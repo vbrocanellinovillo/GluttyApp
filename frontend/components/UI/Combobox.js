@@ -13,7 +13,7 @@ export default function Combobox({
   touched,
 }) {
   function changeHandler(item) {
-    onChange(item.label);
+    onChange(item.value);
   }
 
   return (

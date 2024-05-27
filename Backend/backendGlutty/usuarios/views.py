@@ -41,20 +41,21 @@ def register(request):
         serializer.save()
         usuario_data = serializer.data
         usuario = Usuario.objects.filter(username=usuario_data['username']).first()
-        payload = {
-            'id': usuario.id,
-            'exp' : datetime.now(datetime.UTC) + datetime.timedelta(days=30),
-            'iat': datetime.now(datetime.UTC)
-        }
+        print("fecha: " + str(usuario.dateBirth))
+        # payload = {
+        #     'id': usuario.id,
+        #     'exp' : datetime.now(datetime.UTC) + datetime.timedelta(days=30),
+        #     'iat': datetime.now(datetime.UTC)
+        # }
          
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+        # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
         
         response = {
             "status": status.HTTP_200_OK,
             "error": None,
             "data": {
                 **serializer.data,
-                "token": token
+                # "token": token
             }
         }
     else:
@@ -84,21 +85,21 @@ def login(request):
     usuario.last_login = timezone.now()
     usuario.save(update_fields=['last_login'])
 
-    payload = {
-        'id': usuario.id,
-        'exp': datetime.utcnow() + datetime.timedelta(minutes=500),
-        'iat': datetime.utcnow(),
-        'is_superuser': usuario.is_superuser
-    }
+    # payload = {
+    #     'id': usuario.id,
+    #     'exp': datetime.utcnow() + datetime.timedelta(minutes=500),
+    #     'iat': datetime.utcnow(),
+    #     'is_superuser': usuario.is_superuser
+    # }
     
-    token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+    # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
 
     response = {
         "status": status.HTTP_200_OK,
         "error": None,
-        "data": {
-            'jwt': token
-        }
+        # "data": {
+        #     'jwt': token
+        # }
     }
     
     return Response(response)

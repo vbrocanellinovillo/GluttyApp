@@ -1,14 +1,16 @@
 from django.db import models
+import datetime
+from django.utils import timezone
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from .managers import *
 
 # Create your models here.
 class Usuario(AbstractUser):
-    GENDERS = (("MALE", "M"), ("FEMALE", "F"))
+    GENDERS = (("MALE", "M"), ("FEMALE", "F"), ("OTHER", "O"))
 
     email = models.EmailField(unique=True)
     gender = models.CharField(max_length=50, choices=GENDERS, default="MALE")
-    #dateBirth = models.DateField(blank=False)
+    dateBirth = models.DateField(blank=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

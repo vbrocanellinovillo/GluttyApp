@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Form from "../UI/Form";
 import FormHeader from "../UI/FormHeader";
 import FormTitle from "../UI/FormTitle";
@@ -12,13 +12,14 @@ import DatePicker from "../UI/DatePicker";
 import { Formik } from "formik";
 
 const sexos = [
-  { label: "Masculino", value: "M" },
-  { label: "Femenino", value: "F" },
-  { label: "Otro", value: "O" },
+  { label: "Masculino", value: "MALE" },
+  { label: "Femenino", value: "FEMALE" },
+  { label: "Otro", value: "OTHER" },
 ];
 
 export default function RegisterForm({ onSubmit }) {
   function submitHandler({
+    nombreUsuario,
     nombre,
     apellido,
     sexo,
@@ -26,14 +27,15 @@ export default function RegisterForm({ onSubmit }) {
     email,
     contraseña,
   }) {
-    onSubmit(nombre, apellido, sexo, fechaNacimiento, email, contraseña);
+    onSubmit(nombreUsuario, nombre, apellido, sexo, fechaNacimiento, email, contraseña);
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{alignItems: "center"}}>
       <FormHeader title="GLUTTY" />
       <Formik
         initialValues={{
+          nombreUsuario: "",
           nombre: "",
           apellido: "",
           sexo: "",
@@ -42,6 +44,7 @@ export default function RegisterForm({ onSubmit }) {
           contraseña: "",
         }}
         validate={({
+          nombreUsuario,
           nombre,
           apellido,
           sexo,
@@ -50,6 +53,9 @@ export default function RegisterForm({ onSubmit }) {
           contraseña,
         }) => {
           const errors = {};
+          if (nombreUsuario.trim() === "") {
+            errors.nombreUsuario = "Nombre de usuario requerido";
+          }
 
           if (nombre.trim() === "") {
             errors.nombre = "Nombre requerido";
@@ -92,6 +98,15 @@ export default function RegisterForm({ onSubmit }) {
         }) => (
           <Form>
             <FormTitle>Registrate</FormTitle>
+            <FormControl
+              placeholder="Nombre usuario"
+              value={values.nombreUsuario}
+              name="nombreUsuario"
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              errors={errors.nombreUsuario}
+              touched={touched.nombreUsuario}
+            />
             <FormControl
               placeholder="Nombre"
               value={values.nombre}
@@ -163,14 +178,15 @@ export default function RegisterForm({ onSubmit }) {
           </Form>
         )}
       </Formik>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     paddingTop: 45,
-    alignItems: "center",
+    //alignItems: "center",
+    //flex: 1,
   },
 
   buttonContainer: {

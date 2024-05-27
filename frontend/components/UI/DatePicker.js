@@ -3,6 +3,20 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import { Colors } from "../../constants/colors";
 import { useState } from "react";
 
+function formatDateToYYYYMMDD(date) {
+  // Obtiene el año completo
+  const year = date.getFullYear();
+
+  // Obtiene el mes y agrega un 0 delante si es necesario
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+
+  // Obtiene el día y agrega un 0 delante si es necesario
+  const day = String(date.getDate()).padStart(2, '0');
+
+  // Combina en el formato deseado
+  return `${year}-${month}-${day}`;
+}
+
 export default function DatePicker({
   placeholder,
   onChange,
@@ -21,11 +35,14 @@ export default function DatePicker({
   };
 
   const handleConfirm = (date) => {
-    onChange(date);
+    const formatedDate = formatDateToYYYYMMDD(date);
+    onChange(formatedDate);
     hideDatePicker();
   };
 
-  console.log(value)
+  // if (value) {
+  //   console.log("2:", formatDateToYYYYMMDD(value))
+  // }
 
   return (
     <>
@@ -45,7 +62,7 @@ export default function DatePicker({
                 : [styles.placeholder, { color: "#aaa" }]
             }
           >
-            {value? value.toLocaleDateString() : placeholder}
+            {value? value : placeholder}
           </Text>
           <DateTimePicker
             isVisible={open}
