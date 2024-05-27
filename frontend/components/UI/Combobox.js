@@ -1,31 +1,40 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../constants/colors";
+import { Dropdown } from "react-native-element-dropdown";
 
-export default function FormControl({
+export default function Combobox({
   placeholder,
-  secure,
-  handleChange,
+  data,
+  onChange,
+  value,
   handleBlur,
   name,
-  value,
-  touched,
   errors,
+  touched,
 }) {
+  function changeHandler(item) {
+    onChange(item.label);
+  }
+
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder={placeholder}
+      <Dropdown
+        data={data}
+        labelField="label"
+        valueField="value"
         style={
           touched && errors
-            ? [styles.formControl, styles.formError]
-            : styles.formControl
+            ? [styles.combobox, styles.formError]
+            : styles.combobox
         }
-        placeholderTextColor={touched && errors ? Colors.redError : "#aaa"}
-        secureTextEntry={secure}
-        onChangeText={handleChange(name)}
-        onBlur={handleBlur(name)}
-        value={value}
+        onChange={changeHandler}
+        placeholder={placeholder}
+        placeholderStyle={
+          touched && errors ? { color: Colors.redError } : { color: "#aaa" }
+        }
+        onBlur={() => handleBlur(name)}
       />
+
       {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
     </View>
   );
@@ -33,11 +42,12 @@ export default function FormControl({
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     marginVertical: 12,
   },
 
-  formControl: {
-    paddingVertical: 16,
+  combobox: {
+    height: 50,
     paddingHorizontal: 14,
     backgroundColor: "white",
     borderWidth: 1,

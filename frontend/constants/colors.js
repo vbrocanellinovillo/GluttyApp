@@ -4,4 +4,5 @@ export const Colors = {
   locro: "#DD761C",
   humita: "#FEB941",
   vainilla: "#FDE49E",
+  redError: "#a50000",
 };

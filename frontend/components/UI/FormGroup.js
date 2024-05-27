@@ -11,7 +11,8 @@ export default function FormGroup({ children }) {
 const styles = StyleSheet.create({
   formGroup: {
     flexDirection: "row",
-    gap: 20
+    gap: 20,
+    alignItems: "center"
   },
 
 });

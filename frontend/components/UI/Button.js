@@ -6,7 +6,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-export default function Button({ children, backgroundColor, color }) {
+export default function Button({ children, backgroundColor, color, onPress }) {
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -20,7 +20,7 @@ export default function Button({ children, backgroundColor, color }) {
     .onFinalize(() => (scale.value = 1));
 
   return (
-    <Pressable>
+    <Pressable onPress={onPress}>
       <GestureDetector gesture={tap}>
         <Animated.View
           style={[styles.button, { backgroundColor }, animatedStyle]}

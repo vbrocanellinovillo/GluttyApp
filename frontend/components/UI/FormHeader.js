@@ -18,7 +18,7 @@ export default function FormHeader({ title }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20,
+    marginVertical: 5,
     alignItems: "center",
   },
 
