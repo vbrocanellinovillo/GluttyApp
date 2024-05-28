@@ -6,7 +6,7 @@ const MainNav = createBottomTabNavigator();
 
 export default function MainNavigation() {
   return (
-    <MainNav.Navigator>
+    <MainNav.Navigator screenOptions={{headerShown: false}}>
       <MainNav.Screen
         name="Home"
         component={Home}

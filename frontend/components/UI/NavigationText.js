@@ -12,8 +12,9 @@ export default function NavigationText({ children, action, color, href }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20,
-    alignItems: "center"
+    marginTop: 20,
+    marginBottom: 160,
+    alignItems: "center",
   },
 
   text: {

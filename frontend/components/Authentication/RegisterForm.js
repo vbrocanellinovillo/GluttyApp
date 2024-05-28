@@ -27,11 +27,22 @@ export default function RegisterForm({ onSubmit }) {
     email,
     contraseña,
   }) {
-    onSubmit(nombreUsuario, nombre, apellido, sexo, fechaNacimiento, email, contraseña);
+    onSubmit(
+      nombreUsuario,
+      nombre,
+      apellido,
+      sexo,
+      fechaNacimiento,
+      email,
+      contraseña
+    );
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{alignItems: "center"}}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ alignItems: "center" }}
+    >
       <FormHeader title="GLUTTY" />
       <Formik
         initialValues={{
@@ -172,9 +183,11 @@ export default function RegisterForm({ onSubmit }) {
                 Registrate
               </Button>
             </View>
-            <NavigationText action="Iniciar Sesión" href="Login">
-              ¿Ya tenes cuenta?
-            </NavigationText>
+            <View style={styles.bottomText}>
+              <NavigationText action="Iniciar Sesión" href="Login">
+                ¿Ya tenes cuenta?
+              </NavigationText>
+            </View>
           </Form>
         )}
       </Formik>
@@ -184,9 +197,7 @@ export default function RegisterForm({ onSubmit }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 45,
-    //alignItems: "center",
-    //flex: 1,
+    paddingTop: 60,
   },
 
   buttonContainer: {
@@ -201,4 +212,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     flex: 1,
   },
+
+  bottomText: {
+    paddingBottom: 140
+  }
 });

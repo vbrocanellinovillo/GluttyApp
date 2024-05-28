@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
+
 export default function FormTitle({ children, color }) {
   return (
     <View style={styles.titleContainer}>
