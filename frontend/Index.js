@@ -8,8 +8,7 @@ export default function Index() {
 
   return (
     <NavigationContainer>
-      {!isAuthenticated && <AuthNavigation />}
-      {isAuthenticated && <MainNavigation />}
+      <MainNavigation />
     </NavigationContainer>
   );
 }
