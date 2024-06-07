@@ -1,10 +1,11 @@
+import { View } from "react-native";
 import ScreenCenter from "../components/UI/ScreenCenter";
 import Title from "../components/UI/Title";
 
-export default function Map() {
+export default function Scan() {
   return (
     <ScreenCenter>
-      <Title>Proximamente mapaca...</Title>
+      <Title>Scanner</Title>
     </ScreenCenter>
   );
 }
