@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 import datetime, jwt
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -109,3 +109,23 @@ def login(request):
     }
 
     return Response(response)
+
+
+@api_view(["PUT"])
+def update(request, user_id):
+    user = get_object_or_404(Usuario, id=user_id)
+
+    serializer = UsuarioSerializer(user, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"user": serializer.data}, status=status.HTTP_200_OK)
+
+    return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["DELETE"])
+def delete(request, user_id):
+    user = get_object_or_404(Usuario, id=user_id)
+    user.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
