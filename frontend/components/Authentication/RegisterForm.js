@@ -77,7 +77,7 @@ export default function RegisterForm({ onSubmit }) {
           }
 
           if (sexo.trim() === "") {
-            errors.sexo = "Sexo requerido";
+            errors.sexo = "Genero requerido";
           }
 
           if (fechaNacimiento === undefined) {
@@ -139,7 +139,7 @@ export default function RegisterForm({ onSubmit }) {
             <FormGroup>
               <Combobox
                 data={sexos}
-                placeholder="Sexo"
+                placeholder="Genero"
                 onChange={(item) => setFieldValue("sexo", item)}
                 value={values.sexo}
                 touched={touched.sexo}
