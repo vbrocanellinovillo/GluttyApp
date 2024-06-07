@@ -25,7 +25,6 @@ export default function ProfileForm({ onSubmit, user }) {
     sexo,
     fechaNacimiento,
     email,
-    contraseña,
   }) {
     onSubmit(
       nombreUsuario,
@@ -34,7 +33,6 @@ export default function ProfileForm({ onSubmit, user }) {
       sexo,
       fechaNacimiento,
       email,
-      contraseña
     );
   }
 

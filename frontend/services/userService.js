@@ -40,7 +40,6 @@ export async function register(
   formdata.append("first_name", name);
   formdata.append("last_name", lastName);
   formdata.append("gender", sex);
-  console.log("fecha front: ", dateBirth);
   formdata.append("dateBirth", dateBirth);
   formdata.append("email", email);
   formdata.append("password", password);
@@ -52,6 +51,33 @@ export async function register(
   };
 
   const requestUrl = url + "register/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+
+    return response;
+  } catch (error) {
+    console.log("No se registró el usuario!!! :(");
+    throw new Error();
+  }
+}
+
+export async function update(username, name, lastName, sex, dateBirth, email, id) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+  formdata.append("first_name", name);
+  formdata.append("last_name", lastName);
+  formdata.append("gender", sex);
+  formdata.append("dateBirth", dateBirth);
+  formdata.append("email", email);
+
+  const requestOptions = {
+    method: "PUT",
+    body: formdata,
+    redirect: "follow",
+  };
+
+  const requestUrl = url + id + "/";
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);
