@@ -15,9 +15,8 @@ export default function Login() {
   async function submitHandler(usuario, contraseña) {
     try {
       setisloading(true);
-      const res = await login(usuario, contraseña);
-      console.log(res);
-      dispatch(authActions.login());
+      const response = await login(usuario, contraseña);
+      dispatch(authActions.login(response.user));
     } catch (error) {
       console.log(error);
       Alert.alert("ERROR", "no podes entrar >:/ !!!!");

@@ -19,7 +19,7 @@ export async function login(username, password) {
   try {
     const response = await httpRequest(requestUrl, requestOptions);
 
-    return true;
+    return response;
   } catch (error) {
     console.log("No anda login!!! :(");
     throw new Error();
@@ -56,7 +56,7 @@ export async function register(
   try {
     const response = await httpRequest(requestUrl, requestOptions);
 
-    return true;
+    return response;
   } catch (error) {
     console.log("No se registró el usuario!!! :(");
     throw new Error();
