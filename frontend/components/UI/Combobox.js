@@ -16,6 +16,7 @@ export default function Combobox({
     onChange(item.value);
   }
 
+
   return (
     <View style={styles.container}>
       <Dropdown
@@ -33,6 +34,7 @@ export default function Combobox({
           touched && errors ? { color: Colors.redError } : { color: "#aaa" }
         }
         onBlur={() => handleBlur(name)}
+        value={value}
       />
 
       {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
