@@ -21,7 +21,7 @@ export async function login(username, password) {
 
     return response;
   } catch (error) {
-    console.log("No anda login!!! :(");
+    console.log(error.message);
     throw new Error();
   }
 }
@@ -77,7 +77,7 @@ export async function update(username, name, lastName, sex, dateBirth, email, id
     redirect: "follow",
   };
 
-  const requestUrl = url + id + "/";
+  const requestUrl = url + `update/${id}/`;
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);

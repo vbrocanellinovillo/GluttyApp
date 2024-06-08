@@ -3,12 +3,12 @@ export async function httpRequest(url, requestOptions) {
     const response = await fetch(url, requestOptions);
 
     if (!response.ok) {
-      throw new Error();
+      throw new Error(response);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    throw new Error("Error");
+    throw new Error(error.message);
   }
 }

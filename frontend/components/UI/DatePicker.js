@@ -42,6 +42,8 @@ export default function DatePicker({
             style={
               errors && touched
                 ? [styles.placeholder, { color: Colors.redError }]
+                : value
+                ? [styles.placeholder, { color: "black" }]
                 : [styles.placeholder, { color: "#aaa" }]
             }
           >

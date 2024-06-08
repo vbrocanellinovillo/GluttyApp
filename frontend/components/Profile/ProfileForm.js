@@ -140,7 +140,7 @@ export default function ProfileForm({ onSubmit, user }) {
                 handleBlur={handleBlur}
               />
               <DatePicker
-                placeholder="dd/mm/aaaa"
+                placeholder="Fecha nacimiento"
                 onChange={(date) => setFieldValue("fechaNacimiento", date)}
                 touched={touched.fechaNacimiento}
                 errors={errors.fechaNacimiento}
