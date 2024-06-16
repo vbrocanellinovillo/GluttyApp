@@ -4,20 +4,20 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from .managers import *
 
+
 # Create your models here.
 class Usuario(AbstractUser):
     GENDERS = (("MALE", "M"), ("FEMALE", "F"), ("OTHER", "O"))
 
-    # first_name = models.CharField(max_length=50, required=True)
-    # last_name = models.CharField(max_length=50, required=True)
-    # username = models.CharField(max_length=50, required=True)
+    first_name = models.CharField(max_length=50, blank=False)
+    last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True)
     gender = models.CharField(max_length=50, choices=GENDERS, default="MALE")
     dateBirth = models.DateField(blank=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    
+
     # groups = models.ManyToManyField(
     #     Group,
     #     related_name='usuarios_groups',
@@ -32,11 +32,11 @@ class Usuario(AbstractUser):
     #     help_text='Specific permissions for this user.',
     #     verbose_name='user permissions',
     # )
-    
+
     objects = CustomUserManager()
-    
-    USERNAME_FIELD = 'username'
+
+    USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.username 
+        return self.username

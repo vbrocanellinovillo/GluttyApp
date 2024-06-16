@@ -52,21 +52,9 @@ def register(request):
 
         # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
 
-        response = {
-            "status": status.HTTP_200_OK,
-            "error": None,
-            "data": {
-                **serializer.data,
-                # "token": token
-            },
-        }
-    else:
-        response = {
-            "status": status.HTTP_400_BAD_REQUEST,
-            "error": serializer.errors,
-            "data": [],
-        }
-    return Response(response)
+        return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
+
+    return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -83,9 +71,9 @@ def login(request):
 
     if not usuario.check_password(password):
         raise AuthenticationFailed("Contraseña incorrecta.")
-    
+
     if not usuario.is_active:
-        raise AuthenticationFailed('Cuenta eliminada.')
+        raise AuthenticationFailed("Cuenta eliminada.")
 
     usuario.last_login = timezone.now()
     usuario.save(update_fields=["last_login"])
@@ -103,15 +91,13 @@ def login(request):
     serializer = UsuarioSerializer(usuario)
 
     response = {
-        "status": status.HTTP_200_OK,
-        "error": None,
         "user": serializer.data,
         # "data": {
         #     'jwt': token
         # }
     }
 
-    return Response(response)
+    return Response(response, status=status.HTTP_200_OK)
 
 
 @api_view(["PUT"])
@@ -133,7 +119,7 @@ def update(request):
 def delete(request):
     # user = get_object_or_404(Usuario, id=user_id)
     # user.delete()
-    
+
     username = request.data["username"]
     usuario = Usuario.objects.filter(username=username).first()
 
