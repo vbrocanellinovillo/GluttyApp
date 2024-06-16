@@ -83,6 +83,9 @@ def login(request):
 
     if not usuario.check_password(password):
         raise AuthenticationFailed("Contraseña incorrecta.")
+    
+    if not usuario.is_active:
+        raise AuthenticationFailed('Cuenta eliminada.')
 
     usuario.last_login = timezone.now()
     usuario.save(update_fields=["last_login"])
@@ -112,9 +115,11 @@ def login(request):
 
 
 @api_view(["PUT"])
-def update(request, user_id):
-    user = get_object_or_404(Usuario, id=user_id)
-
+def update(request):
+    # user = get_object_or_404(Usuario, id=user_id)
+    username = request.data["username"]
+    user = Usuario.objects.filter(username=username).first()
+    print(user)
     serializer = UsuarioSerializer(user, data=request.data, partial=True)
 
     if serializer.is_valid():
@@ -125,7 +130,15 @@ def update(request, user_id):
 
 
 @api_view(["DELETE"])
-def delete(request, user_id):
-    user = get_object_or_404(Usuario, id=user_id)
-    user.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+def delete(request):
+    # user = get_object_or_404(Usuario, id=user_id)
+    # user.delete()
+    
+    username = request.data["username"]
+    usuario = Usuario.objects.filter(username=username).first()
+
+    if usuario.is_authenticated:
+        usuario.is_active = False
+        usuario.save()
+        print(usuario)
+        return Response("Se eliminó el usuario.")

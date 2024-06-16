@@ -8,6 +8,9 @@ from .managers import *
 class Usuario(AbstractUser):
     GENDERS = (("MALE", "M"), ("FEMALE", "F"), ("OTHER", "O"))
 
+    # first_name = models.CharField(max_length=50, required=True)
+    # last_name = models.CharField(max_length=50, required=True)
+    # username = models.CharField(max_length=50, required=True)
     email = models.EmailField(unique=True)
     gender = models.CharField(max_length=50, choices=GENDERS, default="MALE")
     dateBirth = models.DateField(blank=False)
