@@ -19,7 +19,7 @@ export default function Login() {
       dispatch(authActions.login(response.user));
     } catch (error) {
       console.log(error);
-      Alert.alert("ERROR", "no podes entrar >:/ !!!!");
+      Alert.alert("ERROR", "No se pudo iniciar sesión");
     } finally {
       setisloading(false);
     }

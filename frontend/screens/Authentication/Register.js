@@ -23,7 +23,7 @@ export default function Register() {
   ) {
     try {
       setisloading(true);
-      const res = await register(
+      const response = await register(
         nombreUsuario,
         nombre,
         apellido,
@@ -32,8 +32,7 @@ export default function Register() {
         email,
         contraseña
       );
-      console.log("se registro");
-      dispatch(authActions.login());
+      dispatch(authActions.login(response.user));
     } catch (error) {
       Alert.alert("Error", "No se pudo registrar");
     } finally {

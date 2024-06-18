@@ -34,7 +34,7 @@ export default function Profile() {
         userData.id
       );
       dispatch(authActions.updateUser(response.user))
-      Alert.alert("delfi decidi porfa", "Se modifico el usuario correctamente")
+      Alert.alert("Usuario modificado", "Se modifico el usuario correctamente")
     } catch (error) {
       Alert.alert("Error", "No se pudo modificar");
     } finally {

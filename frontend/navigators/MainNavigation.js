@@ -102,12 +102,14 @@ export default function MainNavigation() {
         );
       }}
       tabBar={renderTabBar}
-      height={70}
+      height={80}
+      sceneContainerStyle={{backgroundColor: "white"}}
     >
       <CurvedBottomBarExpo.Screen
         name="Home"
         component={Home}
         position="LEFT"
+        options={{}} 
       />
       <CurvedBottomBarExpo.Screen
         name="Recetas"
