@@ -3,9 +3,8 @@ import RegisterForm from "../../components/Authentication/RegisterForm";
 import { register } from "../../services/userService";
 import { Alert } from "react-native";
 import { useState } from "react";
-import LoadingIndicator from "../../components/UI/LoadingIndicator";
-import { Colors } from "../../constants/colors";
 import { authActions } from "../../context/auth";
+import LoadingGlutty from "../../components/UI/LoadingGlutty";
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -40,9 +39,10 @@ export default function Register() {
     }
   }
 
-  if (isloading) {
-    return <LoadingIndicator color={Colors.mJordan} size="large" />;
-  }
-
-  return <RegisterForm onSubmit={submitHandler} />;
+  return (
+    <>
+      <LoadingGlutty visible={isloading} />
+      <RegisterForm onSubmit={submitHandler} />;
+    </>
+  );
 }

@@ -6,13 +6,13 @@ import { authActions } from "../context/auth";
 import { useState } from "react";
 import LoadingIndicator from "../components/UI/LoadingIndicator";
 import { Colors } from "../constants/colors";
+import LoadingGlutty from "../components/UI/LoadingGlutty";
 
 export default function Profile() {
-  const userData = useSelector(state => state.auth.userData);
+  const userData = useSelector((state) => state.auth.userData);
   const dispatch = useDispatch();
 
   const [isloading, setisloading] = useState(false);
-
 
   async function submitHandler(
     nombreUsuario,
@@ -20,7 +20,7 @@ export default function Profile() {
     apellido,
     sexo,
     fechaNacimiento,
-    email,
+    email
   ) {
     try {
       setisloading(true);
@@ -33,8 +33,8 @@ export default function Profile() {
         email,
         userData.id
       );
-      dispatch(authActions.updateUser(response.user))
-      Alert.alert("Usuario modificado", "Se modifico el usuario correctamente")
+      dispatch(authActions.updateUser(response.user));
+      Alert.alert("Usuario modificado", "Se modifico el usuario correctamente");
     } catch (error) {
       Alert.alert("Error", "No se pudo modificar");
     } finally {
@@ -42,10 +42,10 @@ export default function Profile() {
     }
   }
 
-  if (isloading)
-    return <LoadingIndicator color={Colors.mJordan} size="large" />;
-
   return (
-    <ProfileForm onSubmit={submitHandler} user={userData}/>
+    <>
+      <LoadingGlutty visible={isloading} />
+      <ProfileForm onSubmit={submitHandler} user={userData} />
+    </>
   );
 }
