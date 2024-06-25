@@ -1,16 +1,14 @@
 import Home from "../screens/Home";
 import Profile from "../screens/Profile/Profile";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Map from "../screens/Map";
 import Recipes from "../screens/Recipes";
 import Products from "../screens/Products";
-import { useNavigation } from "@react-navigation/native";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../constants/colors";
 import Scan from "../screens/Scan";
-import DrawerUser from "./DrawerUser";
-import TabsHeader from "../components/UI/Header/TabsHeader";
+import PrivacityAndSecurity from "../screens/Profile/PrivacityAndSecurity";
 
 export default function MainNavigation() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -64,9 +62,7 @@ export default function MainNavigation() {
   return (
     <CurvedBottomBarExpo.Navigator
       screenOptions={{
-        header: ({ navigation, route, options }) => (
-          <TabsHeader navigation={navigation} route={route} options={options} />
-        ),
+        headerShown: false,
       }}
       type="DOWN"
       borderTopLeftRight
@@ -88,7 +84,6 @@ export default function MainNavigation() {
       }}
       tabBar={renderTabBar}
       height={80}
-      sceneContainerStyle={{ backgroundColor: "white" }}
     >
       <CurvedBottomBarExpo.Screen
         name="Home"
@@ -116,10 +111,10 @@ export default function MainNavigation() {
         position="RIGHT"
         component={Map}
       />
+      <CurvedBottomBarExpo.Screen name="Mis datos" component={Profile} />
       <CurvedBottomBarExpo.Screen
-        name="DrawerUser"
-        component={DrawerUser}
-        options={{ headerShown: false }}
+        name="Privacidad y Seguridad"
+        component={PrivacityAndSecurity}
       />
     </CurvedBottomBarExpo.Navigator>
   );
