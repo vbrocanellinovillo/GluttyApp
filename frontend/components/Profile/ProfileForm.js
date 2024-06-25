@@ -1,14 +1,13 @@
 import { ScrollView, StyleSheet, View } from "react-native";
-import Form from "../UI/Form";
-import FormHeader from "../UI/FormHeader";
-import FormTitle from "../UI/FormTitle";
-import FormControl from "../UI/FormControl";
-import FormGroup from "../UI/FormGroup";
-import Button from "../UI/Button";
+import Form from "../UI/Forms/Form";
+import FormHeader from "../UI/Forms/FormHeader";
+import FormTitle from "../UI/Forms/FormTitle";
+import FormControl from "../UI/Controls/FormControl";
+import FormGroup from "../UI/Forms/FormGroup";
+import Button from "../UI/Controls/Button";
 import { Colors } from "../../constants/colors";
-import NavigationText from "../UI/NavigationText";
-import Combobox from "../UI/Combobox";
-import DatePicker from "../UI/DatePicker";
+import Combobox from "../UI/Controls/Combobox";
+import DatePicker from "../UI/Controls/DatePicker";
 import { Formik } from "formik";
 
 const sexos = [
@@ -26,14 +25,7 @@ export default function ProfileForm({ onSubmit, user }) {
     fechaNacimiento,
     email,
   }) {
-    onSubmit(
-      nombreUsuario,
-      nombre,
-      apellido,
-      sexo,
-      fechaNacimiento,
-      email,
-    );
+    onSubmit(nombreUsuario, nombre, apellido, sexo, fechaNacimiento, email);
   }
 
   return (
@@ -85,7 +77,6 @@ export default function ProfileForm({ onSubmit, user }) {
             errors.email = "Email invalido";
           }
 
-
           return errors;
         }}
         onSubmit={submitHandler}
@@ -102,7 +93,7 @@ export default function ProfileForm({ onSubmit, user }) {
           <Form>
             <FormTitle>Usuario</FormTitle>
             <FormControl
-              placeholder="Nombre usuario"
+              label="Nombre usuario"
               value={values.nombreUsuario}
               name="nombreUsuario"
               handleChange={handleChange}
@@ -111,7 +102,7 @@ export default function ProfileForm({ onSubmit, user }) {
               touched={touched.nombreUsuario}
             />
             <FormControl
-              placeholder="Nombre"
+              label="Nombre"
               value={values.nombre}
               name="nombre"
               handleChange={handleChange}
@@ -120,7 +111,7 @@ export default function ProfileForm({ onSubmit, user }) {
               touched={touched.nombre}
             />
             <FormControl
-              placeholder="Apellido"
+              label="Apellido"
               value={values.apellido}
               name="apellido"
               handleChange={handleChange}
@@ -131,7 +122,7 @@ export default function ProfileForm({ onSubmit, user }) {
             <FormGroup>
               <Combobox
                 data={sexos}
-                placeholder="Genero"
+                label="Genero"
                 onChange={(item) => setFieldValue("sexo", item)}
                 value={values.sexo}
                 touched={touched.sexo}
@@ -140,7 +131,7 @@ export default function ProfileForm({ onSubmit, user }) {
                 handleBlur={handleBlur}
               />
               <DatePicker
-                placeholder="Fecha nacimiento"
+                label="Fecha nacimiento"
                 onChange={(date) => setFieldValue("fechaNacimiento", date)}
                 touched={touched.fechaNacimiento}
                 errors={errors.fechaNacimiento}
@@ -148,7 +139,7 @@ export default function ProfileForm({ onSubmit, user }) {
               />
             </FormGroup>
             <FormControl
-              placeholder="Email"
+              label="Email"
               value={values.email}
               name="email"
               handleChange={handleChange}
@@ -165,8 +156,7 @@ export default function ProfileForm({ onSubmit, user }) {
                 Guardar cambios
               </Button>
             </View>
-            <View style={styles.bottomText}>
-            </View>
+            <View style={styles.bottomText}></View>
           </Form>
         )}
       </Formik>
@@ -181,7 +171,7 @@ const styles = StyleSheet.create({
 
   buttonContainer: {
     marginTop: 12,
-    paddingBottom: 140
+    paddingBottom: 140,
   },
 
   combobox: {
@@ -194,6 +184,6 @@ const styles = StyleSheet.create({
   },
 
   bottomText: {
-    paddingBottom: 140
-  }
+    paddingBottom: 140,
+  },
 });

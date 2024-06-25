@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { Colors } from "../../constants/colors";
+import { Colors } from "../../../constants/colors";
 import { Dropdown } from "react-native-element-dropdown";
 
 export default function Combobox({

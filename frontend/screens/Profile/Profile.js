@@ -1,12 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import ProfileForm from "../components/Profile/ProfileForm";
-import { update } from "../services/userService";
+import ProfileForm from "../../components/Profile/ProfileForm";
+import { update } from "../../services/userService";
 import { Alert } from "react-native";
-import { authActions } from "../context/auth";
+import { authActions } from "../../context/auth";
 import { useState } from "react";
-import LoadingIndicator from "../components/UI/LoadingIndicator";
-import { Colors } from "../constants/colors";
-import LoadingGlutty from "../components/UI/LoadingGlutty";
+import LoadingIndicator from "../../components/UI/LoadingIndicator";
+import { Colors } from "../../constants/colors";
+import LoadingGlutty from "../../components/UI/LoadingGlutty";
 
 export default function Profile() {
   const userData = useSelector((state) => state.auth.userData);

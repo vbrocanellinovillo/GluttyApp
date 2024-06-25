@@ -1,11 +1,11 @@
 import { StyleSheet, View } from "react-native";
-import Form from "../UI/Form";
-import FormControl from "../UI/FormControl";
-import FormHeader from "../UI/FormHeader";
-import FormTitle from "../UI/FormTitle";
+import Form from "../UI/Forms/Form";
+import FormControl from "../UI/Controls/FormControl";
+import FormHeader from "../UI/Forms/FormHeader";
+import FormTitle from "../UI/Forms/FormTitle";
 import { Colors } from "../../constants/colors";
-import Button from "../UI/Button";
-import NavigationText from "../UI/NavigationText";
+import Button from "../UI/Controls/Button";
+import NavigationText from "../UI/Navigation/NavigationText";
 import { Formik } from "formik";
 
 export default function LoginForm({ onSubmit }) {
@@ -44,7 +44,7 @@ export default function LoginForm({ onSubmit }) {
           <Form>
             <FormTitle color={Colors.mJordan}>Iniciar Sesión</FormTitle>
             <FormControl
-              placeholder="Usuario"
+              label="Usuario"
               value={values.usuario}
               name="usuario"
               handleChange={handleChange}
@@ -53,7 +53,7 @@ export default function LoginForm({ onSubmit }) {
               errors={errors.usuario}
             />
             <FormControl
-              placeholder="Contraseña"
+              label="Contraseña"
               secure
               value={values.contraseña}
               name="contraseña"

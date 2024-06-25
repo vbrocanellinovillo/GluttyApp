@@ -1,8 +1,8 @@
 import { StyleSheet, Pressable, Text, View } from "react-native";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { Colors } from "../../constants/colors";
+import { Colors } from "../../../constants/colors";
 import { useState } from "react";
-import { formatDateToYYYYMMDD } from "../../utils/dateFunctions";
+import { formatDateToYYYYMMDD } from "../../../utils/dateFunctions";
 
 export default function DatePicker({
   placeholder,

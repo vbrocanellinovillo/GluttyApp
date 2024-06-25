@@ -1,8 +1,9 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
-import { Colors } from "../../constants/colors";
+import { StyleSheet, Text, View } from "react-native";
+import { Colors } from "../../../constants/colors";
+import { TextInput } from "react-native-paper";
 
 export default function FormControl({
-  placeholder,
+  label,
   secure,
   handleChange,
   handleBlur,
@@ -14,17 +15,21 @@ export default function FormControl({
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder={placeholder}
-        style={
-          touched && errors
-            ? [styles.formControl, styles.formError]
-            : styles.formControl
-        }
+        label={label}
+        style={styles.formControl}
         placeholderTextColor={touched && errors ? Colors.redError : "#aaa"}
         secureTextEntry={secure}
         onChangeText={handleChange(name)}
         onBlur={handleBlur(name)}
         value={value}
+        mode="outlined"
+        outlineColor={touched && errors ? Colors.redError : Colors.mJordan}
+        outlineStyle={{ borderRadius: 8, borderWidth: 1.1 }}
+        activeOutlineColor={
+          touched && errors ? Colors.redError : Colors.mJordan
+        }
+        textColor={Colors.mJordan}
+        
       />
       {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
     </View>
@@ -37,19 +42,9 @@ const styles = StyleSheet.create({
   },
 
   formControl: {
-    paddingVertical: 16,
-    paddingHorizontal: 14,
     backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: Colors.mJordan,
-    borderRadius: 8,
     fontSize: 16,
-    marginBottom: 5
-  },
-
-  formError: {
-    borderWidth: 1,
-    borderColor: Colors.redError,
+    marginBottom: 5,
   },
 
   errorText: {

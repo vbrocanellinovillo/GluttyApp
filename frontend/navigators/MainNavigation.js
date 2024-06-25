@@ -1,5 +1,5 @@
 import Home from "../screens/Home";
-import Profile from "../screens/Profile";
+import Profile from "../screens/Profile/Profile";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Map from "../screens/Map";
 import Recipes from "../screens/Recipes";
@@ -9,17 +9,19 @@ import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../constants/colors";
 import Scan from "../screens/Scan";
+import DrawerUser from "./DrawerUser";
+import TabsHeader from "../components/UI/Header/TabsHeader";
 
-function HeaderLeft() {
+function HeaderRight() {
   const navigation = useNavigation();
 
   function navigateHandler() {
-    navigation.navigate("Usuario");
+    navigation.navigate("DrawerUser");
   }
 
   return (
     <TouchableOpacity onPress={navigateHandler}>
-      <View style={styles.headerLeft}>
+      <View>
         <Image
           source={{
             uri: "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg",
@@ -82,7 +84,11 @@ export default function MainNavigation() {
 
   return (
     <CurvedBottomBarExpo.Navigator
-      screenOptions={{ headerLeft: () => <HeaderLeft /> }}
+      screenOptions={{
+        header: ({ navigation, route, options }) => (
+          <TabsHeader navigation={navigation} route={route} options={options} />
+        ),
+      }}
       type="DOWN"
       borderTopLeftRight
       bgColor={Colors.humita}
@@ -103,13 +109,13 @@ export default function MainNavigation() {
       }}
       tabBar={renderTabBar}
       height={80}
-      sceneContainerStyle={{backgroundColor: "white"}}
+      sceneContainerStyle={{ backgroundColor: "white" }}
     >
       <CurvedBottomBarExpo.Screen
         name="Home"
         component={Home}
         position="LEFT"
-        options={{}} 
+        options={{title: "Glutty App"}}
       />
       <CurvedBottomBarExpo.Screen
         name="Recetas"
@@ -132,27 +138,15 @@ export default function MainNavigation() {
         component={Map}
       />
       <CurvedBottomBarExpo.Screen
-        name="Usuario"
-        component={Profile}
-        options={{ tabBarItemStyle: { display: "none" } }}
+        name="DrawerUser"
+        component={DrawerUser}
+        options={{ tabBarItemStyle: { display: "none" }, headerShown: false }}
       />
     </CurvedBottomBarExpo.Navigator>
   );
 }
 
 const styles = StyleSheet.create({
-  headerLeft: {
-    bottom: 10,
-    left: 20,
-  },
-
-  image: {
-    height: 60,
-    width: 60,
-    borderRadius: 30,
-    objectFit: "fill",
-  },
-
   button: {
     flex: 1,
     justifyContent: "center",
@@ -184,6 +178,6 @@ const styles = StyleSheet.create({
   tabText: {
     marginTop: 5,
     textAlign: "center",
-    fontWeight: "600"
+    fontWeight: "600",
   },
 });

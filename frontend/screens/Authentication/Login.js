@@ -16,7 +16,6 @@ export default function Login() {
   async function submitHandler(usuario, contraseña) {
     try {
       setisloading(true);
-      await sleep(8000) // acordarse de sacar esto
       const response = await login(usuario, contraseña);
       dispatch(authActions.login(response.user));
     } catch (error) {

@@ -1,5 +1,5 @@
-import { Colors } from "../../constants/colors";
-import Title from "./Title";
+import { Colors } from "../../../constants/colors";
+import Title from "../Title";
 import { View, Image, StyleSheet } from "react-native";
 
 export default function FormHeader({ title }) {
@@ -7,7 +7,7 @@ export default function FormHeader({ title }) {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../assets/images/sin-gluten.webp")}
+          source={require("../../../assets/images/sin-gluten.webp")}
           style={styles.image}
         />
       </View>
