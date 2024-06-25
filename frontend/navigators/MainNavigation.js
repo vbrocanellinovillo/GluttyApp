@@ -12,27 +12,6 @@ import Scan from "../screens/Scan";
 import DrawerUser from "./DrawerUser";
 import TabsHeader from "../components/UI/Header/TabsHeader";
 
-function HeaderRight() {
-  const navigation = useNavigation();
-
-  function navigateHandler() {
-    navigation.navigate("DrawerUser");
-  }
-
-  return (
-    <TouchableOpacity onPress={navigateHandler}>
-      <View>
-        <Image
-          source={{
-            uri: "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg",
-          }}
-          style={styles.image}
-        />
-      </View>
-    </TouchableOpacity>
-  );
-}
-
 export default function MainNavigation() {
   const _renderIcon = (routeName, selectedTab) => {
     let icon = "";
@@ -115,7 +94,7 @@ export default function MainNavigation() {
         name="Home"
         component={Home}
         position="LEFT"
-        options={{title: "Glutty App"}}
+        options={{ title: "Glutty App" }}
       />
       <CurvedBottomBarExpo.Screen
         name="Recetas"
@@ -140,7 +119,7 @@ export default function MainNavigation() {
       <CurvedBottomBarExpo.Screen
         name="DrawerUser"
         component={DrawerUser}
-        options={{ tabBarItemStyle: { display: "none" }, headerShown: false }}
+        options={{ headerShown: false }}
       />
     </CurvedBottomBarExpo.Navigator>
   );

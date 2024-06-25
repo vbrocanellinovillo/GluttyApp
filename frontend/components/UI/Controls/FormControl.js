@@ -15,21 +15,27 @@ export default function FormControl({
   return (
     <View style={styles.container}>
       <TextInput
-        label={label}
-        style={styles.formControl}
-        placeholderTextColor={touched && errors ? Colors.redError : "#aaa"}
+        label={
+          <Text
+            style={{
+              color: touched && errors ? Colors.redError : "#aaa",
+              borderRadius: 8,
+            }}
+          >
+            {label}
+          </Text>
+        }
+        style={[
+          styles.formControl,
+          { borderColor: touched && errors ? Colors.redError : Colors.mJordan },
+        ]}
         secureTextEntry={secure}
         onChangeText={handleChange(name)}
         onBlur={handleBlur(name)}
         value={value}
-        mode="outlined"
-        outlineColor={touched && errors ? Colors.redError : Colors.mJordan}
-        outlineStyle={{ borderRadius: 8, borderWidth: 1.1 }}
-        activeOutlineColor={
-          touched && errors ? Colors.redError : Colors.mJordan
-        }
         textColor={Colors.mJordan}
-        
+        underlineStyle={{ display: "none" }}
+        theme={{ roundness: 8 }}
       />
       {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
     </View>
@@ -45,6 +51,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     fontSize: 16,
     marginBottom: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    overflow: "hidden",
   },
 
   errorText: {
