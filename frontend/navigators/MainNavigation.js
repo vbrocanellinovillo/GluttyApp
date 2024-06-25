@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../constants/colors";
 import Scan from "../screens/Scan";
 import PrivacityAndSecurity from "../screens/Profile/PrivacityAndSecurity";
+import MainHeader from "../components/UI/Header/MainHeader";
 
 export default function MainNavigation() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -62,7 +63,9 @@ export default function MainNavigation() {
   return (
     <CurvedBottomBarExpo.Navigator
       screenOptions={{
-        headerShown: false,
+        header: ({ navigation, route, options }) => (
+          <MainHeader navigation={navigation} route={route} options={options} />
+        ),
       }}
       type="DOWN"
       borderTopLeftRight
@@ -111,10 +114,11 @@ export default function MainNavigation() {
         position="RIGHT"
         component={Map}
       />
-      <CurvedBottomBarExpo.Screen name="Mis datos" component={Profile} />
+      <CurvedBottomBarExpo.Screen name="UserData" component={Profile} options={{title: "Mis datos"}}/>
       <CurvedBottomBarExpo.Screen
-        name="Privacidad y Seguridad"
+        name="PrivacityAndSecurity"
         component={PrivacityAndSecurity}
+        options={{ title: "Privacidad y Seguridad" }}
       />
     </CurvedBottomBarExpo.Navigator>
   );

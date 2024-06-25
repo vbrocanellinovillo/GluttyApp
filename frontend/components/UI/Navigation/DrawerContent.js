@@ -14,7 +14,9 @@ export default function DrawerContent({ navigation, route }) {
           image={
             "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg"
           }
-          onPress={() => console.log("que apretas puto")}
+          onPress={() =>
+            console.log("apretaste algo que no hace nada. bien ahi crack")
+          }
           width={80}
           height={80}
         />
@@ -24,14 +26,14 @@ export default function DrawerContent({ navigation, route }) {
         <Drawer.Item
           label="Editar datos"
           onPress={() => {
-            navigation.navigate("Tabs", { screen: "Mis datos" });
+            navigation.navigate("Tabs", { screen: "UserData" });
           }}
           icon="account-details"
         />
         <Drawer.Item
           label="Privacidad y Seguridad"
           onPress={() => {
-            navigation.navigate("Tabs", { screen: "Privacidad y Seguridad" });
+            navigation.navigate("Tabs", { screen: "PrivacityAndSecurity" });
           }}
           icon="lock"
         />
