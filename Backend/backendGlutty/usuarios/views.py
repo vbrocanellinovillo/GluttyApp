@@ -127,3 +127,54 @@ def delete(request):
         usuario.save()
         print(usuario)
         return Response("Se eliminó el usuario.")
+
+
+@api_view(['POST'])
+def changePassword(request, id, old_password, new_password):
+    """
+    Permite cambiar la contraseña
+    """
+    username = request.data["username"]
+    usuario = Usuario.objects.filter(username=username).first()
+    if not usuario.check_password(old_password):
+            return Response({
+                        'status': '400',
+                        'error': "La contraseña antigua no es correcta",
+                        'data': []
+                    }, status=status.HTTP_400_BAD_REQUEST)
+    usuario.set_password(new_password)
+    usuario.save()
+    return Response({
+        'status': '200',
+        'error': '',
+        'data': []
+    }, status=status.HTTP_200_OK)
+    
+    # try:
+    #     token = request.headers['Authorization']
+    #     payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+    #     idUsuario = payload['id']
+    #     usuario = Usuario.objects.filter(id=idUsuario).first()
+    #     token_contraseñas = request.data['passwords']
+    #     #passwords = jwt.decode(token_contraseñas, 'encriptadofront', algorithms=['HS256'])
+    #     pass_ant = token_contraseñas["pass_antigua"]
+    #     pass_nueva = token_contraseñas['pass_nueva']
+    #     if not usuario.check_password(pass_ant):
+    #         return Response({
+    #                     'status': '400',
+    #                     'error': "La contraseña antigua no es correcta",
+    #                     'data': []
+    #                 }, status=status.HTTP_400_BAD_REQUEST)
+    #     usuario.set_password(pass_nueva)
+    #     usuario.save()
+    #     return Response({
+    #         'status': '200',
+    #         'error': '',
+    #         'data': []
+    #     }, status=status.HTTP_200_OK)
+    # except Exception as e:
+    #     return Response({
+    #                     'status': '400',
+    #                     'error': e.args,
+    #                     'data': []
+    #                 }, status=status.HTTP_400_BAD_REQUEST)
