@@ -7,7 +7,7 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
 from .models import *
-from .serializers import UsuarioSerializer
+from .serializers import *
 
 
 # def apiOverView(request):
@@ -43,7 +43,8 @@ def register(request):
         serializer.save()
         usuario_data = serializer.data
         usuario = Usuario.objects.filter(username=usuario_data["username"]).first()
-        print("fecha: " + str(usuario.dateBirth))
+        Sesion.objects.create(user=usuario)  # Crear una sesión para el nuevo usuario
+        return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
         # payload = {
         #     'id': usuario.id,
         #     'exp' : datetime.now(datetime.UTC) + datetime.timedelta(days=30),
@@ -52,10 +53,102 @@ def register(request):
 
         # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
 
-        return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
-
     return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+
+# @api_view(["POST"])
+# def login(request):
+#     """
+#     Permite iniciar sesión
+#     """
+#     username = request.data["username"]
+#     password = request.data["password"]
+#     usuario = Usuario.objects.filter(username=username).first()
+
+#     if usuario is None:
+#         raise AuthenticationFailed("Usuario no encontrado.")
+    
+#     sesion = Sesion.objects.get(user=usuario)
+
+#     if not usuario.check_password(password):
+#         sesion.increment_login_attempts()
+#         if sesion.login_attempts >= 3:
+#             raise AuthenticationFailed("Máximo número de intentos de inicio de sesión alcanzado.")
+#         raise AuthenticationFailed("Contraseña incorrecta.")
+
+#     if not usuario.is_active:
+#         raise AuthenticationFailed("Cuenta eliminada.")
+    
+    
+#     # Reiniciar los intentos de inicio de sesión y marcar la sesión como inicializada
+#     sesion.initialize_session()
+
+#     usuario.last_login = timezone.now()
+#     usuario.save(update_fields=["last_login"])
+
+#     # payload = {
+#     #     'id': usuario.id,
+#     #     'exp': datetime.utcnow() + datetime.timedelta(minutes=500),
+#     #     'iat': datetime.utcnow(),
+#     #     'is_superuser': usuario.is_superuser
+#     # }
+
+#     # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+
+#     # Convertir usuario a JSON
+#     serializer = UsuarioSerializer(usuario)
+
+#     response = {
+#         "user": serializer.data,
+#         # "data": {
+#         #     'jwt': token
+#         # }
+#     }
+
+#     return Response(response, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+def login(request):
+    """
+    Permite iniciar sesión
+    """
+    try:
+        username = request.data["username"]
+        password = request.data["password"]
+    except KeyError:
+        return Response({"error": "username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    usuario = Usuario.objects.filter(username=username).first()
+
+    if usuario is None:
+        raise AuthenticationFailed("Usuario no encontrado.")
+    
+    sesion, created = Sesion.objects.get_or_create(user=usuario)
+
+    if not usuario.check_password(password):
+        sesion.login_attempts += 1
+        sesion.save()
+        if sesion.login_attempts >= 3:
+            return Response({"error": "Máximo número de intentos de inicio de sesión alcanzado."}, status=status.HTTP_403_FORBIDDEN)
+        return Response({"error": "Contraseña incorrecta."}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if not usuario.is_active:
+        raise AuthenticationFailed("Cuenta eliminada.")
+    
+    # Reiniciar los intentos de inicio de sesión y marcar la sesión como inicializada
+    sesion.session_initialized = True
+    sesion.login_attempts = 0
+    sesion.session_data = {'last_login': timezone.now().isoformat()}
+    sesion.save()
+
+    # Convertir usuario a JSON
+    serializer = UsuarioSerializer(usuario)
+
+    response = {
+        "user": serializer.data,
+    }
+
+    return Response(response, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def login(request):
@@ -68,13 +161,21 @@ def login(request):
 
     if usuario is None:
         raise AuthenticationFailed("Usuario no encontrado.")
+    
+    sesion = Sesion.objects.get(user=usuario)
 
     if not usuario.check_password(password):
+        sesion.increment_login_attempts()
+        if sesion.login_attempts >= 3:
+            raise AuthenticationFailed("Máximo número de intentos de inicio de sesión alcanzado.")
         raise AuthenticationFailed("Contraseña incorrecta.")
 
     if not usuario.is_active:
-        print(usuario.is_active)
         raise AuthenticationFailed("Cuenta eliminada.")
+    
+    
+    # Reiniciar los intentos de inicio de sesión y marcar la sesión como inicializada
+    sesion.initialize_session()
 
     usuario.last_login = timezone.now()
     usuario.save(update_fields=["last_login"])
@@ -99,6 +200,31 @@ def login(request):
     }
 
     return Response(response, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+def logout(request):
+    """
+    Permite cerrar sesión
+    """
+    try:
+        username = request.data["username"]
+    except KeyError:
+        return Response({"error": "username is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    usuario = Usuario.objects.filter(username=username).first()
+
+    if usuario is None:
+        raise AuthenticationFailed("Usuario no encontrado.")
+
+    sesion = Sesion.objects.filter(user=usuario).first()
+
+    if sesion and sesion.session_initialized:
+        sesion.session_initialized = False
+        sesion.save()
+        return Response({"message": "Sesión cerrada exitosamente."}, status=status.HTTP_200_OK)
+    else:
+        return Response({"message": "No hay ninguna sesión activa para cerrar."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(["PUT"])
@@ -125,8 +251,9 @@ def delete(request):
     if usuario.is_authenticated:
         usuario.is_active = False
         usuario.save()
-        print(usuario)
         return Response("Se eliminó el usuario.")
+    
+    return Response("Usuario no encontrado.", status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])
@@ -167,7 +294,7 @@ def changePassword(request):
     return Response({
         'status': '200',
         'error': '',
-        'data': []
+        'data': [usuario.password]
     }, status=status.HTTP_200_OK)
     
     # try:

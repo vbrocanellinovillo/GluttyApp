@@ -40,3 +40,12 @@ class Usuario(AbstractUser):
 
     def __str__(self):
         return self.username
+
+class Sesion(models.Model):
+    user = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name="sesion")
+    session_initialized = models.BooleanField(default=False)
+    login_attempts = models.PositiveIntegerField(default=0)
+    session_data = models.JSONField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"Session for {self.user.username}"
