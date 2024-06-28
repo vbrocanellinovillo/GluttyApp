@@ -17,12 +17,14 @@ export default function GluttyModal({ visible, isError, message, onClose }) {
     <Portal>
       <Dialog style={styles.dialog} onDismiss={onClose} visible={visible}>
         <Dialog.Content>
-          <View style={styles.imageIcon}>
-            <Ionicons name={icon.name} color={icon.color} size={70} />
+          <View style={styles.imageContainer}>
             <Image source={{ uri: imageUri }} style={styles.image} />
           </View>
-          <Text style={styles.message}>{message}</Text>
-          <Button color={Colors.mJordan} onPress={onClose}>
+          <View style={styles.contentContainer}>
+            <Ionicons name={icon.name} color={icon.color} size={30} />
+            <Text style={styles.message}>{message}</Text>
+          </View>
+          <Button backgroundColor={"#aaa"} onPress={onClose}>
             Cerrar
           </Button>
         </Dialog.Content>
@@ -37,12 +39,13 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     marginBottom: 40,
     shadowColor: "black",
-    shadowOffset: {width: 0, height: 0},
+    shadowOffset: { width: 0, height: 0 },
     shadowRadius: 5,
-    shadowOpacity: 0.5
+    shadowOpacity: 0.5,
+    elevation: 5
   },
 
-  imageIcon: {
+  imageContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -54,10 +57,17 @@ const styles = StyleSheet.create({
     objectFit: "contain",
   },
 
+  contentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    overflow: "hidden",
+    marginVertical: 16,
+  },
+
   message: {
     color: Colors.mJordan,
     fontSize: 21,
-    textAlign: "center",
-    marginVertical: 16,
+    flexShrink: 1
   },
 });

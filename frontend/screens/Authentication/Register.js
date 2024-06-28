@@ -5,11 +5,19 @@ import { Alert } from "react-native";
 import { useState } from "react";
 import { authActions } from "../../context/auth";
 import LoadingGlutty from "../../components/UI/LoadingGlutty";
+import GluttyModal from "../../components/UI/GluttyModal";
 
 export default function Register() {
   const dispatch = useDispatch();
 
   const [isloading, setisloading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, serError] = useState("");
+
+  function closeModalHandler() {
+    setIsError(false);
+    serError("");
+  }
 
   async function submitHandler(
     nombreUsuario,
@@ -33,7 +41,8 @@ export default function Register() {
       );
       dispatch(authActions.login(response.user));
     } catch (error) {
-      Alert.alert("Error", "No se pudo registrar");
+      serError("Error, no se pudo registrar el usuario");
+      setIsError(true);
     } finally {
       setisloading(false);
     }
@@ -42,6 +51,12 @@ export default function Register() {
   return (
     <>
       <LoadingGlutty visible={isloading} />
+      <GluttyModal
+        visible={isError}
+        isError={true}
+        message={error}
+        onClose={closeModalHandler}
+      />
       <RegisterForm onSubmit={submitHandler} />
     </>
   );

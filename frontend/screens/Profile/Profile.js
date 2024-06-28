@@ -1,11 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import ProfileForm from "../../components/Profile/ProfileForm";
 import { update } from "../../services/userService";
-import { Alert } from "react-native";
 import { authActions } from "../../context/auth";
 import { useState } from "react";
-import LoadingIndicator from "../../components/UI/LoadingIndicator";
-import { Colors } from "../../constants/colors";
 import LoadingGlutty from "../../components/UI/LoadingGlutty";
 import GluttyModal from "../../components/UI/GluttyModal";
 
@@ -43,7 +40,7 @@ export default function Profile() {
       );
       dispatch(authActions.updateUser(response.user));
       setIsError(false);
-      setMessage("Usuario modificado correctamente");
+      setMessage("Modificación de usuario exitosa");
       setShowModal(true);
     } catch (error) {
       setIsError(true);
