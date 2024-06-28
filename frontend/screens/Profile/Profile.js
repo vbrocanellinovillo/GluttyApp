@@ -7,12 +7,20 @@ import { useState } from "react";
 import LoadingIndicator from "../../components/UI/LoadingIndicator";
 import { Colors } from "../../constants/colors";
 import LoadingGlutty from "../../components/UI/LoadingGlutty";
+import GluttyModal from "../../components/UI/GluttyModal";
 
 export default function Profile() {
   const userData = useSelector((state) => state.auth.userData);
   const dispatch = useDispatch();
 
   const [isloading, setisloading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [message, setMessage] = useState("");
+
+  function closeModalHandler() {
+    setShowModal(false);
+  }
 
   async function submitHandler(
     nombreUsuario,
@@ -34,9 +42,13 @@ export default function Profile() {
         userData.id
       );
       dispatch(authActions.updateUser(response.user));
-      Alert.alert("Usuario modificado", "Se modifico el usuario correctamente");
+      setIsError(false);
+      setMessage("Usuario modificado correctamente");
+      setShowModal(true);
     } catch (error) {
-      Alert.alert("Error", "No se pudo modificar");
+      setIsError(true);
+      setMessage("No se pudo modificar el usuario");
+      setShowModal(true);
     } finally {
       setisloading(false);
     }
@@ -45,6 +57,12 @@ export default function Profile() {
   return (
     <>
       <LoadingGlutty visible={isloading} />
+      <GluttyModal
+        isError={isError}
+        message={message}
+        onClose={closeModalHandler}
+        visible={showModal}
+      />
       <ProfileForm onSubmit={submitHandler} user={userData} />
     </>
   );

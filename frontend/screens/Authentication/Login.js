@@ -4,14 +4,21 @@ import { authActions } from "../../context/auth";
 import { login } from "../../services/userService";
 import { Alert } from "react-native";
 import { useState } from "react";
-import { sleep } from "../../utils/utilFunctions";
 import LoadingGlutty from "../../components/UI/LoadingGlutty";
 import { Colors } from "../../constants/colors";
+import GluttyModal from "../../components/UI/GluttyModal";
 
 export default function Login() {
   const dispatch = useDispatch();
 
   const [isloading, setisloading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, serError] = useState("");
+
+  function closeModalHandler() {
+    setIsError(false);
+    serError("");
+  }
 
   async function submitHandler(usuario, contraseña) {
     try {
@@ -19,8 +26,8 @@ export default function Login() {
       const response = await login(usuario, contraseña);
       dispatch(authActions.login(response.user));
     } catch (error) {
-      console.log(error);
-      Alert.alert("ERROR", "No se pudo iniciar sesión");
+      serError("Error, no se pudo iniciar sesión");
+      setIsError(true);
     } finally {
       setisloading(false);
     }
@@ -29,6 +36,12 @@ export default function Login() {
   return (
     <>
       <LoadingGlutty visible={isloading} color={Colors.vainilla} size="large" />
+      <GluttyModal
+        visible={isError}
+        isError={true}
+        message={error}
+        onClose={closeModalHandler}
+      />
       <LoginForm onSubmit={submitHandler} />
     </>
   );
