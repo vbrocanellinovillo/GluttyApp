@@ -130,20 +130,40 @@ def delete(request):
 
 
 @api_view(['POST'])
-def changePassword(request, id, old_password, new_password):
+def changePassword(request):
     """
     Permite cambiar la contraseña
     """
     username = request.data["username"]
+    old_password = request.data["old_password"]
+    new_password = request.data["new_password"]
+    
+    if not all([username, old_password, new_password]):
+        return Response({
+            'status': '400',
+            'error': "Todos los campos son obligatorios",
+            'data': []
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
     usuario = Usuario.objects.filter(username=username).first()
+    
+    if usuario is None:
+        return Response({
+            'status': '404',
+            'error': "Usuario no encontrado",
+            'data': []
+        }, status=status.HTTP_404_NOT_FOUND)
+    
     if not usuario.check_password(old_password):
             return Response({
                         'status': '400',
                         'error': "La contraseña antigua no es correcta",
                         'data': []
                     }, status=status.HTTP_400_BAD_REQUEST)
+            
     usuario.set_password(new_password)
     usuario.save()
+    
     return Response({
         'status': '200',
         'error': '',
