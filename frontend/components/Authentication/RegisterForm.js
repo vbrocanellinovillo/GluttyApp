@@ -91,7 +91,26 @@ export default function RegisterForm({ onSubmit }) {
 
           const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
           if (!passwordRegex.test(contraseña)) {
-            errors.contraseña = "Contraseña invalida";
+            errors.contraseña = "Error, la contraseña debe tener:";
+
+            if (contraseña.trim().length < 8) {
+              errors.contraseña += "\n *Al menos 8 caracteres";
+            }
+
+            const minRegex = /(?=.*[a-z])/;
+            if (!minRegex.test(contraseña)) {
+              errors.contraseña += "\n *Una minuscula";
+            }
+
+            const mayusRegex = /(?=.*[A-Z])/;
+            if (!mayusRegex.test(contraseña)) {
+              errors.contraseña += "\n *Una mayuscula";
+            }
+
+            const specialCharRegex = /(?=.*[\W_])/;
+            if (!specialCharRegex.test(contraseña)) {
+              errors.contraseña += "\n *Un caracter especial";
+            }
           }
 
           return errors;
@@ -139,7 +158,7 @@ export default function RegisterForm({ onSubmit }) {
             <FormGroup>
               <Combobox
                 data={sexos}
-                label="Genero"
+                placeholder="Genero"
                 onChange={(item) => setFieldValue("sexo", item)}
                 value={values.sexo}
                 touched={touched.sexo}
@@ -148,7 +167,7 @@ export default function RegisterForm({ onSubmit }) {
                 handleBlur={handleBlur}
               />
               <DatePicker
-                label="Fecha nacimiento"
+                placeholder="Fecha nacimiento"
                 onChange={(date) => setFieldValue("fechaNacimiento", date)}
                 touched={touched.fechaNacimiento}
                 errors={errors.fechaNacimiento}

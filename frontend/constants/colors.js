@@ -4,5 +4,6 @@ export const Colors = {
   locro: "#DD761C",
   humita: "#FEB941",
   vainilla: "#FDE49E",
+  pielcita: "#F3CDA7",
   redError: "#a50000",
 };

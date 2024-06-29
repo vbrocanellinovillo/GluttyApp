@@ -2,10 +2,17 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Drawer } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
 import UserImage from "../UserImage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import Button from "../Controls/Button";
+import { authActions } from "../../../context/auth";
 
 export default function DrawerContent({ navigation, route }) {
   const username = useSelector((state) => state.auth.userData.username);
+  const dispatch = useDispatch();
+
+  function logout() {
+    dispatch(authActions.logout());
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -38,6 +45,9 @@ export default function DrawerContent({ navigation, route }) {
           icon="lock"
         />
       </Drawer.Section>
+      <View style={styles.buttons}>
+        <Button onPress={logout}>Cerrar Sesión</Button>
+      </View>
     </ScrollView>
   );
 }
@@ -63,5 +73,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     color: Colors.mJordan,
+  },
+
+  buttons: {
+    marginTop: 30,
   },
 });

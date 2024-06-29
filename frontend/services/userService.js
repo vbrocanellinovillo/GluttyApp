@@ -21,8 +21,7 @@ export async function login(username, password) {
 
     return response;
   } catch (error) {
-    console.log(error.message);
-    throw new Error();
+    throw new Error(error.message);
   }
 }
 
@@ -57,12 +56,19 @@ export async function register(
 
     return response;
   } catch (error) {
-    console.log("No se registró el usuario!!! :(");
-    throw new Error();
+    throw new Error(error.message);
   }
 }
 
-export async function update(username, name, lastName, sex, dateBirth, email, id) {
+export async function update(
+  username,
+  name,
+  lastName,
+  sex,
+  dateBirth,
+  email,
+  id
+) {
   const formdata = new FormData();
   formdata.append("username", username);
   formdata.append("first_name", name);
@@ -84,7 +90,28 @@ export async function update(username, name, lastName, sex, dateBirth, email, id
 
     return response;
   } catch (error) {
-    console.log("No se registró el usuario!!! :(");
-    throw new Error();
+    throw new Error(error.message);
+  }
+}
+
+export async function changePassword(username, currentPassword, newPassword) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+  formdata.append("old_password", currentPassword);
+  formdata.append("new_password", newPassword);
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+    redirect: "follow",
+  };
+
+  const requestUrl = url + "change-password/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
   }
 }

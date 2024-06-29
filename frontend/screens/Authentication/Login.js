@@ -26,7 +26,7 @@ export default function Login() {
       const response = await login(usuario, contraseña);
       dispatch(authActions.login(response.user));
     } catch (error) {
-      serError("Error, no se pudo iniciar sesión");
+      serError(error.message);
       setIsError(true);
     } finally {
       setisloading(false);

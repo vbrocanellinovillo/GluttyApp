@@ -7,9 +7,7 @@ import { Formik } from "formik";
 
 export default function ChangePasswordForm({ onSubmit }) {
   function submitHandler({ previousPassword, newPassword, repeatPassword }) {
-    console.log(previousPassword);
-    console.log(newPassword);
-    console.log(repeatPassword);
+    onSubmit(previousPassword, newPassword, repeatPassword);
   }
 
   return (
@@ -30,6 +28,25 @@ export default function ChangePasswordForm({ onSubmit }) {
           const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
           if (!passwordRegex.test(newPassword)) {
             errors.newPassword = "Contraseña invalida";
+
+            if (newPassword.trim().length < 8) {
+              errors.newPassword += "\n *Al menos 8 caracteres";
+            }
+
+            const minRegex = /(?=.*[a-z])/;
+            if (!minRegex.test(newPassword)) {
+              errors.newPassword += "\n *Una minuscula";
+            }
+
+            const mayusRegex = /(?=.*[A-Z])/;
+            if (!mayusRegex.test(newPassword)) {
+              errors.newPassword += "\n *Una mayuscula";
+            }
+
+            const specialCharRegex = /(?=.*[\W_])/;
+            if (!specialCharRegex.test(newPassword)) {
+              errors.newPassword += "\n *Un caracter especial";
+            }
           }
 
           if (newPassword !== repeatPassword) {

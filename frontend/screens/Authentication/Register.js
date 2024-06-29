@@ -1,7 +1,6 @@
 import { useDispatch } from "react-redux";
 import RegisterForm from "../../components/Authentication/RegisterForm";
 import { register } from "../../services/userService";
-import { Alert } from "react-native";
 import { useState } from "react";
 import { authActions } from "../../context/auth";
 import LoadingGlutty from "../../components/UI/LoadingGlutty";
@@ -41,7 +40,7 @@ export default function Register() {
       );
       dispatch(authActions.login(response.user));
     } catch (error) {
-      serError("Error, no se pudo registrar el usuario");
+      serError(error.message);
       setIsError(true);
     } finally {
       setisloading(false);

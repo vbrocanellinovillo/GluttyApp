@@ -122,7 +122,7 @@ export default function ProfileForm({ onSubmit, user }) {
             <FormGroup>
               <Combobox
                 data={sexos}
-                label="Genero"
+                placeholder="Genero"
                 onChange={(item) => setFieldValue("sexo", item)}
                 value={values.sexo}
                 touched={touched.sexo}
@@ -131,7 +131,7 @@ export default function ProfileForm({ onSubmit, user }) {
                 handleBlur={handleBlur}
               />
               <DatePicker
-                label="Fecha nacimiento"
+                placeholder="Fecha nacimiento"
                 onChange={(date) => setFieldValue("fechaNacimiento", date)}
                 touched={touched.fechaNacimiento}
                 errors={errors.fechaNacimiento}

@@ -1,14 +1,15 @@
 export async function httpRequest(url, requestOptions) {
   try {
     const response = await fetch(url, requestOptions);
+    const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(response);
+      const errorMessage = data[Object.keys(data)[0]];
+      throw new Error(errorMessage);
     }
 
-    const data = await response.json();
     return data;
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error);
   }
 }

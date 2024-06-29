@@ -44,7 +44,7 @@ export default function Profile() {
       setShowModal(true);
     } catch (error) {
       setIsError(true);
-      setMessage("No se pudo modificar el usuario");
+      setMessage(error.message);
       setShowModal(true);
     } finally {
       setisloading(false);

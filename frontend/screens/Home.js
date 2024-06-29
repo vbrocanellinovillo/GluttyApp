@@ -15,9 +15,6 @@ export default function Home() {
   return (
     <ScreenCenter>
       <Title>Proximamente...</Title>
-      <Button backgroundColor={Colors.locro} color={Colors.mJordan} onPress={logout}>
-        Cerrar sesión
-      </Button>
     </ScreenCenter>
   );
 }
