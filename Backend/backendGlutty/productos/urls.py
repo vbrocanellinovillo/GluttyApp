@@ -3,15 +3,14 @@ from .views import *
 from rest_framework import routers
 
 # Crear los routers
-router = routers.SimpleRouter()
+# router = routers.SimpleRouter()
 
-# Registrar los viewsets
-router.register(r'marcas', MarcaViewSet)
-router.register(r'tipos', TipoProductoViewSet)
-router.register(r'', ProductoViewSet)
+# # Registrar los viewsets
+# router.register(r'marcas', MarcaViewSet)
+# router.register(r'tipos', TipoProductoViewSet)
+# router.register(r'', ProductoViewSet)
 
 # Incluir las URLs de los routers en urlpatterns
-urlpatterns = router.urls
 
 # marcas_router = routers.SimpleRouter()
 # tipo_producto_router = routers.SimpleRouter()
@@ -26,3 +25,9 @@ urlpatterns = router.urls
 # urlpatterns = [
 #     path("marcas-list/", MarcaAPIView.as_view(), name="marcas-list"),
 # ]
+
+# Incluir las URLs de los routers en urlpatterns
+urlpatterns = [
+    # path('', include(router.urls)),
+    path('find/', find, name='find'),
+]
