@@ -1,10 +1,5 @@
-import ScreenCenter from "../components/UI/ScreenCenter";
-import Title from "../components/UI/Title";
+import ProductsList from "../components/Products/ProductsList";
 
 export default function Products() {
-  return (
-    <ScreenCenter>
-      <Title>Proximamente productooooosssssssssssssssss juju...</Title>
-    </ScreenCenter>
-  );
+  return <ProductsList />;
 }
