@@ -1,16 +1,19 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Drawer } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
 import UserImage from "../UserImage";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../Controls/Button";
 import { authActions } from "../../../context/auth";
+import { logoutSesion } from "../../../services/userService";
 
 export default function DrawerContent({ navigation, route }) {
   const username = useSelector((state) => state.auth.userData.username);
   const dispatch = useDispatch();
 
-  function logout() {
+  async function logout() {
+    Alert.alert("Cerrar sesión","Cerrar sesión");
+    await logoutSesion(username);
     dispatch(authActions.logout());
   }
 

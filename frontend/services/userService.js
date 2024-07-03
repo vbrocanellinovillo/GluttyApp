@@ -115,3 +115,23 @@ export async function changePassword(username, currentPassword, newPassword) {
     throw new Error(error.message);
   }
 }
+
+export async function logoutSesion(username) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+    redirect: "follow",
+  };
+
+  const requestUrl = url + "logout/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
