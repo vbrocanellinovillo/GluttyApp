@@ -19,9 +19,11 @@ class TipoProductoSerializer(serializers.ModelSerializer):
         ]
         
 class ProductoSerializer(serializers.ModelSerializer):
-    marca_nombre = serializers.SerializerMethodField()
-    tipo_nombre = serializers.SerializerMethodField()
-
+    # marca_nombre = serializers.SerializerMethodField()
+    # tipo_nombre = serializers.SerializerMethodField()
+    marca_nombre = serializers.StringRelatedField(source='marca.nombre')
+    tipo_nombre = serializers.StringRelatedField(source='tipo.nombre')
+    
     class Meta:
         model = Producto
         fields = [
@@ -33,8 +35,8 @@ class ProductoSerializer(serializers.ModelSerializer):
             "denominacion",
         ]
 
-    def get_marca_nombre(self, obj):
-        return obj.marca.nombre if obj.marca else None
+    # def get_marca_nombre(self, obj):
+    #     return obj.marca.nombre if obj.marca else None
 
-    def get_tipo_nombre(self, obj):
-        return obj.tipo.nombre if obj.tipo else None
+    # def get_tipo_nombre(self, obj):
+    #     return obj.tipo.nombre if obj.tipo else None

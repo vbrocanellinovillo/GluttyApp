@@ -2,7 +2,7 @@ from django.urls import include, path
 from .views import *
 from rest_framework import routers
 
-# Crear los routers
+#Crear los routers
 # router = routers.SimpleRouter()
 
 # # Registrar los viewsets

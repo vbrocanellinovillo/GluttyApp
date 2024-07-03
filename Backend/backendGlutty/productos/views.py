@@ -30,16 +30,17 @@ class ProductoViewSet(viewsets.ModelViewSet):
 #     queryset = MarcaProducto.objects.all()
 #     serializer_class = MarcaSerializer
 
-@api_view(["GET"])
+@api_view(["POST"])
 def find(request):
-    query = request.query_params.get('q', None)
-    
+    query = request.data.get('q', None)
+    print(query)
     if query:
         search_query = SearchQuery(query)
-        
+    
         productos = Producto.objects.annotate(
             rank=SearchRank('search_vector', search_query)
         ).filter(rank__gte=0.1, is_active=True).order_by('-rank')
+        print(f"Productos encontrados: {productos.count()}")
         
         productos_serializer = ProductoSerializer(productos, many=True)
         
