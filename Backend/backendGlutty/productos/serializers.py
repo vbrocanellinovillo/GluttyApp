@@ -18,13 +18,7 @@ class TipoProductoSerializer(serializers.ModelSerializer):
             "nombre",
         ]
         
-class ProductoSerializer(serializers.ModelSerializer):
-    # marca_nombre = MarcaSerializer(read_only = True)
-    # #tipo_nombre = TipoProductoSerializer()
-    # author_id = serializers.IntegerField(write_only=True)
-    # name = serializers.CharField(max_length=50)
-    # author = AuthorSerializer(read_only = True)
-    
+class ProductoSerializer(serializers.ModelSerializer):    
     class Meta:
         model = Producto
         fields = [

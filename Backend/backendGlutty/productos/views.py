@@ -76,19 +76,6 @@ def buscar(request):
         ).values('id', 'rnpa', 'marca__nombre', 'tipo__nombre', 'nombre', 'denominacion')
         print(f"Productos encontrados: {productos.count()}")
         
-        # productos_serializer = ProductoSerializer(productos, many=True)
-        # data = []
-        # # for producto in productos_serializer:
-        # for producto in productos:
-        #     p = {
-        #         'id': producto.id,
-        #         'rnpa': producto.rnpa,
-        #         'marca': producto.marca.nombre,
-        #         'tipo': producto.tipo.nombre,
-        #         'nombre': producto.nombre,
-        #         'denominacion': producto.denominacion
-        #     }
-        #     data.append(p)
         marcas = MarcaProducto.objects.filter(nombre__icontains=query)
         tipos_productos = TipoProducto.objects.filter(nombre__icontains=query)
         
