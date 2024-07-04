@@ -23,14 +23,8 @@ class Producto(models.Model):
             GinIndex(fields=['search_vector']),
         ]
         
-class ProductoSearchView(models.Model):
-    id = models.IntegerField(primary_key=True)
-    nombre = models.CharField(max_length=500)
-    denominacion = models.CharField(max_length=500)
-    rnpa = models.CharField(max_length=255)
-    marca_nombre = models.CharField(max_length=255)
-    tipo_nombre = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'producto_search_view'
+    def get_marca_nombre(self):
+        if self.marca:
+            return self.marca.nombre
+        return ''
+        
