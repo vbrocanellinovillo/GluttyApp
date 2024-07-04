@@ -83,6 +83,62 @@ def find(request):
 
     return Response({"error": "No se proporcionó un parámetro de búsqueda."}, status=400)
 
+
+@api_view(["POST"])
+def find_by_marca(request):
+    marca_nombre = request.data.get('marca', None)
+    if marca_nombre:
+        start_time_db = time.time()
+        
+        # Filtrar productos por la marca especificada
+        productos = Producto.objects.filter(
+            marca__nombre__icontains=marca_nombre,
+            is_active=True
+        ).select_related('marca', 'tipo').values(
+            'id', 'rnpa', 'nombre', 'denominacion', 'marca__nombre', 'tipo__nombre'
+        )
+        
+        db_time = time.time() - start_time_db
+        print(f"Tiempo en DB: {db_time:.4f} segundos")
+        print(f"Productos encontrados para la marca '{marca_nombre}': {productos.count()}")
+        
+        start_time_serialization = time.time()
+
+        serialization_time = time.time() - start_time_serialization
+        print(f"Tiempo en serialización: {serialization_time:.4f} segundos")
+
+        return Response(productos, status=200)
+
+    return Response({"error": "No se proporcionó un parámetro de búsqueda válido para la marca."}, status=400)
+
+
+@api_view(["POST"])
+def find_by_tipo(request):
+    tipo_nombre = request.data.get('tipo', None)
+    if tipo_nombre:
+        start_time_db = time.time()
+        
+        # Filtrar productos por el tipo de producto especificado
+        productos = Producto.objects.filter(
+            tipo__nombre__icontains=tipo_nombre,
+            is_active=True
+        ).select_related('marca', 'tipo').values(
+            'id', 'rnpa', 'nombre', 'denominacion', 'marca__nombre', 'tipo__nombre'
+        )
+        
+        db_time = time.time() - start_time_db
+        print(f"Tiempo en DB: {db_time:.4f} segundos")
+        print(f"Productos encontrados para el tipo '{tipo_nombre}': {productos.count()}")
+        
+        start_time_serialization = time.time()
+
+        serialization_time = time.time() - start_time_serialization
+        print(f"Tiempo en serialización: {serialization_time:.4f} segundos")
+
+        return Response(productos, status=200)
+
+    return Response({"error": "No se proporcionó un parámetro de búsqueda válido para el tipo de producto."}, status=400)
+
 @api_view(["POST"])
 # ESTA ES LA QUE YA FUNCIONA!!!! :))))))
 def buscar(request):

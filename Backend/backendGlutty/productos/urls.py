@@ -14,5 +14,7 @@ from rest_framework import routers
 urlpatterns = [
     # path('', include(router.urls)),
     path('find/', find, name='find'),
+    path('find-marca/', find_by_marca, name='find-marca'),
+    path('find-tipo/', find_by_tipo, name='find-tipo'),
     path('buscar/', buscar, name='buscar'),
 ]
