@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from .models import Producto, MarcaProducto, TipoProducto
 from .serializers import ProductoSerializer, MarcaSerializer, TipoProductoSerializer
 import time
+from django.db.models import Q
 
 class MarcaViewSet(viewsets.ModelViewSet):
     queryset = MarcaProducto.objects.all()
@@ -80,4 +81,35 @@ def find(request):
 
         return Response(resultados, status=200)
 
+    return Response({"error": "No se proporcionó un parámetro de búsqueda."}, status=400)
+
+@api_view(["POST"])
+# ESTA ES LA QUE YA FUNCIONA!!!! :))))))
+def buscar(request):
+    query = request.data.get('q', None)
+    print(query)
+    if query:
+        productos = Producto.objects.filter(
+            Q(nombre__icontains=query) |
+            Q(denominacion__icontains=query) |
+            Q(marca__nombre__icontains=query) |
+            Q(tipo__nombre__icontains=query),
+            is_active=True
+        ).values('id', 'rnpa', 'marca__nombre', 'tipo__nombre', 'nombre', 'denominacion')
+        print(f"Productos encontrados: {productos.count()}")
+        
+        marcas = MarcaProducto.objects.filter(nombre__icontains=query)
+        tipos_productos = TipoProducto.objects.filter(nombre__icontains=query)
+        
+        marcas_serializer = MarcaSerializer(marcas, many=True)
+        tipos_productos_serializer = TipoProductoSerializer(tipos_productos, many=True)
+
+        resultados = {
+            'productos': productos,
+            'marcas': marcas_serializer.data,
+            'tipos_productos': tipos_productos_serializer.data,
+        }
+        
+        return Response(resultados, status=200)
+    
     return Response({"error": "No se proporcionó un parámetro de búsqueda."}, status=400)
