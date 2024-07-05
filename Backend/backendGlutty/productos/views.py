@@ -160,3 +160,56 @@ def buscar(request):
         return Response(resultados, status=200)
     
     return Response({"error": "No se proporcionó un parámetro de búsqueda."}, status=400)
+
+@api_view(["POST"])
+def find_by_barcode(request):
+    barcode = request.data.get('barcode', None)
+    if barcode:
+        try:
+            # Buscar el producto por código EAN en ProductoBarcode
+            producto_barcode = ProductoBarcode.objects.get(ean=barcode)
+            rnpa = producto_barcode.rnpa
+
+            # Buscar si el RNPA está registrado en Producto
+            producto = Producto.objects.filter(rnpa=rnpa).first()
+
+            if producto:
+                message = "Apto celiaco: Este producto está registrado y es apto para celiacos."
+            else:
+                message = "No estamos seguros de la composición del producto."
+            
+            # Preparar la respuesta JSON
+            response_data = {
+                'message': message,
+                'producto_barcode': {
+                    'product_name_en': producto_barcode.product_name_en,
+                    'product_name_es': producto_barcode.product_name_es,
+                    'generic_name': producto_barcode.generic_name,
+                    'quantity': producto_barcode.quantity,
+                    'serving_size': producto_barcode.serving_size,
+                    'brands': producto_barcode.brands,
+                    'categories': producto_barcode.categories,
+                    'emb_codes': producto_barcode.emb_codes,
+                    'allergens': producto_barcode.allergens,
+                    'ean': producto_barcode.ean,
+                    'rnpa': rnpa,
+                },
+                'producto': {
+                    'id': producto.id if producto else None,
+                    'rnpa': producto.rnpa if producto else None,
+                    'marca_nombre': producto.marca.nombre if producto and producto.marca else None,
+                    'tipo_nombre': producto.tipo.nombre if producto and producto.tipo else None,
+                    'nombre': producto.nombre if producto else None,
+                    'denominacion': producto.denominacion if producto else None,
+                } if producto else None
+            }
+
+            return Response(response_data, status=200)
+
+        except ProductoBarcode.DoesNotExist:
+            return Response({"message": "No tenemos información sobre este producto."}, status=404)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+    else:
+        return Response({"error": "No se proporcionó un código EAN."}, status=400)

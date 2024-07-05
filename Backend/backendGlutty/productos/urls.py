@@ -15,5 +15,6 @@ urlpatterns = [
     # path('', include(router.urls)),
     path('find/', find, name='find'),
     path('find-filtro/', find_by_filtro, name='find-filtro'),
+    path('find-by-barcode/', find_by_barcode, name='find-by-barcode'),
     path('buscar/', buscar, name='buscar'),
 ]

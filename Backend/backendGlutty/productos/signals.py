@@ -1,22 +1,30 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from productos.models import Producto
-from django.contrib.postgres.search import SearchVector, SearchQuery
+from django.contrib.postgres.search import SearchVector
+from productos.models import Producto, ProductoBarcode
 
 @receiver(post_save, sender=Producto)
-def update_search_vector(sender, instance, **kwargs):
-    if not kwargs.get('raw', False):  # Avoid processing raw saves
-        marca_nombre = instance.get_marca_nombre()
-        tipo_nombre = instance.tipo.nombre if instance.tipo else ''
-        
-        # Construct the search vector using direct field references
-        search_vector = SearchVector(
-            SearchQuery(instance.nombre, config='spanish'),
-            SearchQuery(instance.denominacion, config='spanish'),
-            SearchQuery(instance.rnpa),
-            SearchQuery(marca_nombre, config='spanish'),
-            SearchQuery(tipo_nombre, config='spanish')
+def update_producto_search_vector(sender, instance, **kwargs):
+    # Actualizar el search_vector del Producto
+    Producto.objects.filter(id=instance.id).update(
+        search_vector=(
+            SearchVector('rnpa') + 
+            SearchVector('nombre') +
+            SearchVector('denominacion')
         )
-        
-        # Update the search_vector field
-        Producto.objects.filter(pk=instance.pk).update(search_vector=search_vector)
+    )
+
+@receiver(post_save, sender=ProductoBarcode)
+def update_productobarcode_search_vector(sender, instance, **kwargs):
+    # Actualizar el searchvector del ProductoBarcode
+    ProductoBarcode.objects.filter(id=instance.id).update(
+        searchvector=(
+            SearchVector('product_name_en') +
+            SearchVector('product_name_es') +
+            SearchVector('generic_name') +
+            SearchVector('brands') +
+            SearchVector('categories') +
+            SearchVector('ean') +
+            SearchVector('rnpa')
+        )
+    )

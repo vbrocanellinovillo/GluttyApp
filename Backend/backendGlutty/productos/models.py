@@ -28,3 +28,23 @@ class Producto(models.Model):
             return self.marca.nombre
         return ''
         
+class ProductoBarcode(models.Model):
+    product_name_en = models.CharField(max_length=1000, verbose_name='Product Name (English)', null=True, blank=True)
+    product_name_es = models.CharField(max_length=1000, verbose_name='Product Name (Spanish)', null=True, blank=True)
+    generic_name = models.CharField(max_length=1000, verbose_name='Generic Name', null=True, blank=True)
+    quantity = models.CharField(max_length=1000, verbose_name='Quantity', null=True, blank=True)
+    serving_size = models.CharField(max_length=1000, verbose_name='Serving Size', null=True, blank=True)
+    brands = models.CharField(max_length=1000, verbose_name='Brands', null=True, blank=True)
+    categories = models.CharField(max_length=1000, verbose_name='Categories', null=True, blank=True)
+    emb_codes = models.CharField(max_length=1000, verbose_name='Emb Codes', null=True, blank=True)
+    allergens = models.CharField(max_length=1000, verbose_name='Allergens', null=True, blank=True)
+    ean = models.CharField(max_length=255, verbose_name='EAN')
+    rnpa = models.CharField(max_length=255, null=True, blank=True)
+
+    searchvector = SearchVectorField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.product_name_en} ({self.product_name_es})'
+
+    class Meta:
+        verbose_name_plural = 'Productos con Barcode'
