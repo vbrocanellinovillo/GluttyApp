@@ -7,7 +7,7 @@ import Button from "./Controls/Button";
 export default function GluttyModal({ visible, isError, message, onClose }) {
   const imageUri = isError
     ? "https://res.cloudinary.com/dksmkvi49/image/upload/v1719530424/triste_edit-removebg-preview_uurefr.png"
-    : "https://res.cloudinary.com/dksmkvi49/image/upload/v1719530401/haciendo_dedo-removebg-preview_fb6wxt.png";
+    : "https://res.cloudinary.com/dksmkvi49/image/upload/v1720213929/Glutty_haciendo_dedo_mucza1.webp";
 
   const icon = isError
     ? { name: "close-circle", color: Colors.redError }

@@ -6,9 +6,8 @@ export default function Searchbar({ backgroundColor, onTextChange }) {
     onTextChange(text);
   }
 
-
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
         style={[styles.searchbar, { backgroundColor }]}
         onChangeText={handleChange}
@@ -19,12 +18,15 @@ export default function Searchbar({ backgroundColor, onTextChange }) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+  },
+
   searchbar: {
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    position: "relative",
     borderBottomWidth: 1,
     fontSize: 28,
     height: 60,
