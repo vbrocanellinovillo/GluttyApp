@@ -57,6 +57,45 @@ const productos = [
     rnpa: "978471142-7",
     estado: true,
   },
+  {
+    id: 6,
+    tipo_producto: "Cheese - Cheddar, Medium",
+    marca: "Infinix",
+    nombre_fantasia: "Asteraceae",
+    denominacion_venta:
+      "Maecenas leo odio, condimentumid luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.\n\nMaecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.\n\nNullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",
+    rnpa: "047000626-9",
+    estado: true,
+  },
+  {
+    id: 7,
+    tipo_producto: "Tart - Butter Plain Squares",
+    marca: "alcatel",
+    nombre_fantasia: "Cactaceae",
+    denominacion_venta: "Fusce consequat. Nulla nisl. Nunc nisl.",
+    rnpa: "631055974-5",
+    estado: false,
+  },
+  {
+    id: 8,
+    tipo_producto: "Octopus - Baby, Cleaned",
+    marca: "Haier",
+    nombre_fantasia: "Leskeaceae",
+    denominacion_venta:
+      "Morbi porttitor loremidligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",
+    rnpa: "692328620-4",
+    estado: true,
+  },
+  {
+    id: 9,
+    tipo_producto: "Lemonade - Strawberry, 591 Ml",
+    marca: "alcatel",
+    nombre_fantasia: "Pinaceae",
+    denominacion_venta:
+      "Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.\n\nIn hac habitasse platea dictumst. Morbi vestibulum, velitidpretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.\n\nAliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",
+    rnpa: "241620075-5",
+    estado: true,
+  },
 ];
 
 export async function fetchProducts(values) {
@@ -69,8 +108,8 @@ export async function fetchProducts(values) {
   const requestUrl = url + "find/";
   try {
     // const data = await Json.json();
-    await sleep(5000)
-    const data = productos
+    await sleep(5000);
+    const data = productos;
     const products = [];
 
     for (let dataPoint of data) {

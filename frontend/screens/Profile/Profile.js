@@ -3,7 +3,7 @@ import ProfileForm from "../../components/Profile/ProfileForm";
 import { update } from "../../services/userService";
 import { authActions } from "../../context/auth";
 import { useState } from "react";
-import LoadingGlutty from "../../components/UI/LoadingGlutty";
+import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../components/UI/GluttyModal";
 
 export default function Profile() {

@@ -3,7 +3,7 @@ import RegisterForm from "../../components/Authentication/RegisterForm";
 import { register } from "../../services/userService";
 import { useState } from "react";
 import { authActions } from "../../context/auth";
-import LoadingGlutty from "../../components/UI/LoadingGlutty";
+import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../components/UI/GluttyModal";
 
 export default function Register() {

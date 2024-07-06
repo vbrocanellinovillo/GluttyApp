@@ -20,8 +20,7 @@ export default function MainHeader({ navigation, route, options }) {
           "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg"
         }
         onPress={toggleDrawer}
-        width={60}
-        height={60}
+        dimensions={60}
       />
     </Header>
   );

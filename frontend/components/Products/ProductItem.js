@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function ProductItem({ product }) {
   return (
-    <View style={styles.item}>
-      <Text style={styles.name}>{product.name}</Text>
-      <Text style={styles.brand}>Marca: {product.brand}</Text>
-    </View>
+    <Pressable>
+      <View style={styles.item}>
+        <Text style={styles.name}>{product.name}</Text>
+        <Text style={styles.brand}>Marca: {product.brand}</Text>
+      </View>
+    </Pressable>
   );
 }
 
@@ -19,13 +21,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 4 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
-    marginVertical: 16
+    marginVertical: 16,
   },
 
   name: {
     fontWeight: "bold",
     fontSize: 28,
-    marginBottom: 10
+    marginBottom: 10,
   },
 
   brand: {

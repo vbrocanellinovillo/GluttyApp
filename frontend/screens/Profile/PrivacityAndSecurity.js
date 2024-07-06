@@ -2,7 +2,7 @@ import ChangePasswordForm from "../../components/Profile/ChangePasswordForm";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changePassword } from "../../services/userService";
-import LoadingGlutty from "../../components/UI/LoadingGlutty";
+import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../components/UI/GluttyModal";
 import { useNavigation } from "@react-navigation/native";
 

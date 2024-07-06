@@ -27,8 +27,7 @@ export default function DrawerContent({ navigation, route }) {
           onPress={() =>
             console.log("apretaste algo que no hace nada. bien ahi crack")
           }
-          width={80}
-          height={80}
+          dimensions={80}
         />
         <Text style={styles.username}>{username}</Text>
       </View>

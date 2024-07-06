@@ -1,19 +1,18 @@
-import { FlatList, StyleSheet, View, Text, Image } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  Image,
+} from "react-native";
 import ProductItem from "./ProductItem";
 import Searchbar from "../UI/Controls/Searchbar";
 import { Colors } from "../../constants/colors";
 import { useEffect, useState } from "react";
 import { fetchProducts } from "../../services/productsService";
-import { Skeleton } from "@rneui/themed";
-
-function SkeletonLoading() {
-
-  return (
-    <View style={{ flex: 1, backgroundColor: "red" }}>
-      <Skeleton width={100}/>
-    </View>
-  );
-}
+import ProductsSkeleton from "../UI/Loading/ProductsSkeleton";
+import { Ionicons } from "@expo/vector-icons";
+import { Chip } from "@rneui/themed";
+import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 
 export default function ProductsList() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,25 +58,47 @@ export default function ProductsList() {
     </View>
   );
 
-  if (isLoading) content = <SkeletonLoading />;
+  if (isLoading) content = <ProductsSkeleton />;
 
   if (data)
     content = (
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <ProductItem product={item} />}
-      />
+      <>
+        <View style={styles.filtersContainer}>
+          <Chip
+            title="Arcor"
+            type="outlined"
+            containerStyle={styles.chip}
+            titleStyle={styles.chipText}
+          />
+          <Chip
+            title="Arroz"
+            type="outlined"
+            containerStyle={styles.chip}
+            titleStyle={styles.chipText}
+          />
+          <Ionicons name="filter" size={24} />
+        </View>
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <ProductItem product={item} />}
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+        />
+      </>
     );
 
   return (
-    <View style={styles.container}>
-      <Searchbar
-        backgroundColor={Colors.pielcita}
-        onTextChange={handleChange}
-      />
-      {content}
-    </View>
+    <DismissKeyboardContainer>
+      <View style={styles.container}>
+        <Searchbar
+          backgroundColor={Colors.pielcita}
+          onTextChange={handleChange}
+          placeholder="Buscar productos sin TACC"
+        />
+        {content}
+      </View>
+    </DismissKeyboardContainer>
   );
 }
 
@@ -85,6 +106,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     flex: 1,
+    paddingBottom: 120,
   },
 
   gluttyContainer: {
@@ -97,5 +119,29 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     objectFit: "contain",
+  },
+
+  filtersContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingRight: 14,
+    paddingTop: 12,
+    paddingBottom: 22,
+    gap: 24,
+  },
+
+  chip: {
+    paddingHorizontal: 18,
+    backgroundColor: "white",
+    flex: 1,
+    borderRadius: 4,
+    borderWidth: 0.3,
+  },
+
+  chipText: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "black",
   },
 });

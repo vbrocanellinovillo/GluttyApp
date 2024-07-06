@@ -4,7 +4,7 @@ import { authActions } from "../../context/auth";
 import { login } from "../../services/userService";
 import { Alert } from "react-native";
 import { useState } from "react";
-import LoadingGlutty from "../../components/UI/LoadingGlutty";
+import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { Colors } from "../../constants/colors";
 import GluttyModal from "../../components/UI/GluttyModal";
 

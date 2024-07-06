@@ -1,10 +1,5 @@
-import {
-  Image,
-  Modal,
-  StyleSheet,
-  View,
-} from "react-native";
-import ScreenCenter from "./ScreenCenter";
+import { Image, Modal, StyleSheet, View } from "react-native";
+import ScreenCenter from "../ScreenCenter";
 
 export default function LoadingGlutty({ visible }) {
   return (
