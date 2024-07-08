@@ -9,7 +9,7 @@ export default function Index() {
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? <MainDrawer /> : <AuthNavigation />}
+      <MainDrawer />
     </NavigationContainer>
   );
 }

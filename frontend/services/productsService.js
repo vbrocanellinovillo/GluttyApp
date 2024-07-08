@@ -98,6 +98,87 @@ const productos = [
   },
 ];
 
+const marcas = [
+  { id: 1, name: "Audi" },
+  { id: 2, name: "Buick" },
+  { id: 3, name: "Volkswagen" },
+  { id: 4, name: "Chevrolet" },
+  { id: 5, name: "Lexus" },
+  { id: 6, name: "Saturn" },
+  { id: 7, name: "MG" },
+  { id: 8, name: "Ford" },
+  { id: 9, name: "Chrysler" },
+  { id: 10, name: "BMW" },
+  { id: 11, name: "Mitsubishi" },
+  { id: 12, name: "Chevrolet" },
+  { id: 13, name: "Dodge" },
+  { id: 14, name: "Jeep" },
+  { id: 15, name: "Ford" },
+  { id: 16, name: "Mercedes-Benz" },
+  { id: 17, name: "Buick" },
+  { id: 18, name: "Buick" },
+  { id: 19, name: "Land Rover" },
+  { id: 20, name: "Mitsubishi" },
+  { id: 21, name: "Dodge" },
+  { id: 22, name: "Hyundai" },
+  { id: 23, name: "Nissan" },
+  { id: 24, name: "Audi" },
+  { id: 25, name: "Volkswagen" },
+  { id: 26, name: "Geo" },
+  { id: 27, name: "Lincoln" },
+  { id: 28, name: "Lexus" },
+  { id: 29, name: "GMC" },
+  { id: 30, name: "Dodge" },
+];
+
+const tipos = [
+  { id: 1, name: "Eunectes sp." },
+  { id: 2, name: "Anthropoides paradisea" },
+  { id: 3, name: "Streptopelia senegalensis" },
+  { id: 4, name: "Rhabdomys pumilio" },
+  { id: 5, name: "Nyctea scandiaca" },
+  { id: 6, name: "Cabassous sp." },
+  { id: 7, name: "Sula dactylatra" },
+  { id: 8, name: "Felis libyca" },
+  { id: 9, name: "Phasianus colchicus" },
+  { id: 10, name: "Crotalus triseriatus" },
+  { id: 11, name: "Merops bullockoides" },
+  { id: 12, name: "Dromaeus novaehollandiae" },
+  { id: 13, name: "Fulica cristata" },
+  { id: 14, name: "Xerus sp." },
+  { id: 15, name: "Halcyon smyrnesis" },
+  { id: 16, name: "Sauromalus obesus" },
+  { id: 17, name: "Varanus salvator" },
+  { id: 18, name: "Macropus robustus" },
+  { id: 19, name: "Zenaida asiatica" },
+  { id: 20, name: "Egretta thula" },
+  { id: 21, name: "Plectopterus gambensis" },
+  { id: 22, name: "Phoeniconaias minor" },
+  { id: 23, name: "Canis mesomelas" },
+  { id: 24, name: "Tachybaptus ruficollis" },
+  { id: 25, name: "Dasyurus maculatus" },
+  { id: 26, name: "Anastomus oscitans" },
+  { id: 27, name: "Varanus sp." },
+  { id: 28, name: "Pelecanus conspicillatus" },
+  { id: 29, name: "Ctenophorus ornatus" },
+  { id: 30, name: "Falco mexicanus" },
+  { id: 31, name: "Laniaurius atrococcineus" },
+  { id: 32, name: "Lepus townsendii" },
+  { id: 33, name: "Epicrates cenchria maurus" },
+  { id: 34, name: "Redunca redunca" },
+  { id: 35, name: "Hyaena brunnea" },
+  { id: 36, name: "Pteropus rufus" },
+  { id: 37, name: "Ephippiorhynchus mycteria" },
+  { id: 38, name: "Nucifraga columbiana" },
+  { id: 39, name: "Zonotrichia capensis" },
+  { id: 40, name: "Macaca fuscata" },
+];
+
+const fetchData = async () => {
+  await sleep(5000);
+  return { productos, marcas, tipos };
+};
+
 export async function fetchProducts(values) {
   const requestOptions = {
     method: "POST",
@@ -107,12 +188,11 @@ export async function fetchProducts(values) {
 
   const requestUrl = url + "find/";
   try {
-    // const data = await Json.json();
-    await sleep(5000);
-    const data = productos;
+    const data = await fetchData();
+
     const products = [];
 
-    for (let dataPoint of data) {
+    for (let dataPoint of data.productos) {
       const product = new Product(
         dataPoint.id,
         dataPoint.tipo_producto,
@@ -125,7 +205,7 @@ export async function fetchProducts(values) {
 
       products.push(product);
     }
-    return products;
+    return { products, brands: data.marcas, types: data.tipos };
   } catch (error) {
     console.log("fallo");
   }
