@@ -36,6 +36,15 @@ class ProductoViewSet(viewsets.ModelViewSet):
 @api_view(["POST"])
 def find(request):
     query = request.data.get('q', None)
+    marcas = request.data.get('marca', [])
+    tipos = request.data.get('tipo', [])
+
+    # Asegurarse de que marcas y tipos sean listas
+    if not isinstance(marcas, list):
+        marcas = [marcas]
+    if not isinstance(tipos, list):
+        tipos = [tipos]
+
     if query:
         start_time_db = time.time()
         
@@ -45,15 +54,24 @@ def find(request):
         # Construir la consulta de búsqueda
         search_query = SearchQuery(query, config=spanish_config)
         
-        # Filtrar productos por coincidencias exactas o similares en el search_vector
-        productos = Producto.objects.annotate(
-            rank=SearchVector('nombre', 'denominacion', 'rnpa', 'marca__nombre', 'tipo__nombre', config=spanish_config)
-        ).filter(
+        # Construir el filtro base
+        filter_conditions = Q(
             Q(nombre__icontains=query) | Q(denominacion__icontains=query) | Q(rnpa__icontains=query) |
             Q(marca__nombre__icontains=query) | Q(tipo__nombre__icontains=query) |
             Q(search_vector=query) | Q(search_vector__icontains=query),
             is_active=True
-        ).order_by('-rank').select_related('marca', 'tipo').values(
+        )
+        
+        # Agregar filtros adicionales para marcas y tipos
+        if marcas:
+            filter_conditions &= Q(marca__nombre__in=marcas)
+        if tipos:
+            filter_conditions &= Q(tipo__nombre__in=tipos)
+        
+        # Filtrar productos por coincidencias exactas o similares en el search_vector
+        productos = Producto.objects.annotate(
+            rank=SearchVector('nombre', 'denominacion', 'rnpa', 'marca__nombre', 'tipo__nombre', config=spanish_config)
+        ).filter(filter_conditions).order_by('-rank').select_related('marca', 'tipo').values(
             'id', 'rnpa', 'nombre', 'denominacion', 'marca__nombre', 'tipo__nombre'
         )
         
@@ -82,12 +100,6 @@ def find(request):
         return Response(resultados, status=200)
 
     return Response({"error": "No se proporcionó un parámetro de búsqueda."}, status=400)
-
-
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import Producto, MarcaProducto, TipoProducto
-from .serializers import ProductoSerializer, MarcaSerializer, TipoProductoSerializer
 
 @api_view(["POST"])
 def find_by_filtro(request):
