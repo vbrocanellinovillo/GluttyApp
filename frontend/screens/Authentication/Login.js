@@ -7,6 +7,7 @@ import { useState } from "react";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { Colors } from "../../constants/colors";
 import GluttyModal from "../../components/UI/GluttyModal";
+import TextCommonsRegular from "../../components/UI/FontsTexts/TextCommonsRegular";
 
 export default function Login() {
   const dispatch = useDispatch();

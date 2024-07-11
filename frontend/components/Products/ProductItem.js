@@ -1,11 +1,17 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
+import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 
 export default function ProductItem({ product }) {
   return (
     <Pressable>
       <View style={styles.item}>
-        <Text style={styles.name}>{product.name}</Text>
-        <Text style={styles.brand}>Marca: {product.brand}</Text>
+        <TextCommonsMedium style={styles.name}>
+          {product.name}
+        </TextCommonsMedium>
+        <TextCommonsRegular style={styles.brand}>
+          Marca: {product.brand}
+        </TextCommonsRegular>
       </View>
     </Pressable>
   );
@@ -25,13 +31,13 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    fontWeight: "bold",
     fontSize: 28,
     marginBottom: 10,
+    fontWeight: "500"
   },
 
   brand: {
     fontSize: 22,
-    fontWeight: "light",
+    fontWeight: "300",
   },
 });
