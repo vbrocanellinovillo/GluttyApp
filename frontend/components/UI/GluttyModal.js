@@ -3,11 +3,10 @@ import { Dialog, Portal, Text } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import Button from "./Controls/Button";
+import { sadGlutty, thumbGlutty } from "../../constants/glutty";
 
 export default function GluttyModal({ visible, isError, message, onClose }) {
-  const imageUri = isError
-    ? "https://res.cloudinary.com/dksmkvi49/image/upload/v1719530424/triste_edit-removebg-preview_uurefr.png"
-    : "https://res.cloudinary.com/dksmkvi49/image/upload/v1720213929/Glutty_haciendo_dedo_mucza1.webp";
+  const imageUri = isError ? sadGlutty : thumbGlutty;
 
   const icon = isError
     ? { name: "close-circle", color: Colors.redError }
@@ -42,7 +41,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 5,
     shadowOpacity: 0.5,
-    elevation: 5
+    elevation: 5,
   },
 
   imageContainer: {
@@ -68,6 +67,6 @@ const styles = StyleSheet.create({
   message: {
     color: Colors.mJordan,
     fontSize: 21,
-    flexShrink: 1
+    flexShrink: 1,
   },
 });

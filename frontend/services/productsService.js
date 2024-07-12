@@ -1,5 +1,4 @@
 import { Product } from "../models/Product";
-import Json from "../assets/mock_alimentos.json";
 import { backendUrl } from "../constants/backend";
 import { httpRequest } from "../utils/http";
 import { sleep } from "../utils/utilFunctions";
@@ -13,7 +12,7 @@ const productos = [
     marca: "verykool",
     nombre_fantasia: "Asteraceae",
     denominacion_venta:
-      "Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.\n\nQuisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",
+      "Cras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque. \nQuisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",
     rnpa: "631035937-1",
     estado: false,
   },
@@ -33,7 +32,7 @@ const productos = [
     marca: "Xiaomi",
     nombre_fantasia: "Cucurbitaceae",
     denominacion_venta:
-      "Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.\n\nVestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",
+      "Quisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.\nVestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.",
     rnpa: "793969749-8",
     estado: false,
   },
@@ -43,7 +42,7 @@ const productos = [
     marca: "Siemens",
     nombre_fantasia: "Fabaceae",
     denominacion_venta:
-      "Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.\n\nIn congue. Etiam justo. Etiam pretium iaculis justo.\n\nIn hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",
+      "Vestibulum ac est lacinia nisi venenatis tristique. Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue. Aliquam erat volutpat.\nIn congue. Etiam justo. Etiam pretium iaculis justo.\nIn hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",
     rnpa: "280948259-4",
     estado: true,
   },
@@ -53,7 +52,7 @@ const productos = [
     marca: "alcatel",
     nombre_fantasia: "Cyperaceae",
     denominacion_venta:
-      "Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.\n\nQuisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",
+      "Aenean fermentum. Donec ut mauris eget massa tempor convallis. Nulla neque libero, convallis eget, eleifend luctus, ultricies eu, nibh.\nQuisque id justo sit amet sapien dignissim vestibulum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla dapibus dolor vel est. Donec odio justo, sollicitudin ut, suscipit a, feugiat et, eros.",
     rnpa: "978471142-7",
     estado: true,
   },
@@ -63,7 +62,7 @@ const productos = [
     marca: "Infinix",
     nombre_fantasia: "Asteraceae",
     denominacion_venta:
-      "Maecenas leo odio, condimentumid luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.\n\nMaecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.\n\nNullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",
+      "Maecenas leo odio, condimentumid luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.\nMaecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.\nNullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",
     rnpa: "047000626-9",
     estado: true,
   },
@@ -92,7 +91,7 @@ const productos = [
     marca: "alcatel",
     nombre_fantasia: "Pinaceae",
     denominacion_venta:
-      "Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.\n\nIn hac habitasse platea dictumst. Morbi vestibulum, velitidpretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.\n\nAliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",
+      "Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.\nIn hac habitasse platea dictumst. Morbi vestibulum, velitidpretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.\nAliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",
     rnpa: "241620075-5",
     estado: true,
   },
@@ -179,10 +178,10 @@ const fetchData = async () => {
   return { productos, marcas, tipos };
 };
 
-export async function fetchProducts(values) {
+export async function fetchProducts({ searchTerm, brands, types }) {
   const requestOptions = {
     method: "POST",
-    body: JSON.stringify(values),
+    body: JSON.stringify({ searchTerm, brands, types }),
     headers: { "Content-Type": "application/json" },
   };
 
@@ -205,7 +204,13 @@ export async function fetchProducts(values) {
 
       products.push(product);
     }
-    return { products, brands: data.marcas, types: data.tipos };
+
+    const filteredProducts = products.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+
+    return { products: filteredProducts, brands: data.marcas, types: data.tipos };
   } catch (error) {
     console.log("fallo");
   }

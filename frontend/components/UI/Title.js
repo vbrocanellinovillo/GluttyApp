@@ -1,9 +1,12 @@
 import { StyleSheet, Text, View } from "react-native";
+import TextCommonsMedium from "./FontsTexts/TextCommonsMedium";
 
 export default function Title({ children, color }) {
   return (
     <View style={styles.titleContainer}>
-      <Text style={[styles.title, { color }]}>{children}</Text>
+      <TextCommonsMedium style={[styles.title, { color }]}>
+        {children}
+      </TextCommonsMedium>
     </View>
   );
 }
@@ -16,6 +19,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: "bold",
-    letterSpacing: 2
+    letterSpacing: 2,
   },
 });

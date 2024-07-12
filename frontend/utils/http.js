@@ -1,3 +1,7 @@
+import { QueryClient } from "@tanstack/react-query";
+
+export const queryClient = new QueryClient();
+
 export async function httpRequest(url, requestOptions) {
   try {
     const response = await fetch(url, requestOptions);

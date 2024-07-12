@@ -1,10 +1,17 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ProductItem({ product }) {
+  const navigation = useNavigation();
+
+  function navigateHandler() {
+    navigation.navigate("Details", { product });
+  }
+
   return (
-    <Pressable>
+    <Pressable style={({ pressed }) => (pressed ? styles.pressed : "")} onPress={navigateHandler}>
       <View style={styles.item}>
         <TextCommonsMedium style={styles.name}>
           {product.name}
@@ -33,11 +40,15 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 28,
     marginBottom: 10,
-    fontWeight: "500"
+    fontWeight: "500",
   },
 
   brand: {
     fontSize: 22,
     fontWeight: "300",
+  },
+
+  pressed: {
+    opacity: 0.3,
   },
 });

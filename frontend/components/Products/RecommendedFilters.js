@@ -11,9 +11,20 @@ export default function RecommendedFilters({
   handleSelectBrand,
   handleSelectType,
   toggleFilters,
+  refetch
 }) {
   const selectedBrand = isSelectedBrand(brand);
   const selectedType = isSelectedType(type);
+
+  async function selectBrand() {
+    handleSelectBrand(brand);
+    await refetch();
+  }
+
+  async function selectType() {
+    handleSelectType(type);
+    await refetch();
+  }
 
   return (
     <View style={styles.filtersContainer}>
@@ -24,7 +35,7 @@ export default function RecommendedFilters({
           selectedBrand ? [styles.chip, styles.selected] : styles.chip
         }
         titleStyle={styles.chipText}
-        onPress={() => handleSelectBrand(brand)}
+        onPress={selectBrand}
         icon={
           selectedBrand && {
             name: "close",
@@ -41,7 +52,7 @@ export default function RecommendedFilters({
           selectedType ? [styles.chip, styles.selected] : styles.chip
         }
         titleStyle={styles.chipText}
-        onPress={() => handleSelectType(type)}
+        onPress={selectType}
         icon={
           selectedType && {
             name: "close",

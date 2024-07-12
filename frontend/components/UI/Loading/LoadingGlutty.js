@@ -1,5 +1,6 @@
 import { Image, Modal, StyleSheet, View } from "react-native";
 import ScreenCenter from "../ScreenCenter";
+import { jumpingGlutty } from "../../../constants/glutty";
 
 export default function LoadingGlutty({ visible }) {
   return (
@@ -14,7 +15,7 @@ export default function LoadingGlutty({ visible }) {
           <Image
             style={styles.image}
             source={{
-              uri: "https://res.cloudinary.com/dksmkvi49/image/upload/v1718920847/Glutty-saltando-unscreen_xmvdgw.gif",
+              uri: jumpingGlutty,
             }}
           />
         </ScreenCenter>

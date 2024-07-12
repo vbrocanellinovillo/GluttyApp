@@ -3,13 +3,13 @@ import Profile from "../screens/Profile/Profile";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Map from "../screens/Map";
 import Recipes from "../screens/Recipes";
-import Products from "../screens/Products";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../constants/colors";
 import Scan from "../screens/Scan";
 import PrivacityAndSecurity from "../screens/Profile/PrivacityAndSecurity";
 import MainHeader from "../components/UI/Header/MainHeader";
+import ProductsNavigator from "./ProductsNavigator";
 
 export default function MainNavigation() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -107,7 +107,7 @@ export default function MainNavigation() {
       <CurvedBottomBarExpo.Screen
         name="Productos"
         position="RIGHT"
-        component={Products}
+        component={ProductsNavigator}
       />
       <CurvedBottomBarExpo.Screen
         name="Mapa"

@@ -1,8 +1,4 @@
-import {
-  FlatList,
-  StyleSheet,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import ProductItem from "./ProductItem";
 import Searchbar from "../UI/Controls/Searchbar";
 import { Colors } from "../../constants/colors";
@@ -13,37 +9,31 @@ import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 import NoProductsGlutty from "./NoProductsGlutty";
 import RecommendedFilters from "./RecommendedFilters";
 import FiltersDialog from "./FiltersDialog";
+import { useQuery } from "@tanstack/react-query";
+import NoProductsFound from "./NoProductsFound";
 
 export default function ProductsList() {
   // Filters
   const [searchTerm, setSearchTerm] = useState("");
   const [brands, setBrands] = useState([]);
-  const [productTypes, setProductTypes] = useState([]);
-
-  // Fetched data
-  const [data, setData] = useState(undefined);
+  const [types, setTypes] = useState([]);
 
   // UI
-  const [isLoading, setIsLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+
+  // Fetch data
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["products", searchTerm],
+    queryFn: () => fetchProducts({ searchTerm, brands, types }),
+    enabled: false,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
-      if (searchTerm === "") {
-        setData(undefined);
-        setIsLoading(false);
+      if (searchTerm.trim() === "") {
         return;
       }
-
-      setIsLoading(true);
-      try {
-        const products = await fetchProducts(searchTerm);
-        setData(products);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
+      refetch();
     };
 
     fetchData();
@@ -58,19 +48,11 @@ export default function ProductsList() {
   }
 
   function isSelectedBrand(brand) {
-    if (brands.includes(brand)) {
-      return true;
-    } else {
-      return false;
-    }
+    return brands.includes(brand);
   }
 
   function isSelectedType(type) {
-    if (productTypes.includes(type)) {
-      return true;
-    } else {
-      return false;
-    }
+    return types.includes(type);
   }
 
   function handleSelectBrand(pressedBrand) {
@@ -85,54 +67,67 @@ export default function ProductsList() {
 
   function handleSelectType(pressedType) {
     if (isSelectedType(pressedType)) {
-      setProductTypes((prevTypes) =>
-        prevTypes.filter((type) => type !== pressedType)
-      );
+      setTypes((prevTypes) => prevTypes.filter((type) => type !== pressedType));
     } else {
-      setProductTypes([...productTypes, pressedType]);
+      setTypes([...types, pressedType]);
     }
   }
 
-  let content = <NoProductsGlutty />;
+  async function fetchWithFilters() {
+    if (searchTerm.trim() === "") {
+      return;
+    }
+
+    refetch();
+  }
+
+  let content = <></>
+
+  if (!isLoading && searchTerm.trim() === "") content = <NoProductsGlutty />;
 
   if (isLoading) content = <ProductsSkeleton />;
 
-  if (data) {
-    const recommendedBrand = data.brands[0];
-    const recommendedType = data.types[0];
+  if (data && !isLoading && searchTerm.trim() !== "") {
+    if (data.products.length === 0) {
+      content = <NoProductsFound />;
+    } else {
+      const recommendedBrand = data.brands[0];
+      const recommendedType = data.types[0];
 
-    const initialBrands = data.brands.slice(0, 7);
-    const initialTypes = data.types.slice(0, 7);
+      const initialBrands = data.brands.slice(0, 7);
+      const initialTypes = data.types.slice(0, 7);
 
-    content = (
-      <>
-        <RecommendedFilters
-          brand={recommendedBrand}
-          type={recommendedType}
-          toggleFilters={toggleFilters}
-          isSelectedBrand={isSelectedBrand}
-          isSelectedType={isSelectedType}
-          handleSelectBrand={handleSelectBrand}
-          handleSelectType={handleSelectType}
-        />
-        <FlatList
-          data={data.products}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <ProductItem product={item} />}
-          showsVerticalScrollIndicator={false}
-        />
-        <FiltersDialog
-          brands={initialBrands}
-          types={initialTypes}
-          toggleFilters={toggleFilters}
-          visible={showFilters}
-          handleSelectBrand={handleSelectBrand}
-          handleSelectType={handleSelectType}
-          isSelectedBrand={isSelectedBrand}
-          isSelectedType={isSelectedType}
-        />
-      </>
-    );
+      content = (
+        <>
+          <RecommendedFilters
+            brand={recommendedBrand}
+            type={recommendedType}
+            toggleFilters={toggleFilters}
+            isSelectedBrand={isSelectedBrand}
+            isSelectedType={isSelectedType}
+            handleSelectBrand={handleSelectBrand}
+            handleSelectType={handleSelectType}
+            refetch={fetchWithFilters}
+          />
+          <FlatList
+            data={data.products}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => <ProductItem product={item} />}
+            showsVerticalScrollIndicator={false}
+          />
+          <FiltersDialog
+            brands={initialBrands}
+            types={initialTypes}
+            toggleFilters={toggleFilters}
+            visible={showFilters}
+            handleSelectBrand={handleSelectBrand}
+            handleSelectType={handleSelectType}
+            isSelectedBrand={isSelectedBrand}
+            isSelectedType={isSelectedType}
+          />
+        </>
+      );
+    }
   }
 
   return (
