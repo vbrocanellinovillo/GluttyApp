@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
-import { Portal, Dialog } from "react-native-paper";
+import { Portal, Dialog, Button } from "react-native-paper";
 import { Chip } from "@rneui/themed";
 import { Colors } from "../../constants/colors";
 
@@ -14,6 +14,7 @@ export default function FiltersDialog({
   visible,
   isSelectedBrand,
   isSelectedType,
+  onSearch,
 }) {
   return (
     <Portal>
@@ -84,8 +85,25 @@ export default function FiltersDialog({
               ))}
             </View>
           </View>
+          <View style={styles.buttonsContainer}>
+            <Button
+              mode="contained"
+              onPress={onSearch}
+              buttonColor={Colors.uva}
+              textColor="white"
+            >
+              Buscar
+            </Button>
+            <Button
+              mode="outlined"
+              onPress={toggleFilters}
+              style={{ borderColor: Colors.uva }}
+              textColor={Colors.uva}
+            >
+              Cancelar
+            </Button>
+          </View>
         </Dialog.Content>
-        <Dialog.Actions></Dialog.Actions>
       </Dialog>
     </Portal>
   );
@@ -105,7 +123,7 @@ const styles = StyleSheet.create({
   subtitle: {
     color: Colors.mJordan,
     fontSize: 25,
-    marginBottom: 6
+    marginBottom: 6,
   },
 
   field: {
@@ -137,5 +155,11 @@ const styles = StyleSheet.create({
   chipIcon: {
     height: 20,
     top: "-2%",
+  },
+
+  buttonsContainer: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 17,
   },
 });

@@ -6,4 +6,5 @@ export const Colors = {
   vainilla: "#FDE49E",
   pielcita: "#F3CDA7",
   redError: "#a50000",
+  uva: "#a157a1"
 };

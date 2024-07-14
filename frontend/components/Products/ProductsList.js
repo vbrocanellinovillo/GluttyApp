@@ -28,6 +28,8 @@ export default function ProductsList() {
     enabled: false,
   });
 
+  const [fetchFilters, setFetchFilters] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       if (searchTerm.trim() === "") {
@@ -37,7 +39,7 @@ export default function ProductsList() {
     };
 
     fetchData();
-  }, [searchTerm]);
+  }, [searchTerm, fetchFilters]);
 
   function handleChange(text) {
     setSearchTerm(text);
@@ -73,15 +75,11 @@ export default function ProductsList() {
     }
   }
 
-  async function fetchWithFilters() {
-    if (searchTerm.trim() === "") {
-      return;
-    }
-
-    refetch();
+  function fetchWithFilters() {
+    setFetchFilters(!fetchFilters);
   }
 
-  let content = <></>
+  let content = <></>;
 
   if (!isLoading && searchTerm.trim() === "") content = <NoProductsGlutty />;
 
@@ -107,7 +105,7 @@ export default function ProductsList() {
             isSelectedType={isSelectedType}
             handleSelectBrand={handleSelectBrand}
             handleSelectType={handleSelectType}
-            refetch={fetchWithFilters}
+            onPressFilter={fetchWithFilters}
           />
           <FlatList
             data={data.products}
@@ -124,6 +122,7 @@ export default function ProductsList() {
             handleSelectType={handleSelectType}
             isSelectedBrand={isSelectedBrand}
             isSelectedType={isSelectedType}
+            onSearch={fetchWithFilters}
           />
         </>
       );
