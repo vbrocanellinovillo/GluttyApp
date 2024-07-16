@@ -103,6 +103,7 @@ export default function MainNavigation() {
         name="Escaner"
         position="CIRCLE"
         component={Scan}
+        options={{ headerShown: false }}
       />
       <CurvedBottomBarExpo.Screen
         name="Productos"
@@ -114,7 +115,11 @@ export default function MainNavigation() {
         position="RIGHT"
         component={Map}
       />
-      <CurvedBottomBarExpo.Screen name="UserData" component={Profile} options={{title: "Mis datos"}}/>
+      <CurvedBottomBarExpo.Screen
+        name="UserData"
+        component={Profile}
+        options={{ title: "Mis datos" }}
+      />
       <CurvedBottomBarExpo.Screen
         name="PrivacityAndSecurity"
         component={PrivacityAndSecurity}

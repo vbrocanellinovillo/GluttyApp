@@ -1,5 +1,4 @@
 import { NavigationContainer } from "@react-navigation/native";
-import AuthNavigation from "./navigators/AuthNavigation";
 import { useSelector } from "react-redux";
 import MainDrawer from "./navigators/MainDrawer";
 
