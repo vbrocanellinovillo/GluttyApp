@@ -1,8 +1,4 @@
-import {
-  FlatList,
-  StyleSheet,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import ProductItem from "./ProductItem";
 import Searchbar from "../UI/Controls/Searchbar";
 import { Colors } from "../../constants/colors";
@@ -18,6 +14,7 @@ import NoProductsFound from "./NoProductsFound";
 import BlurDetails from "./BlurDetails";
 import { useDispatch } from "react-redux";
 import { uiActions } from "../../context/ui";
+import * as Haptics from "expo-haptics";
 
 export default function ProductsList() {
   // Filters
@@ -70,6 +67,7 @@ export default function ProductsList() {
   }
 
   function handleSelectBrand(pressedBrand) {
+    Haptics.selectionAsync();
     if (isSelectedBrand(pressedBrand)) {
       setBrands((prevBrands) =>
         prevBrands.filter((brand) => brand !== pressedBrand)
@@ -80,6 +78,7 @@ export default function ProductsList() {
   }
 
   function handleSelectType(pressedType) {
+    Haptics.selectionAsync();
     if (isSelectedType(pressedType)) {
       setTypes((prevTypes) => prevTypes.filter((type) => type !== pressedType));
     } else {
@@ -93,12 +92,12 @@ export default function ProductsList() {
 
   function showDetails(product) {
     setProduct(product);
-    dispatch(uiActions.toggleBlurHeader())
+    dispatch(uiActions.toggleBlurHeader());
     setDetailsVisible(true);
   }
 
   function hideDetails() {
-    dispatch(uiActions.toggleBlurHeader())
+    dispatch(uiActions.toggleBlurHeader());
     setDetailsVisible(false);
     setProduct(undefined);
   }

@@ -1,14 +1,19 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
+import * as Haptics from "expo-haptics";
 
 export default function ProductItem({ product, onPress }) {
   function showDetails() {
-    onPress(product)
+    Haptics.selectionAsync()
+    onPress(product);
   }
 
   return (
-    <Pressable style={({ pressed }) => (pressed ? styles.pressed : "")} onPress={showDetails}>
+    <Pressable
+      style={({ pressed }) => (pressed ? styles.pressed : "")}
+      onPress={showDetails}
+    >
       <View style={styles.item}>
         <TextCommonsMedium style={styles.name}>
           {product.name}

@@ -5,8 +5,15 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 
-export default function Button({ children, backgroundColor, color, onPress, style }) {
+export default function Button({
+  children,
+  backgroundColor,
+  color,
+  onPress,
+  style,
+}) {
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -19,8 +26,13 @@ export default function Button({ children, backgroundColor, color, onPress, styl
     .onBegin(() => (scale.value = 1.1))
     .onFinalize(() => (scale.value = 1));
 
+  function pressHandler() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    onPress()
+  }
+
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={pressHandler}>
       <GestureDetector gesture={tap}>
         <Animated.View
           style={[styles.button, { backgroundColor }, animatedStyle, style]}

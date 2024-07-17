@@ -2,6 +2,7 @@ import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Chip } from "@rneui/themed";
 import { Colors } from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 
 export default function RecommendedFilters({
   brand,
@@ -15,6 +16,11 @@ export default function RecommendedFilters({
 }) {
   const selectedBrand = isSelectedBrand(brand);
   const selectedType = isSelectedType(type);
+
+  function toggleFiltersDialog() {
+    Haptics.selectionAsync();
+    toggleFilters();
+  }
 
   return (
     <View style={styles.filtersContainer}>
@@ -58,7 +64,7 @@ export default function RecommendedFilters({
         iconRight
         iconContainerStyle={styles.chipIcon}
       />
-      <TouchableOpacity onPress={toggleFilters}>
+      <TouchableOpacity onPress={toggleFiltersDialog}>
         <Ionicons name="filter" size={24} />
       </TouchableOpacity>
     </View>

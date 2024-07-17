@@ -42,7 +42,8 @@
     "react-native-svg": "15.2.0",
     "react-native-ui-datepicker": "^2.0.3",
     "react-redux": "^9.1.2",
-    "expo-camera": "~15.0.13"
+    "expo-camera": "~15.0.13",
+    "expo-haptics": "~13.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
