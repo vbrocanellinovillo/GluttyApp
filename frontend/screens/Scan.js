@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 
 export default function Scan() {
@@ -28,51 +28,103 @@ export default function Scan() {
     setColor("#66eb3d");
   }
 
+  const innerCamera = (
+    <CameraView
+      facing="back"
+      style={styles.codeCamera}
+      onBarcodeScanned={scanCodeBar}
+    >
+      <View
+        style={[
+          styles.dimensions,
+          styles.borderTopLeft,
+          { borderColor: color },
+        ]}
+      />
+      <View
+        style={[
+          styles.dimensions,
+          styles.borderTopRight,
+          { borderColor: color },
+        ]}
+      />
+      <View
+        style={[
+          styles.dimensions,
+          styles.borderBottomLeft,
+          { borderColor: color },
+        ]}
+      />
+      <View
+        style={[
+          styles.dimensions,
+          styles.borderBottomRight,
+          { borderColor: color },
+        ]}
+      />
+    </CameraView>
+  );
+
   return (
     <View style={styles.container}>
       <CameraView
         style={styles.camera}
         facing="back"
-      />
-      <View style={styles.codeScanner}>
-        <CameraView
-          facing="back"
-          style={styles.codeCamera}
-          onBarcodeScanned={scanCodeBar}
-        >
-          <View
-            style={[
-              styles.dimensions,
-              styles.borderTopLeft,
-              { borderColor: color },
-            ]}
-          />
-          <View
-            style={[
-              styles.dimensions,
-              styles.borderTopRight,
-              { borderColor: color },
-            ]}
-          />
-          <View
-            style={[
-              styles.dimensions,
-              styles.borderBottomLeft,
-              { borderColor: color },
-            ]}
-          />
-          <View
-            style={[
-              styles.dimensions,
-              styles.borderBottomRight,
-              { borderColor: color },
-            ]}
-          />
-        </CameraView>
-      </View>
+        onBarcodeScanned={scanCodeBar}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.topOverlay} />
+          <View style={styles.middleOverlay}>
+            <View style={styles.sideOverlay} />
+            <View
+              style={{
+                overflow: "hidden",
+              }}
+            >
+              <View style={[styles.focusedArea]}>
+                <View
+                  style={[
+                    styles.corner,
+                    styles.topLeft,
+                    { borderColor: color },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.corner,
+                    styles.topRight,
+                    { borderColor: color },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.corner,
+                    styles.bottomLeft,
+                    { borderColor: color },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.corner,
+                    styles.bottomRight,
+                    { borderColor: color },
+                  ]}
+                />
+              </View>
+            </View>
+            <View style={styles.sideOverlay} />
+          </View>
+          <View style={styles.bottomOverlay} />
+        </View>
+      </CameraView>
     </View>
   );
 }
+
+const overlayColor = "rgba(0, 0, 0, 0.5)";
+const position = -5;
+const borderWidth = 7;
+const borderRadius = 20;
 
 const styles = StyleSheet.create({
   container: {
@@ -82,58 +134,79 @@ const styles = StyleSheet.create({
   },
 
   camera: {
+    flex: 1,
     width: "100%",
-    height: "100%",
-    position: "absolute",
-    opacity: 0.6,
   },
 
-  codeScanner: {
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+
+  topOverlay: {
+    flex: 1,
+    backgroundColor: overlayColor,
+  },
+
+  middleOverlay: {
     height: 300,
+    flexDirection: "row",
+  },
+
+  sideOverlay: {
+    flex: 1,
+    backgroundColor: overlayColor,
+  },
+
+  focusedArea: {
     width: 300,
-    position: "relative",
+    height: 300,
     borderRadius: 20,
-    overflow: "hidden",
   },
 
-  codeCamera: {
-    width: "100%",
-    height: "100%",
+  bottomOverlay: {
+    flex: 1,
+    backgroundColor: overlayColor,
   },
 
-  dimensions: {
+  corner: {
     position: "absolute",
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
   },
 
-  borderTopLeft: {
-    borderTopWidth: 2,
-    borderLeftWidth: 2,
-    borderTopLeftRadius: 20,
-    left: 0,
+  topLeft: {
+    borderTopWidth: borderWidth,
+    borderLeftWidth: borderWidth,
+    borderTopLeftRadius: borderRadius,
+    top: position,
+    left: position,
   },
 
-  borderTopRight: {
-    borderTopWidth: 2,
-    borderRightWidth: 2,
-    borderTopRightRadius: 20,
-    right: 0,
+  topRight: {
+    borderTopWidth: borderWidth,
+    borderRightWidth: borderWidth,
+    borderTopRightRadius: borderRadius,
+    top: position,
+    right: position,
   },
 
-  borderBottomLeft: {
-    borderBottomWidth: 2,
-    borderLeftWidth: 2,
-    borderBottomLeftRadius: 20,
-    left: 0,
-    bottom: 0,
+  bottomLeft: {
+    borderBottomWidth: borderWidth,
+    borderLeftWidth: borderWidth,
+    borderBottomLeftRadius: borderRadius,
+    bottom: position,
+    left: position,
   },
 
-  borderBottomRight: {
-    borderBottomWidth: 2,
-    borderRightWidth: 2,
-    borderBottomRightRadius: 20,
-    right: 0,
-    bottom: 0,
+  bottomRight: {
+    borderBottomWidth: borderWidth,
+    borderRightWidth: borderWidth,
+    borderBottomRightRadius: borderRadius,
+    bottom: position,
+    right: position,
   },
 });
