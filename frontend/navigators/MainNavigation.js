@@ -9,7 +9,7 @@ import { Colors } from "../constants/colors";
 import Scan from "../screens/Scan";
 import PrivacityAndSecurity from "../screens/Profile/PrivacityAndSecurity";
 import MainHeader from "../components/UI/Header/MainHeader";
-import ProductsNavigator from "./ProductsNavigator";
+import Products from "../screens/Products/Products";
 
 export default function MainNavigation() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -108,7 +108,7 @@ export default function MainNavigation() {
       <CurvedBottomBarExpo.Screen
         name="Productos"
         position="RIGHT"
-        component={ProductsNavigator}
+        component={Products}
       />
       <CurvedBottomBarExpo.Screen
         name="Mapa"

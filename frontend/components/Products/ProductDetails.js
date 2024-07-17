@@ -1,14 +1,14 @@
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import { thumbGlutty } from "../../constants/glutty";
 import { Colors } from "../../constants/colors";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Ionicons } from "@expo/vector-icons";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 
-export default function ProductDetails({ product }) {
+export default function ProductDetails({ product, onDismiss }) {
   return (
-    <View style={styles.container}>
-      <View style={styles.detail}>
+    <Pressable style={styles.container} onPress={onDismiss}>
+      <View style={[styles.detail, styles.shadow]}>
         <TextCommonsMedium style={styles.title}>
           {product.name.toUpperCase()}
         </TextCommonsMedium>
@@ -58,21 +58,21 @@ export default function ProductDetails({ product }) {
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 100,
+    paddingHorizontal: 40,
+    paddingTop: 120,
   },
 
   detail: {
     backgroundColor: Colors.pielcita,
     alignItems: "center",
-    borderRadius: 12,
+    borderRadius: 20,
     gap: 10,
     paddingVertical: 20,
   },
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
 
   imageContainer: {
-    height: 200,
+    height: 130,
     backgroundColor: "white",
     borderRadius: 12,
   },
@@ -134,15 +134,15 @@ const styles = StyleSheet.create({
   },
 
   infoTitle: {
-    fontSize: 18,
-    fontWeight: "500"
+    fontSize: 16,
+    fontWeight: "500",
   },
 
   infoText: {
-    fontSize: 16,
+    fontSize: 13,
   },
-  
+
   description: {
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });

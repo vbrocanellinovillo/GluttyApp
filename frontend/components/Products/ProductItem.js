@@ -1,17 +1,14 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
-import { useNavigation } from "@react-navigation/native";
 
-export default function ProductItem({ product }) {
-  const navigation = useNavigation();
-
-  function navigateHandler() {
-    navigation.navigate("Details", { product });
+export default function ProductItem({ product, onPress }) {
+  function showDetails() {
+    onPress(product)
   }
 
   return (
-    <Pressable style={({ pressed }) => (pressed ? styles.pressed : "")} onPress={navigateHandler}>
+    <Pressable style={({ pressed }) => (pressed ? styles.pressed : "")} onPress={showDetails}>
       <View style={styles.item}>
         <TextCommonsMedium style={styles.name}>
           {product.name}

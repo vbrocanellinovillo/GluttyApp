@@ -1,4 +1,8 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  View,
+} from "react-native";
 import ProductItem from "./ProductItem";
 import Searchbar from "../UI/Controls/Searchbar";
 import { Colors } from "../../constants/colors";
@@ -11,6 +15,9 @@ import RecommendedFilters from "./RecommendedFilters";
 import FiltersDialog from "./FiltersDialog";
 import { useQuery } from "@tanstack/react-query";
 import NoProductsFound from "./NoProductsFound";
+import BlurDetails from "./BlurDetails";
+import { useDispatch } from "react-redux";
+import { uiActions } from "../../context/ui";
 
 export default function ProductsList() {
   // Filters
@@ -20,6 +27,11 @@ export default function ProductsList() {
 
   // UI
   const [showFilters, setShowFilters] = useState(false);
+  const dispatch = useDispatch();
+
+  // Product details
+  const [detailsVisible, setDetailsVisible] = useState(false);
+  const [product, setProduct] = useState(null);
 
   // Fetch data
   const { data, isLoading, refetch } = useQuery({
@@ -79,6 +91,18 @@ export default function ProductsList() {
     setFetchFilters(!fetchFilters);
   }
 
+  function showDetails(product) {
+    setProduct(product);
+    dispatch(uiActions.toggleBlurHeader())
+    setDetailsVisible(true);
+  }
+
+  function hideDetails() {
+    dispatch(uiActions.toggleBlurHeader())
+    setDetailsVisible(false);
+    setProduct(undefined);
+  }
+
   let content = <></>;
 
   if (!isLoading && searchTerm.trim() === "") content = <NoProductsGlutty />;
@@ -110,7 +134,9 @@ export default function ProductsList() {
           <FlatList
             data={data.products}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <ProductItem product={item} />}
+            renderItem={({ item }) => (
+              <ProductItem product={item} onPress={showDetails} />
+            )}
             showsVerticalScrollIndicator={false}
           />
           <FiltersDialog
@@ -130,16 +156,23 @@ export default function ProductsList() {
   }
 
   return (
-    <DismissKeyboardContainer>
-      <View style={styles.container}>
-        <Searchbar
-          backgroundColor={Colors.pielcita}
-          onTextChange={handleChange}
-          placeholder="Buscar productos sin TACC"
-        />
-        {content}
-      </View>
-    </DismissKeyboardContainer>
+    <>
+      <DismissKeyboardContainer>
+        <View style={styles.container}>
+          <Searchbar
+            backgroundColor={Colors.pielcita}
+            onTextChange={handleChange}
+            placeholder="Buscar productos sin TACC"
+          />
+          {content}
+        </View>
+      </DismissKeyboardContainer>
+      <BlurDetails
+        isVisible={detailsVisible}
+        product={product}
+        onDismiss={hideDetails}
+      />
+    </>
   );
 }
 

@@ -1,7 +1,17 @@
+import { BlurView } from "expo-blur";
 import { StyleSheet, View } from "react-native";
+import { useSelector } from "react-redux";
+import { GlobalStyles } from "../../../constants/styles";
 
 export default function Header({ children }) {
-  return <View style={styles.header}>{children}</View>;
+  const blurHeader = useSelector((state) => state.ui.blurHeader);
+
+  return (
+    <>
+      <View style={styles.header}>{children}</View>
+      {blurHeader && <BlurView style={GlobalStyles.blur} intensity={1} />}
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
