@@ -6,7 +6,6 @@ import Recipes from "../screens/Recipes";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../constants/colors";
-import Scan from "../screens/Scan";
 import PrivacityAndSecurity from "../screens/Profile/PrivacityAndSecurity";
 import MainHeader from "../components/UI/Header/MainHeader";
 import Products from "../screens/Products/Products";
@@ -75,7 +74,7 @@ export default function MainNavigation() {
         const isScanner = selectedTab === "Escaner";
         return (
           <View style={styles.btnCircleUp}>
-            <TouchableOpacity onPress={() => navigate("Escaner")}>
+            <TouchableOpacity onPress={() => navigate("Scanner")}>
               <Ionicons
                 name="scan"
                 color={isScanner ? Colors.mJordan : Colors.oceanBlue}
@@ -102,8 +101,6 @@ export default function MainNavigation() {
       <CurvedBottomBarExpo.Screen
         name="Escaner"
         position="CIRCLE"
-        component={Scan}
-        options={{ headerShown: false }}
       />
       <CurvedBottomBarExpo.Screen
         name="Productos"
