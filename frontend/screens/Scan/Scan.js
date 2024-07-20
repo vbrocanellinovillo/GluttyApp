@@ -1,9 +1,27 @@
+import { useEffect, useState } from "react";
 import { useCameraPermissions } from "expo-camera";
-import { Button, Text, View } from "react-native";
+import { View } from "react-native";
 import Scanner from "../../components/Scanner/Scanner";
+import NoPermissions from "../../components/Scanner/NoPermissions";
 
-export default function Scan() {
+export default function Scan({ navigation }) {
   const [permission, requestPermission] = useCameraPermissions();
+  const [hasRequestedPermission, setHasRequestedPermission] = useState(false);
+
+  useEffect(() => {
+    async function askPermissions() {
+      const permissionResponse = await requestPermission();
+
+      if (!permissionResponse.granted) {
+        navigation.navigate("MainDrawer");
+      }
+    }
+
+    if (permission && !permission.granted && !hasRequestedPermission) {
+      setHasRequestedPermission(true);
+      askPermissions();
+    }
+  }, [permission, hasRequestedPermission]);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -11,15 +29,7 @@ export default function Scan() {
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
-    return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: "center" }}>
-          We need your permission to show the camera
-        </Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
-    );
+    return <NoPermissions />;
   }
 
   async function onScan(eanCode) {
