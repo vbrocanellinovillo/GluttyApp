@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
 
   bottomOverlay: {
-    flex: 2,
+    flex: 2.2,
   },
 
   topBottomOverlay: {
@@ -81,7 +81,6 @@ const styles = StyleSheet.create({
   },
 
   middleBottomOverlay: {
-    flex: 4,
     flexDirection: "row",
   },
 

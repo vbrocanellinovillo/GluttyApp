@@ -5,12 +5,12 @@ import ScannerOverlay from "./ScannerOverlay";
 
 export default function Scanner({ onScan, scannedProduct }) {
   const [color, setColor] = useState("white");
-  const [ean, setEanCode] = useState(undefined);
 
+  let currentEan = undefined;
   function scanCodeBar(scanningResult) {
     const scannedEan = scanningResult.data;
 
-    if (ean && ean != scannedEan) return;
+    if (currentEan && currentEan === scannedEan) return;
 
     setEanCode(scannedEan);
     setColor("#66eb3d");

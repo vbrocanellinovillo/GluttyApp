@@ -4,6 +4,7 @@ import { Colors } from "../../constants/colors";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Ionicons } from "@expo/vector-icons";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
+import DetailWithTitle from "../UI/DetailWithTitle";
 
 export default function ProductDetails({ product, onDismiss }) {
   return (
@@ -25,37 +26,18 @@ export default function ProductDetails({ product, onDismiss }) {
         </View>
         <View style={[styles.info, styles.shadow, styles.widthElements]}>
           <View style={styles.topInfo}>
-            <View>
-              <TextCommonsMedium style={styles.infoTitle}>
-                Marca
-              </TextCommonsMedium>
-              <TextCommonsRegular style={styles.infoText}>
-                {product.brand}
-              </TextCommonsRegular>
-            </View>
-            <View>
-              <TextCommonsMedium style={styles.infoTitle}>
-                Tipo
-              </TextCommonsMedium>
-              <TextCommonsRegular style={styles.infoText}>
-                {product.type}
-              </TextCommonsRegular>
-            </View>
+            <DetailWithTitle title="Marca">{product.brand}</DetailWithTitle>
+            <DetailWithTitle title="Tipo Producto">
+              {product.type}
+            </DetailWithTitle>
           </View>
-          <View>
-            <TextCommonsMedium style={styles.infoTitle}>RNPA</TextCommonsMedium>
-            <TextCommonsRegular style={styles.infoText}>
-              {product.rnpa}
-            </TextCommonsRegular>
-          </View>
-          <View style={styles.description}>
-            <TextCommonsMedium style={styles.infoTitle}>
-              Descripción
-            </TextCommonsMedium>
-            <TextCommonsRegular style={styles.infoText}>
-              {product.description}
-            </TextCommonsRegular>
-          </View>
+          <DetailWithTitle title="RNPA">{product.rnpa}</DetailWithTitle>
+          <DetailWithTitle
+            title="Descripción"
+            containerStyle={styles.description}
+          >
+            {product.description}
+          </DetailWithTitle>
         </View>
       </View>
     </Pressable>
@@ -131,15 +113,6 @@ const styles = StyleSheet.create({
   topInfo: {
     flexDirection: "row",
     gap: 70,
-  },
-
-  infoTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-
-  infoText: {
-    fontSize: 13,
   },
 
   description: {
