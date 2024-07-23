@@ -209,9 +209,39 @@ export async function fetchProducts({ searchTerm, brands, types }) {
       product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-
-    return { products: filteredProducts, brands: data.marcas, types: data.tipos };
+    return {
+      products: filteredProducts,
+      brands: data.marcas,
+      types: data.tipos,
+    };
   } catch (error) {
     console.log("fallo");
+  }
+}
+
+export async function scanProduct(eanCode) {
+  const requestOptions = {
+    method: "POST",
+    body: JSON.stringify(eanCode),
+    headers: { "Content-Type": "application/json" },
+  };
+
+  const requestUrl = url + "noseacordarsedecambiaraca/";
+
+  try {
+    await sleep(5000);
+    const product = new Product(
+      2,
+      "Saskatoon Berries - Frozen",
+      "Huawei",
+      "Bacidiaceae",
+      "Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",
+      "354473513-X",
+      false
+    );
+
+    return product;
+  } catch (error) {
+    console.log("error choto");
   }
 }

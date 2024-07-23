@@ -1,20 +1,20 @@
 import { CameraView } from "expo-camera";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import ScannerOverlay from "./ScannerOverlay";
 
-export default function Scanner({ onScan, scannedProduct }) {
+export default function Scanner({ onScan, scannedProduct, isLoading }) {
   const [color, setColor] = useState("white");
+  const [ean, setEan] = useState(undefined);
 
-  let currentEan = undefined;
-  function scanCodeBar(scanningResult) {
+  async function scanCodeBar(scanningResult) {
     const scannedEan = scanningResult.data;
+    if (ean && ean === scannedEan) return;
 
-    if (currentEan && currentEan === scannedEan) return;
-
-    setEanCode(scannedEan);
     setColor("#66eb3d");
-    onScan(scannedEan);
+    setEan(scannedEan);
+    await onScan(scannedEan);
+    setColor("white");
   }
 
   return (
@@ -25,7 +25,11 @@ export default function Scanner({ onScan, scannedProduct }) {
         barcodeScannerSettings={{ barcodeTypes: ["ean13", "ean8"] }}
         onBarcodeScanned={scanCodeBar}
       >
-        <ScannerOverlay color={color} />
+        <ScannerOverlay
+          color={color}
+          isLoading={isLoading}
+          scannedProduct={scannedProduct}
+        />
       </CameraView>
     </View>
   );

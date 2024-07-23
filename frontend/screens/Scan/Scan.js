@@ -3,10 +3,14 @@ import { useCameraPermissions } from "expo-camera";
 import { View } from "react-native";
 import Scanner from "../../components/Scanner/Scanner";
 import NoPermissions from "../../components/Scanner/NoPermissions";
+import { scanProduct } from "../../services/productsService";
 
 export default function Scan({ navigation }) {
   const [permission, requestPermission] = useCameraPermissions();
   const [hasRequestedPermission, setHasRequestedPermission] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [scannedProduct, setScannedProduct] = useState(undefined);
 
   useEffect(() => {
     async function askPermissions() {
@@ -33,8 +37,22 @@ export default function Scan({ navigation }) {
   }
 
   async function onScan(eanCode) {
-    console.log(eanCode);
+    setIsLoading(true);
+    try {
+      const scannedData = await scanProduct(eanCode);
+      setScannedProduct(scannedData);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
-  return <Scanner onScan={onScan} />;
+  return (
+    <Scanner
+      onScan={onScan}
+      isLoading={isLoading}
+      scannedProduct={scannedProduct}
+    />
+  );
 }

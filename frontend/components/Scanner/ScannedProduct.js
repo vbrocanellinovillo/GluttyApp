@@ -11,8 +11,11 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import DetailContainer from "./DetailContainer";
+import ScanYourProduct from "./ScanYourProduct";
+import ScannerLoading from "../UI/Loading/ScannerLoading";
 
-export default function ScannedProduct({ product }) {
+export default function ScannedProduct({ product, isLoading }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const rotate = useSharedValue(0);
@@ -35,10 +38,10 @@ export default function ScannedProduct({ product }) {
   useEffect(() => {
     if (isExpanded) {
       rotate.value = 180;
-      opacity.value = 1
+      opacity.value = 1;
     } else {
       rotate.value = 0;
-      opacity.value = 0
+      opacity.value = 0;
     }
   }, [isExpanded]);
 
@@ -46,14 +49,19 @@ export default function ScannedProduct({ product }) {
     setIsExpanded(!isExpanded);
   }
 
+  if (isLoading) return <ScannerLoading />;
+
+  if (!product) return <ScanYourProduct />;
+
   return (
-    <View style={styles.productDetail}>
-      <TextCommonsMedium style={styles.brand}>Arcor</TextCommonsMedium>
+    <DetailContainer>
+      <TextCommonsMedium style={styles.brand}>
+        {product.brand}
+      </TextCommonsMedium>
       <TextCommonsRegular style={styles.name}>
-        Jugo de naranja
+        {product.name}
       </TextCommonsRegular>
       <Image source={{ uri: thumbGlutty }} style={styles.image} />
-
       <TouchableOpacity onPress={toggleDetails}>
         <Animated.View style={[styles.detailsIcon, rotateStyle]}>
           <Ionicons name="chevron-down" size={24} color={Colors.mJordan} />
@@ -62,41 +70,26 @@ export default function ScannedProduct({ product }) {
       {isExpanded && (
         <Animated.View style={[styles.expandedDetails, opacityStyle]}>
           <View style={styles.detailsRow}>
-            <DetailWithTitle title="RNPA">354473513-X</DetailWithTitle>
+            <DetailWithTitle title="RNPA">{product.rnpa}</DetailWithTitle>
             <DetailWithTitle title="Tipo Producto">
-              Saskatoon Berries - Frozen
+              {product.type}
             </DetailWithTitle>
           </View>
           <DetailWithTitle title="Descripción">
-            Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo.
-            Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.,
+            {product.description}
           </DetailWithTitle>
         </Animated.View>
       )}
-    </View>
+    </DetailContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  productDetail: {
-    width: 300,
-    height: "100%",
-    backgroundColor: "white",
-    borderRadius: 12,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.7,
-    shadowRadius: 10,
-    alignItems: "center",
-    paddingVertical: 10,
-    overflow: "hidden",
-  },
-
   image: {
     width: 130,
     height: 130,
     objectFit: "contain",
-    marginLeft: 10
+    marginLeft: 10,
   },
 
   brand: {

@@ -6,3 +6,6 @@ export const sadGlutty =
 
 export const jumpingGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1718920847/Glutty-saltando-unscreen_xmvdgw.gif";
+
+export const smileGlutty =
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1721774190/parado_sonriendo-removebg-preview_an3tym.png";

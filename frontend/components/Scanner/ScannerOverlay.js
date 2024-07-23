@@ -2,7 +2,7 @@ import { View, StyleSheet } from "react-native";
 import Borders from "../../components/Scanner/Borders";
 import ScannedProduct from "./ScannedProduct";
 
-export default function ScannerOverlay({ scannedProduct, color }) {
+export default function ScannerOverlay({ scannedProduct, color, isLoading }) {
   return (
     <View style={styles.overlay}>
       <View style={styles.topOverlay} />
@@ -19,7 +19,7 @@ export default function ScannerOverlay({ scannedProduct, color }) {
         <View style={styles.topBottomOverlay} />
         <View style={styles.middleBottomOverlay}>
           <View style={styles.sideOverlay} />
-          <ScannedProduct />
+          <ScannedProduct isLoading={isLoading} product={scannedProduct} />
           <View style={styles.sideOverlay} />
         </View>
         <View style={styles.bottomBottomOverlay} />
