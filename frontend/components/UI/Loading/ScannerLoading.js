@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import DetailContainer from "../../Scanner/DetailContainer";
 import { jumpingGlutty } from "../../../constants/glutty";
 import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
@@ -6,7 +6,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
-  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { Colors } from "../../../constants/colors";
@@ -41,6 +40,8 @@ export default function ScannerLoading() {
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: "center",
+    width: "100%",
     gap: 18,
   },
 
@@ -48,6 +49,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 130,
     objectFit: "contain",
+    marginRight: 25
   },
 
   text: {
