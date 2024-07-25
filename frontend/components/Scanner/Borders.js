@@ -16,7 +16,7 @@ export default function Borders({ color }) {
 }
 
 const position = -5;
-const borderWidth = 7;
+const borderWidth = 8;
 const borderRadius = 20;
 
 const styles = StyleSheet.create({

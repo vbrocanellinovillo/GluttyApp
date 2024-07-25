@@ -1,25 +1,68 @@
 import { View, StyleSheet } from "react-native";
 import Borders from "../../components/Scanner/Borders";
 import ScannedProduct from "./ScannedProduct";
+import { useEffect, useState } from "react";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 
 export default function ScannerOverlay({ scannedProduct, color, isLoading }) {
+  const [contracted, setContracted] = useState(false);
+
+  const height = useSharedValue(300);
+
+  const animatedHeight = useAnimatedStyle(() => {
+    return {
+      height: withSpring(height.value, { damping: 18 }),
+    };
+  });
+
+  useEffect(() => {
+    setContracted(false);
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (contracted) {
+      height.value = 240;
+    } else {
+      height.value = 300;
+    }
+  }, [contracted]);
+
+  function toggleContracted() {
+    setContracted(!contracted);
+  }
+
   return (
     <View style={styles.overlay}>
       <View style={styles.topOverlay} />
-      <View style={styles.middleOverlay}>
+      <Animated.View style={[styles.middleOverlay, animatedHeight]}>
         <View style={styles.sideOverlay} />
-        <View style={{ overflow: "hidden" }}>
-          <View style={styles.focusedArea}>
-            <Borders color={color} />
+        <View>
+          <View
+            style={{
+              overflow: "hidden",
+            }}
+          >
+            <View style={styles.focusedArea}>
+              <Borders color={color} />
+            </View>
           </View>
         </View>
         <View style={styles.sideOverlay} />
-      </View>
+      </Animated.View>
       <View style={styles.bottomOverlay}>
         <View style={styles.topBottomOverlay} />
         <View style={styles.middleBottomOverlay}>
           <View style={styles.sideOverlay} />
-          <ScannedProduct isLoading={isLoading} product={scannedProduct} />
+          <ScannedProduct
+            isLoading={isLoading}
+            product={scannedProduct}
+            onExpand={toggleContracted}
+            isContracted={contracted}
+          />
           <View style={styles.sideOverlay} />
         </View>
         <View style={styles.bottomBottomOverlay} />
@@ -56,7 +99,6 @@ const styles = StyleSheet.create({
   },
 
   middleOverlay: {
-    height: 300,
     flexDirection: "row",
   },
 
@@ -66,8 +108,8 @@ const styles = StyleSheet.create({
   },
 
   focusedArea: {
+    height: "100%",
     width: 300,
-    height: 300,
     borderRadius: 20,
   },
 

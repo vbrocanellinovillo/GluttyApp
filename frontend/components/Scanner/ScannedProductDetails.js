@@ -5,19 +5,21 @@ import { Colors } from "../../constants/colors";
 import { thumbGlutty } from "../../constants/glutty";
 import { Ionicons } from "@expo/vector-icons";
 import DetailWithTitle from "../UI/DetailWithTitle";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Animated, {
-  FadeIn,
-  FadeOut,
+  SlideInLeft,
+  SlideOutLeft,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
 import DetailContainer from "./DetailContainer";
 
-export default function ScannedProductDetails({ product }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
+export default function ScannedProductDetails({
+  product,
+  onExpand,
+  isContracted,
+}) {
   const rotate = useSharedValue(0);
 
   const rotateStyle = useAnimatedStyle(() => {
@@ -29,15 +31,15 @@ export default function ScannedProductDetails({ product }) {
   });
 
   useEffect(() => {
-    if (isExpanded) {
+    if (isContracted) {
       rotate.value = 180;
     } else {
       rotate.value = 0;
     }
-  }, [isExpanded]);
+  }, [isContracted]);
 
   function toggleDetails() {
-    setIsExpanded(!isExpanded);
+    onExpand();
   }
 
   return (
@@ -54,11 +56,11 @@ export default function ScannedProductDetails({ product }) {
           <Ionicons name="chevron-down" size={24} color={Colors.mJordan} />
         </Animated.View>
       </TouchableOpacity>
-      {isExpanded && (
+      {isContracted && (
         <Animated.View
           style={styles.expandedDetails}
-          entering={FadeIn}
-          exiting={FadeOut}
+          entering={SlideInLeft}
+          exiting={SlideOutLeft}
         >
           <View style={styles.detailsRow}>
             <DetailWithTitle title="RNPA">{product.rnpa}</DetailWithTitle>
@@ -106,6 +108,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     gap: 10,
     paddingHorizontal: 10,
+    justifyContent: "center",
+    flex: 1,
   },
 
   detailsRow: {
