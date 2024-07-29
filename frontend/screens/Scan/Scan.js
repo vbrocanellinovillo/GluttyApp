@@ -6,11 +6,14 @@ import NoPermissions from "../../components/Scanner/NoPermissions";
 import { scanProduct } from "../../services/productsService";
 
 export default function Scan({ navigation }) {
+  // Permissions
   const [permission, requestPermission] = useCameraPermissions();
   const [hasRequestedPermission, setHasRequestedPermission] = useState(false);
 
+  // Fetch data
   const [isLoading, setIsLoading] = useState(false);
   const [scannedProduct, setScannedProduct] = useState(undefined);
+  const [error, setError] = useState(undefined);
 
   useEffect(() => {
     async function askPermissions() {
@@ -41,8 +44,11 @@ export default function Scan({ navigation }) {
     try {
       const scannedData = await scanProduct(eanCode);
       setScannedProduct(scannedData);
+      setError(undefined);
     } catch (error) {
-      console.log(error);
+      const errorMessage = error.message.replace(/^Error:\s*/, "");
+      setScannedProduct(undefined);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -53,6 +59,7 @@ export default function Scan({ navigation }) {
       onScan={onScan}
       isLoading={isLoading}
       scannedProduct={scannedProduct}
+      error={error}
     />
   );
 }

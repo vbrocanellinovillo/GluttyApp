@@ -6,16 +6,20 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import NotFoundProduct from "./NotFoundProduct";
 
 export default function ScannedProduct({
   product,
   isLoading,
   isContracted,
   onExpand,
+  error,
 }) {
   let content = <ScanYourProduct />;
 
   if (isLoading) content = <ScannerLoading />;
+
+  if (error && !isLoading) content = <NotFoundProduct error={error} />;
 
   if (product && !isLoading)
     content = (
