@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 from .managers import *
 
 # Create your models here.
-# Clase para guardar datos generales 
+# Clase para guardar datos generales
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)

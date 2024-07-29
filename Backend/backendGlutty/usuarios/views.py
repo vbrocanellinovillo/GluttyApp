@@ -10,6 +10,7 @@ from .models import *
 from .serializers import *
 from comercios.models import *
 from django.db import transaction
+from comercios.serializers import *
 
 
 # def apiOverView(request):
@@ -45,25 +46,29 @@ def register(request):
         serializer.save()
         usuario_data = serializer.data
         usuario = User.objects.filter(username=usuario_data["username"]).first()
+        print(usuario.username)
         Session.objects.create(user=usuario) # Crear una sesión para el nuevo usuario
-
+        print(usuario.is_commerce)
         # Validar si es comercio o persona y en base a eso realizar el registro
-        if usuario.is_commerce:
-            commerce = Commerce.objects.create(user=usuario) # Crear un comercio para el nuevo usuario
-            commerce.name = request.data["name"]
-            commerce.cuit = request.data["cuit"]
-            commerce.social_reason = request.data["social_reason"]
-            commerce.description = request.data["description"]
+        if (usuario.is_commerce == True):
+            commerce = Commerce.objects.create(user=usuario, 
+                                                name=request.data.get("name"),
+                                                cuit=request.data.get("cuit"),
+                                                social_reason=request.data.get("social_reason"),
+                                                description=request.data.get("description"))
             
             commerce.save()
+            return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
         else:
-            celiac = Celiac.objects.create(user=usuario)
-            celiac.first_name = request.data["first_name"]
-            celiac.last_name = request.data["last_name"]
-            celiac.sex = request.data["sex"]
-            celiac.date_birth = request.data["date_birth"]
+            celiac = Celiac.objects.create(user=usuario,
+                                            first_name=request.data.get("first_name"),
+                                            last_name=request.data.get("last_name"),
+                                            sex=request.data.get("sex"),
+                                            date_birth=request.data.get("date_birth"))
             celiac.save()
-        return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
+            print(celiac.first_name)
+            return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
+        
     #Si el serializaer.is_valid da error
     return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -161,56 +166,56 @@ def login(request):
 
     return Response(response, status=status.HTTP_200_OK)
 
-@api_view(["POST"])
-def login(request):
-    """
-    Permite iniciar sesión
-    """
-    username = request.data["username"]
-    password = request.data["password"]
-    usuario = User.objects.filter(username=username).first()
+# @api_view(["POST"])
+# def login(request):
+#     """
+#     Permite iniciar sesión
+#     """
+#     username = request.data["username"]
+#     password = request.data["password"]
+#     usuario = User.objects.filter(username=username).first()
 
-    if usuario is None:
-        raise AuthenticationFailed("Usuario no encontrado.")
+#     if usuario is None:
+#         raise AuthenticationFailed("Usuario no encontrado.")
     
-    sesion = Session.objects.get(user=usuario)
+#     sesion = Session.objects.get(user=usuario)
 
-    if not usuario.check_password(password):
-        sesion.increment_login_attempts()
-        if sesion.login_attempts >= 3:
-            raise AuthenticationFailed("Máximo número de intentos de inicio de sesión alcanzado.")
-        raise AuthenticationFailed("Contraseña incorrecta.")
+#     if not usuario.check_password(password):
+#         sesion.increment_login_attempts()
+#         if sesion.login_attempts >= 3:
+#             raise AuthenticationFailed("Máximo número de intentos de inicio de sesión alcanzado.")
+#         raise AuthenticationFailed("Contraseña incorrecta.")
 
-    if not usuario.is_active:
-        raise AuthenticationFailed("Cuenta eliminada.")
+#     if not usuario.is_active:
+#         raise AuthenticationFailed("Cuenta eliminada.")
     
     
-    # Reiniciar los intentos de inicio de sesión y marcar la sesión como inicializada
-    sesion.initialize_session()
+#     # Reiniciar los intentos de inicio de sesión y marcar la sesión como inicializada
+#     sesion.initialize_session()
 
-    usuario.last_login = timezone.now()
-    usuario.save(update_fields=["last_login"])
+#     usuario.last_login = timezone.now()
+#     usuario.save(update_fields=["last_login"])
 
-    # payload = {
-    #     'id': usuario.id,
-    #     'exp': datetime.utcnow() + datetime.timedelta(minutes=500),
-    #     'iat': datetime.utcnow(),
-    #     'is_superuser': usuario.is_superuser
-    # }
+#     # payload = {
+#     #     'id': usuario.id,
+#     #     'exp': datetime.utcnow() + datetime.timedelta(minutes=500),
+#     #     'iat': datetime.utcnow(),
+#     #     'is_superuser': usuario.is_superuser
+#     # }
 
-    # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
+#     # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
 
-    # Convertir usuario a JSON
-    serializer = UsuarioSerializer(usuario)
+#     # Convertir usuario a JSON
+#     serializer = UsuarioSerializer(usuario)
 
-    response = {
-        "user": serializer.data,
-        # "data": {
-        #     'jwt': token
-        # }
-    }
+#     response = {
+#         "user": serializer.data,
+#         # "data": {
+#         #     'jwt': token
+#         # }
+#     }
 
-    return Response(response, status=status.HTTP_200_OK)
+#     return Response(response, status=status.HTTP_200_OK)
 
 @api_view(["POST"])
 def logout(request):
@@ -239,16 +244,35 @@ def logout(request):
 
 
 @api_view(["PUT"])
+@transaction.atomic
 def update(request, user_id):
     user = get_object_or_404(User, id=user_id)
 
-    serializer = UsuarioSerializer(user, data=request.data, partial=True)
+    # Actualizar datos del usuario
+    user_serializer = UsuarioSerializer(user, data=request.data, partial=True)
 
-    if serializer.is_valid():
-        serializer.save()
-        return Response({"user": serializer.data}, status=status.HTTP_200_OK)
+    if user_serializer.is_valid():
+        user_serializer.save()
 
-    return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        # Actualizar datos de Celiac o Commerce
+        if user.is_commerce:
+            commerce = get_object_or_404(Commerce, user=user)
+            commerce_serializer = CommerceSerializer(commerce, data=request.data, partial=True)
+            if commerce_serializer.is_valid():
+                commerce_serializer.save()
+            else:
+                return Response({"error": commerce_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            celiac = get_object_or_404(Celiac, user=user)
+            celiac_serializer = CeliacSerializer(celiac, data=request.data, partial=True)
+            if celiac_serializer.is_valid():
+                celiac_serializer.save()
+            else:
+                return Response({"error": celiac_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"user": user_serializer.data}, status=status.HTTP_200_OK)
+
+    return Response({"error": user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["DELETE"])

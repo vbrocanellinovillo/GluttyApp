@@ -12,7 +12,6 @@ class UsuarioSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "password",
-            "last_login",
             "is_commerce",
         ]
         extra_kwargs = {"password": {"write_only": True}}
@@ -41,3 +40,8 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate_new_password(self, value):
         validate_password(value)
         return value
+    
+class CeliacSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Celiac
+        fields = ['first_name', 'last_name', 'sex', 'date_birth']
