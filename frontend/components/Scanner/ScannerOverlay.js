@@ -8,7 +8,12 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-export default function ScannerOverlay({ scannedProduct, color, isLoading }) {
+export default function ScannerOverlay({
+  scannedProduct,
+  color,
+  isLoading,
+  error,
+}) {
   const [contracted, setContracted] = useState(false);
 
   const height = useSharedValue(300);
@@ -62,6 +67,7 @@ export default function ScannerOverlay({ scannedProduct, color, isLoading }) {
             product={scannedProduct}
             onExpand={toggleContracted}
             isContracted={contracted}
+            error={error}
           />
           <View style={styles.sideOverlay} />
         </View>

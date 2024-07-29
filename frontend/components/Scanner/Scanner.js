@@ -1,16 +1,20 @@
 import { CameraView } from "expo-camera";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import ScannerOverlay from "./ScannerOverlay";
+import * as Haptics from "expo-haptics";
 
-export default function Scanner({ onScan, scannedProduct, isLoading }) {
+export default function Scanner({ onScan, scannedProduct, isLoading, error }) {
   const [color, setColor] = useState("white");
   const [ean, setEan] = useState(undefined);
 
   async function scanCodeBar(scanningResult) {
     const scannedEan = scanningResult.data;
-    if (ean && ean === scannedEan) return;
+    if (ean && ean === scannedEan) {
+      return;
+    }
 
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setColor("#66eb3d");
     setEan(scannedEan);
     await onScan(scannedEan);
@@ -29,6 +33,7 @@ export default function Scanner({ onScan, scannedProduct, isLoading }) {
           color={color}
           isLoading={isLoading}
           scannedProduct={scannedProduct}
+          error={error}
         />
       </CameraView>
     </View>

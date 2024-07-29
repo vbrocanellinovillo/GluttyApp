@@ -222,14 +222,15 @@ export async function fetchProducts({ searchTerm, brands, types }) {
 export async function scanProduct(eanCode) {
   const requestOptions = {
     method: "POST",
-    body: JSON.stringify(eanCode),
+    body: JSON.stringify({ barcode: eanCode }),
     headers: { "Content-Type": "application/json" },
   };
 
-  const requestUrl = url + "noseacordarsedecambiaraca/";
+  const requestUrl = url + "find-by-barcode/";
 
   try {
-    await sleep(5000);
+    const data = await httpRequest(requestUrl, requestOptions);
+    console.log(data);
     const product = new Product(
       2,
       "Saskatoon Berries - Frozen",
@@ -242,6 +243,6 @@ export async function scanProduct(eanCode) {
 
     return product;
   } catch (error) {
-    console.log("error choto");
+    throw new Error(error.message);
   }
 }
