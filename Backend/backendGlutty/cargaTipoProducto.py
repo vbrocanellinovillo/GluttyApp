@@ -2,7 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 # Leer el archivo Excel
-df = pd.read_excel('d:\Documents\Downloads\productosANMAT.xlsx')
+df = pd.read_excel('C:/Users/celih/Downloads/productosANMAT.xlsx')
 
 # Obtener los valores únicos de la columna 'TipoProducto'
 tipos_productos_unicos = df['TipoProducto'].unique()

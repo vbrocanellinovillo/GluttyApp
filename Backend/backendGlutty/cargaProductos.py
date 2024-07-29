@@ -6,7 +6,7 @@ import psycopg2
 engine = create_engine('postgresql+psycopg2://celinahunziker:niHosDyld/ov4nus60@200.69.137.167:54321/postgres')
 
 # Leer el archivo Excel
-df = pd.read_excel('d:\Documents\Downloads\productosANMAT.xlsx')
+df = pd.read_excel('C:/Users/celih/Downloads/productosANMAT.xlsx')
 
 # Cargar las marcas existentes en un diccionario
 marcas_df = pd.read_sql_table('productos_marcaproducto', engine)

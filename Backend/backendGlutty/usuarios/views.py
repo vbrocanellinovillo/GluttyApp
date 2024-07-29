@@ -8,6 +8,8 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
 from .models import *
 from .serializers import *
+from comercios.models import *
+from django.db import transaction
 
 
 # def apiOverView(request):
@@ -27,34 +29,43 @@ from .serializers import *
 
 # Create your views here.
 class UsuarioAPIView(generics.ListCreateAPIView):
-    queryset = Usuario.objects.all()
+    queryset = User.objects.all()
     serializer_class = UsuarioSerializer
 
-
 @api_view(["POST"])
+@transaction.atomic
 def register(request):
     """
     Metodo para registrar un usuario, con email y contraseña.
     """
+    # Crear usuario y comercio o celíaco
     serializer = UsuarioSerializer(data=request.data)
-    # serializer.is_valid(raise_exception=True)
-
+        
     if serializer.is_valid():
         serializer.save()
         usuario_data = serializer.data
-        usuario = Usuario.objects.filter(username=usuario_data["username"]).first()
-        Sesion.objects.create(user=usuario)  # Crear una sesión para el nuevo usuario
+        usuario = User.objects.filter(username=usuario_data["username"]).first()
+        Session.objects.create(user=usuario) # Crear una sesión para el nuevo usuario
+
+        # Validar si es comercio o persona y en base a eso realizar el registro
+        if usuario.is_commerce:
+            commerce = Commerce.objects.create(user=usuario) # Crear un comercio para el nuevo usuario
+            commerce.name = request.data["name"]
+            commerce.cuit = request.data["cuit"]
+            commerce.social_reason = request.data["social_reason"]
+            commerce.description = request.data["description"]
+            
+            commerce.save()
+        else:
+            celiac = Celiac.objects.create(user=usuario)
+            celiac.first_name = request.data["first_name"]
+            celiac.last_name = request.data["last_name"]
+            celiac.sex = request.data["sex"]
+            celiac.date_birth = request.data["date_birth"]
+            celiac.save()
         return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
-        # payload = {
-        #     'id': usuario.id,
-        #     'exp' : datetime.now(datetime.UTC) + datetime.timedelta(days=30),
-        #     'iat': datetime.now(datetime.UTC)
-        # }
-
-        # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
-
+    #Si el serializaer.is_valid da error
     return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
 
 # @api_view(["POST"])
 # def login(request):
@@ -118,12 +129,12 @@ def login(request):
     except KeyError:
         return Response({"error": "username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
 
-    usuario = Usuario.objects.filter(username=username).first()
+    usuario = User.objects.filter(username=username).first()
 
     if usuario is None:
         raise AuthenticationFailed("Usuario no encontrado.")
     
-    sesion, created = Sesion.objects.get_or_create(user=usuario)
+    sesion, created = Session.objects.get_or_create(user=usuario)
 
     if not usuario.check_password(password):
         sesion.login_attempts += 1
@@ -157,12 +168,12 @@ def login(request):
     """
     username = request.data["username"]
     password = request.data["password"]
-    usuario = Usuario.objects.filter(username=username).first()
+    usuario = User.objects.filter(username=username).first()
 
     if usuario is None:
         raise AuthenticationFailed("Usuario no encontrado.")
     
-    sesion = Sesion.objects.get(user=usuario)
+    sesion = Session.objects.get(user=usuario)
 
     if not usuario.check_password(password):
         sesion.increment_login_attempts()
@@ -211,12 +222,12 @@ def logout(request):
     except KeyError:
         return Response({"error": "username is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-    usuario = Usuario.objects.filter(username=username).first()
+    usuario = User.objects.filter(username=username).first()
 
     if usuario is None:
         raise AuthenticationFailed("Usuario no encontrado.")
 
-    sesion = Sesion.objects.filter(user=usuario).first()
+    sesion = Session.objects.filter(user=usuario).first()
 
     if sesion and sesion.session_initialized:
         sesion.session_initialized = False
@@ -229,7 +240,7 @@ def logout(request):
 
 @api_view(["PUT"])
 def update(request, user_id):
-    user = get_object_or_404(Usuario, id=user_id)
+    user = get_object_or_404(User, id=user_id)
 
     serializer = UsuarioSerializer(user, data=request.data, partial=True)
 
@@ -246,7 +257,7 @@ def delete(request):
     # user.delete()
 
     username = request.data["username"]
-    usuario = Usuario.objects.filter(username=username).first()
+    usuario = User.objects.filter(username=username).first()
 
     if usuario.is_authenticated:
         usuario.is_active = False
@@ -272,7 +283,7 @@ def changePassword(request):
             'data': []
         }, status=status.HTTP_400_BAD_REQUEST)
     
-    usuario = Usuario.objects.filter(username=username).first()
+    usuario = User.objects.filter(username=username).first()
     
     if usuario is None:
         return Response({

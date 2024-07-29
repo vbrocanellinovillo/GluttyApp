@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'backendGlutty.wsgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'celinahunziker',
         'USER': 'celinahunziker',
         'PASSWORD': 'niHosDyld/ov4nus60',
         'HOST': '200.69.137.167',  # Replace with your PostgreSQL server's address if necessary
@@ -144,4 +144,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-AUTH_USER_MODEL = 'usuarios.Usuario'
+AUTH_USER_MODEL = 'usuarios.User'

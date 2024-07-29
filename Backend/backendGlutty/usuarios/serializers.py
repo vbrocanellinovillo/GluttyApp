@@ -6,23 +6,20 @@ class UsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
 
     class Meta:
-        model = Usuario
+        model = User
         fields = [
             "id",
             "username",
             "email",
-            "first_name",
-            "last_name",
-            "gender",
             "password",
-            "dateBirth",
             "last_login",
+            "is_commerce",
         ]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         #password = validated_data.pop("password")
-        user = Usuario(**validated_data)
+        user = User(**validated_data)
         user.set_password(validated_data['password'])
         user.save()
         return user
