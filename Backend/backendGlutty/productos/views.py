@@ -35,43 +35,65 @@ class ProductoViewSet(viewsets.ModelViewSet):
 
 @api_view(["POST"])
 def find(request):
-    query = request.data.get('q', None)
-    marcas = request.data.get('marca', [])
-    tipos = request.data.get('tipo', [])
+    try:
+        query = request.data.get('q', None)
+        marcas = request.data.get('marca', [])
+        tipos = request.data.get('tipo', [])
 
-    # Asegurarse de que marcas y tipos sean listas
-    if not isinstance(marcas, list):
-        marcas = [marcas]
-    if not isinstance(tipos, list):
-        tipos = [tipos]
+        # Asegurarse de que marcas y tipos sean listas
+        if isinstance(marcas, str):
+            marcas = [marca.strip() for marca in marcas.split(',')]
+        if isinstance(tipos, str):
+            tipos = [tipo.strip() for tipo in tipos.split(',')]
 
-    if query:
+        # Verificar si se proporcionaron al menos uno de los parámetros
+        if not query and not marcas and not tipos:
+            return Response({"error": "No se proporcionó un parámetro de búsqueda."}, status=400)
+
         start_time_db = time.time()
         
         # Configurar la configuración de búsqueda en español
         spanish_config = 'spanish'
         
-        # Construir la consulta de búsqueda
-        search_query = SearchQuery(query, config=spanish_config)
+        # Construir el filtro base con Q
+        base_filter = Q()
+
+        if query:
+            base_filter &= (
+                Q(nombre__icontains=query) | 
+                Q(denominacion__icontains=query) | 
+                Q(rnpa__icontains=query) |
+                Q(search_vector__icontains=query)
+            )
         
-        # Construir el filtro base
-        filter_conditions = Q(
-            Q(nombre__icontains=query) | Q(denominacion__icontains=query) | Q(rnpa__icontains=query) |
-            Q(marca__nombre__icontains=query) | Q(tipo__nombre__icontains=query) |
-            Q(search_vector=query) | Q(search_vector__icontains=query),
-            is_active=True
-        )
-        
-        # Agregar filtros adicionales para marcas y tipos
+        # Filtros de marcas y tipos con OR
+        marcas_filter = Q()
+        tipos_filter = Q()
+
         if marcas:
-            filter_conditions &= Q(marca__nombre__in=marcas)
+            for marca in marcas:
+                marcas_filter |= Q(marca__nombre__icontains=marca)
+
         if tipos:
-            filter_conditions &= Q(tipo__nombre__in=tipos)
+            for tipo in tipos:
+                tipos_filter |= Q(tipo__nombre__icontains=tipo)
+
+        # Combinar todos los filtros con AND
+        combined_filter = base_filter & marcas_filter & tipos_filter
         
         # Filtrar productos por coincidencias exactas o similares en el search_vector
         productos = Producto.objects.annotate(
-            rank=SearchVector('nombre', 'denominacion', 'rnpa', 'marca__nombre', 'tipo__nombre', config=spanish_config)
-        ).filter(filter_conditions).order_by('-rank').select_related('marca', 'tipo').values(
+            rank=SearchVector(
+                'nombre', 
+                'denominacion', 
+                'rnpa', 
+                'marca__nombre', 
+                'tipo__nombre', 
+                config=spanish_config
+            )
+        ).filter(
+            combined_filter, is_active=True
+        ).order_by('-rank').select_related('marca', 'tipo').values(
             'id', 'rnpa', 'nombre', 'denominacion', 'marca__nombre', 'tipo__nombre'
         )
         
@@ -82,14 +104,28 @@ def find(request):
         start_time_serialization = time.time()
 
         # Filtrar marcas y tipos de productos por nombre que contenga las letras buscadas
-        marcas = MarcaProducto.objects.filter(nombre__icontains=query)
-        tipos_productos = TipoProducto.objects.filter(nombre__icontains=query)
+        marcas_query = Q()
+        tipos_query = Q()
+
+        if marcas:
+            for marca in marcas:
+                marcas_query |= Q(nombre__icontains=marca)
+            marcas = MarcaProducto.objects.filter(marcas_query).distinct()
+        else:
+            marcas = MarcaProducto.objects.filter(nombre__icontains=query).distinct() if query else MarcaProducto.objects.none()
+        
+        if tipos:
+            for tipo in tipos:
+                tipos_query |= Q(nombre__icontains=tipo)
+            tipos_productos = TipoProducto.objects.filter(tipos_query).distinct()
+        else:
+            tipos_productos = TipoProducto.objects.filter(nombre__icontains=query).distinct() if query else TipoProducto.objects.none()
 
         marcas_serializer = MarcaSerializer(marcas, many=True)
         tipos_productos_serializer = TipoProductoSerializer(tipos_productos, many=True)
 
         resultados = {
-            'productos': productos,
+            'productos': list(productos),
             'marcas': marcas_serializer.data,
             'tipos_productos': tipos_productos_serializer.data,
         }
@@ -99,7 +135,9 @@ def find(request):
 
         return Response(resultados, status=200)
 
-    return Response({"error": "No se proporcionó un parámetro de búsqueda."}, status=400)
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return Response({"error": "Ocurrió un error interno en el servidor."}, status=500)
 
 @api_view(["POST"])
 def find_by_filtro(request):
