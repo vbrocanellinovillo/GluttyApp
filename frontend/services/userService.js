@@ -25,15 +25,7 @@ export async function login(username, password) {
   }
 }
 
-export async function register(
-  username,
-  name,
-  lastName,
-  sex,
-  dateBirth,
-  email,
-  password
-) {
+export async function register(userData, isCommerce) {
   const formdata = new FormData();
   formdata.append("username", username);
   formdata.append("first_name", name);

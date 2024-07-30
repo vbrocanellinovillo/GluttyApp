@@ -11,6 +11,9 @@ export default function FormControl({
   value,
   touched,
   errors,
+  keyboardType,
+  autoCapitalize,
+  textarea,
 }) {
   return (
     <View style={styles.container}>
@@ -19,14 +22,13 @@ export default function FormControl({
           <Text
             style={{
               color: touched && errors ? Colors.redError : "#aaa",
-              borderRadius: 8,
             }}
           >
             {label}
           </Text>
         }
         style={[
-          styles.formControl,
+          textarea ? [styles.formControl, styles.textarea] : styles.formControl,
           { borderColor: touched && errors ? Colors.redError : Colors.mJordan },
         ]}
         secureTextEntry={secure}
@@ -36,6 +38,9 @@ export default function FormControl({
         textColor={Colors.mJordan}
         underlineStyle={{ display: "none" }}
         theme={{ roundness: 8 }}
+        keyboardType={keyboardType}
+        autoCapitalize={autoCapitalize}
+        numberOfLines={10}
       />
       {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
     </View>
@@ -59,5 +64,10 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 16,
     color: Colors.redError,
+  },
+
+  textarea: {
+    textAlignVertical: "top",
+    minHeight: 100,
   },
 });

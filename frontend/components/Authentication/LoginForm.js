@@ -53,6 +53,7 @@ export default function LoginForm({ onSubmit }) {
                 handleBlur={handleBlur}
                 touched={touched.usuario}
                 errors={errors.usuario}
+                autoCapitalize={false}
               />
               <FormControl
                 label="Contraseña"
@@ -63,6 +64,7 @@ export default function LoginForm({ onSubmit }) {
                 handleBlur={handleBlur}
                 touched={touched.contraseña}
                 errors={errors.contraseña}
+                autoCapitalize={false}
               />
               <View style={styles.buttonContainer}>
                 <Button
