@@ -2,7 +2,7 @@ import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Colors } from "../../constants/colors";
-import { thumbGlutty } from "../../constants/glutty";
+import { sadGlutty, thumbGlutty } from "../../constants/glutty";
 import { Ionicons } from "@expo/vector-icons";
 import DetailWithTitle from "../UI/DetailWithTitle";
 import { useEffect } from "react";
@@ -16,7 +16,7 @@ import Animated, {
 import DetailContainer from "./DetailContainer";
 
 export default function ScannedProductDetails({
-  product,
+  scannedData,
   onExpand,
   isContracted,
 }) {
@@ -42,6 +42,10 @@ export default function ScannedProductDetails({
     onExpand();
   }
 
+  const isApt = scannedData.isApt;
+  const message = scannedData.message;
+  const product = scannedData.product;
+
   return (
     <DetailContainer style={styles.container}>
       <TextCommonsMedium style={styles.brand}>
@@ -50,12 +54,23 @@ export default function ScannedProductDetails({
       <TextCommonsRegular style={styles.name}>
         {product.name}
       </TextCommonsRegular>
-      <Image source={{ uri: thumbGlutty }} style={styles.image} />
-      <TouchableOpacity onPress={toggleDetails}>
-        <Animated.View style={[styles.detailsIcon, rotateStyle]}>
-          <Ionicons name="chevron-down" size={24} color={Colors.mJordan} />
-        </Animated.View>
-      </TouchableOpacity>
+      <Image
+        source={{ uri: isApt ? thumbGlutty : sadGlutty }}
+        style={styles.image}
+      />
+      <View style={styles.messageContainer}>
+        <Ionicons name="checkmark-circle" color="green" size={22} />
+        <TextCommonsMedium style={styles.message}>
+          {message}
+        </TextCommonsMedium>
+      </View>
+      {isApt && (
+        <TouchableOpacity onPress={toggleDetails}>
+          <Animated.View style={[styles.detailsIcon, rotateStyle]}>
+            <Ionicons name="chevron-down" size={24} color={Colors.mJordan} />
+          </Animated.View>
+        </TouchableOpacity>
+      )}
       {isContracted && (
         <Animated.View
           style={styles.expandedDetails}
@@ -102,6 +117,20 @@ const styles = StyleSheet.create({
   detailsIcon: {
     width: "100%",
     alignItems: "center",
+  },
+
+  messageContainer: {
+    flexDirection: "row",
+    marginBottom: 7,
+    gap: 5,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+
+  message: {
+    fontSize: 16,
+    textAlign: "center",
+    color: Colors.mJordan
   },
 
   expandedDetails: {

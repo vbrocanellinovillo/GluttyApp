@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import ScannerOverlay from "./ScannerOverlay";
 import * as Haptics from "expo-haptics";
 
-export default function Scanner({ onScan, scannedProduct, isLoading, error }) {
+export default function Scanner({ onScan, scannedData, isLoading, error }) {
   const [color, setColor] = useState("white");
   const [ean, setEan] = useState(undefined);
 
@@ -32,7 +32,7 @@ export default function Scanner({ onScan, scannedProduct, isLoading, error }) {
         <ScannerOverlay
           color={color}
           isLoading={isLoading}
-          scannedProduct={scannedProduct}
+          scannedData={scannedData}
           error={error}
         />
       </CameraView>

@@ -12,7 +12,7 @@ export default function Scan({ navigation }) {
 
   // Fetch data
   const [isLoading, setIsLoading] = useState(false);
-  const [scannedProduct, setScannedProduct] = useState(undefined);
+  const [scannedData, setScannedData] = useState(undefined);
   const [error, setError] = useState(undefined);
 
   useEffect(() => {
@@ -42,8 +42,8 @@ export default function Scan({ navigation }) {
   async function onScan(eanCode) {
     setIsLoading(true);
     try {
-      const scannedData = await scanProduct(eanCode);
-      setScannedProduct(scannedData);
+      const fetchedData = await scanProduct(eanCode);
+      setScannedData(fetchedData);
       setError(undefined);
     } catch (error) {
       const errorMessage = error.message.replace(/^Error:\s*/, "");
@@ -58,7 +58,7 @@ export default function Scan({ navigation }) {
     <Scanner
       onScan={onScan}
       isLoading={isLoading}
-      scannedProduct={scannedProduct}
+      scannedData={scannedData}
       error={error}
     />
   );

@@ -9,7 +9,7 @@ import Animated, {
 import NotFoundProduct from "./NotFoundProduct";
 
 export default function ScannedProduct({
-  product,
+  scannedData,
   isLoading,
   isContracted,
   onExpand,
@@ -21,10 +21,10 @@ export default function ScannedProduct({
 
   if (error && !isLoading) content = <NotFoundProduct error={error} />;
 
-  if (product && !isLoading)
+  if (scannedData && !isLoading)
     content = (
       <ScannedProductDetails
-        product={product}
+        scannedData={scannedData}
         onExpand={onExpand}
         isContracted={isContracted}
       />
@@ -32,11 +32,9 @@ export default function ScannedProduct({
 
   const animatedHeight = useAnimatedStyle(() => {
     return {
-      height: isContracted ? withSpring(360, { damping: 18 }) : withSpring(210),
+      height: isContracted ? withSpring(360, { damping: 18 }) : withSpring(235),
     };
   });
-
-  const expandedStyle = isContracted ? { height: 360 } : undefined;
 
   return (
     <Animated.View style={[styles.productDetail, animatedHeight]}>

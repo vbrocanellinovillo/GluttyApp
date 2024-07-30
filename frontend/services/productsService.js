@@ -230,18 +230,30 @@ export async function scanProduct(eanCode) {
 
   try {
     const data = await httpRequest(requestUrl, requestOptions);
-    console.log(data);
+
+    const fetchedProductData = data.producto;
+
+    let productName = "";
+
+    if (data.is_apt) {
+      productName = fetchedProductData.nombre;
+    } else if (data.producto_barcode.product_name_es !== "nan") {
+      productName = data.producto_barcode.product_name_en;
+    } else {
+      productName = data.producto_barcode.product_name_en;
+    }
+
     const product = new Product(
-      2,
-      "Saskatoon Berries - Frozen",
-      "Huawei",
-      "Bacidiaceae",
-      "Maecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",
-      "354473513-X",
+      fetchedProductData.id,
+      fetchedProductData.tipo_nombre,
+      fetchedProductData.marca_nombre,
+      productName,
+      fetchedProductData.denominacion,
+      fetchedProductData.rnpa,
       false
     );
 
-    return product;
+    return { isApt: data.is_apt, message: data.message, product: product };
   } catch (error) {
     throw new Error(error.message);
   }

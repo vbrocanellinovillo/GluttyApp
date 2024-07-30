@@ -267,10 +267,10 @@ def find_by_barcode(request):
 
             if producto:
                 is_apt = True
-                message = "Apto celiaco: Este producto está registrado y es apto para celiacos."
+                message = "Producto apto"
             else:
                 is_apt = False
-                message = "No estamos seguros de la composición del producto."
+                message = "No podemos confirmar que este producto es Apto"
 
             # Preparar la respuesta JSON
             response_data = {

@@ -9,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function ScannerOverlay({
-  scannedProduct,
+  scannedData,
   color,
   isLoading,
   error,
@@ -64,7 +64,7 @@ export default function ScannerOverlay({
           <View style={styles.sideOverlay} />
           <ScannedProduct
             isLoading={isLoading}
-            product={scannedProduct}
+            scannedData={scannedData}
             onExpand={toggleContracted}
             isContracted={contracted}
             error={error}
