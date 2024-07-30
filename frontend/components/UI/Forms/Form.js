@@ -1,15 +1,15 @@
-import {
-  Keyboard,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { StyleSheet } from "react-native";
+import Animated, { FadeOut, SlideInLeft } from "react-native-reanimated";
 
 export default function Form({ children }) {
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.form}>{children}</View>
-    </TouchableWithoutFeedback>
+    <Animated.View
+      style={styles.form}
+      entering={SlideInLeft}
+      exiting={FadeOut}
+    >
+      {children}
+    </Animated.View>
   );
 }
 

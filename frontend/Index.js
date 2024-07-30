@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import MainDrawer from "./navigators/MainDrawer";
-import AuthNavigation from "./navigators/AuthNavigation"
+import AuthNavigation from "./navigators/AuthNavigation";
 import MainStack from "./navigators/MainStack";
 
 export default function Index() {
@@ -9,7 +9,7 @@ export default function Index() {
 
   return (
     <NavigationContainer>
-      <MainStack />
+      <AuthNavigation />
     </NavigationContainer>
   );
 }
