@@ -30,7 +30,7 @@ export default function ScannerOverlay({
 
   useEffect(() => {
     if (contracted) {
-      height.value = 240;
+      height.value = 230;
     } else {
       height.value = 300;
     }

@@ -59,10 +59,12 @@ export default function ScannedProductDetails({
         style={styles.image}
       />
       <View style={styles.messageContainer}>
-        <Ionicons name="checkmark-circle" color="green" size={22} />
-        <TextCommonsMedium style={styles.message}>
-          {message}
-        </TextCommonsMedium>
+        <Ionicons
+          name={isApt ? "checkmark-circle" : "close-circle"}
+          color={isApt ? "green" : Colors.redError}
+          size={22}
+        />
+        <TextCommonsMedium style={styles.message}>{message}</TextCommonsMedium>
       </View>
       {isApt && (
         <TouchableOpacity onPress={toggleDetails}>
@@ -123,14 +125,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 7,
     gap: 5,
-    justifyContent: "center",
-    alignItems: "center"
+    paddingHorizontal: 30,
+    marginRight: 20,
   },
 
   message: {
     fontSize: 16,
+    fontWeight: "500",
     textAlign: "center",
-    color: Colors.mJordan
+    color: Colors.mJordan,
   },
 
   expandedDetails: {
@@ -138,7 +141,6 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingHorizontal: 10,
     justifyContent: "center",
-    flex: 1,
   },
 
   detailsRow: {

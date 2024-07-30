@@ -32,7 +32,7 @@ export default function ScannedProduct({
 
   const animatedHeight = useAnimatedStyle(() => {
     return {
-      height: isContracted ? withSpring(360, { damping: 18 }) : withSpring(235),
+      height: isContracted ? withSpring(360, { damping: 18 }) : withSpring(250),
     };
   });
 
@@ -46,7 +46,6 @@ export default function ScannedProduct({
 const styles = StyleSheet.create({
   productDetail: {
     backgroundColor: "white",
-    alignItems: "center",
     paddingVertical: 10,
     width: 300,
     minHeight: 210,
@@ -55,5 +54,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.7,
     shadowRadius: 10,
+    overflow: "hidden",
   },
 });

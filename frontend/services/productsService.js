@@ -229,25 +229,16 @@ export async function scanProduct(eanCode) {
   const requestUrl = url + "find-by-barcode/";
 
   try {
+    await sleep(5000)
     const data = await httpRequest(requestUrl, requestOptions);
 
     const fetchedProductData = data.producto;
-
-    let productName = "";
-
-    if (data.is_apt) {
-      productName = fetchedProductData.nombre;
-    } else if (data.producto_barcode.product_name_es !== "nan") {
-      productName = data.producto_barcode.product_name_en;
-    } else {
-      productName = data.producto_barcode.product_name_en;
-    }
 
     const product = new Product(
       fetchedProductData.id,
       fetchedProductData.tipo_nombre,
       fetchedProductData.marca_nombre,
-      productName,
+      fetchedProductData.nombre,
       fetchedProductData.denominacion,
       fetchedProductData.rnpa,
       false

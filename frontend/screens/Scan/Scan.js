@@ -47,7 +47,7 @@ export default function Scan({ navigation }) {
       setError(undefined);
     } catch (error) {
       const errorMessage = error.message.replace(/^Error:\s*/, "");
-      setScannedProduct(undefined);
+      setScannedData(undefined);
       setError(errorMessage);
     } finally {
       setIsLoading(false);

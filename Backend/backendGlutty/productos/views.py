@@ -264,49 +264,42 @@ def find_by_barcode(request):
 
             # Indicador de si el producto es apto o no
             is_apt: bool
+            product_name = ""
+            product_brand = ""
 
             if producto:
                 is_apt = True
-                message = "Producto apto"
+                message = "Producto apto, confirmado por ANMAT"
+
+                product_name = producto.nombre if producto else None
+                product_brand = (
+                    (producto.marca.nombre if producto and producto.marca else None),
+                )
             else:
                 is_apt = False
-                message = "No podemos confirmar que este producto es Apto"
+                message = "No podemos confirmar que este producto es apto"
+
+                if producto_barcode.product_name_es != "nan":
+                    product_name = producto_barcode.product_name_es
+                else:
+                    product_name = producto_barcode.product_name_en
+
+                product_brand = producto_barcode.brands
 
             # Preparar la respuesta JSON
             response_data = {
                 "is_apt": is_apt,
                 "message": message,
-                "producto_barcode": {
-                    "product_name_en": producto_barcode.product_name_en,
-                    "product_name_es": producto_barcode.product_name_es,
-                    "generic_name": producto_barcode.generic_name,
-                    "quantity": producto_barcode.quantity,
-                    "serving_size": producto_barcode.serving_size,
-                    "brands": producto_barcode.brands,
-                    "categories": producto_barcode.categories,
-                    "emb_codes": producto_barcode.emb_codes,
-                    "allergens": producto_barcode.allergens,
-                    "ean": producto_barcode.ean,
-                    "rnpa": rnpa,
+                "producto": {
+                    "id": producto.id if producto else None,
+                    "rnpa": producto.rnpa if producto else None,
+                    "marca_nombre": product_brand,
+                    "tipo_nombre": (
+                        producto.tipo.nombre if producto and producto.tipo else None
+                    ),
+                    "nombre": product_name,
+                    "denominacion": producto.denominacion if producto else None,
                 },
-                "producto": (
-                    {
-                        "id": producto.id if producto else None,
-                        "rnpa": producto.rnpa if producto else None,
-                        "marca_nombre": (
-                            producto.marca.nombre
-                            if producto and producto.marca
-                            else None
-                        ),
-                        "tipo_nombre": (
-                            producto.tipo.nombre if producto and producto.tipo else None
-                        ),
-                        "nombre": producto.nombre if producto else None,
-                        "denominacion": producto.denominacion if producto else None,
-                    }
-                    if producto
-                    else None
-                ),
             }
 
             return Response(response_data, status=200)
