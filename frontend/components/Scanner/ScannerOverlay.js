@@ -61,7 +61,6 @@ export default function ScannerOverlay({
       <View style={styles.bottomOverlay}>
         <View style={styles.topBottomOverlay} />
         <View style={styles.middleBottomOverlay}>
-          <View style={styles.sideOverlay} />
           <ScannedProduct
             isLoading={isLoading}
             scannedData={scannedData}
@@ -69,7 +68,6 @@ export default function ScannerOverlay({
             isContracted={contracted}
             error={error}
           />
-          <View style={styles.sideOverlay} />
         </View>
         <View style={styles.bottomBottomOverlay} />
       </View>
@@ -121,11 +119,12 @@ const styles = StyleSheet.create({
 
   bottomOverlay: {
     flex: 2.2,
+    backgroundColor: overlayColor,
+    alignItems: "center"
   },
 
   topBottomOverlay: {
     flex: 0.3,
-    backgroundColor: overlayColor,
   },
 
   middleBottomOverlay: {
@@ -134,6 +133,5 @@ const styles = StyleSheet.create({
 
   bottomBottomOverlay: {
     flex: 1,
-    backgroundColor: overlayColor,
   },
 });

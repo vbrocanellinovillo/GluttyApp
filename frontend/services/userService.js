@@ -27,13 +27,19 @@ export async function login(username, password) {
 
 export async function register(userData, isCommerce) {
   const formdata = new FormData();
-  formdata.append("username", username);
-  formdata.append("first_name", name);
-  formdata.append("last_name", lastName);
-  formdata.append("gender", sex);
-  formdata.append("dateBirth", dateBirth);
-  formdata.append("email", email);
-  formdata.append("password", password);
+  formdata.append("is_commerce", isCommerce);
+
+  if (isCommerce) {
+    formdata.append("")
+  } else {
+    formdata.append("username", username);
+    formdata.append("first_name", name);
+    formdata.append("last_name", lastName);
+    formdata.append("gender", sex);
+    formdata.append("dateBirth", dateBirth);
+    formdata.append("email", email);
+    formdata.append("password", password);
+  }
 
   const requestOptions = {
     method: "POST",

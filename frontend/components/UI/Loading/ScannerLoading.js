@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     width: "100%",
-    gap: 18,
+    gap: 10,
   },
 
   image: {
