@@ -1,11 +1,11 @@
 import { StyleSheet } from "react-native";
-import Animated, { FadeOut, SlideInLeft } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 export default function Form({ children }) {
   return (
     <Animated.View
       style={styles.form}
-      entering={SlideInLeft}
+      entering={FadeIn}
       exiting={FadeOut}
     >
       {children}

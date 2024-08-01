@@ -9,7 +9,7 @@ export default function Index() {
 
   return (
     <NavigationContainer>
-      <MainStack />
+      <AuthNavigation />
     </NavigationContainer>
   );
 }

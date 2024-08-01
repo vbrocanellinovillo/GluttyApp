@@ -10,8 +10,8 @@ import { Formik } from "formik";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 
 export default function LoginForm({ onSubmit }) {
-  function submitHandler({ usuario, contraseña }) {
-    onSubmit(usuario, contraseña);
+  function submitHandler({ username, password }) {
+    onSubmit(username, password);
   }
 
   return (
@@ -19,16 +19,16 @@ export default function LoginForm({ onSubmit }) {
       <View style={styles.container}>
         <FormHeader title="GLUTTY" />
         <Formik
-          initialValues={{ usuario: "", contraseña: "" }}
-          validate={({ usuario, contraseña }) => {
+          initialValues={{ username: "", password: "" }}
+          validate={({ username, password }) => {
             const errors = {};
 
-            if (usuario.trim() === "") {
-              errors.usuario = "Usuario requerido";
+            if (username.trim() === "") {
+              errors.username = "Usuario requerido";
             }
 
-            if (contraseña.trim() === "") {
-              errors.contraseña = "Contraseña requerida";
+            if (password.trim() === "") {
+              errors.password = "Contraseña requerida";
             }
 
             return errors;
@@ -47,24 +47,24 @@ export default function LoginForm({ onSubmit }) {
               <FormTitle color={Colors.mJordan}>Iniciar Sesión</FormTitle>
               <FormControl
                 label="Usuario"
-                value={values.usuario}
-                name="usuario"
+                value={values.username}
+                name="username"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                touched={touched.usuario}
-                errors={errors.usuario}
-                autoCapitalize={false}
+                touched={touched.username}
+                errors={errors.username}
+                autoCapitalize="none"
               />
               <FormControl
                 label="Contraseña"
                 secure
-                value={values.contraseña}
-                name="contraseña"
+                value={values.password}
+                name="password"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                touched={touched.contraseña}
-                errors={errors.contraseña}
-                autoCapitalize={false}
+                touched={touched.password}
+                errors={errors.password}
+                autoCapitalize="none"
               />
               <View style={styles.buttonContainer}>
                 <Button

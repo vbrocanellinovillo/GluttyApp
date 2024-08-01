@@ -229,7 +229,6 @@ export async function scanProduct(eanCode) {
   const requestUrl = url + "find-by-barcode/";
 
   try {
-    await sleep(5000)
     const data = await httpRequest(requestUrl, requestOptions);
 
     const fetchedProductData = data.producto;

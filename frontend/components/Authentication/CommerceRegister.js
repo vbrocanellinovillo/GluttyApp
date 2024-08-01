@@ -13,20 +13,34 @@ export default function CommerceRegister({ onSubmit }) {
   return (
     <Formik
       initialValues={{
-        nombre: "",
+        username: "",
+        name: "",
         cuit: "",
         email: "",
-        contraseña: "",
-        descripcion: "",
+        password: "",
+        repeatPassword: "",
+        description: "",
       }}
-      validate={({ nombre, cuit, email, contraseña, descripcion }) => {
+      validate={({
+        username,
+        name,
+        cuit,
+        email,
+        password,
+        repeatPassword,
+        description,
+      }) => {
         const errors = {};
-        if (nombre.trim() === "") {
-          errors.nombre = "Nombre";
+        if (username.trim() === "") {
+          errors.username = "Nombre de usuario requerido";
+        }
+
+        if (name.trim() === "") {
+          errors.name = "Nombre requerido";
         }
 
         if (cuit.trim() === "") {
-          errors.nombre = "CUIT requerido";
+          errors.cuit = "CUIT requerido";
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,27 +49,31 @@ export default function CommerceRegister({ onSubmit }) {
         }
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
-        if (!passwordRegex.test(contraseña)) {
-          errors.contraseña = "Error, la contraseña debe tener:";
+        if (!passwordRegex.test(password)) {
+          errors.password = "Error, la contraseña debe tener:";
 
-          if (contraseña.trim().length < 8) {
-            errors.contraseña += "\n *Al menos 8 caracteres";
+          if (password.trim().length < 8) {
+            errors.password += "\n *Al menos 8 caracteres";
           }
 
           const minRegex = /(?=.*[a-z])/;
-          if (!minRegex.test(contraseña)) {
-            errors.contraseña += "\n *Una minuscula";
+          if (!minRegex.test(password)) {
+            errors.password += "\n *Una minuscula";
           }
 
           const mayusRegex = /(?=.*[A-Z])/;
-          if (!mayusRegex.test(contraseña)) {
-            errors.contraseña += "\n *Una mayuscula";
+          if (!mayusRegex.test(password)) {
+            errors.password += "\n *Una mayuscula";
           }
 
           const specialCharRegex = /(?=.*[\W_])/;
-          if (!specialCharRegex.test(contraseña)) {
-            errors.contraseña += "\n *Un caracter especial";
+          if (!specialCharRegex.test(password)) {
+            errors.password += "\n *Un caracter especial";
           }
+        }
+
+        if (repeatPassword !== password) {
+          errors.repeatPassword = "Las contraseñas no coinciden";
         }
 
         return errors;
@@ -72,14 +90,24 @@ export default function CommerceRegister({ onSubmit }) {
       }) => (
         <>
           <FormControl
-            label="Nombre"
-            value={values.nombre}
-            name="nombre"
+            label="Nombre de usuario"
+            value={values.username}
+            name="username"
             handleChange={handleChange}
             handleBlur={handleBlur}
-            errors={errors.nombre}
-            touched={touched.nombre}
-            autoCapitalize={true}
+            errors={errors.username}
+            touched={touched.username}
+            autoCapitalize="none"
+          />
+          <FormControl
+            label="Nombre"
+            value={values.name}
+            name="name"
+            handleChange={handleChange}
+            handleBlur={handleBlur}
+            errors={errors.name}
+            touched={touched.name}
+            autoCapitalize="sentences"
           />
           <FormControl
             label="CUIT"
@@ -100,29 +128,41 @@ export default function CommerceRegister({ onSubmit }) {
             errors={errors.email}
             touched={touched.email}
             keyboardType="email-address"
-            autoCapitalize={false}
+            autoCapitalize="none"
           />
           <FormControl
             label="Contraseña"
             secure
-            value={values.contraseña}
-            name="contraseña"
+            value={values.password}
+            name="password"
             handleChange={handleChange}
             handleBlur={handleBlur}
-            errors={errors.contraseña}
-            touched={touched.contraseña}
-            autoCapitalize={false}
+            errors={errors.password}
+            touched={touched.password}
+            autoCapitalize="none"
           />
           <FormControl
-            label="Descripción"
-            value={values.descripcion}
-            name="descripcion"
+            label="Repetir contraseña"
+            secure
+            value={values.repeatPassword}
+            name="repeatPassword"
             handleChange={handleChange}
             handleBlur={handleBlur}
-            errors={errors.descripcion}
-            touched={touched.descripcion}
-            autoCapitalize={true}
+            errors={errors.repeatPassword}
+            touched={touched.repeatPassword}
+            autoCapitalize="none"
+          />
+          <FormControl
+            label="Descripción (opcional / maximo 50 )"
+            value={values.description}
+            name="description"
+            handleChange={handleChange}
+            handleBlur={handleBlur}
+            errors={errors.description}
+            touched={touched.description}
             textarea={true}
+            autoCapitalize="sentences"
+            maxLength={50}
           />
           <View style={styles.buttonContainer}>
             <Button
@@ -150,6 +190,6 @@ const styles = StyleSheet.create({
   },
 
   bottomText: {
-    paddingBottom: 140,
+    paddingBottom: 170,
   },
 });

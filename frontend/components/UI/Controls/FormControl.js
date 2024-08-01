@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors";
 import { TextInput } from "react-native-paper";
+import { useState } from "react";
 
 export default function FormControl({
   label,
@@ -12,9 +13,16 @@ export default function FormControl({
   touched,
   errors,
   keyboardType,
-  autoCapitalize,
   textarea,
+  autoCapitalize,
+  maxLength,
 }) {
+  const [hideText, setHideText] = useState(secure ? true : false);
+
+  function toggleHiddeText() {
+    setHideText(!hideText);
+  }
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -29,9 +37,11 @@ export default function FormControl({
         }
         style={[
           textarea ? [styles.formControl, styles.textarea] : styles.formControl,
-          { borderColor: touched && errors ? Colors.redError : Colors.mJordan },
+          {
+            borderColor: touched && errors ? Colors.redError : Colors.mJordan,
+          },
         ]}
-        secureTextEntry={secure}
+        secureTextEntry={hideText}
         onChangeText={handleChange(name)}
         onBlur={handleBlur(name)}
         value={value}
@@ -40,7 +50,16 @@ export default function FormControl({
         theme={{ roundness: 8 }}
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
-        numberOfLines={10}
+        maxLength={maxLength}
+        right={
+          secure && (
+            <TextInput.Icon
+              icon={hideText ? "eye" : "eye-off"}
+              color={Colors.mJordan}
+              onPress={toggleHiddeText}
+            />
+          )
+        }
       />
       {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
     </View>
@@ -67,7 +86,7 @@ const styles = StyleSheet.create({
   },
 
   textarea: {
-    textAlignVertical: "top",
     minHeight: 100,
+    paddingBottom: 30,
   },
 });

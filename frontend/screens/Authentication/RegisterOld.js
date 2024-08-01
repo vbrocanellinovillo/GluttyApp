@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import RegisterForm from "../../components/Authentication/RegisterForm";
+import RegisterForm from "../../components/Authentication/RegisterFormOld";
 import { register } from "../../services/userService";
 import { useState } from "react";
 import { authActions } from "../../context/auth";

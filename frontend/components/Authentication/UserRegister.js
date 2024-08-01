@@ -8,7 +8,7 @@ import Button from "../UI/Controls/Button";
 import { Colors } from "../../constants/colors";
 import NavigationText from "../UI/Navigation/NavigationText";
 
-const sexos = [
+const sexes = [
   { label: "Masculino", value: "MALE" },
   { label: "Femenino", value: "FEMALE" },
   { label: "Otro", value: "OTHER" },
@@ -22,42 +22,44 @@ export default function UserRegister({ onSubmit }) {
   return (
     <Formik
       initialValues={{
-        nombreUsuario: "",
-        nombre: "",
-        apellido: "",
-        sexo: "",
-        fechaNacimiento: undefined,
+        username: "",
+        firstName: "",
+        lastName: "",
+        sex: "",
+        dateBirth: undefined,
         email: "",
-        contraseña: "",
+        password: "",
+        repeatPassword: "",
       }}
       validate={({
-        nombreUsuario,
-        nombre,
-        apellido,
-        sexo,
-        fechaNacimiento,
+        username,
+        firstName,
+        lastName,
+        sex,
+        dateBirth,
         email,
-        contraseña,
+        password,
+        repeatPassword,
       }) => {
         const errors = {};
-        if (nombreUsuario.trim() === "") {
-          errors.nombreUsuario = "Nombre de usuario requerido";
+        if (username.trim() === "") {
+          errors.username = "Nombre de usuario requerido";
         }
 
-        if (nombre.trim() === "") {
-          errors.nombre = "Nombre requerido";
+        if (firstName.trim() === "") {
+          errors.firstName = "Nombre requerido";
         }
 
-        if (apellido.trim() === "") {
-          errors.apellido = "Apellido requerido";
+        if (lastName.trim() === "") {
+          errors.lastName = "Apellido requerido";
         }
 
-        if (sexo.trim() === "") {
-          errors.sexo = "Genero requerido";
+        if (sex.trim() === "") {
+          errors.sex = "Genero requerido";
         }
 
-        if (fechaNacimiento === undefined) {
-          errors.fechaNacimiento = "Fecha requerida";
+        if (dateBirth === undefined) {
+          errors.dateBirth = "Fecha requerida";
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,27 +68,31 @@ export default function UserRegister({ onSubmit }) {
         }
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
-        if (!passwordRegex.test(contraseña)) {
-          errors.contraseña = "Error, la contraseña debe tener:";
+        if (!passwordRegex.test(password)) {
+          errors.password = "Error, la contraseña debe tener:";
 
-          if (contraseña.trim().length < 8) {
-            errors.contraseña += "\n *Al menos 8 caracteres";
+          if (password.trim().length < 8) {
+            errors.password += "\n *Al menos 8 caracteres";
           }
 
           const minRegex = /(?=.*[a-z])/;
-          if (!minRegex.test(contraseña)) {
-            errors.contraseña += "\n *Una minuscula";
+          if (!minRegex.test(password)) {
+            errors.password += "\n *Una minuscula";
           }
 
           const mayusRegex = /(?=.*[A-Z])/;
-          if (!mayusRegex.test(contraseña)) {
-            errors.contraseña += "\n *Una mayuscula";
+          if (!mayusRegex.test(password)) {
+            errors.password += "\n *Una mayuscula";
           }
 
           const specialCharRegex = /(?=.*[\W_])/;
-          if (!specialCharRegex.test(contraseña)) {
-            errors.contraseña += "\n *Un caracter especial";
+          if (!specialCharRegex.test(password)) {
+            errors.password += "\n *Un caracter especial";
           }
+        }
+
+        if (repeatPassword !== password) {
+          errors.repeatPassword = "Las contraseñas no coinciden";
         }
 
         return errors;
@@ -105,51 +111,51 @@ export default function UserRegister({ onSubmit }) {
         <>
           <FormControl
             label="Nombre usuario"
-            value={values.nombreUsuario}
-            name="nombreUsuario"
+            value={values.username}
+            name="username"
             handleChange={handleChange}
             handleBlur={handleBlur}
-            errors={errors.nombreUsuario}
-            touched={touched.nombreUsuario}
-            autoCapitalize={false}
+            errors={errors.username}
+            touched={touched.username}
+            autoCapitalize="none"
           />
           <FormControl
             label="Nombre"
-            value={values.nombre}
-            name="nombre"
+            value={values.firstName}
+            name="firstName"
             handleChange={handleChange}
             handleBlur={handleBlur}
-            errors={errors.nombre}
-            touched={touched.nombre}
-            autoCapitalize={true}
+            errors={errors.firstName}
+            touched={touched.firstName}
+            autoCapitalize="words"
           />
           <FormControl
             label="Apellido"
-            value={values.apellido}
-            name="apellido"
+            value={values.lastName}
+            name="lastName"
             handleChange={handleChange}
             handleBlur={handleBlur}
-            errors={errors.apellido}
-            touched={touched.apellido}
-            autoCapitalize={true}
+            errors={errors.lastName}
+            touched={touched.lastName}
+            autoCapitalize="words"
           />
           <FormGroup>
             <Combobox
-              data={sexos}
-              placeholder="Genero"
-              onChange={(item) => setFieldValue("sexo", item)}
-              value={values.sexo}
-              touched={touched.sexo}
-              errors={errors.sexo}
-              name="sexo"
+              data={sexes}
+              placeholder="Sexo"
+              onChange={(item) => setFieldValue("sex", item)}
+              value={values.sex}
+              touched={touched.sex}
+              errors={errors.sex}
+              name="sex"
               handleBlur={handleBlur}
             />
             <DatePicker
               placeholder="Fecha nacimiento"
-              onChange={(date) => setFieldValue("fechaNacimiento", date)}
-              touched={touched.fechaNacimiento}
-              errors={errors.fechaNacimiento}
-              value={values.fechaNacimiento}
+              onChange={(date) => setFieldValue("dateBirth", date)}
+              touched={touched.dateBirth}
+              errors={errors.dateBirth}
+              value={values.dateBirth}
             />
           </FormGroup>
           <FormControl
@@ -161,18 +167,29 @@ export default function UserRegister({ onSubmit }) {
             errors={errors.email}
             touched={touched.email}
             keyboardType="email-address"
-            autoCapitalize={false}
+            autoCapitalize="none"
           />
           <FormControl
             label="Contraseña"
             secure
-            value={values.contraseña}
-            name="contraseña"
+            value={values.password}
+            name="password"
             handleChange={handleChange}
             handleBlur={handleBlur}
-            errors={errors.contraseña}
-            touched={touched.contraseña}
-            autoCapitalize={false}
+            errors={errors.password}
+            touched={touched.password}
+            autoCapitalize="none"
+          />
+          <FormControl
+            label="Repetir contraseña"
+            secure
+            value={values.repeatPassword}
+            name="repeatPassword"
+            handleChange={handleChange}
+            handleBlur={handleBlur}
+            errors={errors.repeatPassword}
+            touched={touched.repeatPassword}
+            autoCapitalize="none"
           />
           <View style={styles.buttonContainer}>
             <Button
@@ -200,6 +217,6 @@ const styles = StyleSheet.create({
   },
 
   bottomText: {
-    paddingBottom: 140,
+    paddingBottom: 170,
   },
 });
