@@ -98,10 +98,7 @@ export default function MainNavigation() {
         component={Recipes}
         position="LEFT"
       />
-      <CurvedBottomBarExpo.Screen
-        name="Escaner"
-        position="CIRCLE"
-      />
+      <CurvedBottomBarExpo.Screen name="Escaner" position="CIRCLE" />
       <CurvedBottomBarExpo.Screen
         name="Productos"
         position="RIGHT"

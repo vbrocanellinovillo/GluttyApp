@@ -5,7 +5,7 @@ import * as Haptics from "expo-haptics";
 
 export default function ProductItem({ product, onPress }) {
   function showDetails() {
-    Haptics.selectionAsync()
+    Haptics.selectionAsync();
     onPress(product);
   }
 
@@ -15,7 +15,7 @@ export default function ProductItem({ product, onPress }) {
       onPress={showDetails}
     >
       <View style={styles.item}>
-        <TextCommonsMedium style={styles.name}>
+        <TextCommonsMedium style={styles.name} numberOfLines={2}>
           {product.name}
         </TextCommonsMedium>
         <TextCommonsRegular style={styles.brand}>
@@ -40,13 +40,13 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    fontSize: 28,
+    fontSize: 25,
     marginBottom: 10,
     fontWeight: "500",
   },
 
   brand: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "300",
   },
 

@@ -22,6 +22,9 @@ export default function ProductsList() {
   const [brands, setBrands] = useState([]);
   const [types, setTypes] = useState([]);
 
+  const [recommendedBrands, setRecommendedBrands] = useState([]);
+  const [recommendedTypes, setRecommendedTypes] = useState([]);
+
   // UI
   const [showFilters, setShowFilters] = useState(false);
   const dispatch = useDispatch();
@@ -32,12 +35,10 @@ export default function ProductsList() {
 
   // Fetch data
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["products", searchTerm],
+    queryKey: ["products", searchTerm, brands, types],
     queryFn: () => fetchProducts({ searchTerm, brands, types }),
     enabled: false,
   });
-
-  const [fetchFilters, setFetchFilters] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,13 +49,14 @@ export default function ProductsList() {
     };
 
     fetchData();
-  }, [searchTerm, fetchFilters]);
+  }, [searchTerm, brands, types]);
 
   function handleChange(text) {
     setSearchTerm(text);
   }
 
   function toggleFilters() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setShowFilters(!showFilters);
   }
 
@@ -86,8 +88,11 @@ export default function ProductsList() {
     }
   }
 
-  function fetchWithFilters() {
-    setFetchFilters(!fetchFilters);
+  function searchWithFilters(selectedBrands, selectedTypes) {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    setBrands(selectedBrands);
+    setTypes(selectedTypes);
   }
 
   function showDetails(product) {
@@ -104,52 +109,52 @@ export default function ProductsList() {
 
   let content = <></>;
 
+  let initialBrands = [];
+  let initialTypes = [];
+
   if (!isLoading && searchTerm.trim() === "") content = <NoProductsGlutty />;
 
   if (isLoading) content = <ProductsSkeleton />;
 
   if (data && !isLoading && searchTerm.trim() !== "") {
+    if (data.brands && data.brands.length > 0) {
+      initialBrands = data.brands.slice(0, 7);
+
+      if (data.brands.length > 1) {
+        const firstBrand = data.brands[0].nombre;
+        const secondBrand = data.brands[1].nombre;
+
+        if (recommendedBrands[0] !== firstBrand) {
+          setRecommendedBrands([firstBrand, secondBrand]);
+        }
+      }
+    }
+
+    if (data.types && data.types.length > 0) {
+      initialTypes = data.types.slice(0, 7);
+
+      if (data.types.length > 1) {
+        const firstType = data.types[0].nombre;
+        const secondType = data.types[1].nombre;
+
+        if (recommendedTypes[0] !== firstType) {
+          setRecommendedTypes([firstType, secondType]);
+        }
+      }
+    }
+
     if (data.products.length === 0) {
       content = <NoProductsFound />;
     } else {
-      const recommendedBrand = data.brands[0];
-      const recommendedType = data.types[0];
-
-      const initialBrands = data.brands.slice(0, 7);
-      const initialTypes = data.types.slice(0, 7);
-
       content = (
-        <>
-          <RecommendedFilters
-            brand={recommendedBrand}
-            type={recommendedType}
-            toggleFilters={toggleFilters}
-            isSelectedBrand={isSelectedBrand}
-            isSelectedType={isSelectedType}
-            handleSelectBrand={handleSelectBrand}
-            handleSelectType={handleSelectType}
-            onPressFilter={fetchWithFilters}
-          />
-          <FlatList
-            data={data.products}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <ProductItem product={item} onPress={showDetails} />
-            )}
-            showsVerticalScrollIndicator={false}
-          />
-          <FiltersDialog
-            brands={initialBrands}
-            types={initialTypes}
-            toggleFilters={toggleFilters}
-            visible={showFilters}
-            handleSelectBrand={handleSelectBrand}
-            handleSelectType={handleSelectType}
-            isSelectedBrand={isSelectedBrand}
-            isSelectedType={isSelectedType}
-            onSearch={fetchWithFilters}
-          />
-        </>
+        <FlatList
+          data={data.products}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <ProductItem product={item} onPress={showDetails} />
+          )}
+          showsVerticalScrollIndicator={false}
+        />
       );
     }
   }
@@ -163,6 +168,18 @@ export default function ProductsList() {
             onTextChange={handleChange}
             placeholder="Buscar productos sin TACC"
           />
+          {searchTerm.trim().length > 0 &&
+            (recommendedBrands.length > 1 || recommendedTypes.length > 1) && (
+              <RecommendedFilters
+                brands={recommendedBrands}
+                types={recommendedTypes}
+                toggleFilters={toggleFilters}
+                isSelectedBrand={isSelectedBrand}
+                isSelectedType={isSelectedType}
+                handleSelectBrand={handleSelectBrand}
+                handleSelectType={handleSelectType}
+              />
+            )}
           {content}
         </View>
       </DismissKeyboardContainer>
@@ -170,6 +187,15 @@ export default function ProductsList() {
         isVisible={detailsVisible}
         product={product}
         onDismiss={hideDetails}
+      />
+      <FiltersDialog
+        brands={initialBrands}
+        types={initialTypes}
+        toggleFilters={toggleFilters}
+        visible={showFilters}
+        onSearch={searchWithFilters}
+        markedBrands={brands}
+        markedTypes={types}
       />
     </>
   );

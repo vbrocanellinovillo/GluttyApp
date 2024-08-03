@@ -4,18 +4,121 @@ import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Portal, Dialog, Button } from "react-native-paper";
 import { Chip } from "@rneui/themed";
 import { Colors } from "../../constants/colors";
+import FallbackText from "./FallbackText";
+import { useState, useEffect } from "react";
+import * as Haptics from "expo-haptics";
 
 export default function FiltersDialog({
+  toggleFilters,
   brands,
   types,
-  handleSelectBrand,
-  handleSelectType,
-  toggleFilters,
   visible,
-  isSelectedBrand,
-  isSelectedType,
   onSearch,
+  markedBrands,
+  markedTypes,
 }) {
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
+
+  useEffect(() => {
+    setSelectedBrands(markedBrands ? markedBrands : []);
+  }, [markedBrands]);
+
+  useEffect(() => {
+    setSelectedTypes(markedTypes ? markedTypes : []);
+  }, [markedTypes]);
+
+
+  function isSelectedBrand(brand) {
+    return selectedBrands.includes(brand);
+  }
+
+  function isSelectedType(type) {
+    return selectedTypes.includes(type);
+  }
+
+  function selectBrand(pressedBrand) {
+    Haptics.selectionAsync();
+    if (isSelectedBrand(pressedBrand)) {
+      setSelectedBrands((prevBrands) =>
+        prevBrands.filter((brand) => brand !== pressedBrand)
+      );
+    } else {
+      setSelectedBrands([...selectedBrands, pressedBrand]);
+    }
+  }
+
+  function selectType(pressedType) {
+    Haptics.selectionAsync();
+    if (isSelectedType(pressedType)) {
+      setSelectedTypes((prevTypes) =>
+        prevTypes.filter((type) => type !== pressedType)
+      );
+    } else {
+      setSelectedTypes([...selectedTypes, pressedType]);
+    }
+  }
+
+  let brandsContent = <FallbackText>No se encontraron marcas</FallbackText>;
+  let typesContent = (
+    <FallbackText>No se encontraron tipos de producto</FallbackText>
+  );
+
+  if (brands.length > 0) {
+    brandsContent = brands.map((brand) => (
+      <Chip
+        key={brand.id}
+        type="outlined"
+        title={brand.nombre}
+        containerStyle={
+          isSelectedBrand(brand.nombre)
+            ? [styles.chip, styles.selected]
+            : styles.chip
+        }
+        titleStyle={styles.chipText}
+        onPress={() => selectBrand(brand.nombre)}
+        icon={
+          isSelectedBrand(brand.nombre) && {
+            name: "close",
+            type: "ionicon",
+          }
+        }
+        iconRight
+        iconContainerStyle={styles.chipIcon}
+      />
+    ));
+  }
+
+  if (types.length > 0) {
+    typesContent = types.map((type) => (
+      <Chip
+        key={type.id}
+        type="outlined"
+        title={type.nombre}
+        containerStyle={
+          isSelectedType(type.nombre)
+            ? [styles.chip, styles.selected]
+            : styles.chip
+        }
+        titleStyle={styles.chipText}
+        onPress={() => selectType(type.nombre)}
+        icon={
+          isSelectedType(type.nombre) && {
+            name: "close",
+            type: "ionicon",
+          }
+        }
+        iconRight
+        iconContainerStyle={styles.chipIcon}
+      />
+    ));
+  }
+
+  function submitSearch() {
+    onSearch(selectedBrands, selectedTypes);
+    toggleFilters();
+  }
+
   return (
     <Portal>
       <Dialog
@@ -31,64 +134,18 @@ export default function FiltersDialog({
             <TextCommonsRegular style={styles.subtitle}>
               Tipo Producto
             </TextCommonsRegular>
-            <View style={styles.chipsContainer}>
-              {types.map((type) => (
-                <Chip
-                  key={type.id}
-                  type="outlined"
-                  title={type.name}
-                  containerStyle={
-                    isSelectedType(type)
-                      ? [styles.chip, styles.selected]
-                      : styles.chip
-                  }
-                  titleStyle={styles.chipText}
-                  onPress={() => handleSelectType(type)}
-                  icon={
-                    isSelectedType(type) && {
-                      name: "close",
-                      type: "ionicon",
-                    }
-                  }
-                  iconRight
-                  iconContainerStyle={styles.chipIcon}
-                />
-              ))}
-            </View>
+            <View style={styles.chipsContainer}>{typesContent}</View>
           </View>
           <View style={styles.field}>
             <Text style={styles.subtitle}>
               <TextCommonsRegular>Marca</TextCommonsRegular>
             </Text>
-            <View style={styles.chipsContainer}>
-              {brands.map((brand) => (
-                <Chip
-                  key={brand.id}
-                  type="outlined"
-                  title={brand.name}
-                  containerStyle={
-                    isSelectedBrand(brand)
-                      ? [styles.chip, styles.selected]
-                      : styles.chip
-                  }
-                  titleStyle={styles.chipText}
-                  onPress={() => handleSelectBrand(brand)}
-                  icon={
-                    isSelectedBrand(brand) && {
-                      name: "close",
-                      type: "ionicon",
-                    }
-                  }
-                  iconRight
-                  iconContainerStyle={styles.chipIcon}
-                />
-              ))}
-            </View>
+            <View style={styles.chipsContainer}>{brandsContent}</View>
           </View>
           <View style={styles.buttonsContainer}>
             <Button
               mode="contained"
-              onPress={onSearch}
+              onPress={submitSearch}
               buttonColor={Colors.uva}
               textColor="white"
             >
@@ -135,6 +192,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 6,
     marginTop: 6,
+    overflow: "hidden",
   },
 
   chip: {
@@ -144,8 +202,9 @@ const styles = StyleSheet.create({
   },
 
   chipText: {
-    fontSize: 16,
+    fontSize: 14,
     color: "black",
+    fontWeight: "400",
   },
 
   selected: {

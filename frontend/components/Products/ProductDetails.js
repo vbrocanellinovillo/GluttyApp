@@ -13,31 +13,38 @@ export default function ProductDetails({ product, onDismiss }) {
         <TextCommonsMedium style={styles.title}>
           {product.name.toUpperCase()}
         </TextCommonsMedium>
-        <View
-          style={[styles.imageContainer, styles.shadow, styles.widthElements]}
-        >
+        <View style={[styles.imageContainer, styles.shadow]}>
           <Image source={{ uri: thumbGlutty }} style={styles.image} />
         </View>
-        <View style={[styles.tag, styles.shadow, styles.widthElements]}>
+        <View style={[styles.tag, styles.shadow]}>
           <TextCommonsRegular style={styles.tagText}>
             Producto Apto
           </TextCommonsRegular>
           <Ionicons name="checkmark" color="white" size={26} />
         </View>
-        <View style={[styles.info, styles.shadow, styles.widthElements]}>
-          <View style={styles.topInfo}>
-            <DetailWithTitle title="Marca">{product.brand}</DetailWithTitle>
+        <View style={styles.shadow}>
+          <View style={styles.info}>
+            <View style={styles.topInfo}>
+              <DetailWithTitle
+                title="Marca"
+                containerStyle={styles.topInfoItem}
+              >
+                {product.brand}
+              </DetailWithTitle>
+              <DetailWithTitle title="RNPA" containerStyle={styles.topInfoItem}>
+                {product.rnpa}
+              </DetailWithTitle>
+            </View>
             <DetailWithTitle title="Tipo Producto">
               {product.type}
             </DetailWithTitle>
+            <DetailWithTitle
+              title="Descripción"
+              containerStyle={styles.description}
+            >
+              {product.description}
+            </DetailWithTitle>
           </View>
-          <DetailWithTitle title="RNPA">{product.rnpa}</DetailWithTitle>
-          <DetailWithTitle
-            title="Descripción"
-            containerStyle={styles.description}
-          >
-            {product.description}
-          </DetailWithTitle>
         </View>
       </View>
     </Pressable>
@@ -53,25 +60,22 @@ const styles = StyleSheet.create({
 
   detail: {
     backgroundColor: Colors.pielcita,
-    alignItems: "center",
     borderRadius: 20,
     gap: 10,
-    paddingVertical: 20,
+    padding: 20,
   },
 
   title: {
-    fontSize: 30,
-    paddingBottom: 14,
+    fontSize: 23,
+    fontWeight: "600",
+    textAlign: "center",
   },
 
   imageContainer: {
     height: 130,
+    width: "100%",
     backgroundColor: "white",
     borderRadius: 12,
-  },
-
-  widthElements: {
-    width: "90%",
   },
 
   shadow: {
@@ -108,11 +112,18 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 12,
     gap: 10,
+    overflow: "hidden",
   },
 
   topInfo: {
     flexDirection: "row",
-    gap: 70,
+    gap: 50,
+    overflow: "hidden",
+    marginBottom: 4,
+  },
+
+  topInfoItem: {
+    flex: 1,
   },
 
   description: {

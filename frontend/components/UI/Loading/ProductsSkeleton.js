@@ -6,11 +6,6 @@ export default function ProductsSkeleton() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.filtersContainer}>
-        <Skeleton width={100} height={30} style={styles.chipsRadius} />
-        <Skeleton width={100} height={30} style={styles.chipsRadius} />
-        <Skeleton width={20} height={30} style={styles.chipsRadius} />
-      </View>
       {items.map((item) => (
         <Skeleton key={item} style={styles.skeleton} />
       ))}

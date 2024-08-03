@@ -2,12 +2,10 @@ import { useDispatch } from "react-redux";
 import LoginForm from "../../components/Authentication/LoginForm";
 import { authActions } from "../../context/auth";
 import { login } from "../../services/userService";
-import { Alert } from "react-native";
 import { useState } from "react";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { Colors } from "../../constants/colors";
 import GluttyModal from "../../components/UI/GluttyModal";
-import TextCommonsRegular from "../../components/UI/FontsTexts/TextCommonsRegular";
 
 export default function Login() {
   const dispatch = useDispatch();
