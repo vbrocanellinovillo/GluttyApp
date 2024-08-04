@@ -42,7 +42,11 @@ export default function ProductsList() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (searchTerm.trim() === "") {
+      if (
+        searchTerm.trim() === "" &&
+        brands.length === 0 &&
+        types.length === 0
+      ) {
         return;
       }
       refetch();
@@ -50,6 +54,10 @@ export default function ProductsList() {
 
     fetchData();
   }, [searchTerm, brands, types]);
+
+  useEffect(() => {
+    setSearchTerm("");
+  }, [brands, types]);
 
   function handleChange(text) {
     setSearchTerm(text);
@@ -116,7 +124,7 @@ export default function ProductsList() {
 
   if (isLoading) content = <ProductsSkeleton />;
 
-  if (data && !isLoading && searchTerm.trim() !== "") {
+  if (data && !isLoading) {
     if (data.brands && data.brands.length > 0) {
       initialBrands = data.brands.slice(0, 7);
 
@@ -167,19 +175,19 @@ export default function ProductsList() {
             backgroundColor={Colors.pielcita}
             onTextChange={handleChange}
             placeholder="Buscar productos sin TACC"
+            value={searchTerm}
           />
-          {searchTerm.trim().length > 0 &&
-            (recommendedBrands.length > 1 || recommendedTypes.length > 1) && (
-              <RecommendedFilters
-                brands={recommendedBrands}
-                types={recommendedTypes}
-                toggleFilters={toggleFilters}
-                isSelectedBrand={isSelectedBrand}
-                isSelectedType={isSelectedType}
-                handleSelectBrand={handleSelectBrand}
-                handleSelectType={handleSelectType}
-              />
-            )}
+          {(recommendedBrands.length > 1 || recommendedTypes.length > 1) && (
+            <RecommendedFilters
+              brands={recommendedBrands}
+              types={recommendedTypes}
+              toggleFilters={toggleFilters}
+              isSelectedBrand={isSelectedBrand}
+              isSelectedType={isSelectedType}
+              handleSelectBrand={handleSelectBrand}
+              handleSelectType={handleSelectType}
+            />
+          )}
           {content}
         </View>
       </DismissKeyboardContainer>

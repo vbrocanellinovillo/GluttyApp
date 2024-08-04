@@ -1,7 +1,12 @@
 import { StyleSheet, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function Searchbar({ backgroundColor, onTextChange, placeholder }) {
+export default function Searchbar({
+  backgroundColor,
+  onTextChange,
+  placeholder,
+  value,
+}) {
   function handleChange(text) {
     onTextChange(text);
   }
@@ -13,6 +18,7 @@ export default function Searchbar({ backgroundColor, onTextChange, placeholder }
         onChangeText={handleChange}
         placeholder={placeholder}
         placeholderTextColor="#666"
+        value={value}
       />
       <Ionicons name="search" color="#666" size={24} style={styles.icon} />
     </View>

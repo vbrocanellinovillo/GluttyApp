@@ -28,7 +28,6 @@ export default function FiltersDialog({
     setSelectedTypes(markedTypes ? markedTypes : []);
   }, [markedTypes]);
 
-
   function isSelectedBrand(brand) {
     return selectedBrands.includes(brand);
   }
@@ -192,7 +191,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 6,
     marginTop: 6,
-    overflow: "hidden",
   },
 
   chip: {
