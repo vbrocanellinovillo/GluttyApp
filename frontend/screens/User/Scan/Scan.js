@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useCameraPermissions } from "expo-camera";
 import { View } from "react-native";
-import Scanner from "../../components/Scanner/Scanner";
-import NoPermissions from "../../components/Scanner/NoPermissions";
-import { scanProduct } from "../../services/productsService";
+import Scanner from "../../../components/Scanner/Scanner";
+import NoPermissions from "../../../components/Scanner/NoPermissions";
+import { scanProduct } from "../../../services/productsService";
 
 export default function Scan({ navigation }) {
   // Permissions

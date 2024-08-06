@@ -1,10 +1,10 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import MainNavigation from "./MainNavigation";
-import DrawerContent from "../components/UI/Navigation/DrawerContent";
+import DrawerContent from "../../../components/UI/Navigation/DrawerContent";
+import UserTabs from "./UserTabs";
 
 const Drawer = createDrawerNavigator();
 
-export default function MainDrawer() {
+export default function UserDrawer() {
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -14,7 +14,7 @@ export default function MainDrawer() {
         <DrawerContent navigation={navigation} />
       )}
     >
-      <Drawer.Screen name="Tabs" component={MainNavigation} />
+      <Drawer.Screen name="Tabs" component={UserTabs} />
     </Drawer.Navigator>
   );
 }

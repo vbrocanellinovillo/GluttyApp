@@ -1,16 +1,16 @@
-import Home from "../screens/Home";
-import Profile from "../screens/Profile/Profile";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Map from "../screens/Map";
-import Recipes from "../screens/Recipes";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "../constants/colors";
-import PrivacityAndSecurity from "../screens/Profile/PrivacityAndSecurity";
-import MainHeader from "../components/UI/Header/MainHeader";
-import Products from "../screens/Products/Products";
+import { Colors } from "../../../constants/colors";
+import MainHeader from "../../../components/UI/Header/MainHeader";
+import Home from "../../../screens/User/Home";
+import Recipes from "../../../screens/User/Recipes";
+import Products from "../../../screens/User/Products/Products";
+import Map from "../../../screens/User/Map";
+import Profile from "../../../screens/Profile/Profile";
+import PrivacityAndSecurity from "../../../screens/Profile/PrivacityAndSecurity";
 
-export default function MainNavigation() {
+export default function UserTabs() {
   const _renderIcon = (routeName, selectedTab) => {
     let icon = "";
 

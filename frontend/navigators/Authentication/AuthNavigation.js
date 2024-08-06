@@ -1,8 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Login from "../screens/Authentication/Login";
-import Register from "../screens/Authentication/Register";
-import { Colors } from "../constants/colors";
-import InitialScreen from "../screens/Authentication/InitialScreen";
+import Login from "../../screens/Authentication/Login";
+import Register from "../../screens/Authentication/Register";
+import { Colors } from "../../constants/colors";
+import InitialScreen from "../../screens/Authentication/InitialScreen";
 
 const AuthNav = createNativeStackNavigator();
 

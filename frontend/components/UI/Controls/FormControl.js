@@ -16,6 +16,9 @@ export default function FormControl({
   textarea,
   autoCapitalize,
   maxLength,
+  style,
+  containerStyle,
+  labelColor,
 }) {
   const [hideText, setHideText] = useState(secure ? true : false);
 
@@ -24,26 +27,33 @@ export default function FormControl({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <TextInput
         label={
           <Text
             style={{
-              color: touched && errors ? Colors.redError : "#aaa",
+              color:
+                touched && errors
+                  ? Colors.redError
+                  : labelColor
+                  ? labelColor
+                  : "#aaa",
             }}
           >
             {label}
           </Text>
         }
         style={[
-          textarea ? [styles.formControl, styles.textarea] : styles.formControl,
+          textarea
+            ? [styles.formControl, styles.textarea, style]
+            : [styles.formControl, style],
           {
             borderColor: touched && errors ? Colors.redError : Colors.mJordan,
           },
         ]}
         secureTextEntry={hideText}
-        onChangeText={handleChange(name)}
-        onBlur={handleBlur(name)}
+        onChangeText={handleChange ? handleChange(name) : () => undefined}
+        onBlur={handleBlur ? handleBlur(name) : () => undefined}
         value={value}
         textColor={Colors.mJordan}
         underlineStyle={{ display: "none" }}

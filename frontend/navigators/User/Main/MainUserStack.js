@@ -1,18 +1,18 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import MainDrawer from "./MainDrawer";
-import Scan from "../screens/Scan/Scan";
-import ScannerHeader from "../components/Scanner/ScannerHeader";
+import ScannerHeader from "../../../components/Scanner/ScannerHeader";
+import Scan from "../../../screens/User/Scan/Scan";
+import UserDrawer from "./UserDrawer";
 
 const Stack = createNativeStackNavigator();
 
-export default function MainStack() {
+export default function MainUserStack() {
   return (
     <Stack.Navigator
       screenOptions={{ gestureEnabled: false, gestureDirection: "vertical" }}
     >
       <Stack.Screen
         name="MainDrawer"
-        component={MainDrawer}
+        component={UserDrawer}
         options={{ headerShown: false }}
       />
       <Stack.Screen

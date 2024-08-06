@@ -1,12 +1,12 @@
-import ScreenCenter from "../components/UI/ScreenCenter";
-import Button from "../components/UI/Controls/Button";
-import { Colors } from "../constants/colors";
+import ScreenCenter from "../../components/UI/ScreenCenter";
+import Button from "../../components/UI/Controls/Button";
+import { Colors } from "../../constants/colors";
 import {
   useAnimatedProps,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import SmileGlutty from "../components/UI/SVGGlutty/SmileGlutty";
+import SmileGlutty from "../../components/UI/SVGGlutty/SmileGlutty";
 
 export default function Home() {
   const y = useSharedValue(0);

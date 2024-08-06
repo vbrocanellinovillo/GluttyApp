@@ -13,6 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
+import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 
 export default function Button({
   children,
@@ -54,9 +55,9 @@ export default function Button({
           ) : (
             <View />
           )}
-          <Text style={[styles.buttonText, { color }, textStyle]}>
+          <TextCommonsRegular style={[styles.buttonText, { color }, textStyle]}>
             {children}
-          </Text>
+          </TextCommonsRegular>
           {rightIcon ? (
             <Ionicons name={rightIcon} size={iconSize} color={iconColor} />
           ) : (
