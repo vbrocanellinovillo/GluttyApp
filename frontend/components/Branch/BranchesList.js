@@ -28,8 +28,8 @@ export default function BranchesList() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        gap: 30,
-        paddingBottom: 30
-    }
+  container: {
+    gap: 30,
+    paddingBottom: 30,
+  },
 });

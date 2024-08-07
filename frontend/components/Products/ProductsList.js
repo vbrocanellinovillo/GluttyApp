@@ -15,6 +15,7 @@ import BlurDetails from "./BlurDetails";
 import { useDispatch } from "react-redux";
 import { uiActions } from "../../context/ui";
 import * as Haptics from "expo-haptics";
+import GluttyErrorScreen from "../UI/GluttyErrorScreen";
 
 export default function ProductsList() {
   // Filters
@@ -34,7 +35,7 @@ export default function ProductsList() {
   const [product, setProduct] = useState(null);
 
   // Fetch data
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch, isError, error } = useQuery({
     queryKey: ["products", searchTerm, brands, types],
     queryFn: () => fetchProducts({ searchTerm, brands, types }),
     enabled: false,
@@ -123,6 +124,14 @@ export default function ProductsList() {
   if (!isLoading && searchTerm.trim() === "") content = <NoProductsGlutty />;
 
   if (isLoading) content = <ProductsSkeleton />;
+
+  if (isError)
+    content = (
+      <GluttyErrorScreen width={250} height={250}>
+        Ocurrio un error al buscar las productos, por favor intente de nuevo mas
+        tarde
+      </GluttyErrorScreen>
+    );
 
   if (data && !isLoading) {
     if (data.brands && data.brands.length > 0) {

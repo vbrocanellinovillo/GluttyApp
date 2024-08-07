@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import AddBranchButton from "./AddBranchButton";
 import BranchesList from "./BranchesList";
 
@@ -14,7 +14,7 @@ export default function BranchesContainer() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    gap: 40,
+    gap: 35,
     marginTop: 40,
     paddingBottom: 200,
   },

@@ -12,3 +12,6 @@ export const smileGlutty =
 
 export const superMarketGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1722470711/Fondo_de_pantalla_inicio_iz8lim.webp";
+
+export const mechanicGlutty =
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1722988056/mecanico_pqa9y9.webp";

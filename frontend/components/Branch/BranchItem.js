@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
@@ -20,9 +20,7 @@ export default function BranchItem({ name, address }) {
           </TextCommonsRegular>
         </View>
       </View>
-      <TouchableOpacity>
-        <Ionicons name="chevron-forward" size={25} color={Colors.mJordan} />
-      </TouchableOpacity>
+      <Ionicons name="chevron-forward" size={25} color={Colors.mJordan} />
     </Pressable>
   );
 }

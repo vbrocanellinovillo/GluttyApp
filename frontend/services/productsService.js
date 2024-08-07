@@ -38,7 +38,7 @@ export async function fetchProducts({ searchTerm, brands, types }) {
       types: data.tipos_productos,
     };
   } catch (error) {
-    console.log(error);
+    throw new Error(error.message);
   }
 }
 

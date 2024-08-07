@@ -1,6 +1,9 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import MainHeader from "../../components/UI/Header/MainHeader";
 import Menu from "../../screens/Commerce/Menu/Menu";
@@ -12,15 +15,15 @@ export default function CommerceTabs() {
 
     switch (routeName) {
       case "Sucursales":
-        icon = "storefront";
+        icon = "store";
         break;
       case "Menu":
-        icon = "clipboard";
+        icon = "clipboard-text";
         break;
     }
 
     return (
-      <Ionicons
+      <MaterialCommunityIcons
         name={icon}
         size={25}
         color={routeName === selectedTab ? Colors.mJordan : Colors.oceanBlue}
