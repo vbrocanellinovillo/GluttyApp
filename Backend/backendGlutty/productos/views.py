@@ -10,7 +10,9 @@ from .models import Producto, MarcaProducto, TipoProducto
 from .serializers import ProductoSerializer, MarcaSerializer, TipoProductoSerializer
 import time
 from django.db.models import Q
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import api_view, permission_classes
 
 class MarcaViewSet(viewsets.ModelViewSet):
     queryset = MarcaProducto.objects.all()
@@ -40,6 +42,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def find(request):
     try:
         query = request.data.get("q", None)
@@ -163,6 +166,7 @@ def find(request):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def find_by_filtro(request):
     marca_nombre = request.data.get("marca", None)
     tipo_nombre = request.data.get("tipo", None)
@@ -215,6 +219,7 @@ def find_by_filtro(request):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 # ESTA ES LA QUE YA FUNCIONA!!!! :))))))
 def buscar(request):
     query = request.data.get("q", None)
@@ -251,6 +256,7 @@ def buscar(request):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def find_by_barcode(request):
     barcode = request.data.get("barcode", None)
     if barcode:
