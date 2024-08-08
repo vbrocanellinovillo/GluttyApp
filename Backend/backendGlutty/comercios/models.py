@@ -6,7 +6,6 @@ class Commerce(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="commerce")
     name = models.CharField(max_length=50, blank=False)
     cuit = models.CharField(max_length=50, blank=False)
-    social_reason = models.CharField(max_length=50, blank=False)
     description= models.CharField(max_length=300, blank=True)
 
 class Branch(models.Model):

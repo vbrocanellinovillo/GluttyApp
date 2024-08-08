@@ -1,16 +1,19 @@
 from django.shortcuts import render, get_object_or_404
-import datetime, jwt
 from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 from django.conf import settings
-from rest_framework.decorators import api_view
-from rest_framework.exceptions import AuthenticationFailed
-from .models import *
-from .serializers import *
-from comercios.models import *
+# from drf_yasg.utils import swagger_auto_schema
+from .models import User, Session, Celiac
+from comercios.models import Commerce
+from .serializers import UsuarioSerializer, CeliacSerializer
+from comercios.serializers import CommerceSerializer
 from django.db import transaction
-from comercios.serializers import *
+# from drf_yasg.utils import swagger_auto_schema
 
 
 # def apiOverView(request):
@@ -33,7 +36,8 @@ class UsuarioAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UsuarioSerializer
 
-@api_view(["POST"])
+# @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
+@api_view(['POST'])
 @transaction.atomic
 def register(request):
     """
@@ -46,11 +50,9 @@ def register(request):
         serializer.save()
         usuario_data = serializer.data
         usuario = User.objects.filter(username=usuario_data["username"]).first()
-        print(usuario.username)
         Session.objects.create(user=usuario) # Crear una sesión para el nuevo usuario
-        print(usuario.is_commerce)
         # Validar si es comercio o persona y en base a eso realizar el registro
-        if (usuario.is_commerce == True):
+        if usuario.is_commerce:
             commerce = Commerce.objects.create(user=usuario, 
                                                 name=request.data.get("name"),
                                                 cuit=request.data.get("cuit"),
@@ -66,7 +68,6 @@ def register(request):
                                             sex=request.data.get("sex"),
                                             date_birth=request.data.get("date_birth"))
             celiac.save()
-            print(celiac.first_name)
             return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
         
     #Si el serializaer.is_valid da error
@@ -123,6 +124,7 @@ def register(request):
 
 #     return Response(response, status=status.HTTP_200_OK)
 
+# @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
 @api_view(["POST"])
 def login(request):
     """
@@ -156,12 +158,18 @@ def login(request):
     sesion.login_attempts = 0
     sesion.session_data = {'last_login': timezone.now().isoformat()}
     sesion.save()
+    
+    # Generar tokens JWT
+    refresh = RefreshToken.for_user(usuario)
+    access_token = str(refresh.access_token)
 
     # Convertir usuario a JSON
     serializer = UsuarioSerializer(usuario)
 
     response = {
         "user": serializer.data,
+        "access_token": access_token,
+        "refresh_token": str(refresh)
     }
 
     return Response(response, status=status.HTTP_200_OK)
@@ -217,7 +225,9 @@ def login(request):
 
 #     return Response(response, status=status.HTTP_200_OK)
 
+# @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: "Sesión cerrada exitosamente."})
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def logout(request):
     """
     Permite cerrar sesión
@@ -243,7 +253,9 @@ def logout(request):
 
 
 
+# @swagger_auto_schema(method='put', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
 @api_view(["PUT"])
+@permission_classes([IsAuthenticated])
 @transaction.atomic
 def update(request, user_id):
     user = get_object_or_404(User, id=user_id)
@@ -275,7 +287,9 @@ def update(request, user_id):
     return Response({"error": user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# @swagger_auto_schema(method='delete', request_body=UsuarioSerializer, responses={200: "Se eliminó el usuario."})
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def delete(request):
     # user = get_object_or_404(Usuario, id=user_id)
     # user.delete()
@@ -291,7 +305,9 @@ def delete(request):
     return Response("Usuario no encontrado.", status=status.HTTP_404_NOT_FOUND)
 
 
+# @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: "Contraseña cambiada exitosamente."})
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def changePassword(request):
     """
     Permite cambiar la contraseña
