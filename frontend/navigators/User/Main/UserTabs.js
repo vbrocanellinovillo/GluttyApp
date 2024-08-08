@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../../constants/colors";
 import MainHeader from "../../../components/UI/Header/MainHeader";
 import Home from "../../../screens/User/Home";
@@ -9,6 +9,7 @@ import Products from "../../../screens/User/Products/Products";
 import Map from "../../../screens/User/Map";
 import Profile from "../../../screens/Profile/Profile";
 import PrivacityAndSecurity from "../../../screens/Profile/PrivacityAndSecurity";
+import MedicalExams from "../../../screens/User/MedicalExams";
 
 export default function UserTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -16,23 +17,23 @@ export default function UserTabs() {
 
     switch (routeName) {
       case "Home":
-        icon = "home";
+        icon = "house-chimney";
         break;
       case "Recetas":
-        icon = "list";
+        icon = "receipt";
         break;
-      case "Productos":
-        icon = "fast-food";
+      case "Estudios":
+        icon = "notes-medical";
         break;
       case "Mapa":
-        icon = "map";
+        icon = "map-location-dot";
         break;
     }
 
     return (
-      <Ionicons
+      <FontAwesome6
         name={icon}
-        size={25}
+        size={24}
         color={routeName === selectedTab ? Colors.mJordan : Colors.oceanBlue}
       />
     );
@@ -100,15 +101,16 @@ export default function UserTabs() {
       />
       <CurvedBottomBarExpo.Screen name="Escaner" position="CIRCLE" />
       <CurvedBottomBarExpo.Screen
-        name="Productos"
+        name="Estudios"
         position="RIGHT"
-        component={Products}
+        component={MedicalExams}
       />
       <CurvedBottomBarExpo.Screen
         name="Mapa"
         position="RIGHT"
         component={Map}
       />
+      <CurvedBottomBarExpo.Screen name="Productos" component={Products} />
       <CurvedBottomBarExpo.Screen
         name="UserData"
         component={Profile}

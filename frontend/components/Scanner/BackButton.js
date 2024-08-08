@@ -1,6 +1,7 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
+import HeaderButtonContainer from "./HeaderButtonContainer";
 
 export default function BackButton({ navigation }) {
   function goBack() {
@@ -8,11 +9,9 @@ export default function BackButton({ navigation }) {
   }
 
   return (
-    <TouchableOpacity onPress={goBack}>
-      <View style={styles.container}>
-        <Ionicons name="chevron-back" size={28} color={Colors.oceanBlue} />
-      </View>
-    </TouchableOpacity>
+    <HeaderButtonContainer onPress={goBack}>
+      <Ionicons name="chevron-back" size={28} color={Colors.oceanBlue} />
+    </HeaderButtonContainer>
   );
 }
 
@@ -21,6 +20,5 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 20,
     borderRadius: 20,
-    width: "18%",
   },
 });
