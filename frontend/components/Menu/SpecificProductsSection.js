@@ -3,14 +3,28 @@ import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import FormControl from "../UI/Controls/FormControl";
 import { Colors } from "../../constants/colors";
 import { Formik } from "formik";
+import * as Location from "expo-location";
+import Button from "../UI/Controls/Button";
 
 export default function SpecificProductsSection() {
+  async function geocode() {
+    const result = await Location.geocodeAsync("Camacua 99 Córdoba")
+    console.log(result)
+  }
+
   return (
     <View>
       <TextCommonsMedium style={styles.title}>
         Productos Especificos
       </TextCommonsMedium>
       <TextCommonsMedium>proximamente</TextCommonsMedium>
+      <Button
+        backgroundColor={Colors.mJordan}
+        color={Colors.vainilla}
+        onPress={geocode}
+      >
+        Geolocalizar
+      </Button>
     </View>
   );
 }

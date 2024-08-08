@@ -2,10 +2,17 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
+import { useNavigation } from "@react-navigation/native";
 
 export default function AddBranchButton() {
+  const navigation = useNavigation();
+
+  function navigateNewBranch() {
+    navigation.navigate("NewBranch");
+  }
+
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={navigateNewBranch}>
       <TextCommonsMedium style={styles.text}>Nueva Sucursal</TextCommonsMedium>
       <Ionicons
         name="add-circle-sharp"

@@ -45,11 +45,6 @@ export default function RegisterForm({ onSubmit }) {
 }
 
 const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-
   container: {
     paddingTop: 70,
   },
