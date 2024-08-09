@@ -131,16 +131,20 @@ def register(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def login(request):
+    print("hola")
     """
     Permite iniciar sesión y generar token JWT
     """
     try:
         username = request.data["username"]
         password = request.data["password"]
+        print("usuario: " + username)
     except KeyError:
+        print("hay un error")
         return Response({"error": "username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
 
     usuario = User.objects.filter(username=username).first()
+    print(str(usuario.username))
 
     if usuario is None:
         raise AuthenticationFailed("Usuario no encontrado.")
