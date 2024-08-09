@@ -3,7 +3,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 from django.conf import settings
@@ -13,6 +13,8 @@ from comercios.models import Commerce
 from .serializers import UsuarioSerializer, CeliacSerializer
 from comercios.serializers import CommerceSerializer
 from django.db import transaction
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 # from drf_yasg.utils import swagger_auto_schema
 
 
@@ -38,6 +40,7 @@ class UsuarioAPIView(generics.ListCreateAPIView):
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
 @api_view(['POST'])
+@permission_classes([AllowAny])
 @transaction.atomic
 def register(request):
     """
@@ -126,9 +129,10 @@ def register(request):
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def login(request):
     """
-    Permite iniciar sesión
+    Permite iniciar sesión y generar token JWT
     """
     try:
         username = request.data["username"]
