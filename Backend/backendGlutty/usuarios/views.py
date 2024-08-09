@@ -3,7 +3,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 from django.conf import settings
@@ -13,8 +13,9 @@ from comercios.models import Commerce
 from .serializers import UsuarioSerializer, CeliacSerializer
 from comercios.serializers import CommerceSerializer
 from django.db import transaction
+from .image import *
+from django.views.decorators.csrf import csrf_exempt
 # from drf_yasg.utils import swagger_auto_schema
-
 
 # def apiOverView(request):
 #     """
@@ -36,9 +37,22 @@ class UsuarioAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UsuarioSerializer
 
+# @csrf_exempt
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def cargar_foto(request):
+#     try:
+#         print("hasta acá sí llega")
+#         picture_link = upload_to_cloudinary(request)
+#         return Response({"url": picture_link}, status=status.HTTP_201_CREATED)
+#     except Exception as e:
+#         print("hay un error: " + str(e))
+#         return Response({"error": "no se pudo cargar la foto."}, status=status.HTTP_400_BAD_REQUEST)
+
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
 @api_view(['POST'])
 @transaction.atomic
+@permission_classes([AllowAny])
 def register(request):
     """
     Metodo para registrar un usuario, con email y contraseña.
@@ -50,6 +64,13 @@ def register(request):
         serializer.save()
         usuario_data = serializer.data
         usuario = User.objects.filter(username=usuario_data["username"]).first()
+        
+        image = request.FILES.get('image')
+        if image:
+            picture_link = upload_to_cloudinary(image)
+            usuario.profile_picture = picture_link
+            usuario.save()
+        
         Session.objects.create(user=usuario) # Crear una sesión para el nuevo usuario
         # Validar si es comercio o persona y en base a eso realizar el registro
         if usuario.is_commerce:
@@ -173,61 +194,11 @@ def login(request):
     response = {
         "user": serializer.data,
         "access_token": access_token,
-        "refresh_token": str(refresh)
+        "refresh_token": str(refresh),
+        "profile_picture": str(usuario.profile_picture), 
     }
 
     return Response(response, status=status.HTTP_200_OK)
-
-# @api_view(["POST"])
-# def login(request):
-#     """
-#     Permite iniciar sesión
-#     """
-#     username = request.data["username"]
-#     password = request.data["password"]
-#     usuario = User.objects.filter(username=username).first()
-
-#     if usuario is None:
-#         raise AuthenticationFailed("Usuario no encontrado.")
-    
-#     sesion = Session.objects.get(user=usuario)
-
-#     if not usuario.check_password(password):
-#         sesion.increment_login_attempts()
-#         if sesion.login_attempts >= 3:
-#             raise AuthenticationFailed("Máximo número de intentos de inicio de sesión alcanzado.")
-#         raise AuthenticationFailed("Contraseña incorrecta.")
-
-#     if not usuario.is_active:
-#         raise AuthenticationFailed("Cuenta eliminada.")
-    
-    
-#     # Reiniciar los intentos de inicio de sesión y marcar la sesión como inicializada
-#     sesion.initialize_session()
-
-#     usuario.last_login = timezone.now()
-#     usuario.save(update_fields=["last_login"])
-
-#     # payload = {
-#     #     'id': usuario.id,
-#     #     'exp': datetime.utcnow() + datetime.timedelta(minutes=500),
-#     #     'iat': datetime.utcnow(),
-#     #     'is_superuser': usuario.is_superuser
-#     # }
-
-#     # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
-
-#     # Convertir usuario a JSON
-#     serializer = UsuarioSerializer(usuario)
-
-#     response = {
-#         "user": serializer.data,
-#         # "data": {
-#         #     'jwt': token
-#         # }
-#     }
-
-#     return Response(response, status=status.HTTP_200_OK)
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: "Sesión cerrada exitosamente."})
 @api_view(["POST"])
@@ -269,7 +240,13 @@ def update(request, user_id):
 
     if user_serializer.is_valid():
         user_serializer.save()
-
+        
+        image = request.FILES.get('image')
+        if image:
+            picture_link = upload_to_cloudinary(image)
+            user.profile_picture = picture_link
+            user.save()
+        
         # Actualizar datos de Celiac o Commerce
         if user.is_commerce:
             commerce = get_object_or_404(Commerce, user=user)

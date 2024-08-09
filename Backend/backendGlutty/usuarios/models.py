@@ -12,6 +12,7 @@ class User(AbstractUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_commerce = models.BooleanField(default=False)
+    profile_picture = models.CharField(blank=True)
 
     objects = CustomUserManager()
 

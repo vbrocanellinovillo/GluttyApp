@@ -146,6 +146,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Configuration
+CLOUDINARY = {
+    'cloud_name': 'dc7sftc2n',
+    'api_key': '893994145379559',
+    'api_secret': '7dJQGAsg9Z-P6c3Dmt89F3phUU0',
+}
+    
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
