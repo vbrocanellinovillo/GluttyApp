@@ -16,9 +16,6 @@ export default function MainHeader({ navigation, route, options }) {
     <Header>
       <IconTextHeader>{title ? title : name}</IconTextHeader>
       <UserImage
-        image={
-          "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg"
-        }
         onPress={toggleDrawer}
         dimensions={60}
       />

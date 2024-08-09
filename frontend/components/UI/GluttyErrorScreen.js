@@ -17,7 +17,7 @@ export default function GluttyErrorScreen({
         }}
         style={[styles.image, { width, height }, textStyle]}
       />
-      <TextCommonsMedium style={styles.text}>{children}</TextCommonsMedium>
+      <TextCommonsMedium style={[styles.text, textStyle]}>{children}</TextCommonsMedium>
     </View>
   );
 }
@@ -37,6 +37,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 22,
     fontStyle: "italic",
-    fontWeight: "400",
+    fontWeight: "bold",
+    textAlign: "center",
+    paddingHorizontal: 16
   },
 });

@@ -12,7 +12,7 @@ export default function DrawerContent({ navigation, route }) {
   const dispatch = useDispatch();
 
   async function logout() {
-    Alert.alert("Cerrar sesión","Cerrar sesión");
+    Alert.alert("Cerrar sesión", "Cerrar sesión");
     await logoutSesion(username);
     dispatch(authActions.logout());
   }
@@ -21,9 +21,6 @@ export default function DrawerContent({ navigation, route }) {
     <ScrollView style={styles.container}>
       <View style={styles.userInfo}>
         <UserImage
-          image={
-            "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg"
-          }
           onPress={() =>
             console.log("apretaste algo que no hace nada. bien ahi crack")
           }
