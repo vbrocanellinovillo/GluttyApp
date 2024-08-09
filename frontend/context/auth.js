@@ -1,6 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = { isAuthenticated: false, userData: undefined };
+const initialState = {
+  isAuthenticated: false,
+  userData: {
+    nombreUsuario: "gon",
+    nombre: "gon",
+    apellido: "gon",
+    sexo: "gon",
+    fechaNacimiento: "gon",
+    email: "gon",
+    image:
+      "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg",
+  },
+};
 
 const authSlice = createSlice({
   name: "auth",
@@ -12,7 +24,7 @@ const authSlice = createSlice({
     },
 
     updateUser(state, action) {
-      state.userData = action.payload
+      state.userData = action.payload;
     },
 
     logout(state) {

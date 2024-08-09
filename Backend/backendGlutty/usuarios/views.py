@@ -51,6 +51,7 @@ class UsuarioAPIView(generics.ListCreateAPIView):
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
 @api_view(['POST'])
+@permission_classes([AllowAny])
 @transaction.atomic
 @permission_classes([AllowAny])
 def register(request):
@@ -147,10 +148,11 @@ def register(request):
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def login(request):
     print("hola")
     """
-    Permite iniciar sesión
+    Permite iniciar sesión y generar token JWT
     """
     try:
         username = request.data["username"]
