@@ -10,7 +10,10 @@ class Commerce(models.Model):
 
 class Branch(models.Model):
     commerce = models.OneToOneField(Commerce, on_delete=models.CASCADE, related_name="branch")
-    number = models.IntegerField(blank=True)
+    name = models.CharField(max_length=255, blank=True)
+    phone = models.CharField(max_length=10, blank=False, default=None)
+    optional_phone = models.CharField(max_length=10, blank=True)
     location = models.CharField(max_length=255, blank=False)
+    separated_kitchen= models.BooleanField(default=False)
     just_takeaway= models.BooleanField(default=False)
     
