@@ -9,8 +9,6 @@ const initialState = {
     sexo: "gon",
     fechaNacimiento: "gon",
     email: "gon",
-    image:
-      "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg",
   },
 };
 

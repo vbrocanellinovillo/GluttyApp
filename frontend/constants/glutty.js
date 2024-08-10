@@ -15,3 +15,6 @@ export const superMarketGlutty =
 
 export const mechanicGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1722988056/mecanico_pqa9y9.webp";
+
+export const userImageGlutty =
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1723252182/Logo-Usuario-1_vdmqia.webp";

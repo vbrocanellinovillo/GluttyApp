@@ -89,16 +89,7 @@ export default function CommerceRegister({ onSubmit }) {
         handleSubmit,
       }) => (
         <>
-          <FormControl
-            label="Nombre de usuario"
-            value={values.username}
-            name="username"
-            handleChange={handleChange}
-            handleBlur={handleBlur}
-            errors={errors.username}
-            touched={touched.username}
-            autoCapitalize="none"
-          />
+         
           <FormControl
             label="Nombre"
             value={values.name}

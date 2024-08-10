@@ -8,8 +8,8 @@ import Button from "../UI/Controls/Button";
 
 export default function SpecificProductsSection() {
   async function geocode() {
-    const result = await Location.geocodeAsync("Camacua 99 Córdoba")
-    console.log(result)
+    const result = await Location.geocodeAsync("Camacua 99 Córdoba");
+    console.log(result);
   }
 
   return (

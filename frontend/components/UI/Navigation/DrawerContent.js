@@ -1,7 +1,7 @@
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Drawer } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
-import UserImage from "../UserImage";
+import UserImage from "../UserImage/UserImage";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../Controls/Button";
 import { authActions } from "../../../context/auth";

@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import Header from "./Header";
 import IconTextHeader from "./IconTextHeader";
-import UserImage from "../UserImage";
+import UserImage from "../UserImage/UserImage";
 import { DrawerActions } from "@react-navigation/native";
 
 export default function MainHeader({ navigation, route, options }) {
@@ -15,10 +15,7 @@ export default function MainHeader({ navigation, route, options }) {
   return (
     <Header>
       <IconTextHeader>{title ? title : name}</IconTextHeader>
-      <UserImage
-        onPress={toggleDrawer}
-        dimensions={60}
-      />
+      <UserImage onPress={toggleDrawer} dimensions={60} />
     </Header>
   );
 }
