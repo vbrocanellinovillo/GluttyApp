@@ -15,6 +15,7 @@ from comercios.serializers import CommerceSerializer
 from django.db import transaction
 from .image import *
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework_simplejwt.authentication import JWTAuthentication
 # from drf_yasg.utils import swagger_auto_schema
 
 # def apiOverView(request):
@@ -157,13 +158,11 @@ def login(request):
     try:
         username = request.data["username"]
         password = request.data["password"]
-        print("usuario: " + username)
     except KeyError:
         print("hay un error")
         return Response({"error": "username and password are required."}, status=status.HTTP_400_BAD_REQUEST)
 
     usuario = User.objects.filter(username=username).first()
-    print(str(usuario.username))
 
     if usuario is None:
         raise AuthenticationFailed("Usuario no encontrado.")
@@ -186,8 +185,9 @@ def login(request):
     sesion.session_data = {'last_login': timezone.now().isoformat()}
     sesion.save()
     
-    # Generar tokens JWT
+    # Generar tokens JWT con el user_id
     refresh = RefreshToken.for_user(usuario)
+    refresh['username'] = usuario.username  # Añadir el user_id al token
     access_token = str(refresh.access_token)
 
     # Convertir usuario a JSON
@@ -207,27 +207,32 @@ def login(request):
 @permission_classes([IsAuthenticated])
 def logout(request):
     """
-    Permite cerrar sesión
+    Permite cerrar sesión solo para el usuario autenticado con el token proporcionado.
     """
     try:
-        username = request.data["username"]
-    except KeyError:
-        return Response({"error": "username is required."}, status=status.HTTP_400_BAD_REQUEST)
+        # Obtener el token JWT desde la solicitud
+        jwt_authenticator = JWTAuthentication()
+        user_jwt, token = jwt_authenticator.authenticate(request)
 
-    usuario = User.objects.filter(username=username).first()
+        if not user_jwt or not token:
+            return Response({"error": "Token inválido o no se encontró token."}, status=status.HTTP_403_FORBIDDEN)
 
-    if usuario is None:
-        raise AuthenticationFailed("Usuario no encontrado.")
+        # Verificar que el token JWT pertenece al usuario que realiza la solicitud
+        if token['username'] != request.user:
+            return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
 
-    sesion = Session.objects.filter(user=usuario).first()
+        # Obtener la sesión del usuario autenticado
+        sesion = Session.objects.filter(user=request.user).first()
 
-    if sesion and sesion.session_initialized:
-        sesion.session_initialized = False
-        sesion.save()
-        return Response({"message": "Sesión cerrada exitosamente."}, status=status.HTTP_200_OK)
-    else:
-        return Response({"message": "No hay ninguna sesión activa para cerrar."}, status=status.HTTP_400_BAD_REQUEST)
+        if sesion and sesion.session_initialized:
+            sesion.session_initialized = False
+            sesion.save()
+            return Response({"message": "Sesión cerrada exitosamente."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "No hay ninguna sesión activa para cerrar."}, status=status.HTTP_400_BAD_REQUEST)
 
+    except Exception as e:
+        return Response({"error": f"Error al procesar la solicitud: {str(e)}"}, status=status.HTTP_403_FORBIDDEN)
 
 
 # @swagger_auto_schema(method='put', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
@@ -235,6 +240,9 @@ def logout(request):
 @permission_classes([IsAuthenticated])
 @transaction.atomic
 def update(request, user_id):
+    if request.user.id != user_id:
+        return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
+    
     user = get_object_or_404(User, id=user_id)
 
     # Actualizar datos del usuario
@@ -274,11 +282,11 @@ def update(request, user_id):
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def delete(request):
-    # user = get_object_or_404(Usuario, id=user_id)
-    # user.delete()
-
     username = request.data["username"]
     usuario = User.objects.filter(username=username).first()
+    
+    if not usuario or request.user.username != username:
+        return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
 
     if usuario.is_authenticated:
         usuario.is_active = False
@@ -305,6 +313,9 @@ def changePassword(request):
             'error': "Todos los campos son obligatorios",
             'data': []
         }, status=status.HTTP_400_BAD_REQUEST)
+        
+    if request.user.username != username:
+        return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
     
     usuario = User.objects.filter(username=username).first()
     
