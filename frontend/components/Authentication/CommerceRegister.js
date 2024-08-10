@@ -21,15 +21,7 @@ export default function CommerceRegister({ onSubmit }) {
         repeatPassword: "",
         description: "",
       }}
-      validate={({
-        username,
-        name,
-        cuit,
-        email,
-        password,
-        repeatPassword,
-        description,
-      }) => {
+      validate={({ username, name, cuit, email, password, repeatPassword }) => {
         const errors = {};
         if (username.trim() === "") {
           errors.username = "Nombre de usuario requerido";
@@ -89,7 +81,16 @@ export default function CommerceRegister({ onSubmit }) {
         handleSubmit,
       }) => (
         <>
-         
+          <FormControl
+            label="Nombre de usuario"
+            value={values.username}
+            name="username"
+            handleChange={handleChange}
+            handleBlur={handleBlur}
+            errors={errors.username}
+            touched={touched.username}
+            autoCapitalize="none"
+          />
           <FormControl
             label="Nombre"
             value={values.name}

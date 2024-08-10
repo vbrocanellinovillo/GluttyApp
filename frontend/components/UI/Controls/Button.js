@@ -26,6 +26,7 @@ export default function Button({
   rightIcon,
   iconSize,
   iconColor,
+  opacityPress,
 }) {
   const scale = useSharedValue(1);
 
@@ -45,10 +46,18 @@ export default function Button({
   }
 
   return (
-    <Pressable onPress={pressHandler}>
+    <Pressable
+      onPress={pressHandler}
+      style={({ pressed }) => pressed && styles.pressed}
+    >
       <GestureDetector gesture={tap}>
         <Animated.View
-          style={[styles.button, { backgroundColor }, animatedStyle, style]}
+          style={[
+            styles.button,
+            { backgroundColor },
+            !opacityPress && animatedStyle,
+            style,
+          ]}
         >
           {leftIcon ? (
             <Ionicons name={leftIcon} size={iconSize} color={iconColor} />
@@ -83,5 +92,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     fontWeight: "bold",
+  },
+
+  pressed: {
+    opacity: 0.4,
   },
 });

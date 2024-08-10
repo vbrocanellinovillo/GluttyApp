@@ -1,7 +1,10 @@
 import { StyleSheet, Pressable, Image, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { useSelector } from "react-redux";
-import { userImageGlutty } from "../../../constants/glutty";
+import {
+  userAddGlutty,
+  userGlutty,
+} from "../../../constants/glutty";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 
 export default function UserImage({ onPress, dimensions, style, isForm }) {
@@ -34,7 +37,7 @@ export default function UserImage({ onPress, dimensions, style, isForm }) {
         <View style={styles.addPhotoContainer}>
           <Image
             source={{
-              uri: userImageGlutty,
+              uri: userAddGlutty,
             }}
             style={[
               styles.userImage,
@@ -48,7 +51,7 @@ export default function UserImage({ onPress, dimensions, style, isForm }) {
       ) : (
         <Image
           source={{
-            uri: userImageGlutty,
+            uri: userGlutty,
           }}
           style={[styles.userImage, { width: dimensions, height: dimensions }]}
         />
@@ -59,7 +62,7 @@ export default function UserImage({ onPress, dimensions, style, isForm }) {
 
 const styles = StyleSheet.create({
   userImage: {
-    objectFit: "contain",
+    objectFit: "cover"
   },
 
   pressed: {

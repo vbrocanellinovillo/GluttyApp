@@ -25,6 +25,10 @@ const authSlice = createSlice({
       state.userData = action.payload;
     },
 
+    setImage(state, actions) {
+      state.userData.image = actions.payload;
+    },
+
     logout(state) {
       state.isAuthenticated = false;
       state.userData = undefined;
