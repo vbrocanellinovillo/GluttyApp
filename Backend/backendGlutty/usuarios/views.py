@@ -84,15 +84,15 @@ def register(request):
             
             commerce.save()
             
-            login_data = {
-            "username": usuario.username,
-            "password": request.data.get("password")
-            }
-            login_request = request._request
-            login_request.POST = login_data
-            login_response = login(login_request)
+            # login_data = {
+            # "username": usuario.username,
+            # "password": request.data.get("password")
+            # }
+            # login_request = request._request
+            # login_request.POST = login_data
+            # login_response = login(login_request)
                    
-            return Response({login_response}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
         else:
             celiac = Celiac.objects.create(user=usuario,
                                             first_name=request.data.get("first_name"),
@@ -101,74 +101,18 @@ def register(request):
                                             date_birth=request.data.get("date_birth"))
             celiac.save()
             
-            login_data = {
-            "username": usuario.username,
-            "password": request.data.get("password")
-            }
-            login_request = request._request
-            login_request.POST = login_data
-            login_response = login(login_request)
+            # login_data = {
+            # "username": usuario.username,
+            # "password": request.data.get("password")
+            # }
+            # login_request = request._request
+            # login_request.POST = login_data
+            # login_response = login(login_request)
                    
-            return Response({login_response}, status=status.HTTP_201_CREATED)
-            
-        # Iniciar sesión automáticamente
-        
-
-            
+            return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
         
     #Si el serializaer.is_valid da error
     return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-# @api_view(["POST"])
-# def login(request):
-#     """
-#     Permite iniciar sesión
-#     """
-#     username = request.data["username"]
-#     password = request.data["password"]
-#     usuario = Usuario.objects.filter(username=username).first()
-
-#     if usuario is None:
-#         raise AuthenticationFailed("Usuario no encontrado.")
-    
-#     sesion = Sesion.objects.get(user=usuario)
-
-#     if not usuario.check_password(password):
-#         sesion.increment_login_attempts()
-#         if sesion.login_attempts >= 3:
-#             raise AuthenticationFailed("Máximo número de intentos de inicio de sesión alcanzado.")
-#         raise AuthenticationFailed("Contraseña incorrecta.")
-
-#     if not usuario.is_active:
-#         raise AuthenticationFailed("Cuenta eliminada.")
-    
-    
-#     # Reiniciar los intentos de inicio de sesión y marcar la sesión como inicializada
-#     sesion.initialize_session()
-
-#     usuario.last_login = timezone.now()
-#     usuario.save(update_fields=["last_login"])
-
-#     # payload = {
-#     #     'id': usuario.id,
-#     #     'exp': datetime.utcnow() + datetime.timedelta(minutes=500),
-#     #     'iat': datetime.utcnow(),
-#     #     'is_superuser': usuario.is_superuser
-#     # }
-
-#     # token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256').decode('utf-8')
-
-#     # Convertir usuario a JSON
-#     serializer = UsuarioSerializer(usuario)
-
-#     response = {
-#         "user": serializer.data,
-#         # "data": {
-#         #     'jwt': token
-#         # }
-#     }
-
-#     return Response(response, status=status.HTTP_200_OK)
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
 @api_view(["POST"])
