@@ -9,13 +9,15 @@ from django.utils import timezone
 from django.conf import settings
 # from drf_yasg.utils import swagger_auto_schema
 from .models import User, Session, Celiac
-from comercios.models import Commerce
+from comercios.models import Commerce, Branch
 from .serializers import UsuarioSerializer, CeliacSerializer
 from comercios.serializers import CommerceSerializer
 from django.db import transaction
 from .image import *
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.core.exceptions import ValidationError
+from comercios.views import get_commerce_info
 # from drf_yasg.utils import swagger_auto_schema
 
 # def apiOverView(request):
@@ -51,68 +53,138 @@ class UsuarioAPIView(generics.ListCreateAPIView):
 #         return Response({"error": "no se pudo cargar la foto."}, status=status.HTTP_400_BAD_REQUEST)
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# @transaction.atomic
+# @permission_classes([AllowAny])
+# def register(request):
+#     """
+#     Metodo para registrar un usuario, con email y contraseña.
+#     """
+#     # Crear usuario y comercio o celíaco
+#     serializer = UsuarioSerializer(data=request.data)
+        
+#     if serializer.is_valid():
+#         serializer.save()
+#         usuario_data = serializer.data
+#         usuario = User.objects.filter(username=usuario_data["username"]).first()
+        
+#         image = request.FILES.get('image')
+#         if image:
+#             picture_link = upload_to_cloudinary(image)
+#             usuario.profile_picture = picture_link
+#             usuario.save()
+        
+#         Session.objects.create(user=usuario) # Crear una sesión para el nuevo usuario
+#         # Validar si es comercio o persona y en base a eso realizar el registro
+#         if usuario.is_commerce:
+#             commerce = Commerce.objects.create(user=usuario, 
+#                                                 name=request.data.get("name"),
+#                                                 cuit=request.data.get("cuit"),
+#                                                 description=request.data.get("description"))
+            
+#             commerce.save()
+            
+#             # login_data = {
+#             # "username": usuario.username,
+#             # "password": request.data.get("password")
+#             # }
+#             # login_request = request._request
+#             # login_request.POST = login_data
+#             # login_response = login(login_request)
+                   
+#             return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
+#         else:
+#             celiac = Celiac.objects.create(user=usuario,
+#                                             first_name=request.data.get("first_name"),
+#                                             last_name=request.data.get("last_name"),
+#                                             sex=request.data.get("sex"),
+#                                             date_birth=request.data.get("date_birth"))
+#             celiac.save()
+            
+#             # login_data = {
+#             # "username": usuario.username,
+#             # "password": request.data.get("password")
+#             # }
+#             # login_request = request._request
+#             # login_request.POST = login_data
+#             # login_response = login(login_request)
+                   
+#             return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
+        
+#     #Si el serializaer.is_valid da error
+#     return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @transaction.atomic
-@permission_classes([AllowAny])
 def register(request):
     """
-    Metodo para registrar un usuario, con email y contraseña.
+    Método para registrar un usuario, con email y contraseña.
     """
-    # Crear usuario y comercio o celíaco
-    serializer = UsuarioSerializer(data=request.data)
-        
-    if serializer.is_valid():
-        serializer.save()
-        usuario_data = serializer.data
-        usuario = User.objects.filter(username=usuario_data["username"]).first()
-        
-        image = request.FILES.get('image')
-        if image:
-            picture_link = upload_to_cloudinary(image)
-            usuario.profile_picture = picture_link
-            usuario.save()
-        
-        Session.objects.create(user=usuario) # Crear una sesión para el nuevo usuario
-        # Validar si es comercio o persona y en base a eso realizar el registro
-        if usuario.is_commerce:
-            commerce = Commerce.objects.create(user=usuario, 
-                                                name=request.data.get("name"),
-                                                cuit=request.data.get("cuit"),
-                                                social_reason=request.data.get("social_reason"),
-                                                description=request.data.get("description"))
+    try:
+        # Crear usuario y comercio o celíaco
+        serializer = UsuarioSerializer(data=request.data)
+        print("hola")
+        if serializer.is_valid():
+            # Guardar el usuario
+            print("entra a serializer is valid")
+            usuario = serializer.save()
             
-            commerce.save()
+            # Manejar la imagen de perfil si se proporciona
+            print("1")
+            image = request.FILES.get('image')
+            #print(str(image))
+            print("2")
             
-            # login_data = {
-            # "username": usuario.username,
-            # "password": request.data.get("password")
-            # }
-            # login_request = request._request
-            # login_request.POST = login_data
-            # login_response = login(login_request)
-                   
+            if image:
+                try:
+                    print("entra al try")
+                    picture_link = upload_to_cloudinary(image)
+                    usuario.profile_picture = picture_link
+                    usuario.save()
+                except Exception as e:
+                    raise ValidationError(f"Error al subir la imagen: {str(e)}")
+            
+            # Crear sesión para el nuevo usuario
+            Session.objects.create(user=usuario)
+
+            # Validar si es comercio o persona y en base a eso realizar el registro
+            if usuario.is_commerce:
+                try:
+                    commerce = Commerce.objects.create(
+                        user=usuario,
+                        name=request.data.get("name"),
+                        cuit=request.data.get("cuit"),
+                        description=request.data.get("description")
+                    )
+                    commerce.save()
+                except Exception as e:
+                    raise ValidationError(f"Error al crear el comercio: {str(e)}")
+            else:
+                try:
+                    celiac = Celiac.objects.create(
+                        user=usuario,
+                        first_name=request.data.get("first_name"),
+                        last_name=request.data.get("last_name"),
+                        sex=request.data.get("sex"),
+                        date_birth=request.data.get("date_birth")
+                    )
+                    celiac.save()
+                except Exception as e:
+                    raise ValidationError(f"Error al crear el perfil de celíaco: {str(e)}")
+
+            # Respuesta de éxito
             return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
-        else:
-            celiac = Celiac.objects.create(user=usuario,
-                                            first_name=request.data.get("first_name"),
-                                            last_name=request.data.get("last_name"),
-                                            sex=request.data.get("sex"),
-                                            date_birth=request.data.get("date_birth"))
-            celiac.save()
-            
-            # login_data = {
-            # "username": usuario.username,
-            # "password": request.data.get("password")
-            # }
-            # login_request = request._request
-            # login_request.POST = login_data
-            # login_response = login(login_request)
-                   
-            return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
-        
-    #Si el serializaer.is_valid da error
-    return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        print(serializer.errors)
+        # Si el serializer.is_valid da error
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    except ValidationError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
 @api_view(["POST"])
@@ -161,21 +233,33 @@ def login(request):
     # Convertir usuario a JSON
     serializer = UsuarioSerializer(usuario)
 
-    datos = {
-        "username": usuario.username, 
-        "is_commerce": usuario.is_commerce, 
-        "profile_picture": usuario.profile_picture}
+    user_data = {"username": usuario.username}
 
-    #if usuario.is_commerce:
-        
-    response = {
-        "user": serializer.data,
-        "access_token": access_token,
-        "refresh_token": str(refresh),
-        "profile_picture": str(usuario.profile_picture), 
-    }
+    if usuario.is_commerce:
+        # Agregar datos específicos para comercio
+        commerce = Commerce.objects.filter(user=usuario).first()
+        if commerce:
+            user_data["name"] = commerce.name
+            
+            # Obtener las sucursales (Branch) del comercio
+            branches = Branch.objects.filter(commerce=commerce)
+            branches_data = [{"name": branch.name, "location": branch.location} for branch in branches]
+            user_data["Branches"] = branches_data
 
-    return Response(response, status=status.HTTP_200_OK)
+    else:
+        # Agregar datos específicos para celíaco
+        celiac = Celiac.objects.filter(user=usuario).first()
+        if celiac:
+            user_data["first_name"] = celiac.first_name
+    
+    response_data = {}
+    response_data["user"] = user_data
+    response_data["profile_picture"] = str(usuario.profile_picture)
+    response_data["is_commerce"] = usuario.is_commerce
+    response_data["access_token"] = access_token
+    response_data["refresh_token"] = str(refresh)
+
+    return Response(response_data, status=status.HTTP_200_OK)
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: "Sesión cerrada exitosamente."})
 @api_view(["POST"])
@@ -193,7 +277,9 @@ def logout(request):
             return Response({"error": "Token inválido o no se encontró token."}, status=status.HTTP_403_FORBIDDEN)
 
         # Verificar que el token JWT pertenece al usuario que realiza la solicitud
-        if token['username'] != request.user:
+        if token['username'] != request.user.username:
+            print(token['username'])
+            print(request.user)
             return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
 
         # Obtener la sesión del usuario autenticado
@@ -226,8 +312,11 @@ def update(request, user_id):
     if user_serializer.is_valid():
         user_serializer.save()
         
+        print("1")
         image = request.FILES.get('image')
+        print("2")
         if image:
+            print("entra a if image")
             picture_link = upload_to_cloudinary(image)
             user.profile_picture = picture_link
             user.save()
@@ -258,14 +347,14 @@ def update(request, user_id):
 @permission_classes([IsAuthenticated])
 def delete(request):
     username = request.data["username"]
-    usuario = User.objects.filter(username=username).first()
+    user = User.objects.filter(username=username).first()
     
-    if not usuario or request.user.username != username:
+    if not user or request.user.username != username:
         return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
 
-    if usuario.is_authenticated:
-        usuario.is_active = False
-        usuario.save()
+    if user.is_authenticated:
+        user.is_active = False
+        user.save()
         return Response("Se eliminó el usuario.")
     
     return Response("Usuario no encontrado.", status=status.HTTP_404_NOT_FOUND)
@@ -316,32 +405,47 @@ def changePassword(request):
         'error': '',
         'data': [usuario.password]
     }, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+@transaction.atomic
+def get_user(request):
+    username = request.data.get("username")
+    user = User.objects.filter(username=username).first()
     
-    # try:
-    #     token = request.headers['Authorization']
-    #     payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-    #     idUsuario = payload['id']
-    #     usuario = Usuario.objects.filter(id=idUsuario).first()
-    #     token_contraseñas = request.data['passwords']
-    #     #passwords = jwt.decode(token_contraseñas, 'encriptadofront', algorithms=['HS256'])
-    #     pass_ant = token_contraseñas["pass_antigua"]
-    #     pass_nueva = token_contraseñas['pass_nueva']
-    #     if not usuario.check_password(pass_ant):
-    #         return Response({
-    #                     'status': '400',
-    #                     'error': "La contraseña antigua no es correcta",
-    #                     'data': []
-    #                 }, status=status.HTTP_400_BAD_REQUEST)
-    #     usuario.set_password(pass_nueva)
-    #     usuario.save()
-    #     return Response({
-    #         'status': '200',
-    #         'error': '',
-    #         'data': []
-    #     }, status=status.HTTP_200_OK)
-    # except Exception as e:
-    #     return Response({
-    #                     'status': '400',
-    #                     'error': e.args,
-    #                     'data': []
-    #                 }, status=status.HTTP_400_BAD_REQUEST)
+    if not user or request.user.username != username:
+        return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+    user_data = {
+        "username": user.username,
+        "email": user.email,
+        "profile_picture": user.profile_picture,
+    }
+    
+    if user.is_commerce:
+        # Llamar a la función de commerce para obtener la información
+        commerce_data, branch_data = get_commerce_info(user)
+        
+        return Response({
+            "user_data": user_data,
+            "commerce_data": commerce_data,
+            "branch_data": branch_data
+        }, status=status.HTTP_200_OK)
+    else:
+        # Obtenemos los datos del celíaco
+        celiac = get_object_or_404(Celiac, user=user)
+        celiac_data = {
+            "first_name": celiac.first_name,
+            "last_name": celiac.last_name,
+            "sex": celiac.sex,
+            "date_birth": celiac.date_birth,
+        }
+        
+        return Response({
+            "user_data": user_data,
+            "celiac_data": celiac_data
+        }, status=status.HTTP_200_OK)
+    
+    # ESTO NO ESTÁ BIEN
+    # if request.user.id != user.id:
+    #     return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)

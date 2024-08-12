@@ -9,7 +9,7 @@ class Commerce(models.Model):
     description= models.CharField(max_length=300, blank=True)
 
 class Branch(models.Model):
-    commerce = models.OneToOneField(Commerce, on_delete=models.CASCADE, related_name="branch")
+    commerce = models.ForeignKey(Commerce, on_delete=models.CASCADE, related_name="branches")
     name = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=10, blank=False, default=None)
     optional_phone = models.CharField(max_length=10, blank=True)
