@@ -1,17 +1,14 @@
 import { StyleSheet, Pressable, Image, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { useSelector } from "react-redux";
-import {
-  userAddGlutty,
-  userGlutty,
-} from "../../../constants/glutty";
+import { userAddGlutty, userGlutty } from "../../../constants/glutty";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 
 export default function UserImage({ onPress, dimensions, style, isForm }) {
   const borderRadius = dimensions / 2;
   //const image =
   //  "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg";
-  const image = useSelector((state) => state.auth.userData.image);
+  const image = useSelector((state) => state.auth.image);
 
   function pressImageHandler() {
     Haptics.selectionAsync();
@@ -62,7 +59,7 @@ export default function UserImage({ onPress, dimensions, style, isForm }) {
 
 const styles = StyleSheet.create({
   userImage: {
-    objectFit: "cover"
+    objectFit: "cover",
   },
 
   pressed: {

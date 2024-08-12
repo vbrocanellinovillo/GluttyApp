@@ -29,22 +29,33 @@ export async function register(userData, isCommerce) {
   const formdata = new FormData();
   formdata.append("is_commerce", isCommerce);
 
+  formdata.append("username", userData.username);
+  formdata.append("email", userData.email);
+  formdata.append("password", userData.password);
+  formdata.append("image", {
+    uri: userData.image.uri,
+    name: userData.image.fileName,
+    type: userData.image.mimeType,
+  });
+
   if (isCommerce) {
-    formdata.append("")
+    formdata.append("name", userData.name);
+    formdata.append("cuit", userData.cuit);
+    formdata.append("description", userData.description);
   } else {
-    formdata.append("username", username);
-    formdata.append("first_name", name);
-    formdata.append("last_name", lastName);
-    formdata.append("gender", sex);
-    formdata.append("dateBirth", dateBirth);
-    formdata.append("email", email);
-    formdata.append("password", password);
+    formdata.append("first_name", userData.firstName);
+    formdata.append("last_name", userData.lastName);
+    formdata.append("gender", userData.sex);
+    formdata.append("dateBirth", userData.dateBirth);
   }
 
   const requestOptions = {
     method: "POST",
     body: formdata,
     redirect: "follow",
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   };
 
   const requestUrl = url + "register/";

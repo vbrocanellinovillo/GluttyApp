@@ -23,7 +23,15 @@ export default function Login() {
     try {
       setisloading(true);
       const response = await login(usuario, contraseña);
-      dispatch(authActions.login(response.user));
+      dispatch(
+        authActions.login({
+          user: response.user,
+          accessToken: response.access_token,
+          refreshToken: response.refresh_token,
+          image: response.profile_picture,
+          isCommerce: response.is_commerce,
+        })
+      );
     } catch (error) {
       serError(error.message);
       setIsError(true);
@@ -34,7 +42,7 @@ export default function Login() {
 
   return (
     <>
-      <LoadingGlutty visible={isloading} color={Colors.vainilla} size="large" />
+      <LoadingGlutty visible={isloading} color={Colors.vainilla} />
       <GluttyModal
         visible={isError}
         isError={true}
