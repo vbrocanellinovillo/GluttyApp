@@ -25,7 +25,7 @@ const authSlice = createSlice({
     },
 
     setImage(state, actions) {
-      state.userData.image = actions.payload;
+      state.image = actions.payload;
     },
 
     logout(state) {

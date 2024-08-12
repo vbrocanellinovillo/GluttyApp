@@ -1,5 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import Button from "../Controls/Button";
+import { useEffect } from "react";
 
 export default function ImageSheetOptions({ onTakeImage, onPickImage }) {
   return (

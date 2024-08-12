@@ -4,6 +4,7 @@ import { View } from "react-native";
 import Scanner from "../../../components/Scanner/Scanner";
 import NoPermissions from "../../../components/Scanner/NoPermissions";
 import { scanProduct } from "../../../services/productsService";
+import { useSelector } from "react-redux";
 
 export default function Scan({ navigation }) {
   // Permissions
@@ -14,6 +15,9 @@ export default function Scan({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [scannedData, setScannedData] = useState(undefined);
   const [error, setError] = useState(undefined);
+
+  // Token
+  const token = useSelector((state) => state.auth.accessToken);
 
   useEffect(() => {
     async function askPermissions() {
@@ -42,7 +46,7 @@ export default function Scan({ navigation }) {
   async function onScan(eanCode) {
     setIsLoading(true);
     try {
-      const fetchedData = await scanProduct(eanCode);
+      const fetchedData = await scanProduct(eanCode, token);
       setScannedData(fetchedData);
       setError(undefined);
     } catch (error) {

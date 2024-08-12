@@ -12,7 +12,7 @@ import FiltersDialog from "./FiltersDialog";
 import { useQuery } from "@tanstack/react-query";
 import NoProductsFound from "./NoProductsFound";
 import BlurDetails from "./BlurDetails";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { uiActions } from "../../context/ui";
 import * as Haptics from "expo-haptics";
 import GluttyErrorScreen from "../UI/GluttyErrorScreen";
@@ -34,10 +34,13 @@ export default function ProductsList() {
   const [detailsVisible, setDetailsVisible] = useState(false);
   const [product, setProduct] = useState(null);
 
+  // Token
+  const token = useSelector((state) => state.auth.accessToken);
+
   // Fetch data
   const { data, isLoading, refetch, isError, error } = useQuery({
     queryKey: ["products", searchTerm, brands, types],
-    queryFn: () => fetchProducts({ searchTerm, brands, types }),
+    queryFn: () => fetchProducts({ searchTerm, brands, types, token }),
     enabled: false,
   });
 

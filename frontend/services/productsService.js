@@ -4,11 +4,14 @@ import { httpRequest } from "../utils/http";
 
 const url = backendUrl + "productos/";
 
-export async function fetchProducts({ searchTerm, brands, types }) {
+export async function fetchProducts({ searchTerm, brands, types, token }) {
   const requestOptions = {
     method: "POST",
     body: JSON.stringify({ q: searchTerm, marca: brands, tipo: types }),
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   };
 
   const requestUrl = url + "find/";
@@ -42,11 +45,14 @@ export async function fetchProducts({ searchTerm, brands, types }) {
   }
 }
 
-export async function scanProduct(eanCode) {
+export async function scanProduct(eanCode, token) {
   const requestOptions = {
     method: "POST",
     body: JSON.stringify({ barcode: eanCode }),
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   };
 
   const requestUrl = url + "find-by-barcode/";

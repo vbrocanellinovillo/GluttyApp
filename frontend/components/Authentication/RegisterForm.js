@@ -57,6 +57,7 @@ export default function RegisterForm({ onSubmit }) {
   }
 
   async function selectImage(option) {
+    sheetRef.current?.close();
     const permissionStatus = await checkPermissions(option);
 
     if (!permissionStatus) return;

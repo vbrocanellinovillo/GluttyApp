@@ -8,13 +8,18 @@ import { authActions } from "../../../context/auth";
 import { logoutSesion } from "../../../services/userService";
 
 export default function DrawerContent({ navigation, route }) {
-  //const username = useSelector((state) => state.auth.userData.username);
+  const username = useSelector((state) => state.auth.userData.username);
+  const token = useSelector((state) => state.auth.accessToken);
+
   const dispatch = useDispatch();
 
   async function logout() {
-    Alert.alert("Cerrar sesión", "Cerrar sesión");
-    await logoutSesion(username);
-    dispatch(authActions.logout());
+    try {
+      await logoutSesion(username, token);
+      dispatch(authActions.logout());
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   return (
@@ -26,7 +31,7 @@ export default function DrawerContent({ navigation, route }) {
           }
           dimensions={80}
         />
-        <Text style={styles.username}>username</Text>
+        <Text style={styles.username}>{username}</Text>
       </View>
       <Drawer.Section title={<Text style={styles.title}>Usuario</Text>}>
         <Drawer.Item

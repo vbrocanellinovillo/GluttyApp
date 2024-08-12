@@ -32,11 +32,17 @@ export async function register(userData, isCommerce) {
   formdata.append("username", userData.username);
   formdata.append("email", userData.email);
   formdata.append("password", userData.password);
-  formdata.append("image", {
-    uri: userData.image.uri,
-    name: userData.image.fileName,
-    type: userData.image.mimeType,
-  });
+
+  formdata.append(
+    "image",
+    userData.image
+      ? {
+          uri: userData.image.uri,
+          name: userData.image.fileName,
+          type: userData.image.mimeType,
+        }
+      : null
+  );
 
   if (isCommerce) {
     formdata.append("name", userData.name);
@@ -45,14 +51,13 @@ export async function register(userData, isCommerce) {
   } else {
     formdata.append("first_name", userData.firstName);
     formdata.append("last_name", userData.lastName);
-    formdata.append("gender", userData.sex);
-    formdata.append("dateBirth", userData.dateBirth);
+    formdata.append("sex", userData.sex);
+    formdata.append("date_birth", userData.dateBirth);
   }
 
   const requestOptions = {
     method: "POST",
     body: formdata,
-    redirect: "follow",
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -112,7 +117,6 @@ export async function changePassword(username, currentPassword, newPassword) {
   const requestOptions = {
     method: "POST",
     body: formdata,
-    redirect: "follow",
   };
 
   const requestUrl = url + "change-password/";
@@ -125,14 +129,16 @@ export async function changePassword(username, currentPassword, newPassword) {
   }
 }
 
-export async function logoutSesion(username) {
+export async function logoutSesion(username, token) {
   const formdata = new FormData();
   formdata.append("username", username);
 
   const requestOptions = {
     method: "POST",
     body: formdata,
-    redirect: "follow",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
 
   const requestUrl = url + "logout/";
