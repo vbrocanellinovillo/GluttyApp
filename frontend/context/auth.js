@@ -1,15 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isAuthenticated: false,
-  userData: {
-    nombreUsuario: "gon",
-    nombre: "gon",
-    apellido: "gon",
-    sexo: "gon",
-    fechaNacimiento: "gon",
-    email: "gon",
-  },
+  userData: undefined,
+  image: undefined,
+  accessToken: undefined,
+  refreshToken: undefined,
+  isCommerce: undefined,
 };
 
 const authSlice = createSlice({
@@ -17,8 +13,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login(state, action) {
-      state.isAuthenticated = true;
-      state.userData = action.payload;
+      state.userData = action.payload.user;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
+      state.image = action.payload.image;
+      state.isCommerce = action.payload.isCommerce;
     },
 
     updateUser(state, action) {
@@ -30,8 +29,10 @@ const authSlice = createSlice({
     },
 
     logout(state) {
-      state.isAuthenticated = false;
       state.userData = undefined;
+      state.image = undefined;
+      state.accessToken = undefined;
+      state.refreshToken = undefined;
     },
   },
 });
