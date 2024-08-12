@@ -83,7 +83,16 @@ def register(request):
                                                 description=request.data.get("description"))
             
             commerce.save()
-            return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
+            
+            login_data = {
+            "username": usuario.username,
+            "password": request.data.get("password")
+            }
+            login_request = request._request
+            login_request.POST = login_data
+            login_response = login(login_request)
+                   
+            return Response({login_response}, status=status.HTTP_201_CREATED)
         else:
             celiac = Celiac.objects.create(user=usuario,
                                             first_name=request.data.get("first_name"),
@@ -91,7 +100,21 @@ def register(request):
                                             sex=request.data.get("sex"),
                                             date_birth=request.data.get("date_birth"))
             celiac.save()
-            return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
+            
+            login_data = {
+            "username": usuario.username,
+            "password": request.data.get("password")
+            }
+            login_request = request._request
+            login_request.POST = login_data
+            login_response = login(login_request)
+                   
+            return Response({login_response}, status=status.HTTP_201_CREATED)
+            
+        # Iniciar sesión automáticamente
+        
+
+            
         
     #Si el serializaer.is_valid da error
     return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -156,6 +179,7 @@ def login(request):
     Permite iniciar sesión y generar token JWT
     """
     try:
+        print("try")
         username = request.data["username"]
         password = request.data["password"]
     except KeyError:
@@ -193,6 +217,13 @@ def login(request):
     # Convertir usuario a JSON
     serializer = UsuarioSerializer(usuario)
 
+    datos = {
+        "username": usuario.username, 
+        "is_commerce": usuario.is_commerce, 
+        "profile_picture": usuario.profile_picture}
+
+    #if usuario.is_commerce:
+        
     response = {
         "user": serializer.data,
         "access_token": access_token,
