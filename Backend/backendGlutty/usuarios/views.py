@@ -233,7 +233,7 @@ def login(request):
     # Convertir usuario a JSON
     serializer = UsuarioSerializer(usuario)
 
-    user_data = {"username": usuario.username}
+    user_data = {"username": usuario.username, "id": usuario.id}
 
     if usuario.is_commerce:
         # Agregar datos específicos para comercio
@@ -341,7 +341,6 @@ def update(request, user_id):
 
     return Response({"error": user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-
 # @swagger_auto_schema(method='delete', request_body=UsuarioSerializer, responses={200: "Se eliminó el usuario."})
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
@@ -358,7 +357,6 @@ def delete(request):
         return Response("Se eliminó el usuario.")
     
     return Response("Usuario no encontrado.", status=status.HTTP_404_NOT_FOUND)
-
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: "Contraseña cambiada exitosamente."})
 @api_view(['POST'])
