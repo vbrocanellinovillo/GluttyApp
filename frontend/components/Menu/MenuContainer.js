@@ -18,6 +18,7 @@ export default function MenuContainer() {
 
 const styles = StyleSheet.create({
   menu: {
+    marginTop:70,
     flex: 1,
     paddingHorizontal: 20,
   },
