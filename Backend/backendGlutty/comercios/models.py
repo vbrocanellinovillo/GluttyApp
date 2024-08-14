@@ -7,6 +7,8 @@ class Commerce(models.Model):
     name = models.CharField(max_length=50, blank=False)
     cuit = models.CharField(max_length=50, blank=False)
     description= models.CharField(max_length=300, blank=True, null=True)
+    menu_url = models.URLField(max_length=500, blank=True, null=True)
+    # menu_pages = models.IntegerField(blank=True, null=True)
 
 class Branch(models.Model):
     commerce = models.ForeignKey(Commerce, on_delete=models.CASCADE, related_name="branches")
@@ -16,4 +18,5 @@ class Branch(models.Model):
     location = models.CharField(max_length=255, blank=False)
     separated_kitchen= models.BooleanField(default=False)
     just_takeaway= models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     

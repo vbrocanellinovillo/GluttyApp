@@ -125,21 +125,16 @@ def register(request):
     try:
         # Crear usuario y comercio o celíaco
         serializer = UsuarioSerializer(data=request.data)
-        print("hola")
         if serializer.is_valid():
             # Guardar el usuario
-            print("entra a serializer is valid")
             usuario = serializer.save()
             
             # Manejar la imagen de perfil si se proporciona
-            print("1")
             image = request.FILES.get('image')
             #print(str(image))
-            print("2")
             
             if image:
                 try:
-                    print("entra al try")
                     picture_link = upload_to_cloudinary(image)
                     usuario.profile_picture = picture_link
                     usuario.save()
@@ -243,7 +238,7 @@ def login(request):
             
             # Obtener las sucursales (Branch) del comercio
             branches = Branch.objects.filter(commerce=commerce)
-            branches_data = [{"name": branch.name, "location": branch.location} for branch in branches]
+            branches_data = [{"name": branch.name, "location": branch.location} for branch in branches if branch.is_active]
             user_data["Branches"] = branches_data
 
     else:
