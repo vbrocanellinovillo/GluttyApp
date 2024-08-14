@@ -33,5 +33,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     color: Colors.mJordan,
+    marginTop: 20,
   },
 });
