@@ -35,9 +35,6 @@ export default function AddressForm({ onBack, onNext }) {
     onNext(address, coordinates);
   }
 
-  console.log(address);
-  console.log(coordinates);
-
   return (
     <DismissKeyboardContainer>
       <View style={styles.container}>

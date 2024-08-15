@@ -33,10 +33,19 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
           }) => {
             const errors = {};
 
+            /* if (name.trim() === "") {
+              errors.name = "Nombre requerido";
+            }
+
+            if (phone.trim() === "") {
+              errors.phone = "Se requiere al menos un número";
+            } */
+
             if (name.trim() === "") {
               errors.name = "Nombre requerido";
             }
 
+            // Ver de cuantos números tiene que ser el telefono
             if (phone.trim() === "") {
               errors.phone = "Se requiere al menos un número";
             }

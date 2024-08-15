@@ -19,12 +19,13 @@ export default function AddBranchStack() {
           />
         ),
         animation: "fade",
+        gestureEnabled: false,
       }}
     >
       <Stack.Screen
         name="GeneralInfo"
         component={GeneralInfo}
-        options={{ title: "Información General" }}
+        options={{ title: "Información General", gestureEnabled: true }}
       />
       <Stack.Screen
         name="Address"

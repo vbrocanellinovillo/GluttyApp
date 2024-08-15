@@ -1,11 +1,10 @@
 import { Text, View } from "react-native";
-import MapConfirmationForm from "../../../../components/Branch/AddBranchForms/MapConfirmationForm";
 
 export default function MapConfirmation({ navigation, route }) {
   const address = route.params.address;
   const coordinates = route.params.coordinates;
 
-  function goBack() {
+  function cancel() {
     navigation.navigate("Address");
   }
 
@@ -14,11 +13,8 @@ export default function MapConfirmation({ navigation, route }) {
   }
 
   return (
-    <MapConfirmationForm
-      address={address}
-      coordinates={coordinates}
-      onBack={goBack}
-      onSave={save}
-    />
+    <View>
+      <Text>map confirmation</Text>
+    </View>
   );
 }
