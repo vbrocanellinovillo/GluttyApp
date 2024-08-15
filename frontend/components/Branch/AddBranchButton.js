@@ -3,11 +3,13 @@ import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import { useNavigation } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
 
 export default function AddBranchButton() {
   const navigation = useNavigation();
 
   function navigateNewBranch() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.navigate("AddBranchStack");
   }
 

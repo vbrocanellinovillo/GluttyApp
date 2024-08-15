@@ -71,13 +71,6 @@ export default function AddBranchHeader({ navigation, route, options }) {
         stepCount={4}
         currentPosition={currentPosition}
       />
-      <View style={styles.sectionContainer}>
-        <View style={styles.section}>
-          <TextCommonsMedium style={styles.sectionText}>
-            {title ? title : name}
-          </TextCommonsMedium>
-        </View>
-      </View>
     </View>
   );
 }
@@ -97,20 +90,5 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 32,
-  },
-
-  sectionContainer: {
-    alignItems: "center",
-  },
-
-  section: {
-    paddingVertical: 12,
-    paddingHorizontal: 50,
-    backgroundColor: Colors.pielcita,
-    borderRadius: 10,
-  },
-
-  sectionText: {
-    fontSize: 24,
   },
 });

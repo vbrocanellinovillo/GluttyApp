@@ -6,21 +6,29 @@ export default function Searchbar({
   onTextChange,
   placeholder,
   value,
+  containerStyle,
+  textInputStyle,
+  iconStyle,
 }) {
   function handleChange(text) {
     onTextChange(text);
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <TextInput
-        style={[styles.searchbar, { backgroundColor }]}
+        style={[styles.searchbar, { backgroundColor }, textInputStyle]}
         onChangeText={handleChange}
         placeholder={placeholder}
         placeholderTextColor="#666"
         value={value}
       />
-      <Ionicons name="search" color="#666" size={24} style={styles.icon} />
+      <Ionicons
+        name="search"
+        color="#666"
+        size={24}
+        style={[styles.icon, iconStyle]}
+      />
     </View>
   );
 }
