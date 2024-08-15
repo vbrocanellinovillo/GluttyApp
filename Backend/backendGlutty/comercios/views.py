@@ -199,7 +199,7 @@ def upload_menu(request):
         elif file_url:
             # Guardar la URL del archivo en el comercio
             commerce.menu_url = file_url
-            commerce.menu_pages = None
+            #commerce.menu_pages = None
         else:
             return Response({"error": "No se ha proporcionado ni un archivo ni un enlace."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -207,7 +207,7 @@ def upload_menu(request):
 
         response_data = {
             "menu_url": commerce.menu_url,
-            "num_pages": commerce.menu_pages,
+            #"num_pages": commerce.menu_pages,
         }
         
         return Response(response_data, status=status.HTTP_200_OK)
@@ -300,7 +300,7 @@ def update_menu(request):
 
             # Actualizar la URL del menú en el comercio
             commerce.menu_url = file_url
-            commerce.menu_pages = None
+            # commerce.menu_pages = None
         else:
             return Response({"error": "No se ha proporcionado ni un archivo ni un enlace."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -308,7 +308,7 @@ def update_menu(request):
 
         response_data = {
             "menu_url": commerce.menu_url,
-            "num_pages": commerce.menu_pages,
+            #"num_pages": commerce.menu_pages,
         }
         
         return Response(response_data, status=status.HTTP_200_OK)
