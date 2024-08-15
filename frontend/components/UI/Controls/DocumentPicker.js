@@ -1,44 +1,3 @@
-/*import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
-import * as DocumentPicker from 'expo-document-picker';
-import Button from './Button';
-
-export default function DocumentPickerComponent() {
-  
-    const pickDocument = async () => {
-    try {
-      let result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory: true });
-      console.log(result);
-      if (!result.canceled) {
-        Alert.alert('Documento seleccionado', result.uri);
-      } else {
-        Alert.alert('No se seleccionó ningún documento');
-      }
-    } catch (error) {
-      console.error('Error al seleccionar el documento:', error);
-    }
-  }
-
-  return (
-    <Button style={styles.container} onPress={pickDocument}>Carga el .pdf de tu menu</Button>
-    
-
-  );
-};
-
-const styles = StyleSheet.create({
-    container: {
-      borderRadius: 8,
-      paddingHorizontal: 10,
-      paddingVertical: 14,
-      position: "relative",
-      flexDirection: "row",
-      justifyContent: "space-around",
-    },
-     
-})
-
-;*/
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
@@ -46,21 +5,23 @@ import Button from './Button';
 import { Colors } from '../../../constants/colors';
 import Feather from '@expo/vector-icons/Feather';
 import Entypo from '@expo/vector-icons/Entypo';
+import { sendPdf } from '../../../services/commerceService';
+import { useSelector } from 'react-redux';
 
 export default function DocumentPickerComponent() {
+  const token = useSelector((state) => state.auth.accessToken);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
 
   const pickDocument = async () => {
     try {
-      let result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory: true });
-      console.log(result);
-      if (result.type !== 'cancel') {
-        const fileSizeMB = result.assets[0].size / (1024 * 1024); // Convertir tamaño a MB
-        if (fileSizeMB > 50) {
-          Alert.alert('Archivo demasiado grande', 'El archivo supera los 50 MB de tamaño.');
+      let result = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true });
+      if (!result.canceled) {
+        const file = result.assets[0]; // Accedemos al primer elemento de assets
+        const fileSizeMB = file.size / (1024 * 1024); // Convertimos tamaño a MB
+        if (fileSizeMB > 10) {
+          Alert.alert('Archivo demasiado grande', 'El archivo supera los 10 MB de tamaño.');
         } else {
-          setSelectedDocuments([...selectedDocuments, result]);
-          console.log(result.assets[0].uri)
+          setSelectedDocuments([...selectedDocuments, file]);
         }
       } else {
         Alert.alert('No se seleccionó ningún documento');
@@ -71,7 +32,7 @@ export default function DocumentPickerComponent() {
   };
 
   const removeDocument = (uri) => {
-    setSelectedDocuments(selectedDocuments.filter(doc => doc.assets[0].uri !== uri));
+    setSelectedDocuments(selectedDocuments.filter(doc => doc.uri !== uri));
   };
 
   return (
@@ -82,18 +43,19 @@ export default function DocumentPickerComponent() {
           <View style={styles.row}>
             <Feather style={styles.fileIcon} name="file" size={24} color="black" />
             <View style={styles.textContainer}>
-              <Text style={styles.documentName}>{document.assets[0].name}</Text>
-              <Text style={styles.documentSize}>{(document.assets[0].size / (1024 * 1024)).toFixed(2)} MB</Text>
+              <Text style={styles.documentName}>{document.name}</Text>
+              <Text style={styles.documentSize}>{(document.size / (1024 * 1024)).toFixed(2)} MB</Text>
             </View>
-            <TouchableOpacity onPress={() => removeDocument(document.assets[0].uri)}>
+            <TouchableOpacity onPress={() => removeDocument(document.uri)}>
               <Entypo name="squared-cross" size={24} color="black" />
             </TouchableOpacity>
           </View>
         </View>
       ))}
+      <Button onPress={() => sendPdf(selectedDocuments, token)}>Guardar</Button>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
