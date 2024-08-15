@@ -1,22 +1,21 @@
 import { StyleSheet, View, ScrollView } from "react-native";
-import Form from "../UI/Forms/Form";
-import FormControl from "../UI/Controls/FormControl";
-import FormHeader from "../UI/Forms/FormHeader";
-import { Colors } from "../../constants/colors";
-import Button from "../UI/Controls/Button";
+import Form from "../../UI/Forms/Form";
+import FormControl from "../../UI/Controls/FormControl";
+import { Colors } from "../../../constants/colors";
 import { Formik } from "formik";
-import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
-import CheckboxControl from "../UI/Controls/CheckboxControl";
+import DismissKeyboardContainer from "../../UI/Forms/DismissKeyboadContainer";
+import CheckboxControl from "../../UI/Controls/CheckboxControl";
+import TextCommonsRegular from "../../UI/FontsTexts/TextCommonsRegular";
+import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
 
-export default function BranchForm({ onSubmit, branch }) {
+export default function GeneralInfoForm({ onNext, onCancel }) {
   function submitHandler(values) {
-    onSubmit();
+    onNext();
   }
 
   return (
     <DismissKeyboardContainer>
       <ScrollView contentContainerStyle={styles.container}>
-        <FormHeader title="GLUTTY" />
         <Formik
           initialValues={{
             name: "",
@@ -86,27 +85,31 @@ export default function BranchForm({ onSubmit, branch }) {
                 errors={errors.optionalPhone}
                 keyboardType="numeric"
               />
-              <CheckboxControl
-                title="Cocina separada"
-                name="separateKitchen"
-                checked={values.separateKitchen}
-                setChecked={setFieldValue}
-              />
-              <CheckboxControl
-                title="Solo TakeAway"
-                name="onlyTakeAway"
-                checked={values.onlyTakeAway}
-                setChecked={setFieldValue}
-              />
-              <View style={styles.buttonContainer}>
-                <Button
-                  backgroundColor={Colors.locro}
-                  color={Colors.mJordan}
-                  onPress={handleSubmit}
-                >
-                  Guardar
-                </Button>
+              <View style={styles.checkboxServices}>
+                <TextCommonsRegular style={styles.checkboxServicesText}>
+                  Servicios Ofrecidos
+                </TextCommonsRegular>
+                <CheckboxControl
+                  title="Cocina separada"
+                  name="separateKitchen"
+                  checked={values.separateKitchen}
+                  setChecked={setFieldValue}
+                  style={styles.checkbox}
+                />
+                <CheckboxControl
+                  title="Solo TakeAway"
+                  name="onlyTakeAway"
+                  checked={values.onlyTakeAway}
+                  setChecked={setFieldValue}
+                  style={styles.checkbox}
+                />
               </View>
+              <FormButtonsGroup
+                prev="Cancelar"
+                next="Siguiente"
+                onPrev={onCancel}
+                onNext={handleSubmit}
+              />
             </Form>
           )}
         </Formik>
@@ -117,11 +120,21 @@ export default function BranchForm({ onSubmit, branch }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 100,
+    paddingTop: 40,
     alignItems: "center",
+    paddingBottom: 230,
   },
 
-  buttonContainer: {
+  checkboxServices: {
     marginTop: 20,
+  },
+
+  checkboxServicesText: {
+    fontSize: 16,
+  },
+
+  checkbox: {
+    backgroundColor: Colors.pielcita,
+    borderWidth: 0,
   },
 });

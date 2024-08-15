@@ -3,7 +3,14 @@ import { CheckBox } from "@rneui/themed";
 import { Colors } from "../../../constants/colors";
 import { useFonts } from "expo-font";
 
-export default function CheckboxControl({ title, checked, setChecked, name }) {
+export default function CheckboxControl({
+  title,
+  checked,
+  setChecked,
+  name,
+  style,
+  textStyle,
+}) {
   const [loaded, error] = useFonts({
     "TT-Commons-Regular": require("../../../assets/fonts/TT Commons Regular.otf"),
   });
@@ -14,8 +21,13 @@ export default function CheckboxControl({ title, checked, setChecked, name }) {
       checked={checked}
       checkedColor={Colors.mJordan}
       onPress={() => setChecked(name, !checked)}
-      containerStyle={styles.checkbox}
-      textStyle={[styles.textStyle, { fontFamily: "TT-Commons-Regular" }]}
+      containerStyle={[styles.checkbox, style]}
+      textStyle={[
+        styles.textStyle,
+        { fontFamily: "TT-Commons-Regular" },
+        textStyle,
+      ]}
+      uncheckedColor={Colors.mJordan}
     />
   );
 }
@@ -31,7 +43,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.mJordan,
     marginLeft: 0,
     paddingVertical: 13,
-    width: "100%"
+    width: "100%",
   },
 
   textStyle: {

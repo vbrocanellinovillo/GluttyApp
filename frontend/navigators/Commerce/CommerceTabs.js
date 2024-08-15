@@ -1,14 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
-import {
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import MainHeader from "../../components/UI/Header/MainHeader";
 import Menu from "../../screens/Commerce/Menu/Menu";
 import Branches from "../../screens/Commerce/Branches/Branches";
-import BranchesStack from "./BranchesStack";
 
 export default function CommerceTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -83,7 +79,7 @@ export default function CommerceTabs() {
     >
       <CurvedBottomBarExpo.Screen
         name="Sucursales"
-        component={BranchesStack}
+        component={Branches}
         position="LEFT"
         options={{ title: "Mis Sucursales" }}
       />

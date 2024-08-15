@@ -8,7 +8,7 @@ export default function AddBranchButton() {
   const navigation = useNavigation();
 
   function navigateNewBranch() {
-    navigation.navigate("NewBranch");
+    navigation.navigate("AddBranchStack");
   }
 
   return (
