@@ -2,14 +2,16 @@ from django.db import models
 from usuarios.models import *
 
 # Create your models here.
+# Modelo COMERCIO
 class Commerce(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="commerce")
     name = models.CharField(max_length=50, blank=False)
     cuit = models.CharField(max_length=50, blank=False)
     description= models.CharField(max_length=300, blank=True, null=True)
-    menu_url = models.URLField(max_length=500, blank=True, null=True)
+    # menu_url = models.URLField(max_length=500, blank=True, null=True)
     # menu_pages = models.IntegerField(blank=True, null=True)
 
+# Modelo SUCURSAL
 class Branch(models.Model):
     commerce = models.ForeignKey(Commerce, on_delete=models.CASCADE, related_name="branches")
     name = models.CharField(max_length=255, blank=False)
@@ -19,4 +21,8 @@ class Branch(models.Model):
     separated_kitchen= models.BooleanField(default=False)
     just_takeaway= models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    
+
+# Modelo MENÚ
+class Menu(models.Model):
+    menu_url = models.URLField(max_length=500, blank=True, null=True)
+    commerce = models.ForeignKey(Commerce, on_delete=models.CASCADE, related_name="menu")

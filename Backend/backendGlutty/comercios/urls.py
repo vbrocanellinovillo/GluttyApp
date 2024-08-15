@@ -9,5 +9,4 @@ urlpatterns = [
     path("upload-menu/", upload_menu, name="upload_menu"),
     path("get-menu/", get_menu, name="get_menu"),
     path("delete-menu/", delete_menu, name="delete_menu"),
-    path("update-menu", update_menu, name="update_menu"),
 ]
