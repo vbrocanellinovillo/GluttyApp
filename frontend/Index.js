@@ -33,7 +33,7 @@ export default function Index() {
 
   return (
     <NavigationContainer>
-      <AddBranchStack />
+      <MainCommerceStack />
     </NavigationContainer>
   );
 }

@@ -27,10 +27,10 @@ export default function AddressForm({ onBack, onNext }) {
   }
 
   function handleSubmit() {
-    /* if (address.trim() === "") {
+    if (address.trim() === "") {
       setError(true);
       return;
-    } */
+    }
 
     onNext(address, coordinates);
   }
@@ -42,6 +42,7 @@ export default function AddressForm({ onBack, onNext }) {
           fetchDetails
           query={{
             language: "es",
+            key: "AIzaSyCnZUUd8qL17L1giWuc1m1YSkLhY_rpC20",
           }}
           onPress={getAddress}
           textInputProps={{
