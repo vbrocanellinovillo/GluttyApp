@@ -27,10 +27,10 @@ export default function AddressForm({ onBack, onNext }) {
   }
 
   function handleSubmit() {
-    if (address.trim() === "") {
+    /* if (address.trim() === "") {
       setError(true);
       return;
-    }
+    } */
 
     onNext(address, coordinates);
   }

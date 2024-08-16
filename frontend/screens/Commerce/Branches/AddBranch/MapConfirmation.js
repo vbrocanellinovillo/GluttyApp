@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import MapConfirmationForm from "../../../../components/Branch/AddBranchForms/MapConfirmationForm";
+import NuevaSucursalScreen from "../../../../components/Branch/AddBranchForms/PhotoForm";
 
 export default function MapConfirmation({ navigation, route }) {
   const address = route.params.address;
@@ -13,8 +14,6 @@ export default function MapConfirmation({ navigation, route }) {
   }
 
   return (
-    <View>
-      <Text>map confirmation</Text>
-    </View>
+    <NuevaSucursalScreen />
   );
 }
