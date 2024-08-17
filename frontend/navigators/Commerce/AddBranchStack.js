@@ -5,6 +5,12 @@ import Photos from "../../screens/Commerce/Branches/AddBranch/Photos";
 import AddBranchHeader from "../../components/UI/Header/AddBranchHeader";
 import MapConfirmation from "../../screens/Commerce/Branches/AddBranch/MapConfirmation";
 
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
+
 const Stack = createNativeStackNavigator();
 
 export default function AddBranchStack() {
