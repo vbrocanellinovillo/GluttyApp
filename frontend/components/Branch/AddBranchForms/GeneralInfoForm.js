@@ -9,8 +9,14 @@ import TextCommonsRegular from "../../UI/FontsTexts/TextCommonsRegular";
 import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
 
 export default function GeneralInfoForm({ onNext, onCancel }) {
-  function submitHandler(values) {
-    onNext();
+  function submitHandler(
+    name,
+    phone,
+    optionalPhone,
+    separatedKitchen,
+    onlyTakeAway
+  ) {
+    onNext(name, phone, optionalPhone, separatedKitchen, onlyTakeAway);
   }
 
   return (
@@ -21,14 +27,14 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
             name: "",
             phone: "",
             optionalPhone: "",
-            separateKitchen: false,
+            separatedKitchen: false,
             onlyTakeAway: false,
           }}
           validate={({
             name,
             phone,
             optionalPhone,
-            separateKitchen,
+            separatedKitchen,
             onlyTakeAway,
           }) => {
             const errors = {};
@@ -37,6 +43,7 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
               errors.name = "Nombre requerido";
             }
 
+            // Ver de cuantos números tiene que ser el telefono
             if (phone.trim() === "") {
               errors.phone = "Se requiere al menos un número";
             }
@@ -91,8 +98,8 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
                 </TextCommonsRegular>
                 <CheckboxControl
                   title="Cocina separada"
-                  name="separateKitchen"
-                  checked={values.separateKitchen}
+                  name="separatedKitchen"
+                  checked={values.separatedKitchen}
                   setChecked={setFieldValue}
                   style={styles.checkbox}
                 />

@@ -5,6 +5,12 @@ import Photos from "../../screens/Commerce/Branches/AddBranch/Photos";
 import AddBranchHeader from "../../components/UI/Header/AddBranchHeader";
 import MapConfirmation from "../../screens/Commerce/Branches/AddBranch/MapConfirmation";
 
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
+
 const Stack = createNativeStackNavigator();
 
 export default function AddBranchStack() {
@@ -21,16 +27,8 @@ export default function AddBranchStack() {
         animation: "fade",
       }}
     >
-      <Stack.Screen
-        name="GeneralInfo"
-        component={GeneralInfo}
-        options={{ title: "Información General" }}
-      />
-      <Stack.Screen
-        name="Address"
-        component={Address}
-        options={{ title: "Dirección" }}
-      />
+      <Stack.Screen name="GeneralInfo" component={GeneralInfo} />
+      <Stack.Screen name="Address" component={Address} />
       <Stack.Screen name="MapConfirmation" component={MapConfirmation} />
       <Stack.Screen name="Photos" component={Photos} />
     </Stack.Navigator>

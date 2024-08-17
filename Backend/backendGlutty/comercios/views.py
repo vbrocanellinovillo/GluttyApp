@@ -165,52 +165,34 @@ def upload_menu(request):
         user = request.user
         commerce = get_object_or_404(Commerce, user=user)
 
-        # Verificar si se ha subido un archivo o proporcionado un enlace
-        file = request.FILES.get('menu')
-        file_url = request.data.get('menu_url')
+        # Obtener múltiples archivos o URLs de menú
+        files = request.FILES.getlist('menu')
+        file_urls = request.data.getlist('menu_url')
 
-        if file:
+        if not files and not file_urls:
+            return Response({"error": "No se ha proporcionado ni un archivo ni un enlace."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Subir y guardar cada menú
+        for file in files:
             file_type = file.content_type
 
-            # Verificamos si el archivo es una imagen o un PDF
             if file_type not in ["image/jpeg", "image/png", "application/pdf"]:
                 return Response({"error": "Formato de archivo no soportado. Solo se permiten imágenes y PDFs."}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # Usar el nombre original del archivo
+
             original_filename = file.name
-            
-            # Subir el archivo a Cloudinary
             upload_result = cloudinary.uploader.upload(
                 file,
                 resource_type='auto',
-                public_id=f"{user.username}/{original_filename}"  # Puedes modificar esto según tu lógica
+                public_id=f"{user.username}/{original_filename}"
             )
 
-            # Si es un PDF, contamos las páginas
-            # num_pages = None
-            # if file_type == "application/pdf":
-            #     pdf_file = BytesIO(file.read())
-            #     pdf = PdfReader(pdf_file)
-            #     num_pages = len(pdf.pages)
+            Menu.objects.create(commerce=commerce, menu_url=upload_result['url'])
 
-            # Guardamos la información del archivo en el comercio
-            commerce.menu_url = upload_result['url']
-            # commerce.menu_pages = num_pages
-        elif file_url:
-            # Guardar la URL del archivo en el comercio
-            commerce.menu_url = file_url
-            #commerce.menu_pages = None
-        else:
-            return Response({"error": "No se ha proporcionado ni un archivo ni un enlace."}, status=status.HTTP_400_BAD_REQUEST)
+        # Guardar URLs si fueron proporcionadas
+        for file_url in file_urls:
+            Menu.objects.create(commerce=commerce, menu_url=file_url)
 
-        commerce.save()
-
-        response_data = {
-            "menu_url": commerce.menu_url,
-            #"num_pages": commerce.menu_pages,
-        }
-        
-        return Response(response_data, status=status.HTTP_200_OK)
+        return Response({"detail": "Menús subidos correctamente."}, status=status.HTTP_200_OK)
 
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -220,98 +202,35 @@ def upload_menu(request):
 def get_menu(request):
     user = request.user
     commerce = get_object_or_404(Commerce, user=user)
-    
-    if commerce.menu_url:
-        return Response({"menu_url": commerce.menu_url}, status=status.HTTP_200_OK)
+
+    menus = commerce.menu.all()
+    if menus.exists():
+        menu_urls = [{"menu_url": menu.menu_url} for menu in menus]
+        return Response(menu_urls, status=status.HTTP_200_OK)
     else:
-        return Response({"error": "No menu file found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "No se encontraron menús."}, status=status.HTTP_404_NOT_FOUND)
     
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def delete_menu(request):
     user = request.user
     commerce = get_object_or_404(Commerce, user=user)
-    
-    if commerce.menu_url:
-        # Extraer el public_id de la URL del archivo
-        public_id = commerce.menu_url.split('/')[-1].split('.')[0]
-        
-        # Eliminar el archivo de Cloudinary
-        cloudinary.uploader.destroy(public_id, resource_type='auto')
-        
-        # Eliminar la URL del archivo del modelo
-        commerce.menu_url = None
-        commerce.save()
-        
-        return Response({"detail": "Menu file deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
-    else:
-        return Response({"error": "No menu file found"}, status=status.HTTP_404_NOT_FOUND)
 
-@api_view(["PUT"])
-@permission_classes([IsAuthenticated])
-def update_menu(request):
-    try:
-        user = request.user
-        commerce = get_object_or_404(Commerce, user=user)
+    # Obtener la lista de menús a eliminar
+    menu_urls = request.data.getlist("menu_urls")
 
-        # Verificar si se ha subido un archivo o proporcionado un enlace
-        file = request.FILES.get('menu')
-        file_url = request.data.get('menu_url')
+    if not menu_urls:
+        return Response({"error": "No se han proporcionado URLs de menús para eliminar."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if file:
-            file_type = file.content_type
+    for url in menu_urls:
+        menu = get_object_or_404(Menu, commerce=commerce, menu_url=url)
 
-            # Verificamos si el archivo es una imagen o un PDF
-            if file_type not in ["image/jpeg", "image/png", "application/pdf"]:
-                return Response({"error": "Formato de archivo no soportado. Solo se permiten imágenes y PDFs."}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # Usar el nombre original del archivo
-            original_filename = file.name
-            
-            # Si existe un archivo de menú anterior, eliminarlo de Cloudinary
-            if commerce.menu_url and (commerce.menu_url.startswith("http://res.cloudinary.com/") or commerce.menu_url.startswith("https://res.cloudinary.com/")):
-                public_id = commerce.menu_url.split('/')[-1].split('.')[0]
-                cloudinary.uploader.destroy(public_id, resource_type='auto')
+        # Extraer el public_id de la URL del archivo y eliminarlo de Cloudinary
+        if menu.menu_url.startswith("http://res.cloudinary.com/") or menu.menu_url.startswith("https://res.cloudinary.com/"):
+            public_id = menu.menu_url.split('/')[-1].split('.')[0]
+            cloudinary.uploader.destroy(public_id, resource_type='auto')
 
-            # Subir el nuevo archivo a Cloudinary
-            upload_result = cloudinary.uploader.upload(
-                file,
-                resource_type='auto',
-                public_id=f"{user.username}/{original_filename}"  # Puedes modificar esto según tu lógica
-            )
+        # Eliminar el registro de la base de datos
+        menu.delete()
 
-            file_url = upload_result['secure_url']
-            
-            # Si es un PDF, contamos las páginas
-            # num_pages = None
-            # if file_type == "application/pdf":
-            #     pdf_file = BytesIO(file.read())
-            #     pdf = PdfReader(pdf_file)
-            #     num_pages = len(pdf.pages)
-            
-            # Actualizamos la información del archivo en el comercio
-            commerce.menu_url = file_url
-            # commerce.menu_pages = num_pages
-        elif file_url:
-            # Eliminar el archivo de Cloudinary si existía
-            if commerce.menu_url and (commerce.menu_url.startswith("http://res.cloudinary.com/") or commerce.menu_url.startswith("https://res.cloudinary.com/")):
-                public_id = commerce.menu_url.split('/')[-1].split('.')[0]
-                cloudinary.uploader.destroy(public_id, resource_type='auto')
-
-            # Actualizar la URL del menú en el comercio
-            commerce.menu_url = file_url
-            # commerce.menu_pages = None
-        else:
-            return Response({"error": "No se ha proporcionado ni un archivo ni un enlace."}, status=status.HTTP_400_BAD_REQUEST)
-
-        commerce.save()
-
-        response_data = {
-            "menu_url": commerce.menu_url,
-            #"num_pages": commerce.menu_pages,
-        }
-        
-        return Response(response_data, status=status.HTTP_200_OK)
-
-    except Exception as e:
-        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response({"detail": "Menús eliminados correctamente."}, status=status.HTTP_204_NO_CONTENT)
