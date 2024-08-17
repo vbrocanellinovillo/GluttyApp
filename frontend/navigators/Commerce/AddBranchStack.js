@@ -21,16 +21,8 @@ export default function AddBranchStack() {
         animation: "fade",
       }}
     >
-      <Stack.Screen
-        name="GeneralInfo"
-        component={GeneralInfo}
-        options={{ title: "Información General" }}
-      />
-      <Stack.Screen
-        name="Address"
-        component={Address}
-        options={{ title: "Dirección" }}
-      />
+      <Stack.Screen name="GeneralInfo" component={GeneralInfo} />
+      <Stack.Screen name="Address" component={Address} />
       <Stack.Screen name="MapConfirmation" component={MapConfirmation} />
       <Stack.Screen name="Photos" component={Photos} />
     </Stack.Navigator>

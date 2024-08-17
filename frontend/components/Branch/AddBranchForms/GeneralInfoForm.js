@@ -37,6 +37,7 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
               errors.name = "Nombre requerido";
             }
 
+            // Ver de cuantos números tiene que ser el telefono
             if (phone.trim() === "") {
               errors.phone = "Se requiere al menos un número";
             }

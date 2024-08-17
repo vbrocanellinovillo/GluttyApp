@@ -1,9 +1,9 @@
-import { Text, View } from "react-native";
+import PhotosForm from "../../../../components/Branch/AddBranchForms/PhotosForm";
 
-export default function Photos() {
-  return (
-    <View>
-      <Text>photos</Text>
-    </View>
-  );
+export default function Photos({ navigation }) {
+  function goBack() {
+    navigation.navigate("MapConfirmation");
+  }
+  
+  return <PhotosForm onBack={goBack} />;
 }
