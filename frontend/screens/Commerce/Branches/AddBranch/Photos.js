@@ -1,11 +1,9 @@
-import { Text, View } from "react-native";
-import PhotoForm from "C:\Users\franm\OneDrive\Escritorio\Tesis\GluttyApp\frontend\components\Branch\AddBranchForms\PhotoForm.js"
+import PhotosForm from "../../../../components/Branch/AddBranchForms/PhotosForm";
 
-export default function Photos({navigation}) {
+export default function Photos({ navigation }) {
   function goBack() {
-    navigation.navigate("GeneralInfo");
+    navigation.navigate("MapConfirmation");
   }
-  return (
-    <PhotoForm onBack={goBack}/>
-  );
+  
+  return <PhotosForm onBack={goBack} />;
 }
