@@ -403,11 +403,14 @@ def changePassword(request):
 @permission_classes([IsAuthenticated])
 @transaction.atomic
 def get_user(request):
-    username = request.data.get("username")
+    username = request.user.username
+    #user = request.user
     user = User.objects.filter(username=username).first()
     
-    if not user or request.user.username != username:
-        return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
+    # if not user or request.user.username != username:
+    #     print(request.user.username)
+    #     print(username)
+    #     return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
 
     user_data = {
         "username": user.username,
