@@ -111,6 +111,7 @@ export default function UserTabs() {
         component={Map}
       />
       <CurvedBottomBarExpo.Screen name="Productos" component={Products} />
+      
       <CurvedBottomBarExpo.Screen
         name="UserData"
         component={Profile}

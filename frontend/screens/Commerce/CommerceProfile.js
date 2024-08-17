@@ -2,16 +2,15 @@ import { useDispatch, useSelector } from "react-redux";
 import ProfileForm from "../../components/Profile/ProfileForm";
 import { update } from "../../services/userService";
 import { authActions } from "../../context/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../components/UI/GluttyModal";
 import NoUserData from "../../components/Profile/NoUserData";
 import { getUser } from "../../services/userService";
+import { View, Text } from "react-native";
 
-export default function Profile() {
-  const username = useSelector((state) => state.auth.userData.username);
+export default function CommerceProfile() {
   const token = useSelector((state) => state.auth.accessToken);
-
 
   const [isloading, setisloading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -19,8 +18,9 @@ export default function Profile() {
   const [message, setMessage] = useState("");
   const [userData, setUserData] = useState();
 
+
   useEffect(() => {
-    async function getUserData() {
+    async function getCommerceData() {
       try {
         setisloading(true);
         const response = getUser(token)
@@ -35,7 +35,7 @@ export default function Profile() {
       }
     }
 
-    getUserData();
+    getCommerceData();
   }, []);
 
   function closeModalHandler() {
@@ -43,21 +43,15 @@ export default function Profile() {
   }
 
   async function submitHandler(
-    nombreUsuario,
-    nombre,
-    apellido,
-    sexo,
-    fechaNacimiento,
+    nombreComercio,
+    cuit,
     email
   ) {
     try {
       setisloading(true);
       const response = await update(
-        nombreUsuario,
-        nombre,
-        apellido,
-        sexo,
-        fechaNacimiento,
+        nombreComercio,
+        cuit,
         email,
         userData.id
       );
@@ -73,17 +67,13 @@ export default function Profile() {
       setisloading(false);
     }
   }
-
+  console.log(userData)
+  console.log("El de arriba es el userdata");
+  //console.log(token)
   return (
-    <>
-      <LoadingGlutty visible={isloading} />
-      <GluttyModal
-        isError={isError}
-        message={message}
-        onClose={closeModalHandler}
-        visible={showModal}
-      />
-      <ProfileForm onSubmit={submitHandler} user={userData} />
-    </>
+    <View>
+        <Text>Hola</Text>
+    </View>
   );
+  
 }

@@ -18,8 +18,6 @@ export async function sendPdf(selectedDocuments, token) {
             element
         )
     }
-         
-    
 
     const requestOptions = {
         method: "POST",
@@ -28,14 +26,15 @@ export async function sendPdf(selectedDocuments, token) {
             "Content-Type": "multipart/form-data",
              "Authorization": `Bearer ${token}`,
           },
-        
     };
 
     try {
         const response = await httpRequest(requestUrl, requestOptions);
-    
         return response;
       } catch (error) {
         throw new Error(error.message);
       }
 }
+
+
+
