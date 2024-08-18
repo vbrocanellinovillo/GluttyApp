@@ -20,17 +20,28 @@ export default function MapConfirmationForm({
   };
 
   const [marker, setMarker] = useState(coordinates);
+  const [selectedAddress, setSelectedAddress] = useState(address);
 
   const mapRef = useRef();
 
   async function dragMarker(event) {
-    const newCoordinate = event._dispatchInstances.memoizedProps.coordinate;
-    console.log(event._dispatchInstances);
-
+    const newCoordinate = event.nativeEvent.coordinate;
     setMarker(newCoordinate);
 
-    const newAddress = await mapRef.addressForCoordinate(newCoordinate);
-    console.log(newAddress);
+    const newAddress = await mapRef.current?.addressForCoordinate(
+      newCoordinate
+    );
+
+    const formattedAddress =
+      newAddress.name +
+      ", " +
+      newAddress.postalCode +
+      " " +
+      newAddress.locality +
+      ", " +
+      newAddress.country;
+
+    setSelectedAddress(formattedAddress);
   }
 
   return (
@@ -47,7 +58,7 @@ export default function MapConfirmationForm({
             Ubicación
           </TextCommonsMedium>
           <TextCommonsRegular style={styles.ubication}>
-            {address}
+            {selectedAddress}
           </TextCommonsRegular>
         </View>
         <FormButtonsGroup
