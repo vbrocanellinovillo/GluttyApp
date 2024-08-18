@@ -4,7 +4,7 @@ import TextCommonsMedium from "../../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../../constants/colors";
 import TextCommonsRegular from "../../UI/FontsTexts/TextCommonsRegular";
 import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function MapConfirmationForm({
   address,
@@ -21,19 +21,21 @@ export default function MapConfirmationForm({
 
   const [marker, setMarker] = useState(coordinates);
 
-  function dragMarker(event) {
+  const mapRef = useRef();
+
+  async function dragMarker(event) {
     const newCoordinate = event._dispatchInstances.memoizedProps.coordinate;
     console.log(event._dispatchInstances);
 
-    setMarker({
-      latitude: newCoordinate.latitude,
-      longitude: newCoordinate.longitude,
-    });
+    setMarker(newCoordinate);
+
+    const newAddress = await mapRef.addressForCoordinate(newCoordinate);
+    console.log(newAddress);
   }
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} region={mapRegion}>
+      <MapView style={styles.map} region={mapRegion} ref={mapRef}>
         <Marker coordinate={marker} draggable onDragEnd={dragMarker} />
       </MapView>
       <View style={styles.bottomOptions}>
