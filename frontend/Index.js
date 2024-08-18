@@ -25,13 +25,16 @@ export default function Index() {
       {!accessToken ? (
         <AuthNavigation />
       ) : isCommerce ? (
-        <CommerceDrawer />
-
+        <MainCommerceStack />
       ) : (
         <MainUserStack />
       )}
     </NavigationContainer>
   );
 
-  return navigation
+  return (
+    <NavigationContainer>
+      <MainCommerceStack />
+    </NavigationContainer>
+  );
 }

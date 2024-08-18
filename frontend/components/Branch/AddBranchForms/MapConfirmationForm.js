@@ -23,6 +23,7 @@ export default function MapConfirmationForm({
 
   function dragMarker(event) {
     const newCoordinate = event._dispatchInstances.memoizedProps.coordinate;
+    console.log(event._dispatchInstances);
 
     setMarker({
       latitude: newCoordinate.latitude,
@@ -49,7 +50,7 @@ export default function MapConfirmationForm({
         </View>
         <FormButtonsGroup
           prev="Cancelar"
-          next="Guardar"
+          next="Confirmar"
           onPrev={onCancel}
           onNext={onSave}
         />

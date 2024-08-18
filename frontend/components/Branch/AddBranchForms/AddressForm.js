@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import DismissKeyboardContainer from "../../UI/Forms/DismissKeyboadContainer";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { Colors } from "../../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
+import { API_KEY_GOOGLE } from "@env";
 
 export default function AddressForm({ onBack, onNext }) {
   const [address, setAddress] = useState("");
@@ -42,7 +43,7 @@ export default function AddressForm({ onBack, onNext }) {
           fetchDetails
           query={{
             language: "es",
-            key: "AIzaSyBS1lcGPjb_Wvze-fn_FmPOjs1nJTznsWk",
+            key: API_KEY_GOOGLE
           }}
           onPress={getAddress}
           textInputProps={{

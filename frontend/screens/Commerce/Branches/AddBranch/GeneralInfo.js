@@ -21,7 +21,7 @@ export default function GeneralInfo({ navigation }) {
   }
 
   function cancel() {
-    navigation.navigate("CommerceTabs");
+    navigation.navigate("CommerceDrawer");
   }
 
   return <GeneralInfoForm onNext={navigateToAddress} onCancel={cancel} />;
