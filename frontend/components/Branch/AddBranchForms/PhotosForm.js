@@ -1,5 +1,12 @@
 import { useState, useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
 import BottomSheet from "@devvie/bottom-sheet";
 import ImageSheetOptions from "../../UI/UserImage/ImageSheetOptions";
 import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
@@ -17,7 +24,8 @@ export default function PhotosForm({ onBack, onNext }) {
   const sheetRef = useRef(null);
 
   const [cameraPermissions, requestCameraPermissions] = useCameraPermissions();
-  const [galleryPermissions, requestGalleryPermissions] = useMediaLibraryPermissions();
+  const [galleryPermissions, requestGalleryPermissions] =
+    useMediaLibraryPermissions();
 
   async function checkPermissions(option) {
     if (option === "Take Image") {
@@ -55,7 +63,16 @@ export default function PhotosForm({ onBack, onNext }) {
 
     if (!imageResult.canceled) {
       const imageUri = imageResult.assets[0].uri;
-      setImages((prevImages) => [...prevImages, imageUri]);
+      const imageMimeType = imageResult.assets[0].mimeType;
+      const imageFileName = imageResult.assets[0].fileName;
+
+      const image = {
+        uri: imageUri,
+        mimeType: imageMimeType,
+        fileName: imageFileName,
+      };
+
+      setImages((prevImages) => [...prevImages, image]);
     }
   }
 
@@ -70,16 +87,22 @@ export default function PhotosForm({ onBack, onNext }) {
   return (
     <View style={styles.container}>
       <ScrollView horizontal contentContainerStyle={styles.photosContainer}>
-        {images.map((imageUri, index) => (
+        {images.map((image, index) => (
           <View key={index} style={styles.imageContainer}>
-            <Image source={{ uri: imageUri }} style={styles.photo} />
-            <TouchableOpacity style={styles.deleteButton} onPress={() => removeImage(index)}>
+            <Image source={{ uri: image.uri }} style={styles.photo} />
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => removeImage(index)}
+            >
               <Text style={styles.deleteButtonText}>X</Text>
             </TouchableOpacity>
           </View>
         ))}
         {images.length < 4 && (
-          <TouchableOpacity style={styles.addPhotoButton} onPress={openImageOptions}>
+          <TouchableOpacity
+            style={styles.addPhotoButton}
+            onPress={openImageOptions}
+          >
             <Text style={styles.addPhotoText}>+</Text>
           </TouchableOpacity>
         )}
@@ -87,9 +110,9 @@ export default function PhotosForm({ onBack, onNext }) {
 
       <FormButtonsGroup
         prev="Anterior"
-        next="Siguiente"
+        next="Finalizar"
         onPrev={onBack}
-        onNext={() => {}}
+        onNext={onNext.bind(this, images)}
       />
 
       <BottomSheet ref={sheetRef} height={200}>
@@ -106,7 +129,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#fff",
   },
   photosContainer: {
     flexDirection: "row",
@@ -133,19 +155,19 @@ const styles = StyleSheet.create({
     color: "#d3d3d3",
   },
   deleteButton: {
-    position: 'absolute',
+    position: "absolute",
     top: -10,
     right: 10,
-    backgroundColor: 'rgba(128, 128, 128, 0.5)',
+    backgroundColor: "rgba(128, 128, 128, 0.5)",
     borderRadius: 15,
     width: 30,
     height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   deleteButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 18,
   },
 });

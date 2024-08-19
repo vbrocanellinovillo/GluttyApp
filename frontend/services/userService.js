@@ -150,3 +150,20 @@ export async function logoutSesion(username, token) {
     throw new Error(error.message);
   }
 }
+
+export async function getUser(token) {
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const requestUrl = url + `get-user/`;
+    try {
+      const response = await httpRequest(requestUrl, requestOptions);
+      console.log(response);
+      return response;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+}

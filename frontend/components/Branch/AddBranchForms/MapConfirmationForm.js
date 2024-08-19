@@ -4,7 +4,7 @@ import TextCommonsMedium from "../../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../../constants/colors";
 import TextCommonsRegular from "../../UI/FontsTexts/TextCommonsRegular";
 import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function MapConfirmationForm({
   address,
@@ -15,24 +15,42 @@ export default function MapConfirmationForm({
   const mapRegion = {
     latitude: coordinates.latitude,
     longitude: coordinates.longitude,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
+    latitudeDelta: 0.02,
+    longitudeDelta: 0.02,
   };
 
   const [marker, setMarker] = useState(coordinates);
+  const [selectedAddress, setSelectedAddress] = useState(address);
 
-  function dragMarker(event) {
-    const newCoordinate = event._dispatchInstances.memoizedProps.coordinate;
+  const mapRef = useRef();
 
-    setMarker({
-      latitude: newCoordinate.latitude,
-      longitude: newCoordinate.longitude,
-    });
+  async function dragMarker(event) {
+    const newCoordinate = event.nativeEvent.coordinate;
+    setMarker(newCoordinate);
+
+    const newAddress = await mapRef.current?.addressForCoordinate(
+      newCoordinate
+    );
+
+    const formattedAddress =
+      newAddress.name +
+      ", " +
+      newAddress.postalCode +
+      " " +
+      newAddress.locality +
+      ", " +
+      newAddress.country;
+
+    setSelectedAddress(formattedAddress);
+  }
+
+  function confirm() {
+    onSave(selectedAddress, marker);
   }
 
   return (
     <View style={styles.container}>
-      <MapView style={styles.map} region={mapRegion}>
+      <MapView style={styles.map} region={mapRegion} ref={mapRef}>
         <Marker coordinate={marker} draggable onDragEnd={dragMarker} />
       </MapView>
       <View style={styles.bottomOptions}>
@@ -44,14 +62,14 @@ export default function MapConfirmationForm({
             Ubicación
           </TextCommonsMedium>
           <TextCommonsRegular style={styles.ubication}>
-            {address}
+            {selectedAddress}
           </TextCommonsRegular>
         </View>
         <FormButtonsGroup
           prev="Cancelar"
-          next="Guardar"
+          next="Confirmar"
           onPrev={onCancel}
-          onNext={onSave}
+          onNext={confirm}
         />
       </View>
     </View>

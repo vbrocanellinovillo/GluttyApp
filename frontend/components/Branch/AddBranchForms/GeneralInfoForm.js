@@ -7,10 +7,25 @@ import DismissKeyboardContainer from "../../UI/Forms/DismissKeyboadContainer";
 import CheckboxControl from "../../UI/Controls/CheckboxControl";
 import TextCommonsRegular from "../../UI/FontsTexts/TextCommonsRegular";
 import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
+import PhoneInput from "../../UI/Controls/PhoneInput";
 
 export default function GeneralInfoForm({ onNext, onCancel }) {
-  function submitHandler(values) {
-    onNext();
+  function submitHandler({
+    name,
+    phone,
+    optionalPhone,
+    separatedKitchen,
+    onlyTakeAway,
+  }) {
+    
+    // Si el telefono solo es codigo de pais lo borro (maximo 3 caracteres por codigo, ademas del +)
+    if (optionalPhone.trim().length < 5) {
+      optionalPhone = "";
+    }
+
+    console.log(phone);
+    console.log(optionalPhone);
+    onNext(name, phone, optionalPhone, separatedKitchen, onlyTakeAway);
   }
 
   return (
@@ -21,14 +36,14 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
             name: "",
             phone: "",
             optionalPhone: "",
-            separateKitchen: false,
+            separatedKitchen: false,
             onlyTakeAway: false,
           }}
           validate={({
             name,
             phone,
             optionalPhone,
-            separateKitchen,
+            separatedKitchen,
             onlyTakeAway,
           }) => {
             const errors = {};
@@ -38,8 +53,8 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
             }
 
             // Ver de cuantos números tiene que ser el telefono
-            if (phone.trim() === "") {
-              errors.phone = "Se requiere al menos un número";
+            if (phone.trim().length < 7 || phone.trim().length > 15) {
+              errors.phone = "Se requiere al menos un número de telefono";
             }
 
             return errors;
@@ -66,25 +81,27 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
                 errors={errors.name}
                 autoCapitalize="words"
               />
-              <FormControl
+              <PhoneInput
+                defaultCode={{ code: "+54", flag: "🇦🇷" }}
                 label="Telefono 1"
                 value={values.phone}
                 name="phone"
-                handleChange={handleChange}
+                onChange={(phone) => setFieldValue("phone", phone)}
                 handleBlur={handleBlur}
                 touched={touched.phone}
                 errors={errors.phone}
-                keyboardType="numeric"
               />
-              <FormControl
+              <PhoneInput
+                defaultCode={{ code: "+54", flag: "🇦🇷" }}
                 label="Otro telefono (opcional)"
                 value={values.optionalPhone}
                 name="optionalPhone"
-                handleChange={handleChange}
+                onChange={(optionalPhone) =>
+                  setFieldValue("optionalPhone", optionalPhone)
+                }
                 handleBlur={handleBlur}
                 touched={touched.optionalPhone}
                 errors={errors.optionalPhone}
-                keyboardType="numeric"
               />
               <View style={styles.checkboxServices}>
                 <TextCommonsRegular style={styles.checkboxServicesText}>
@@ -92,8 +109,8 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
                 </TextCommonsRegular>
                 <CheckboxControl
                   title="Cocina separada"
-                  name="separateKitchen"
-                  checked={values.separateKitchen}
+                  name="separatedKitchen"
+                  checked={values.separatedKitchen}
                   setChecked={setFieldValue}
                   style={styles.checkbox}
                 />

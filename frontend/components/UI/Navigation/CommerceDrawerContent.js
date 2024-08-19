@@ -7,9 +7,9 @@ import Button from "../Controls/Button";
 import { authActions } from "../../../context/auth";
 import { logoutSesion } from "../../../services/userService";
 
-export default function DrawerContent({ navigation, route }) {
-  const username = useSelector((state) => state.auth.userData.username);
-  const token = useSelector((state) => state.auth.accessToken);
+export default function CommerceDrawerContent({ navigation, route }) {
+  const username = useSelector((state) => state.auth.userData?.username);
+  const token = useSelector((state) => state.auth?.accessToken);
 
   const dispatch = useDispatch();
 

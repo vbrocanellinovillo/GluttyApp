@@ -1,66 +1,52 @@
+
 import { useDispatch, useSelector } from "react-redux";
-import ProfileForm from "../../components/Profile/ProfileForm";
-import { update } from "../../services/userService";
+import CommerceProfileForm from "../../components/Profile/CommerceProfileForm";
+import { update, getUser } from "../../services/userService";
 import { authActions } from "../../context/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../components/UI/GluttyModal";
 import NoUserData from "../../components/Profile/NoUserData";
-import { getUser } from "../../services/userService";
+import { View, Text } from "react-native";
 
-export default function Profile() {
-  const username = useSelector((state) => state.auth.userData.username);
+export default function CommerceProfile() {
   const token = useSelector((state) => state.auth.accessToken);
-
+  const dispatch = useDispatch();
 
   const [isloading, setisloading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    async function getUserData() {
+    async function getCommerceData() {
       try {
         setisloading(true);
-        const response = getUser(token)
-        setUserData(response)
+        const response = await getUser(token);
+        setUserData(response); 
         setIsError(false);
       } catch (error) {
         setIsError(true);
         setMessage(error.message);
         setShowModal(true);
+        console.log("ERROR", error);
       } finally {
         setisloading(false);
       }
     }
 
-    getUserData();
-  }, []);
+    getCommerceData();
+  }, [token]);
 
   function closeModalHandler() {
     setShowModal(false);
   }
 
-  async function submitHandler(
-    nombreUsuario,
-    nombre,
-    apellido,
-    sexo,
-    fechaNacimiento,
-    email
-  ) {
+  async function submitHandler(email, username) {
     try {
       setisloading(true);
-      const response = await update(
-        nombreUsuario,
-        nombre,
-        apellido,
-        sexo,
-        fechaNacimiento,
-        email,
-        userData.id
-      );
+      const response = await update(email, username, userData.id);
       dispatch(authActions.updateUser(response.user));
       setIsError(false);
       setMessage("Modificación de usuario exitosa");
@@ -74,16 +60,23 @@ export default function Profile() {
     }
   }
 
+  if (isloading) {
+    return <LoadingGlutty visible={isloading} />;
+  }
+
+  if (!userData) {
+    return <NoUserData />;
+  }
+
   return (
     <>
-      <LoadingGlutty visible={isloading} />
       <GluttyModal
         isError={isError}
         message={message}
         onClose={closeModalHandler}
         visible={showModal}
       />
-      <ProfileForm onSubmit={submitHandler} user={userData} />
+      <CommerceProfileForm onSubmit={submitHandler} user={userData.user_data} commerce={userData.commerce_data}/>
     </>
   );
 }

@@ -5,6 +5,7 @@ import { Colors } from "../../constants/colors";
 import MainHeader from "../../components/UI/Header/MainHeader";
 import Menu from "../../screens/Commerce/Menu/Menu";
 import Branches from "../../screens/Commerce/Branches/Branches";
+import CommerceProfile from "../../screens/Commerce/CommerceProfile";
 
 export default function CommerceTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -89,7 +90,16 @@ export default function CommerceTabs() {
         position="RIGHT"
         component={Menu}
       />
+
+      <CurvedBottomBarExpo.Screen
+        name="UserData"
+        component={CommerceProfile}
+        options={{ title: "Mis datos" }}
+      />
+      
     </CurvedBottomBarExpo.Navigator>
+
+    
   );
 }
 

@@ -6,6 +6,7 @@ import AuthNavigation from "./navigators/Authentication/AuthNavigation";
 import { useEffect } from "react";
 import MainCommerceStack from "./navigators/Commerce/MainCommerceStack";
 import AddBranchStack from "./navigators/Commerce/AddBranchStack.js";
+import CommerceDrawer from "./navigators/Commerce/CommerceDrawer";
 
 export default function Index() {
   const accessToken = useSelector((state) => state.auth.accessToken);
@@ -24,7 +25,7 @@ export default function Index() {
       {!accessToken ? (
         <AuthNavigation />
       ) : isCommerce ? (
-        <CommerceTabs />
+        <MainCommerceStack />
       ) : (
         <MainUserStack />
       )}
@@ -33,7 +34,7 @@ export default function Index() {
 
   return (
     <NavigationContainer>
-      <MainCommerceStack />
+      <MainUserStack />
     </NavigationContainer>
   );
 }

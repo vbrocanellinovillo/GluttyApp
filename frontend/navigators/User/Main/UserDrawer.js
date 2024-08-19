@@ -1,7 +1,6 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import DrawerContent from "../../../components/UI/Navigation/DrawerContent";
 import UserTabs from "./UserTabs";
-
+import UserDrawerContent from "../../../components/UI/Navigation/UserDrawerContent";
 const Drawer = createDrawerNavigator();
 
 export default function UserDrawer() {
@@ -11,7 +10,7 @@ export default function UserDrawer() {
         headerShown: false,
       }}
       drawerContent={({ navigation }) => (
-        <DrawerContent navigation={navigation} />
+        <UserDrawerContent navigation={navigation} />
       )}
     >
       <Drawer.Screen name="Tabs" component={UserTabs} />

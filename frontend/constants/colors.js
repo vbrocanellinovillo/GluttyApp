@@ -8,4 +8,6 @@ export const Colors = {
   redError: "#a50000",
   uva: "#a157a1",
   darkBlue: "#061431",
+  whiteGreen: "#afdbaf",
+  whiteRed: "#c58d8d",
 };
