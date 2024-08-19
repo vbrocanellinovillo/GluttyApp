@@ -17,7 +17,7 @@ class Branch(models.Model):
     name = models.CharField(max_length=255, blank=False)
     phone = models.CharField(max_length=10, blank=False, default=None)
     optional_phone = models.CharField(max_length=10, blank=True, null=True)
-    location = models.CharField(max_length=255, blank=False)
+    #location = models.CharField(max_length=255, blank=False)
     separated_kitchen= models.BooleanField(default=False)
     just_takeaway= models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -26,3 +26,11 @@ class Branch(models.Model):
 class Menu(models.Model):
     menu_url = models.URLField(max_length=500, blank=True, null=True)
     commerce = models.ForeignKey(Commerce, on_delete=models.CASCADE, related_name="menu")
+
+# Modelo UBICACIÓN (para la ubicación de la sucursal)
+class Location(models.Model):
+    branch = models.OneToOneField(Branch, on_delete=models.CASCADE, related_name="location")
+    address = models.CharField(max_length=255, blank=False)
+    latitude =  models.FloatField(blank=False, null=False)
+    longitude = models.FloatField(blank=False, null=False)
+         

@@ -238,7 +238,7 @@ def login(request):
             
             # Obtener las sucursales (Branch) del comercio
             branches = Branch.objects.filter(commerce=commerce)
-            branches_data = [{"name": branch.name, "location": branch.location} for branch in branches if branch.is_active]
+            branches_data = [{"name": branch.name, "address": branch.location.address} for branch in branches if branch.is_active]
             user_data["Branches"] = branches_data
 
     else:

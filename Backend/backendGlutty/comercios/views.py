@@ -24,8 +24,6 @@ from rest_framework import status
 from PyPDF2 import PdfReader
 from io import BytesIO
 
-
-
 def get_commerce_info(user):
     # Obtenemos el comercio asociado al usuario
     commerce = get_object_or_404(Commerce, user=user)
@@ -54,23 +52,35 @@ def get_commerce_info(user):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
+@transaction.atomic
 def add_branch(request):
-    username = request.data["username"]
+    # username = request.data["username"]
+    # user = User.objects.filter(username=username).first()
+    username = request.user.username
     user = User.objects.filter(username=username).first()
     try:
         if user.is_commerce:
             user_commerce = Commerce.objects.filter(user=user).first()
-            # branch_serializer = BranchSerializer(data=request.data)
+            
             new_branch = Branch.objects.create(
                         commerce=user_commerce,
                         name=request.data.get("name"),
                         phone=request.data.get("phone"),
                         optional_phone=request.data.get("optional_phone"),
-                        location=request.data.get("location"),
                         separated_kitchen=request.data.get("separated_kitchen"),
                         just_takeaway=request.data.get("just_takeaway"),
                     )
             new_branch.save()
+            
+            # Crear location para la nueva sucursal
+            new_location = Location.objects.create(
+                branch=new_branch,
+                address=request.data.get("address"),
+                latitude=request.data.get("latitude"),
+                longitude=request.data.get("longitude"),
+            )
+            new_location.save()
+            
             return Response({"detail": "Sucursal cargada correctamente."}, status=status.HTTP_201_CREATED)
         else:
             return Response({"error:" f"No está habilitado a realizar esta función"}, status=status.HTTP_400_BAD_REQUEST)
@@ -93,7 +103,9 @@ def get_branch(request):
             "name": branch.name,
             "phone": branch.phone,
             "optional_phone": branch.optional_phone,
-            "location": branch.location,
+            "address": branch.location.address,
+            "latitude": branch.location.latitude,
+            "longitude": branch.location.longitude,
             "separated_kitchen": branch.separated_kitchen,
             "just_takeaway": branch.just_takeaway,
         }
@@ -120,7 +132,9 @@ def update_branch(request):
         branch.name = request.data.get("name", branch.name)
         branch.phone = request.data.get("phone", branch.phone)
         branch.optional_phone = request.data.get("optional_phone", branch.optional_phone)
-        branch.location = request.data.get("location", branch.location)
+        branch.location.address = request.data.get("address", branch.location.address)
+        branch.location.latitude = request.data.get("latitude", branch.location.latitude)
+        branch.location.longitude = request.data.get("longitude", branch.location.longitude)
         branch.separated_kitchen = request.data.get("separated_kitchen", branch.separated_kitchen)
         branch.just_takeaway = request.data.get("just_takeaway", branch.just_takeaway)
         
@@ -234,3 +248,46 @@ def delete_menu(request):
         menu.delete()
 
     return Response({"detail": "Menús eliminados correctamente."}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_commerces(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        commerces = Commerce.objects.all()
+        all_commerces_data = []
+        for commerce in commerces:
+            commerce_data = {
+            "name": commerce.name,
+            "cuit": commerce.cuit,
+            "description": commerce.description,
+            }
+            branches = Branch.objects.filter(commerce=commerce, is_active=True)
+            branch_data = [
+            {
+                "name": branch.name,
+                "address": branch.location.address,
+                "latitude": branch.location.latitude,
+                "longitude": branch.location.longitude,
+                "phone": branch.phone,
+                "optional_phone": branch.optional_phone,
+                "separated_kitchen": branch.separated_kitchen,
+                "just_takeaway": branch.just_takeaway
+            } for branch in branches
+            ]
+            
+            # Agregar los datos de las sucursales al diccionario de datos del comercio
+            commerce_data["branches"] = branch_data
+            
+            # Agregar el comercio completo a la lista de todos los comercios
+            all_commerces_data.append(commerce_data)
+            
+        # Devolver los datos    
+        return Response({"commerces": all_commerces_data}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
+        
