@@ -6,6 +6,7 @@ export default function MedicalExams() {
   return (
     <ScreenCenter>
       <Title>Proximamente estudios medicos</Title>
+      <BoxingGlutty width={400} height={400} />
     </ScreenCenter>
   );
 }
