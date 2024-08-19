@@ -15,8 +15,8 @@ export default function MapConfirmationForm({
   const mapRegion = {
     latitude: coordinates.latitude,
     longitude: coordinates.longitude,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
+    latitudeDelta: 0.02,
+    longitudeDelta: 0.02,
   };
 
   const [marker, setMarker] = useState(coordinates);
@@ -44,6 +44,10 @@ export default function MapConfirmationForm({
     setSelectedAddress(formattedAddress);
   }
 
+  function confirm() {
+    onSave(marker, selectedAddress);
+  }
+
   return (
     <View style={styles.container}>
       <MapView style={styles.map} region={mapRegion} ref={mapRef}>
@@ -65,7 +69,7 @@ export default function MapConfirmationForm({
           prev="Cancelar"
           next="Confirmar"
           onPrev={onCancel}
-          onNext={onSave}
+          onNext={confirm}
         />
       </View>
     </View>

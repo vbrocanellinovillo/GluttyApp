@@ -82,7 +82,7 @@ export default function PhoneInput({
                         ? Colors.redError
                         : labelColor
                         ? labelColor
-                        : "#aaa",
+                        : Colors.mJordan,
                   },
                   codeStyle,
                 ]}
@@ -120,7 +120,7 @@ export default function PhoneInput({
             underlineStyle={{ display: "none" }}
             theme={{ roundness: 8 }}
             maxLength={maxLength}
-            keyboardType="numeric"
+            keyboardType="number-pad"
           />
         </View>
         {errors && touched && <Text style={styles.errorText}>{errors}</Text>}

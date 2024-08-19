@@ -8,7 +8,10 @@ export default function MapConfirmation({ navigation, route }) {
     navigation.navigate("Address", { branch: receivedBranch });
   }
 
-  function save() {
+  function save(address, coordinates) {
+    receivedBranch.address = address;
+    receivedBranch.coordinates = coordinates;
+
     navigation.navigate("Photos", { branch: receivedBranch });
   }
 

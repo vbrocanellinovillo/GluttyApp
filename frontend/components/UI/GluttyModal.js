@@ -3,12 +3,25 @@ import { Dialog, Portal, Text } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import Button from "./Controls/Button";
-import { sadGlutty, thumbGlutty } from "../../constants/glutty";
+import { sadGlutty, smileGlutty, thumbGlutty } from "../../constants/glutty";
 
-export default function GluttyModal({ visible, isError, message, onClose }) {
-  const imageUri = isError ? sadGlutty : thumbGlutty;
+export default function GluttyModal({
+  visible,
+  other,
+  isError,
+  message,
+  onClose,
+  buttons, // Array de botones. Boton: {text, bg, color, style, onPress, id}
+  closeButton = true,
+  closeButtonStyle,
+  closeButtonColor,
+  closeButtonBg,
+}) {
+  const imageUri = other ? smileGlutty : isError ? sadGlutty : thumbGlutty;
 
-  const icon = isError
+  const icon = other
+    ? { name: undefined, color: undefined }
+    : isError
     ? { name: "close-circle", color: Colors.redError }
     : { name: "checkmark-circle", color: "green" };
 
@@ -19,13 +32,45 @@ export default function GluttyModal({ visible, isError, message, onClose }) {
           <View style={styles.imageContainer}>
             <Image source={{ uri: imageUri }} style={styles.image} />
           </View>
-          <View style={styles.contentContainer}>
+          <View
+            style={[
+              styles.contentContainer,
+              { justifyContent: other && "center" },
+            ]}
+          >
             <Ionicons name={icon.name} color={icon.color} size={30} />
             <Text style={styles.message}>{message}</Text>
           </View>
-          <Button backgroundColor={"#aaa"} onPress={onClose}>
-            Cerrar
-          </Button>
+          <View style={styles.buttonsContainer}>
+            {closeButton && (
+              <View style={styles.buttonContainer}>
+                <Button
+                  backgroundColor={closeButtonBg ? closeButtonBg : "#aaa"}
+                  color={closeButtonColor}
+                  onPress={onClose}
+                  style={closeButtonStyle}
+                >
+                  Cerrar
+                </Button>
+              </View>
+            )}
+            {buttons &&
+              buttons.map((button) => (
+                <View
+                  style={styles.buttonContainer}
+                  key={button.id ? button.id : Math.random()}
+                >
+                  <Button
+                    backgroundColor={button.bg ? button.bg : "#aaa"}
+                    color={button.color}
+                    style={button.style}
+                    onPress={button.onPress ? button.onPress : () => undefined}
+                  >
+                    {button.text}
+                  </Button>
+                </View>
+              ))}
+          </View>
         </Dialog.Content>
       </Dialog>
     </Portal>
@@ -51,8 +96,8 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     objectFit: "contain",
   },
 
@@ -68,5 +113,15 @@ const styles = StyleSheet.create({
     color: Colors.mJordan,
     fontSize: 21,
     flexShrink: 1,
+  },
+
+  buttonsContainer: {
+    marginTop: 10,
+    flexDirection: "row",
+    gap: 10,
+  },
+
+  buttonContainer: {
+    flex: 1,
   },
 });
