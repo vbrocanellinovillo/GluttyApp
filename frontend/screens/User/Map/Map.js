@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import { useFocusEffect } from "@react-navigation/native";
+import { getMapPoints } from "../../../services/commerceService";
 
 export default function Map() {
   const [locationPermissions, requestLocationPermissions] =
@@ -18,9 +19,10 @@ export default function Map() {
 
   const [isloading, setisloading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [error, serError] = useState("");
+
+  const [mapData, setMapData] = useState(undefined);
 
   function closeModalHandler() {
     setShowModal(false);
@@ -28,8 +30,8 @@ export default function Map() {
   }
 
   const [location, setLocation] = useState({
-    latitude: -31.4135,
-    longitude: -64.18105,
+    latitude: -31.4262,
+    longitude: -64.1888,
   }); // ubicación por defecto si no se conceden los permisos
 
   useEffect(() => {
@@ -58,12 +60,12 @@ export default function Map() {
       async function getMapData() {
         try {
           setisloading(true);
-          const response = await getMap(token); // Asegúrate de que esta función sea asíncrona
-          setMapData(response);
+          const restaurants = await getMapPoints(token);
+          setMapData(restaurants);
           setIsError(false);
         } catch (error) {
           setIsError(true);
-          setMessage(error.message);
+          serError(error.message);
           setShowModal(true);
         } finally {
           setisloading(false);
@@ -79,11 +81,11 @@ export default function Map() {
       <LoadingGlutty visible={isloading} />
       <GluttyModal
         isError={isError}
-        message={message}
+        message={error}
         onClose={closeModalHandler}
         visible={showModal}
       />
-      <RestaurantsMap location={location} />
+      <RestaurantsMap location={location} restaurants={mapData} />
     </>
   );
 }
