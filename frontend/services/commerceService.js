@@ -35,6 +35,8 @@ export async function sendPdf(selectedDocuments, token) {
 }
 
 export async function addBranch(branch, token) {
+  console.log(branch);
+  
   const requestUrl = url + "add-branch/";
 
   const formdata = new FormData();
@@ -42,8 +44,14 @@ export async function addBranch(branch, token) {
   formdata.append("name", branch.name);
   formdata.append("phone", branch.phone);
   formdata.append("optional_phone", branch.optionalPhone);
-  formdata.append("separated_kitchen", branch.separatedKitchen);
-  formdata.append("just_takeaway", branch.onlyTakeAway);
+  formdata.append(
+    "separated_kitchen",
+    branch.separatedKitchen ? "True" : "False"
+  );
+  formdata.append("just_takeaway", branch.onlyTakeAway ? "True" : "False");
+  formdata.append("address", branch.address);
+  formdata.append("latitude", branch.coordinates.latitude);
+  formdata.append("longitude", branch.coordinates.longitude);
   // Queda lo de la ubicación y las fotos
 
   const requestOptions = {

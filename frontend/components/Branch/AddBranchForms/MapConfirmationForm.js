@@ -45,7 +45,7 @@ export default function MapConfirmationForm({
   }
 
   function confirm() {
-    onSave(marker, selectedAddress);
+    onSave(selectedAddress, marker);
   }
 
   return (

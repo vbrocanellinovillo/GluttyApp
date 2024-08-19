@@ -17,10 +17,10 @@ export default function RestaurantsMap({ restaurants, location }) {
       {restaurants &&
         restaurants.map((restaurant) => (
           <Marker key={Math.random()} coordinate={restaurant.coordinates}>
-            {/* <Image
+            <Image
               source={{ uri: thumbGlutty }}
               style={{ height: 50, width: 50 }}
-            /> */}
+            />
           </Marker>
         ))}
     </MapView>
