@@ -8,7 +8,7 @@ import { authActions } from "../../../context/auth";
 import { logoutSesion } from "../../../services/userService";
 
 export default function UserDrawerContent({ navigation, route }) {
-  const username = useSelector((state) => state.auth.userData.username);
+  //const username = useSelector((state) => state.auth.userData.username);
   const token = useSelector((state) => state.auth.accessToken);
 
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ export default function UserDrawerContent({ navigation, route }) {
           }
           dimensions={80}
         />
-        <Text style={styles.username}>{username}</Text>
+        <Text style={styles.username}>username</Text>
       </View>
       <Drawer.Section title={<Text style={styles.title}>Usuario</Text>}>
         <Drawer.Item
