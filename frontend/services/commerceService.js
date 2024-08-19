@@ -1,6 +1,5 @@
 import { backendUrl } from "../constants/backend";
 import { httpRequest } from "../utils/http";
-import { sleep } from "../utils/utilFunctions";
 
 const url = backendUrl + "comercios/";
 
@@ -57,6 +56,24 @@ export async function addBranch(branch, token) {
   try {
     const response = await httpRequest(requestUrl, requestOptions);
     return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function getMapData(token) {
+  const requestUrl = url + "noniideabro/";
+
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    /* const response = await httpRequest(requestUrl, requestOptions);
+    return response; */
   } catch (error) {
     throw new Error(error.message);
   }

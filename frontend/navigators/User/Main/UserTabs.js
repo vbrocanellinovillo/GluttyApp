@@ -109,9 +109,10 @@ export default function UserTabs() {
         name="Mapa"
         position="RIGHT"
         component={Map}
+        options={{ headerShown: false }}
       />
       <CurvedBottomBarExpo.Screen name="Productos" component={Products} />
-      
+
       <CurvedBottomBarExpo.Screen
         name="UserData"
         component={Profile}
