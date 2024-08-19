@@ -9,7 +9,7 @@ export default function MenuContainer() {
     <DismissKeyboardContainer>
       <View style={styles.menu}>
         <MenuLinksSection />
-        <Divider />
+        <Divider style={styles.divider}/>
         <SpecificProductsSection />
       </View>
     </DismissKeyboardContainer>
@@ -22,4 +22,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
+  divider: {
+    marginTop:25, 
+    backgroundColor: "lightgray",
+    height: 3,  
+  
+  }
 });

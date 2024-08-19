@@ -32,9 +32,5 @@ export default function Index() {
     </NavigationContainer>
   );
 
-  return (
-    <NavigationContainer>
-      <MainUserStack />
-    </NavigationContainer>
-  );
+  return navigation
 }

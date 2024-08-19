@@ -7,32 +7,38 @@ import * as Location from "expo-location";
 import Button from "../UI/Controls/Button";
 
 export default function SpecificProductsSection() {
-  async function geocode() {
-    const result = await Location.geocodeAsync("Camacua 99 Córdoba");
-    console.log(result);
-  }
+  // async function geocode() {
+  //   const result = await Location.geocodeAsync("Camacua 99 Córdoba");
+  //   console.log(result);
+  // }
 
   return (
     <View>
       <TextCommonsMedium style={styles.title}>
         Productos Especificos
       </TextCommonsMedium>
-      <TextCommonsMedium>proximamente</TextCommonsMedium>
-      <Button
+      <TextCommonsMedium style={styles.prox}>proximamente</TextCommonsMedium>
+      {/* <Button
         backgroundColor={Colors.mJordan}
         color={Colors.vainilla}
-        onPress={geocode}
+        //onPress={geocode}
       >
         Geolocalizar
-      </Button>
+      </Button> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 34,
+    fontSize: 25,
     color: Colors.mJordan,
     marginTop: 20,
+    textAlign: 'center',
   },
+  prox: {
+    margin: 25,
+    textAlign: 'center',
+  
+  }
 });
