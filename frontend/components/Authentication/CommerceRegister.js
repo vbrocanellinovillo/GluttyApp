@@ -31,8 +31,8 @@ export default function CommerceRegister({ onSubmit }) {
           errors.name = "Nombre requerido";
         }
 
-        if (cuit.trim() === "") {
-          errors.cuit = "CUIT requerido";
+        if (cuit.trim().length !== 11) {
+          errors.cuit = "El CUIT debe tener 11 números";
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -109,7 +109,7 @@ export default function CommerceRegister({ onSubmit }) {
             handleBlur={handleBlur}
             errors={errors.cuit}
             touched={touched.cuit}
-            keyboardType="numeric"
+            keyboardType="number-pad"
           />
           <FormControl
             label="Email"

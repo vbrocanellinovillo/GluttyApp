@@ -7,7 +7,6 @@ import { useState, useEffect } from "react";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../components/UI/GluttyModal";
 import NoUserData from "../../components/Profile/NoUserData";
-import { View, Text } from "react-native";
 
 export default function CommerceProfile() {
   const token = useSelector((state) => state.auth.accessToken);

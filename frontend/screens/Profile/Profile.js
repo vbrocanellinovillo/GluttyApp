@@ -1,17 +1,15 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ProfileForm from "../../components/Profile/ProfileForm";
 import { update } from "../../services/userService";
 import { authActions } from "../../context/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../components/UI/GluttyModal";
-import NoUserData from "../../components/Profile/NoUserData";
 import { getUser } from "../../services/userService";
 
 export default function Profile() {
   const username = useSelector((state) => state.auth.userData.username);
   const token = useSelector((state) => state.auth.accessToken);
-
 
   const [isloading, setisloading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -23,8 +21,8 @@ export default function Profile() {
     async function getUserData() {
       try {
         setisloading(true);
-        const response = getUser(token)
-        setUserData(response)
+        const response = getUser(token);
+        setUserData(response);
         setIsError(false);
       } catch (error) {
         setIsError(true);
