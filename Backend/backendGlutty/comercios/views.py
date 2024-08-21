@@ -251,42 +251,42 @@ def delete_menu(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_commerces(request):
+def get_branches(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     if not user:
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     try:
-        commerces = Commerce.objects.all()
-        all_commerces_data = []
-        for commerce in commerces:
-            commerce_data = {
-            "name": commerce.name,
-            "cuit": commerce.cuit,
-            "description": commerce.description,
-            }
-            branches = Branch.objects.filter(commerce=commerce, is_active=True)
-            branch_data = [
-            {
-                "name": branch.name,
-                "address": branch.location.address,
+        # commerces = Commerce.objects.all()
+        all_branches_data = []
+        # for commerce in commerces:
+        #     commerce_data = {
+        #     "name": commerce.name,
+        #     "cuit": commerce.cuit,
+        #     "description": commerce.description,
+        #     }
+        branches = Branch.objects.filter(is_active=True)
+        for branch in branches:
+            branch_data = {
+                "id": branch.id,
+                #"name": branch.name,
+                #"address": branch.location.address,
                 "latitude": branch.location.latitude,
                 "longitude": branch.location.longitude,
-                "phone": branch.phone,
-                "optional_phone": branch.optional_phone,
-                "separated_kitchen": branch.separated_kitchen,
-                "just_takeaway": branch.just_takeaway
-            } for branch in branches
-            ]
-            
-            # Agregar los datos de las sucursales al diccionario de datos del comercio
-            commerce_data["branches"] = branch_data
-            
-            # Agregar el comercio completo a la lista de todos los comercios
-            all_commerces_data.append(commerce_data)
+                #"phone": branch.phone,
+                #"optional_phone": branch.optional_phone,
+                #"separated_kitchen": branch.separated_kitchen,
+                #"just_takeaway": branch.just_takeaway
+            }
+        
+        # Agregar los datos de las sucursales al diccionario de datos del comercio
+        # commerce_data["branches"] = branch_data
+        
+        # Agregar el comercio completo a la lista de todos los comercios
+            all_branches_data.append(branch_data)
             
         # Devolver los datos    
-        return Response({"commerces": all_commerces_data}, status=status.HTTP_200_OK)
+        return Response({"branches": all_branches_data}, status=status.HTTP_200_OK)
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
