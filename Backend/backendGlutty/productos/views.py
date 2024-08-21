@@ -13,6 +13,9 @@ from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import api_view, permission_classes
+from django.core.paginator import Paginator
+from rest_framework.pagination import PageNumberPagination
+
 
 class MarcaViewSet(viewsets.ModelViewSet):
     queryset = MarcaProducto.objects.all()
@@ -48,6 +51,10 @@ def find(request):
         query = request.data.get("q", None)
         marcas = request.data.get("marca", [])
         tipos = request.data.get("tipo", [])
+
+        # Parámetros de paginación
+        page_number = request.data.get("page", 1)
+        page_size = request.data.get("page_size", 10)
 
         # Asegurarse de que marcas y tipos sean listas
         if isinstance(marcas, str):
@@ -112,9 +119,13 @@ def find(request):
             )
         )
 
+        # Aplicar paginación
+        paginator = Paginator(productos, page_size)
+        paginated_productos = paginator.get_page(page_number)
+
         db_time = time.time() - start_time_db
         print(f"Tiempo en DB: {db_time:.4f} segundos")
-        print(f"Productos encontrados: {productos.count()}")
+        print(f"Productos encontrados: {paginator.count}")
 
         start_time_serialization = time.time()
 
@@ -148,7 +159,7 @@ def find(request):
         tipos_productos_serializer = TipoProductoSerializer(tipos_productos, many=True)
 
         resultados = {
-            "productos": list(productos),
+            "productos": list(paginated_productos),
             "marcas": marcas_serializer.data,
             "tipos_productos": tipos_productos_serializer.data,
         }
