@@ -259,12 +259,9 @@ def delete_menu(request):
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
     
-
-    
-
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_branches(request):
+def get_branches_address(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     if not user:

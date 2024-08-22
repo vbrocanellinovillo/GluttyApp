@@ -9,5 +9,5 @@ urlpatterns = [
     path("upload-menu/", upload_menu, name="upload_menu"),
     path("get-menu/", get_menu, name="get_menu"),
     path("delete-menu/", delete_menu, name="delete_menu"),
-    path("get-branches/", get_branches, name="get_commerces")
+    path("get-branches-address/", get_branches_address, name="get_branches_address")
 ]
