@@ -4,10 +4,23 @@ import { httpRequest } from "../utils/http";
 
 const url = backendUrl + "productos/";
 
-export async function fetchProducts({ searchTerm, brands, types, token }) {
+export async function fetchProducts({
+  searchTerm,
+  brands,
+  types,
+  token,
+  page,
+  pageSize,
+}) {
   const requestOptions = {
     method: "POST",
-    body: JSON.stringify({ q: searchTerm, marca: brands, tipo: types }),
+    body: JSON.stringify({
+      q: searchTerm,
+      marca: brands,
+      tipo: types,
+      page: page,
+      page_size: pageSize,
+    }),
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

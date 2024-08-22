@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import ProductItem from "./ProductItem";
 import Searchbar from "../UI/Controls/Searchbar";
 import { Colors } from "../../constants/colors";
@@ -37,10 +37,18 @@ export default function ProductsList() {
   // Token
   const token = useSelector((state) => state.auth.accessToken);
 
+  // Pagination
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [products, setProducts] = useState([]);
+
+  const pageSize = 10;
+
   // Fetch data
-  const { data, isLoading, refetch, isError, error } = useQuery({
+  const { data, isLoading, refetch, isError } = useQuery({
     queryKey: ["products", searchTerm, brands, types],
-    queryFn: () => fetchProducts({ searchTerm, brands, types, token }),
+    queryFn: () =>
+      fetchProducts({ searchTerm, brands, types, token, page, pageSize }),
     enabled: false,
   });
 
@@ -53,6 +61,8 @@ export default function ProductsList() {
       ) {
         return;
       }
+      setPage(1);
+      setProducts([]);
       refetch();
     };
 
@@ -61,10 +71,27 @@ export default function ProductsList() {
 
   useEffect(() => {
     setSearchTerm("");
+    setPage(1);
   }, [brands, types]);
+
+  useEffect(() => {
+    if (data) {
+      setProducts((prevProducts) =>
+        page === 1 ? data.products : [...prevProducts, ...data.products]
+      );
+      setHasNextPage(data.products.length === pageSize);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (searchTerm.trim() !== "" || brands.length !== 0 || types.length !== 0) {
+      refetch();
+    }
+  }, [page]);
 
   function handleChange(text) {
     setSearchTerm(text);
+    setPage(1);
   }
 
   function toggleFilters() {
@@ -105,6 +132,7 @@ export default function ProductsList() {
 
     setBrands(selectedBrands);
     setTypes(selectedTypes);
+    setPage(1);
   }
 
   function showDetails(product) {
@@ -117,6 +145,18 @@ export default function ProductsList() {
     dispatch(uiActions.toggleBlurHeader());
     setDetailsVisible(false);
     setProduct(undefined);
+  }
+
+  function loadMoreProducts() {
+    if (hasNextPage && !isLoading) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
+
+  function renderLoadingFooter() {
+    return hasNextPage ? (
+      <ActivityIndicator color={Colors.mJordan} size="small" />
+    ) : null;
   }
 
   let content = <></>;
@@ -168,12 +208,15 @@ export default function ProductsList() {
     } else {
       content = (
         <FlatList
-          data={data.products}
+          data={products}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <ProductItem product={item} onPress={showDetails} />
           )}
           showsVerticalScrollIndicator={false}
+          onEndReachedThreshold={0.1}
+          onEndReached={loadMoreProducts}
+          ListFooterComponent={renderLoadingFooter}
         />
       );
     }
