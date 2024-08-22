@@ -3,8 +3,6 @@ import MapView, { Marker } from "react-native-maps";
 import { thumbGlutty } from "../../constants/glutty";
 
 export default function RestaurantsMap({ restaurants, location }) {
-  // capaz que lo mejor seria que restaurants sea un array de todas las branchs que hay
-  // si cada restauran es una branch, armo el marker con restaurant.coordinates
   const userLocation = {
     latitude: location.latitude ? location.latitude : -31.4262,
     longitude: location.longitude ? location.longitude : -64.1888,
@@ -16,11 +14,8 @@ export default function RestaurantsMap({ restaurants, location }) {
     <MapView region={userLocation} style={styles.map}>
       {restaurants &&
         restaurants.map((restaurant) => (
-          <Marker key={Math.random()} coordinate={restaurant.coordinates}>
-            <Image
-              source={{ uri: thumbGlutty }}
-              style={{ height: 50, width: 50 }}
-            />
+          <Marker key={restaurant.id} coordinate={restaurant.coordinate}>
+            <Image source={{ uri: thumbGlutty }} style={styles.gluttyMarker} />
           </Marker>
         ))}
     </MapView>
@@ -30,5 +25,10 @@ export default function RestaurantsMap({ restaurants, location }) {
 const styles = StyleSheet.create({
   map: {
     flex: 1,
+  },
+
+  gluttyMarker: {
+    height: 75,
+    width: 75,
   },
 });

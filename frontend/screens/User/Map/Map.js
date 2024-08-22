@@ -16,8 +16,6 @@ export default function Map() {
     useForegroundPermissions();
 
   const token = useSelector((state) => state.auth.accessToken);
-  console.log(token);
-  
 
   const [isloading, setisloading] = useState(false);
   const [isError, setIsError] = useState(false);
