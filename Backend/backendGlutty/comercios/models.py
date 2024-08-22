@@ -26,6 +26,7 @@ class Branch(models.Model):
 class Menu(models.Model):
     menu_url = models.URLField(max_length=500, blank=True, null=True)
     commerce = models.ForeignKey(Commerce, on_delete=models.CASCADE, related_name="menu")
+    public_id = models.CharField(max_length=300, blank=False, default="")
 
 # Modelo UBICACIÓN (para la ubicación de la sucursal)
 class Location(models.Model):

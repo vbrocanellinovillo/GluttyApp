@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.exceptions import ValidationError
 import cloudinary.uploader
+import cloudinary.api
 from django.core.files.storage import default_storage
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -200,7 +201,7 @@ def upload_menu(request):
                 public_id=f"{user.username}/{original_filename}"
             )
 
-            Menu.objects.create(commerce=commerce, menu_url=upload_result['url'])
+            Menu.objects.create(commerce=commerce, menu_url=upload_result['url'], public_id=upload_result['public_id'])
 
         # Guardar URLs si fueron proporcionadas
         for file_url in file_urls:
@@ -226,28 +227,40 @@ def get_menu(request):
     
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
+@transaction.atomic
 def delete_menu(request):
-    user = request.user
-    commerce = get_object_or_404(Commerce, user=user)
+    try: 
+        user = request.user
+        commerce = get_object_or_404(Commerce, user=user)
 
-    # Obtener la lista de menús a eliminar
-    menu_urls = request.data.getlist("menu_urls")
+        # Obtener la lista de menús a eliminar
+        menu_id = request.data.get("id")
+        
+        if not menu_id:
+            return Response({"error": "No se han proporcionado menús para eliminar."}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not menu_urls:
-        return Response({"error": "No se han proporcionado URLs de menús para eliminar."}, status=status.HTTP_400_BAD_REQUEST)
-
-    for url in menu_urls:
-        menu = get_object_or_404(Menu, commerce=commerce, menu_url=url)
-
+        # for url in menu_urls:
+        menu = get_object_or_404(Menu, commerce=commerce, id = menu_id)
+    
         # Extraer el public_id de la URL del archivo y eliminarlo de Cloudinary
-        if menu.menu_url.startswith("http://res.cloudinary.com/") or menu.menu_url.startswith("https://res.cloudinary.com/"):
-            public_id = menu.menu_url.split('/')[-1].split('.')[0]
-            cloudinary.uploader.destroy(public_id, resource_type='auto')
+        if menu.public_id and (menu.menu_url.startswith("http://res.cloudinary.com/") or menu.menu_url.startswith("https://res.cloudinary.com/")):
+            #public_id = menu.menu_url.split('/')[-1].split('.')[0]
+            print(menu.public_id)
+            #cloudinary.uploader.destroy(menu.public_id, resource_type='raw')
+            #cloudinary.api.delete_resources(menu.public_id, resource_type="raw", type="upload")
+            pdf_delete_result = cloudinary.api.delete_resources(menu.public_id, resource_type="image", type="upload")
+            print(pdf_delete_result)
+            
+            # Eliminar el registro de la base de datos
+            menu.delete()
+            return Response({"detail": "Menú eliminado correctamente."}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"error": "No se encontró el public_id para eliminar el archivo."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
+    
 
-        # Eliminar el registro de la base de datos
-        menu.delete()
-
-    return Response({"detail": "Menús eliminados correctamente."}, status=status.HTTP_204_NO_CONTENT)
+    
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
