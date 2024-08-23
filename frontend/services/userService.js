@@ -18,7 +18,7 @@ export async function login(username, password) {
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);
-
+    console.log(response);
     return response;
   } catch (error) {
     throw new Error(error.message);

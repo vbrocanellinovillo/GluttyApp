@@ -1,19 +1,14 @@
 import { FlatList, StyleSheet, View } from "react-native";
 import BranchItem from "./BranchItem";
-
-const BRANCH = [
-  { id: 1, name: "Entresano", address: "Bv Illia" },
-  { id: 2, name: "Entresano", address: "Bv Illia" },
-  { id: 3, name: "Entresano", address: "Bv Illia" },
-  { id: 4, name: "Entresano", address: "Bv Illia" },
-  { id: 5, name: "Entresano", address: "Bv Illia" },
-  { id: 6, name: "Entresano", address: "Bv Illia" },
-  { id: 7, name: "Entresano", address: "Bv Illia" },
-  { id: 8, name: "Entresano", address: "Bv Illia" },
-  { id: 9, name: "Entresano", address: "Bv Illia" },
-];
+import { useSelector } from "react-redux";
+import { Text } from "react-native-paper";
 
 export default function BranchesList() {
+
+  const userData = useSelector((state) => state.auth.userData);
+  const BRANCH = userData.Branches
+  console.log(BRANCH);
+
   return (
     <FlatList
       data={BRANCH}
@@ -24,7 +19,7 @@ export default function BranchesList() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     />
-  );
+    )
 }
 
 const styles = StyleSheet.create({

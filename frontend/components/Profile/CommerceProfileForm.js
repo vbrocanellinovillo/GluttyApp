@@ -39,7 +39,7 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
           if (!emailRegex.test(email)) {
             errors.email = "Email invalido";
           }
-
+          // FALTAN VALIDACIONES 
           return errors;
         }}
         onSubmit={submitHandler}
