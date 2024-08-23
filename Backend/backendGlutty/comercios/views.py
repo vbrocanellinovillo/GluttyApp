@@ -1,4 +1,6 @@
+from django.http import StreamingHttpResponse
 from django.shortcuts import render, get_object_or_404
+import requests
 from .models import *
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -212,18 +214,87 @@ def upload_menu(request):
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_menu(request):
-    user = request.user
-    commerce = get_object_or_404(Commerce, user=user)
+    menu_id = request.data.get("menu_id")
+    if not menu_id:
+        return Response({"error": "El ID del menú es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Encontrar el comercio que quiere encontrar el menu
+        user = request.user
+        commerce = get_object_or_404(Commerce, user=user)
 
-    menus = commerce.menu.all()
-    if menus.exists():
-        menu_urls = [{"menu_url": menu.menu_url} for menu in menus]
-        return Response(menu_urls, status=status.HTTP_200_OK)
-    else:
-        return Response({"error": "No se encontraron menús."}, status=status.HTTP_404_NOT_FOUND)
+        # Verificar si el usuario tiene permisos para actualizar la sucursal
+        if not user.is_commerce or commerce.user != user:
+            return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_403_FORBIDDEN)
+    
+        # Obtener el menú basado en el ID proporcionado
+        menu = get_object_or_404(Menu, id=menu_id)
+
+        if not menu.menu_url:
+            return Response({"error": "El menú solicitado no tiene un archivo asociado."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Realizar la solicitud al URL del PDF
+        response = requests.get(menu.menu_url, stream=True)
+        
+        # Verificar que la solicitud fue exitosa
+        if response.status_code != 200:
+            return Response({"error": "No se pudo recuperar el archivo PDF."}, status=response.status_code)
+
+        # Determinar el tipo de contenido
+        content_type = response.headers.get('Content-Type', 'application/pdf')
+
+        # Crear una respuesta HTTP con el PDF directamente
+        response = StreamingHttpResponse(streaming_content=response.iter_content(chunk_size=8192), content_type=content_type)
+        response['Content-Disposition'] = f'inline; filename="{menu.public_id}.pdf"'
+
+        return response
+
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_all_menues(request):
+    try:
+        # Encontrar el comercio que quiere encontrar el menu
+        user = request.user
+        commerce = get_object_or_404(Commerce, user=user)
+
+        # Verificar si el usuario tiene permisos para actualizar la sucursal
+        if not user.is_commerce or commerce.user != user:
+            return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_403_FORBIDDEN)
+
+        menus = commerce.menu.all()
+        all_menu_data = []
+        
+        for menu in menus:
+            resource = cloudinary.api.resource(menu.public_id, resource_type="image")
+
+            # Extraer el nombre del archivo y el tamaño
+            file_name = resource.get("display_name")
+            file_size = resource.get("bytes", 0)  # El tamaño en bytes
+            
+            # Convertir el tamaño a megabytes
+            file_size_kb = round(file_size / 1024, 2)
+        
+            menu_data = {
+                "id": menu.id,
+                "file_name": file_name,
+                "file_size": file_size_kb,
+            }
+        
+        # Agregar el comercio completo a la lista de todos los comercios
+            all_menu_data.append(menu_data)
+            
+        # Devolver los datos    
+        return Response({"menues": all_menu_data}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
@@ -301,3 +372,33 @@ def get_branches_address(request):
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)   
         
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_branches(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        all_branches_data = []
+       #Se agregan todas las branches del comercio con el que se accede.
+        commerce = Commerce.objects.filter(username=username)
+        branches = Branch.objects.filter(is_active=True, commerce=commerce)
+        for branch in branches:
+            branch_data = {
+                "id": branch.id,
+                "name": branch.name,
+                "address": branch.location.address,
+            }
+        
+        # Agregar los datos de las sucursales al diccionario de datos del comercio
+        # commerce_data["branches"] = branch_data
+        
+        # Agregar el comercio completo a la lista de todos los comercios
+            all_branches_data.append(branch_data)
+            
+        # Devolver los datos    
+        return Response({"branches": all_branches_data}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
