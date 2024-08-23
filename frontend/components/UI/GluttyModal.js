@@ -16,6 +16,8 @@ export default function GluttyModal({
   closeButtonStyle,
   closeButtonColor,
   closeButtonBg,
+  closeButtonText = "Cerrar",
+  buttonsContainerStyle,
 }) {
   const imageUri = other ? smileGlutty : isError ? sadGlutty : thumbGlutty;
 
@@ -41,7 +43,7 @@ export default function GluttyModal({
             <Ionicons name={icon.name} color={icon.color} size={30} />
             <Text style={styles.message}>{message}</Text>
           </View>
-          <View style={styles.buttonsContainer}>
+          <View style={[styles.buttonsContainer, buttonsContainerStyle]}>
             {closeButton && (
               <View style={styles.buttonContainer}>
                 <Button
@@ -50,7 +52,7 @@ export default function GluttyModal({
                   onPress={onClose}
                   style={closeButtonStyle}
                 >
-                  Cerrar
+                  {closeButtonText}
                 </Button>
               </View>
             )}

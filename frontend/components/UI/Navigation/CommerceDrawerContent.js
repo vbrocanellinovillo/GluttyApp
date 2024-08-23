@@ -1,38 +1,14 @@
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import { Drawer } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
-import UserImage from "../UserImage/UserImage";
-import { useDispatch, useSelector } from "react-redux";
-import Button from "../Controls/Button";
-import { authActions } from "../../../context/auth";
-import { logoutSesion } from "../../../services/userService";
+import DrawerContent from "./DrawerContent";
+import { useNavigation } from "@react-navigation/native";
 
-export default function CommerceDrawerContent({ navigation, route }) {
-  const username = useSelector((state) => state.auth.userData?.username);
-  const token = useSelector((state) => state.auth?.accessToken);
-
-  const dispatch = useDispatch();
-
-  async function logout() {
-    try {
-      await logoutSesion(username, token);
-      dispatch(authActions.logout());
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
+export default function CommerceDrawerContent() {
+  const navigation = useNavigation();
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.userInfo}>
-        <UserImage
-          onPress={() =>
-            console.log("apretaste algo que no hace nada. bien ahi crack")
-          }
-          dimensions={80}
-        />
-        <Text style={styles.username}>{username}</Text>
-      </View>
+    <DrawerContent>
       <Drawer.Section title={<Text style={styles.title}>Usuario</Text>}>
         <Drawer.Item
           label="Editar datos"
@@ -49,10 +25,7 @@ export default function CommerceDrawerContent({ navigation, route }) {
           icon="lock"
         />
       </Drawer.Section>
-      <View style={styles.buttons}>
-        <Button onPress={logout}>Cerrar Sesión</Button>
-      </View>
-    </ScrollView>
+    </DrawerContent>
   );
 }
 
