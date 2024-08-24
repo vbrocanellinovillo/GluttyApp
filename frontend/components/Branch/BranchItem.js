@@ -4,12 +4,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 
-export default function BranchItem({ name, address }) {
+export default function BranchItem({ name, address, onPress }) {
   return (
     <Pressable
       style={({ pressed }) =>
         pressed ? [styles.item, styles.pressed] : styles.item
       }
+      onPress={onPress}
     >
       <View style={styles.detailsContainer}>
         <Ionicons name="storefront" size={22} color={Colors.mJordan} />

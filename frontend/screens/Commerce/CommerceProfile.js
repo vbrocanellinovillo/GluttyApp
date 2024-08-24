@@ -1,7 +1,8 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import CommerceProfileForm from "../../components/Profile/CommerceProfileForm";
-import { update, getUser } from "../../services/userService";
+import { update } from "../../services/commerceService";
+import {getUser} from "../../services/userService"
 import { authActions } from "../../context/auth";
 import { useState, useEffect } from "react";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
@@ -12,6 +13,7 @@ export default function CommerceProfile() {
   const token = useSelector((state) => state.auth.accessToken);
   const dispatch = useDispatch();
 
+  const user = useSelector((state) => state.auth.userData);
   const [isloading, setisloading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -42,13 +44,14 @@ export default function CommerceProfile() {
     setShowModal(false);
   }
 
-  async function submitHandler(email, username) {
+  async function submitHandler(cuit, name, email, username, description) {
     try {
       setisloading(true);
-      const response = await update(email, username, userData.id);
+      console.log("UID" + user.id)
+      const response = await update(cuit, name, email, username, description, user.id);
       dispatch(authActions.updateUser(response.user));
       setIsError(false);
-      setMessage("Modificación de usuario exitosa");
+      setMessage("Modificación de comercio exitosa");
       setShowModal(true);
     } catch (error) {
       setIsError(true);
