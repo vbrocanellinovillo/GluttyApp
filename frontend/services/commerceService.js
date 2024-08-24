@@ -104,3 +104,37 @@ export async function getMapPoints(token) {
     throw new Error(error.message);
   }
 }
+
+/* HACER ESTA FUNCIÓN PARA UPDATE DE COMERCIO*/
+export async function update(
+  username,
+  name,
+  cuit,
+  description,
+  email,
+  id
+) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+  formdata.append("name", name);
+  formdata.append("cuit", cuit); 
+  formdata.append("description", description);
+  formdata.append("email", email);
+  formdata.append("id", id);
+
+  const requestOptions = {
+    method: "PUT",
+    body: formdata,
+    redirect: "follow",
+  };
+  console.log("LPM MADREEE")
+  const requestUrl = url + `update/${id}/`;
+  try {
+    console.log("BOCA LA CONCHA DE TU MADREEE")
+    const response = await httpRequest(requestUrl, requestOptions);
+
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+} 
