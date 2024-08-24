@@ -4,12 +4,12 @@ import {
   useForegroundPermissions,
 } from "expo-location";
 import { useEffect, useState, useCallback } from "react";
-import RestaurantsMap from "../../../components/Map/RestaurantsMap";
 import { useSelector } from "react-redux";
 import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { getMapPoints } from "../../../services/commerceService";
+import InfoMap from "../../../components/Map/InfoMap";
 
 export default function Map() {
   const [locationPermissions, requestLocationPermissions] =
@@ -60,8 +60,8 @@ export default function Map() {
       async function getMapData() {
         try {
           setisloading(true);
-          const restaurants = await getMapPoints(token);
-          setMapData(restaurants);
+          const branches = await getMapPoints(token);
+          setMapData(branches);
           setIsError(false);
         } catch (error) {
           setIsError(true);
@@ -85,7 +85,7 @@ export default function Map() {
         onClose={closeModalHandler}
         visible={showModal}
       />
-      <RestaurantsMap location={location} restaurants={mapData} />
+      <InfoMap location={location} branches={mapData} />
     </>
   );
 }
