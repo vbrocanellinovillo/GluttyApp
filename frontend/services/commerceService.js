@@ -327,7 +327,7 @@ const getData = async () => {
 };
 
 export async function getMapPoints(token) {
-  const requestUrl = url + "noniideabro/";
+  const requestUrl = url + "get-branches-address/";
 
   const requestOptions = {
     method: "GET",
@@ -340,24 +340,49 @@ export async function getMapPoints(token) {
     // const response = await httpRequest(requestUrl, requestOptions);
     const data = await getData();
 
-    const restaurants = [];
+    const branches = [];
 
-    for (dataPoint of data) {
-      const restaurant = new Branch(
-        dataPoint.name,
-        dataPoint.phone,
-        dataPoint.optionalPhone,
-        dataPoint.onlyTakeAway,
-        dataPoint.separatedKitchen,
-        dataPoint.address,
-        dataPoint.coordinates,
-        dataPoint.photos
+    for (dataPoint of response.branches) {
+      const coordinate = new Coordinates(
+        dataPoint.latitude,
+        dataPoint.longitude
       );
 
-      restaurants.push(restaurant);
+      const id = dataPoint.id;
+
+      const branch = { id, coordinate };
+
+      branches.push(branch);
     }
 
-    return restaurants;
+    return branches;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+/* HACER ESTA FUNCIÓN PARA UPDATE DE COMERCIO*/
+export async function update(username, name, cuit, description, email, id) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+  formdata.append("name", name);
+  formdata.append("cuit", cuit);
+  formdata.append("description", description);
+  formdata.append("email", email);
+  formdata.append("id", id);
+
+  const requestOptions = {
+    method: "PUT",
+    body: formdata,
+    redirect: "follow",
+  };
+  console.log("LPM MADREEE");
+  const requestUrl = url + `update/${id}/`;
+  try {
+    console.log("BOCA LA CONCHA DE TU MADREEE");
+    const response = await httpRequest(requestUrl, requestOptions);
+
+    return response;
   } catch (error) {
     throw new Error(error.message);
   }

@@ -35,7 +35,7 @@ export default function AddressForm({ onBack, onNext }) {
 
     onNext(address, coordinates);
   }
-
+  
   return (
     <DismissKeyboardContainer>
       <View style={styles.container}>

@@ -13,6 +13,7 @@ import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 
 export default function CommerceProfileForm({ onSubmit, user, commerce }) {
   function submitHandler({ cuit, name, email, username, description }) {
+    console.log(cuit + name + email + username + description)
     onSubmit(email, username, cuit, name, description);
   }
 
@@ -29,7 +30,7 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
           cuit: commerce.cuit,
           description: commerce.description,
         }}
-        validate={({ nombreUsuario, email }) => {
+        validate={({ nombreUsuario, email, name }) => {
           const errors = {};
           if (nombreUsuario.trim() === "") {
             errors.nombreUsuario = "Nombre de usuario requerido";
@@ -38,6 +39,10 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(email)) {
             errors.email = "Email invalido";
+          }
+
+          if (name.trim() === "") {
+            errors.name = "Nombre de comercio requerido";
           }
           // FALTAN VALIDACIONES 
           return errors;
@@ -58,11 +63,11 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
             <FormControl
               label="Nombre de Comercio"
               value={values.name}
-              name="nombreComercio"
+              name="name"
               handleChange={handleChange}
               handleBlur={handleBlur}
-              //errors={errors.nombreUsuario}
-              //touched={touched.nombreUsuario}
+              errors={errors.name}
+              touched={touched.name}
             />
 
             <FormControl
@@ -98,7 +103,7 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
               textarea
               label="Descripción"
               value={values.description}
-              name="descripcion"
+              name="description"
               handleChange={handleChange}
               handleBlur={handleBlur}
               //errors={errors.}
