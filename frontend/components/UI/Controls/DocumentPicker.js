@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
@@ -6,12 +6,30 @@ import Button from './Button';
 import { Colors } from '../../../constants/colors';
 import Feather from '@expo/vector-icons/Feather';
 import Entypo from '@expo/vector-icons/Entypo';
-import { sendPdf } from '../../../services/commerceService';
+import { sendPdf, getAllMenues } from '../../../services/commerceService';
 import { useSelector } from 'react-redux';
+
 
 export default function DocumentPickerComponent() {
   const token = useSelector((state) => state.auth.accessToken);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
+  const [uploadedMenues, setUploadedMenues] = useState([]);
+
+  // Cargar menús al montar el componente
+  useEffect(() => {
+    const fetchMenues = async () => {
+      try {
+        const response = await getAllMenues(token);
+        console.log("HOLA:",response);
+        setUploadedMenues(response.menues);
+      } catch (error) {
+        Alert.alert('Error al cargar los menús', error.message);
+      }
+    };
+
+    fetchMenues();
+  }, [token]);
+
 
   const pickDocument = async () => {
     try {
@@ -34,7 +52,6 @@ export default function DocumentPickerComponent() {
 
   const removeDocument = (uri, document) => {
     setSelectedDocuments(selectedDocuments.filter(doc => doc.uri !== uri));
-    //removePDF(uri); ACÁ AGREGAR  
   };
 
   const openPdfExternally = async (document) => {
@@ -52,6 +69,26 @@ export default function DocumentPickerComponent() {
 
   return (
     <View style={styles.container}>
+        {/* Mostrar menús previamente subidos */}
+        {uploadedMenues.length > 0 && uploadedMenues.map((menu, index) => (
+          <View key={index} style={styles.previewContainer}>
+            <View style={styles.row}>
+              <Feather style={styles.fileIcon} name="file" size={24} color="black" />
+              <View style={styles.textContainer}>
+                <Text style={styles.documentName}>{menu.file_name}</Text>
+                <Text style={styles.documentSize}>{(menu.file_size)} </Text>
+              </View>
+              <TouchableOpacity style={styles.iconWrapper} onPress={() => openPdfExternally(menu)}>
+                <Entypo name="eye" size={24} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.iconWrapper} onPress={() => removeDocument(menu.uri)}>
+                <Entypo name="squared-cross" size={24} color="black" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+
+      {/* Mostrar documentos seleccionados */}
       <Button style={styles.button} onPress={pickDocument}>Carga el .pdf de tu menú</Button>
       {selectedDocuments.length > 0 && selectedDocuments.map((document, index) => (
         <View key={index} style={styles.previewContainer}>
