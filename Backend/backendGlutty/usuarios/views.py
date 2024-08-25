@@ -300,16 +300,28 @@ def update(request, user_id):
         return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
     
     user = get_object_or_404(User, id=user_id)
+    old_username = user.username
 
     # Actualizar datos del usuario
     user_serializer = UsuarioSerializer(user, data=request.data, partial=True)
+    print("holaaaaaaaaaaaa")
+    print(user_serializer)
 
     if user_serializer.is_valid():
         user_serializer.save()
         
-        print("1")
+        # Si el nombre de usuario ha cambiado, generamos un nuevo token
+        if user.username != old_username:
+            refresh = RefreshToken.for_user(user)
+            tokens = {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token)
+            }
+        else:
+            tokens = None
+        
+        # Procesar imagen si está presente
         image = request.FILES.get('image')
-        print("2")
         if image:
             print("entra a if image")
             picture_link = upload_to_cloudinary(image)
@@ -332,7 +344,11 @@ def update(request, user_id):
             else:
                 return Response({"error": celiac_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({"user": user_serializer.data}, status=status.HTTP_200_OK)
+        # Responder con los datos del usuario y los tokens si es necesario
+        response_data = {"user": user_serializer.data}
+        if tokens:
+            response_data["tokens"] = tokens
+        return Response(response_data, status=status.HTTP_200_OK)
 
     return Response({"error": user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
