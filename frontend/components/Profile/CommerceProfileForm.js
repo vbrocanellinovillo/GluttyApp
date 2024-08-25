@@ -13,8 +13,9 @@ import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 
 export default function CommerceProfileForm({ onSubmit, user, commerce }) {
   function submitHandler({ cuit, name, email, username, description }) {
+    console.log("usuario: " + username)
     console.log(cuit + name + email + username + description)
-    onSubmit(email, username, cuit, name, description);
+    onSubmit(username, name, cuit, description, email);
   }
 
   return (
@@ -25,15 +26,17 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
       <Formik
         initialValues={{
           name: commerce.name,
-          nombreUsuario: user.username,
+          username: user.username,
           email: user.email,
           cuit: commerce.cuit,
           description: commerce.description,
         }}
-        validate={({ nombreUsuario, email, name }) => {
+        
+        validate={({ username, email, name }) => {
           const errors = {};
-          if (nombreUsuario.trim() === "") {
-            errors.nombreUsuario = "Nombre de usuario requerido";
+          
+          if (username.trim() === "") {
+            errors.username = "Nombre de usuario requerido";
           }
 
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -72,12 +75,12 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
 
             <FormControl
               label="Nombre usuario"
-              value={values.nombreUsuario}
-              name="nombreUsuario"
+              value={values.username}
+              name="username"
               handleChange={handleChange}
               handleBlur={handleBlur}
-              errors={errors.nombreUsuario}
-              touched={touched.nombreUsuario}
+              errors={errors.username}
+              touched={touched.username}
             />
 
             <FormControl

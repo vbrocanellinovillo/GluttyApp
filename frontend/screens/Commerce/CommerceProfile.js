@@ -48,7 +48,7 @@ export default function CommerceProfile() {
     try {
       setisloading(true);
       console.log("UID" + user.id)
-      const response = await update(cuit, name, email, username, description, user.id);
+      const response = await update(cuit, name, email, username, description, token, user.id);
       dispatch(authActions.updateUser(response.user));
       setIsError(false);
       setMessage("Modificación de comercio exitosa");

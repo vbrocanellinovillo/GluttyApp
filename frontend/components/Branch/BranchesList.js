@@ -13,7 +13,7 @@ export default function BranchesList() {
   const navigation = useNavigation();
 
   const handlePress = (branch) =>{
-    console.log(Aprieta)
+    console.log("Aprieta")
   }
   return (
     <FlatList

@@ -161,7 +161,7 @@ export async function getUser(token) {
   const requestUrl = url + `get-user/`;
     try {
       const response = await httpRequest(requestUrl, requestOptions);
-      console.log(response);
+      console.log("COMERCIO: " + response);
       return response;
     } catch (error) {
       throw new Error(error.message);
