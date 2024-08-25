@@ -98,7 +98,7 @@ export default function PhotosForm({ onBack, onNext }) {
             </TouchableOpacity>
           </View>
         ))}
-        {images.length < 4 && (
+        {images.length < 6 && (
           <TouchableOpacity
             style={styles.addPhotoButton}
             onPress={openImageOptions}

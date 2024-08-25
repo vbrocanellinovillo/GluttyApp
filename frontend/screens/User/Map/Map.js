@@ -72,8 +72,9 @@ export default function Map() {
         }
       }
 
+      if (mapData) return;
       getMapData();
-    }, [token]) // Dependencia de token para asegurarse de que useFocusEffect se reejecute si el token cambia
+    }, [token])
   );
 
   return (

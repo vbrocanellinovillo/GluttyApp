@@ -8,17 +8,25 @@ import Animated, {
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import BranchDetails from "./BranchDetails";
+import LoadingMapBranchDetails from "../UI/Loading/LoadingMapBranchDetails";
+import ErrorBranchDetails from "./ErrorBranchDetails";
 
 const screenHeight = Dimensions.get("window").height;
 
 const MIN_HEIGHT = screenHeight * 0.25;
-const MAX_HEIGHT = screenHeight * 0.75;
+const MAX_HEIGHT = screenHeight * 0.80;
 const FIRST_MID_HEIGHT = screenHeight * 0.4;
 const MID_HEIGHT = screenHeight * 0.5;
 const SECOND_MID_HEIGHT = screenHeight * 0.6;
 
-export default function DetailsContainer({ visible, onDismiss, branch }) {
-  const height = useSharedValue(MAX_HEIGHT);
+export default function DetailsContainer({
+  visible,
+  onDismiss,
+  branch,
+  isError,
+  isLoading,
+}) {
+  const height = useSharedValue(MID_HEIGHT);
 
   const animatedHeight = useAnimatedStyle(() => {
     return {
@@ -34,6 +42,20 @@ export default function DetailsContainer({ visible, onDismiss, branch }) {
     }
   });
 
+  let content = <></>;
+
+  if (isLoading) {
+    content = <LoadingMapBranchDetails />;
+  }
+
+  if (isError) {
+    content = <ErrorBranchDetails />;
+  }
+
+  if (branch && !isLoading) {
+    content = <BranchDetails branch={branch} />;
+  }
+
   return (
     <>
       {visible && (
@@ -48,7 +70,7 @@ export default function DetailsContainer({ visible, onDismiss, branch }) {
                 style={[styles.container, animatedHeight]}
                 entering={SlideInDown}
               >
-                <BranchDetails />
+                {content}
               </Animated.View>
             </GestureDetector>
           </View>
