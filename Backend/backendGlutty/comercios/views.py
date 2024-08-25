@@ -43,7 +43,9 @@ def get_commerce_info(user):
     branch_data = [
         {
             "name": branch.name,
-            "location": branch.location,
+            "address": branch.location.address,
+            "latitude": branch.location.latitude,
+            "longitude": branch.location.longitude
             # "phone": branch.phone,
             # "optional_phone": branch.optional_phone,
             # "separated_kitchen": branch.separated_kitchen,
