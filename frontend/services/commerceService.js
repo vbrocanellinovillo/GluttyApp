@@ -3,6 +3,7 @@ import { Coordinates } from "../models/Coordinates";
 import { httpRequest } from "../utils/http";
 
 const url = backendUrl + "comercios/";
+const urlUs = backendUrl + "usuarios/";
 
 export async function sendPdf(selectedDocuments, token) {
   console.log(selectedDocuments);
@@ -125,22 +126,24 @@ export async function getMapPoints(token) {
 }
 
 /* HACER ESTA FUNCIÓN PARA UPDATE DE COMERCIO*/
-export async function update(username, name, cuit, description, email, id) {
+export async function update(username, name, cuit, description, email, id, token) {
   const formdata = new FormData();
   formdata.append("username", username);
   formdata.append("name", name);
   formdata.append("cuit", cuit);
   formdata.append("description", description);
   formdata.append("email", email);
-  formdata.append("id", id);
 
   const requestOptions = {
     method: "PUT",
     body: formdata,
     redirect: "follow",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
   console.log("LPM MADREEE");
-  const requestUrl = url + `update/${id}/`;
+  const requestUrl = urlUs + `update/${id}/`;
   try {
     console.log("BOCA LA CONCHA DE TU MADREEE");
     const response = await httpRequest(requestUrl, requestOptions);
