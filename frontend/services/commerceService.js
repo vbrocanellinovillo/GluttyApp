@@ -126,7 +126,15 @@ export async function getMapPoints(token) {
 }
 
 /* HACER ESTA FUNCIÓN PARA UPDATE DE COMERCIO*/
-export async function update(username, name, cuit, description, email, id, token) {
+export async function update(
+  username,
+  name,
+  cuit,
+  description,
+  email,
+  id,
+  token
+) {
   const formdata = new FormData();
   formdata.append("username", username);
   formdata.append("name", name);
@@ -148,6 +156,28 @@ export async function update(username, name, cuit, description, email, id, token
     console.log("BOCA LA CONCHA DE TU MADREEE");
     const response = await httpRequest(requestUrl, requestOptions);
 
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function getBranch(id, token) {
+  const formdata = new FormData();
+  formdata.append("branch_id", id)
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const requestUrl = url + "get-branch/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
     return response;
   } catch (error) {
     throw new Error(error.message);
