@@ -48,13 +48,12 @@ export default function BranchDetails({ branch }) {
           optionalPhone={branch.optional_phone}
         />
         <Divider />
-        <PhotosContainer photos={PHOTOS} />
+        <PhotosContainer photos={branch.pictures} />
         <Divider />
         <AditionalInfo
           onlyTakeAway={branch.just_takeaway}
           separatedKitchen={branch.separated_kitchen}
-          //description={branch.commerce_description}
-          description={DESCRIPTION}
+          description={branch.commerce_description}
         />
       </View>
     </View>
@@ -76,7 +75,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     backgroundColor: "white",
-    padding: 14,
     borderRadius: 60,
     marginTop: -60,
     shadowColor: "black",
@@ -87,6 +85,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+    borderRadius: 60,
     objectFit: "contain",
   },
 

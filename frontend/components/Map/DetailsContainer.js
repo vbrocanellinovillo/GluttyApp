@@ -9,6 +9,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
+  withSpring,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import BranchDetails from "./BranchDetails";
@@ -63,8 +64,6 @@ export default function DetailsContainer({
       if (newHeight <= maxHeight) {
         height.value = newHeight;
       }
-
-      //console.log(newHeight);
     })
     .onFinalize(() => {
       if (height.value < CLOSE_THRESHOLD) {
@@ -114,12 +113,17 @@ export default function DetailsContainer({
         }
       }
     }
-  }, [branch]);
+  }, [branch]); */
+
+  /* useEffect(() => {
+    height.value = withSpring(maxHeight);
+  }, [maxHeight]); */
 
   useEffect(() => {
-    height.value = withSpring(maxHeight);
-  }, [maxHeight]);
- */
+    if (!isLoading && !isError) {
+      height.value = withSpring(MAX_HEIGHT);
+    }
+  }, [isLoading]);
 
   let content = <></>;
 
@@ -149,10 +153,7 @@ export default function DetailsContainer({
               exiting={FadeOut}
             />
             <GestureDetector gesture={Pan}>
-              <Animated.View
-                style={[styles.container, animatedHeight]}
-                layout={FadingTransition}
-              >
+              <Animated.View style={[styles.container, animatedHeight]}>
                 {content}
               </Animated.View>
             </GestureDetector>

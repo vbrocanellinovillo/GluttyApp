@@ -8,7 +8,7 @@ export default function PhotosContainer({ photos }) {
       <ScrollView style={styles.photos} horizontal showsHorizontalScrollIndicator={false}>
         {photos.map((photo, index) => (
           <Image
-            source={{ uri: photo.photo }}
+            source={{ uri: photo }}
             style={styles.photo}
             key={index}
           />
