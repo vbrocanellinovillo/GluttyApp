@@ -18,9 +18,6 @@ const PHOTOS = [
   { photo: "http://dummyimage.com/149x100.png/cc0000/ffffff" },
 ];
 
-const DESCRIPTION =
-  "Esta es una descripción harcodeada para probar mientras espero que se agregue en el back";
-
 export default function BranchDetails({ branch, onDismiss }) {
   if (!branch) return <ErrorBranchDetails />;
 
@@ -28,11 +25,18 @@ export default function BranchDetails({ branch, onDismiss }) {
     <View style={styles.branch}>
       <View style={styles.imageRow}>
         <View style={styles.imageContainer}>
-          <Image source={{ uri: thumbGlutty }} style={styles.image} />
+          <Image
+            source={{
+              uri: branch.commerce_picture
+                ? branch.commerce_picture
+                : thumbGlutty,
+            }}
+            style={styles.image}
+          />
         </View>
       </View>
       <TextCommonsMedium style={styles.commerceName}>
-        Mc Donalds
+        {branch.commerce_name}
       </TextCommonsMedium>
       <View style={styles.details}>
         <Divider />
@@ -47,7 +51,7 @@ export default function BranchDetails({ branch, onDismiss }) {
         <AditionalInfo
           onlyTakeAway={branch.just_takeaway}
           separatedKitchen={branch.separated_kitchen}
-          description={DESCRIPTION}
+          description={branch.commerce_description}
         />
         <Divider />
         <Button backgroundColor="#aaa" onPress={onDismiss}>

@@ -51,7 +51,7 @@ export default function DetailsContainer({
     }
   });
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (branch) {
       const hasAditionalInfo = branch.just_takeaway && branch.separated_kitchen;
       const hasDescription = branch.description ? true : false;
@@ -89,8 +89,7 @@ export default function DetailsContainer({
   useEffect(() => {
     height.value = withSpring(maxHeight);
   }, [maxHeight]);
-
-  console.log(THREE_QUARTER_SECTION);
+ */
 
   let content = <></>;
 
@@ -103,6 +102,8 @@ export default function DetailsContainer({
   }
 
   if (branch && !isLoading) {
+    console.log(branch);
+    
     content = <BranchDetails branch={branch} onDismiss={onDismiss} />;
   }
 

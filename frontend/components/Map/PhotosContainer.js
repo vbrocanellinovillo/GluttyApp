@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 
   photo: {
     width: 130,
-    height: 150,
+    height: 145,
     objectFit: "fill",
     marginRight: 10,
   },
