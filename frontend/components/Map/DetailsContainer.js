@@ -3,9 +3,7 @@ import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   FadeIn,
   FadeOut,
-  FadingTransition,
   runOnJS,
-  SlideInDown,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
