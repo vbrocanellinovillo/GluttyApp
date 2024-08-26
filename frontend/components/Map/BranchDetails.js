@@ -17,6 +17,9 @@ const PHOTOS = [
   { photo: "http://dummyimage.com/149x100.png/cc0000/ffffff" },
 ];
 
+const DESCRIPTION =
+  "Esta es una descripción harcodeada que uso para probar hasta que suban los cambios en el back";
+
 export default function BranchDetails({ branch }) {
   if (!branch) return <ErrorBranchDetails />;
 
@@ -50,7 +53,8 @@ export default function BranchDetails({ branch }) {
         <AditionalInfo
           onlyTakeAway={branch.just_takeaway}
           separatedKitchen={branch.separated_kitchen}
-          description={branch.commerce_description}
+          //description={branch.commerce_description}
+          description={DESCRIPTION}
         />
       </View>
     </View>

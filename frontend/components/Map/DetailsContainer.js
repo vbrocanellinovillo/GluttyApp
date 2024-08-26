@@ -1,6 +1,9 @@
 import { Portal } from "react-native-paper";
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
+  FadeIn,
+  FadeOut,
+  FadingTransition,
   runOnJS,
   SlideInDown,
   useAnimatedStyle,
@@ -15,19 +18,21 @@ import { useEffect, useState } from "react";
 
 const screenHeight = Dimensions.get("window").height;
 
-const MIN_HEIGHT = screenHeight * 0.38;
-const MAX_HEIGHT = screenHeight * 0.88;
+const MIN_HEIGHT = screenHeight * 0.32;
+const MAX_HEIGHT = screenHeight * 0.8;
 const CLOSE_THRESHOLD = screenHeight * 0.27;
 const MID_HEIGHT = screenHeight * 0.5;
-const WITH_SECTION = screenHeight * 0.62;
+const WITH_SECTION = screenHeight * 0.54;
 const THREE_QUARTER_SECTION = screenHeight * 0.72;
 const HALF_SECTION = screenHeight * 0.53;
 
-// MIN_HEIGHT es 322, va si no tiene nada de las cosas opcionales y el boton
-// WITH_SECTION es 555, si tiene fotos o (servicios adicionales + descripción)
+// MIN_HEIGHT es 286, va si no tiene nada de las cosas opcionales y el boton
+// WITH_SECTION es 483, si tiene fotos o (servicios adicionales + descripción)
 // HALF_SECTION es 474, si no tiene fotos y tiene solo uno de: servicios adicionales o descripción
 // THREE_QUARTER_SECTION es 645, tiene fotos y (descripción o servicios adicionales, pero no los dos)
 // MAX_HEIGHT si tiene todo
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export default function DetailsContainer({
   visible,
@@ -58,6 +63,8 @@ export default function DetailsContainer({
       if (newHeight <= maxHeight) {
         height.value = newHeight;
       }
+
+      //console.log(newHeight);
     })
     .onFinalize(() => {
       if (height.value < CLOSE_THRESHOLD) {
@@ -125,6 +132,8 @@ export default function DetailsContainer({
   }
 
   if (branch && !isLoading) {
+    console.log(branch);
+
     content = <BranchDetails branch={branch} />;
   }
 
@@ -133,14 +142,16 @@ export default function DetailsContainer({
       {visible && (
         <Portal>
           <View style={styles.backdrop}>
-            <Pressable
+            <AnimatedPressable
               onPress={handleDismiss}
               style={StyleSheet.absoluteFill}
-            ></Pressable>
+              entering={FadeIn}
+              exiting={FadeOut}
+            />
             <GestureDetector gesture={Pan}>
               <Animated.View
                 style={[styles.container, animatedHeight]}
-                entering={SlideInDown}
+                layout={FadingTransition}
               >
                 {content}
               </Animated.View>
