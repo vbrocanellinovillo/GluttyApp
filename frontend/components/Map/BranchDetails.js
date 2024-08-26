@@ -7,6 +7,7 @@ import AditionalInfo from "./AditionalInfo";
 import PhotosContainer from "./PhotosContainer";
 import DetailsGeneralInfo from "./DetailsGeneralInfo";
 import ErrorBranchDetails from "./ErrorBranchDetails";
+import Button from "../UI/Controls/Button";
 
 const PHOTOS = [
   { photo: "http://dummyimage.com/227x100.png/5fa2dd/ffffff" },
@@ -17,7 +18,10 @@ const PHOTOS = [
   { photo: "http://dummyimage.com/149x100.png/cc0000/ffffff" },
 ];
 
-export default function BranchDetails({ branch }) {
+const DESCRIPTION =
+  "Esta es una descripción harcodeada para probar mientras espero que se agregue en el back";
+
+export default function BranchDetails({ branch, onDismiss }) {
   if (!branch) return <ErrorBranchDetails />;
 
   return (
@@ -43,7 +47,12 @@ export default function BranchDetails({ branch }) {
         <AditionalInfo
           onlyTakeAway={branch.just_takeaway}
           separatedKitchen={branch.separated_kitchen}
+          description={DESCRIPTION}
         />
+        <Divider />
+        <Button backgroundColor="#aaa" onPress={onDismiss}>
+          Cerrar
+        </Button>
       </View>
     </View>
   );
@@ -52,7 +61,7 @@ export default function BranchDetails({ branch }) {
 const styles = StyleSheet.create({
   branch: {
     paddingHorizontal: 20,
-    gap: 10,
+    gap: 8,
   },
 
   imageRow: {
@@ -80,12 +89,12 @@ const styles = StyleSheet.create({
 
   commerceName: {
     textAlign: "center",
-    fontSize: 28,
+    fontSize: 26,
     color: Colors.mJordan,
   },
 
   details: {
     marginTop: 10,
-    gap: 20,
+    gap: 18,
   },
 });
