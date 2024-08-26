@@ -12,7 +12,7 @@ const commerceSlice = createSlice({
 
     addBranch(state, action) {
       const newBranch = action.payload.branch;
-      state.branches = [newBranch, ...state.branches];
+      state.branches = [...state.branches, newBranch];
     },
   },
 });
