@@ -49,7 +49,14 @@ export default function CommerceProfile() {
       setisloading(true);
       console.log("UID" + user.id)
       const response = await update(cuit, name, email, username, description, user.id,token);
-      dispatch(authActions.updateUser(response.user));
+      dispatch(
+        authActions.updateUser(
+          response.user,
+          response.access_token,
+          response.refresh_token
+        )
+        
+      );
       setIsError(false);
       setMessage("Modificación de comercio exitosa");
       setShowModal(true);
