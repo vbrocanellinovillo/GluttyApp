@@ -34,7 +34,6 @@ export async function sendPdf(selectedDocuments, token) {
   }
 }
 
-
 export async function getAllMenues(token) {
   const requestUrl = url + "get-all-menues/";
 
@@ -47,27 +46,27 @@ export async function getAllMenues(token) {
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);
-    {console.log("get all menues:",response)}
+    {
+      console.log("get all menues:", response);
+    }
     return response;
-    
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
 export async function deletePdf(token, id) {
-
   if (id === "") {
     console.log("El ID está vacío. No se realizará ninguna acción.");
     return; // Sale de la función sin hacer nada más
   }
 
-  const requestUrl = url + "delete-menu/"
+  const requestUrl = url + "delete-menu/";
 
   const formdata = new FormData();
 
   formdata.append("id", id);
-  
+
   const requestOptions = {
     method: "DELETE",
     body: formdata,
@@ -99,20 +98,20 @@ export async function getPdfById(id, token) {
       "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${token}`,
     },
-    responseType: 'blob', // Esto asegura que la respuesta se maneje como un archivo binario (blob)
-  }
+    responseType: "blob", // Esto asegura que la respuesta se maneje como un archivo binario (blob)
+  };
   try {
-    const response = await fetch(requestUrl, requestOptions)
-      
+    const response = await fetch(requestUrl, requestOptions);
+
     // Retorna el blob para que lo manejes en el componente
     return response;
-
   } catch (error) {
     // Manejo de errores más detallado
-    throw new Error(`Error en la solicitud: ${error.response?.data?.error || error.message}`);
+    throw new Error(
+      `Error en la solicitud: ${error.response?.data?.error || error.message}`
+    );
   }
 }
-
 
 export async function addBranch(branch, token) {
   const requestUrl = url + "add-branch/";
@@ -244,6 +243,23 @@ export async function getBranch(id, token) {
   };
 
   const requestUrl = url + "get-branch/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function getBranches(token) {
+  const requestOptions = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const requestUrl = url + "get-branches/";
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);

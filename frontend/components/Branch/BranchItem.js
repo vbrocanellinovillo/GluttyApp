@@ -37,8 +37,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 4,
     backgroundColor: "white",
-    padding: 20,
-    paddingRight: 55,
+    paddingVertical: 20,
+    paddingRight: 20,
+    paddingLeft: 10
   },
 
   pressed: {
