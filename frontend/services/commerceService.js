@@ -34,6 +34,86 @@ export async function sendPdf(selectedDocuments, token) {
   }
 }
 
+
+export async function getAllMenues(token) {
+  const requestUrl = url + "get-all-menues/";
+
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    {console.log("get all menues:",response)}
+    return response;
+    
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function deletePdf(token, id) {
+
+  if (id === "") {
+    console.log("El ID está vacío. No se realizará ninguna acción.");
+    return; // Sale de la función sin hacer nada más
+  }
+
+  const requestUrl = url + "delete-menu/"
+
+  const formdata = new FormData();
+
+  formdata.append("id", id);
+  
+  const requestOptions = {
+    method: "DELETE",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function getPdfById(id, token) {
+  const requestUrl = url + "get-menu/";
+
+  const formdata = new FormData();
+
+  formdata.append("id", id);
+  console.log("token back", token);
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+    responseType: 'blob', // Esto asegura que la respuesta se maneje como un archivo binario (blob)
+  }
+  try {
+    const response = await fetch(requestUrl, requestOptions)
+      
+    // Retorna el blob para que lo manejes en el componente
+    return response;
+
+  } catch (error) {
+    // Manejo de errores más detallado
+    throw new Error(`Error en la solicitud: ${error.response?.data?.error || error.message}`);
+  }
+}
+
+
 export async function addBranch(branch, token) {
   const requestUrl = url + "add-branch/";
 
@@ -79,26 +159,6 @@ export async function addBranch(branch, token) {
     throw new Error(error.message);
   }
 }
-
-export async function getAllMenues(token) {
-  const requestUrl = url + "get-all-menues/";
-
-  const requestOptions = {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  try {
-    const response = await httpRequest(requestUrl, requestOptions);
-    return response;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-}
-
-export async function deletePdf() {}
 
 export async function getMapPoints(token) {
   const requestUrl = url + "get-branches-address/";
