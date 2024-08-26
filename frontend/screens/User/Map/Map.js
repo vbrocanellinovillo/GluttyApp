@@ -58,6 +58,7 @@ export default function Map() {
   useFocusEffect(
     useCallback(() => {
       async function getMapData() {
+        if (mapData) return;
         try {
           setisloading(true);
           const branches = await getMapPoints(token);
@@ -73,7 +74,7 @@ export default function Map() {
       }
 
       getMapData();
-    }, [token]) // Dependencia de token para asegurarse de que useFocusEffect se reejecute si el token cambia
+    }, [token])
   );
 
   return (

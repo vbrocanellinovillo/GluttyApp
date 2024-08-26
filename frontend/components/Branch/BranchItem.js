@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     backgroundColor: "white",
     padding: 20,
+    paddingRight: 55,
   },
 
   pressed: {

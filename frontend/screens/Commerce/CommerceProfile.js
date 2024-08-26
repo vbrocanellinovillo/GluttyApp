@@ -11,6 +11,7 @@ import NoUserData from "../../components/Profile/NoUserData";
 
 export default function CommerceProfile() {
   const token = useSelector((state) => state.auth.accessToken);
+  const refreshtoken = useSelector((state) => state.auth.refreshToken);
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.auth.userData);
@@ -48,11 +49,37 @@ export default function CommerceProfile() {
     try {
       setisloading(true);
       console.log("UID" + user.id)
-      const response = await update(cuit, name, email, username, description, token, user.id);
-      dispatch(authActions.updateUser(response.user));
+      const response = await update(cuit, name, email, username, description, user.id,token);
+      console.log(response)
+
+      if (response.tokens){
+        const nuevaData = await getUser(response.tokens.access);
+        setUserData(nuevaData);
+        dispatch(
+          authActions.updateUser({
+            user: response.user,
+            accessToken: response.tokens.access,
+            refreshToken: response.tokens.refresh,
+          }
+          )
+        );  
+      } else{
+        const nuevaData = await getUser(token);
+        setUserData(nuevaData);
+        dispatch(
+        authActions.updateUser({
+          user: response.user,
+          accessToken: token,
+          refreshToken: refreshtoken,
+        }));
+      }
+      
+      
+      
       setIsError(false);
       setMessage("Modificación de comercio exitosa");
       setShowModal(true);
+
     } catch (error) {
       setIsError(true);
       setMessage(error.message);

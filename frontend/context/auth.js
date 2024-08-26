@@ -21,7 +21,10 @@ const authSlice = createSlice({
     },
 
     updateUser(state, action) {
-      state.userData = action.payload;
+      state.userData = action.payload.user;
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken;
+      
     },
 
     setImage(state, actions) {

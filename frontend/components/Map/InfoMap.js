@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import BranchDetail from "./DetailsContainer";
+import MapView from "react-native-maps";
 import MapMarker from "./MapMarker";
 import { useState } from "react";
 import DetailsContainer from "./DetailsContainer";
+import { getBranch } from "../../services/commerceService";
+import { useSelector } from "react-redux";
 
 export default function InfoMap({ branches, location }) {
   const userLocation = {
@@ -16,8 +17,25 @@ export default function InfoMap({ branches, location }) {
   const [showDetails, setShowDetails] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
-  function openDetails(id) {
+  const [branch, setBranch] = useState(undefined);
+
+  const [isError, setIsError] = useState(false);
+
+  const token = useSelector((state) => state.auth.accessToken);
+
+  async function openDetails(id) {
     setShowDetails(true);
+    setIsLoadingDetails(true);
+    try {
+      const detailsBranch = await getBranch(id, token);
+      setBranch(detailsBranch);
+      setIsError(false);
+    } catch (error) {
+      setBranch(undefined);
+      setIsError(true);
+    } finally {
+      setIsLoadingDetails(false);
+    }
   }
 
   function closeDetails() {
@@ -32,7 +50,13 @@ export default function InfoMap({ branches, location }) {
             <MapMarker branch={branch} key={branch.id} onPress={openDetails} />
           ))}
       </MapView>
-      <DetailsContainer onDismiss={closeDetails} visible={showDetails} />
+      <DetailsContainer
+        onDismiss={closeDetails}
+        visible={showDetails}
+        isLoading={isLoadingDetails}
+        isError={isError}
+        branch={branch}
+      />
     </>
   );
 }
