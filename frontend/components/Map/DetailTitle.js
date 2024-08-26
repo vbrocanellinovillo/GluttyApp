@@ -9,6 +9,6 @@ const styles = StyleSheet.create({
   title: {
     color: "#aaa",
     fontSize: 20,
-    marginBottom: 6,
+    marginBottom: 4
   },
 });

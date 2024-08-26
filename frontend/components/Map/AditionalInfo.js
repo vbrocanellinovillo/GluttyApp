@@ -21,7 +21,6 @@ export default function AditionalInfo({
           <DetailTitle>Información adicional</DetailTitle>
           {separatedKitchen && <ServiceInfo>Cocina separada</ServiceInfo>}
           {onlyTakeAway && <ServiceInfo>Solo Take Away</ServiceInfo>}
-          <ServiceInfo>service info choto</ServiceInfo>
         </View>
       )}
     </>
