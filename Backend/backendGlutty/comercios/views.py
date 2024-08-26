@@ -59,22 +59,21 @@ def get_commerce_info(user):
 @permission_classes([IsAuthenticated])
 @transaction.atomic
 def add_branch(request):
-    # username = request.data["username"]
-    # user = User.objects.filter(username=username).first()
     username = request.user.username
     user = User.objects.filter(username=username).first()
     try:
         if user.is_commerce:
             user_commerce = Commerce.objects.filter(user=user).first()
             
+            # Crear nueva sucursal
             new_branch = Branch.objects.create(
-                        commerce=user_commerce,
-                        name=request.data.get("name"),
-                        phone=request.data.get("phone"),
-                        optional_phone=request.data.get("optional_phone"),
-                        separated_kitchen=request.data.get("separated_kitchen"),
-                        just_takeaway=request.data.get("just_takeaway"),
-                    )
+                commerce=user_commerce,
+                name=request.data.get("name"),
+                phone=request.data.get("phone"),
+                optional_phone=request.data.get("optional_phone"),
+                separated_kitchen=request.data.get("separated_kitchen"),
+                just_takeaway=request.data.get("just_takeaway"),
+            )
             new_branch.save()
             
             # Crear location para la nueva sucursal
@@ -85,14 +84,28 @@ def add_branch(request):
                 longitude=request.data.get("longitude"),
             )
             new_location.save()
+
+            # Obtener los datos de la sucursal recién creada
+            branch_data = {
+                "id": new_branch.id,
+                "name": new_branch.name,
+                "phone": new_branch.phone,
+                "optional_phone": new_branch.optional_phone,
+                "address": new_location.address,
+                "latitude": new_location.latitude,
+                "longitude": new_location.longitude,
+                "separated_kitchen": new_branch.separated_kitchen,
+                "just_takeaway": new_branch.just_takeaway,
+            }
             
-            return Response({"detail": "Sucursal cargada correctamente."}, status=status.HTTP_201_CREATED)
+            return Response(branch_data, status=status.HTTP_201_CREATED)
         else:
-            return Response({"error:" f"No está habilitado a realizar esta función"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_400_BAD_REQUEST)
     except ValidationError as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
