@@ -53,9 +53,11 @@ export async function addBranch(branch, token) {
 
   if (branch.photos) {
     branch.photos.forEach((photo) => {
+      console.log(photo);
+
       formdata.append("image", {
         uri: photo.uri,
-        name: photo.fileName,
+        name: photo.fileName || "photo",
         type: photo.mimeType,
       });
     });

@@ -9,7 +9,6 @@ export default function BranchesList() {
 
   const userData = useSelector((state) => state.auth.userData);
   const BRANCH = userData.Branches
-  console.log(BRANCH);
   const navigation = useNavigation();
 
   const handlePress = (branch) =>{
