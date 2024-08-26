@@ -131,11 +131,11 @@ def register(request):
             
             # Manejar la imagen de perfil si se proporciona
             image = request.FILES.get('image')
-            #print(str(image))
+            print(str(image))
             
             if image:
                 try:
-                    picture_link = upload_to_cloudinary(image)
+                    picture_link, public_id = upload_to_cloudinary(image)
                     usuario.profile_picture = picture_link
                     usuario.save()
                 except Exception as e:

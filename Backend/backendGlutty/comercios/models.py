@@ -15,13 +15,13 @@ class Commerce(models.Model):
 class Branch(models.Model):
     commerce = models.ForeignKey(Commerce, on_delete=models.CASCADE, related_name="branches")
     name = models.CharField(max_length=255, blank=False)
-    phone = models.CharField(max_length=10, blank=False, default=None)
-    optional_phone = models.CharField(max_length=10, blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=False, default=None)
+    optional_phone = models.CharField(max_length=20, blank=True, null=True)
     #location = models.CharField(max_length=255, blank=False)
     separated_kitchen= models.BooleanField(default=False)
     just_takeaway= models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    
+
 # Modelo LINKS FOTOS DE SUCURSAL
 class PictureBranch(models.Model):
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="photos")

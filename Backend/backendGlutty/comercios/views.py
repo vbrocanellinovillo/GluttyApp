@@ -26,6 +26,7 @@ from rest_framework import status
 from PyPDF2 import PdfReader
 from io import BytesIO
 from usuarios.image import upload_to_cloudinary
+from .validations import *
 
 def get_commerce_info(user):
     # Obtenemos el comercio asociado al usuario
@@ -70,8 +71,8 @@ def add_branch(request):
             new_branch = Branch.objects.create(
                         commerce=user_commerce,
                         name=request.data.get("name"),
-                        phone=request.data.get("phone"),
-                        optional_phone=request.data.get("optional_phone"),
+                        phone=validate_phone(request.data.get("phone")),
+                        optional_phone=validate_phone(request.data.get("optional_phone")),
                         separated_kitchen=request.data.get("separated_kitchen"),
                         just_takeaway=request.data.get("just_takeaway"),
                     )
@@ -87,16 +88,17 @@ def add_branch(request):
             new_location.save()
             
             # Manejar la imagen de perfil si se proporciona
-            images = request.FILES.get('image')
-            #print(str(image))
+            images = request.FILES.getlist('image')
+            print("imagen:" + str(images))
             
             if images:
                 try:
+                    #for image in images:
+                    print("hola"+str(images))
                     for image in images:
-                        picture_link = upload_to_cloudinary(image)
-                        # PictureBranch.objects.create(branch=new_branch, photo_url=picture_link, public_id=upload_result['public_id'])
-                        # usuario.profile_picture = picture_link
-                        # usuario.save()
+                        picture_link, public_id = upload_to_cloudinary(image)
+                        new_picture = PictureBranch.objects.create(branch=new_branch, photo_url=picture_link, public_id=public_id)
+                        new_picture.save()
                 except Exception as e:
                     raise ValidationError(f"Error al subir la imagen: {str(e)}")
             
@@ -131,6 +133,12 @@ def get_branch(request):
             "separated_kitchen": branch.separated_kitchen,
             "just_takeaway": branch.just_takeaway,
         }
+        photos_data = []
+        branch_pictures = PictureBranch.objects.filter(branch=branch)
+        for picture in branch_pictures:
+            photos_data.append(picture.photo_url)
+        branch_data["pictures"] = photos_data
+        
         return Response(branch_data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -343,7 +351,7 @@ def delete_menu(request):
             
             # Eliminar el registro de la base de datos
             menu.delete()
-            return Response({"detail": "Menú eliminado correctamente."}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"detail": "Menú eliminado correctamente."}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "No se encontró el public_id para eliminar el archivo."}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:

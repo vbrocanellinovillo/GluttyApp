@@ -8,8 +8,8 @@ class CommerceSerializer(serializers.ModelSerializer):
         fields = ['name', 'cuit', 'description']
         
 class BranchSerializer(serializers.ModelSerializer):
-    phone = serializers.CharField(validators=[validar_telefono])
-    optional_phone = serializers.CharField(validators=[validar_telefono], required=False, allow_blank=True)
+    phone = serializers.CharField(validators=[validate_phone])
+    optional_phone = serializers.CharField(validators=[validate_phone], required=False, allow_blank=True)
 
     class Meta:
         model = Branch
