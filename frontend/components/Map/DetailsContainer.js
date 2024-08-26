@@ -45,6 +45,12 @@ export default function DetailsContainer({
     };
   });
 
+  function handleDismiss() {
+    height.value = withTiming(0, { duration: 100 }, () => {
+      runOnJS(onDismiss)();
+    });
+  }
+
   const Pan = Gesture.Pan()
     .onChange(({ y }) => {
       const newHeight = height.value - y;
@@ -128,7 +134,7 @@ export default function DetailsContainer({
         <Portal>
           <View style={styles.backdrop}>
             <Pressable
-              onPress={onDismiss}
+              onPress={handleDismiss}
               style={StyleSheet.absoluteFill}
             ></Pressable>
             <GestureDetector gesture={Pan}>
@@ -152,6 +158,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
   },
 
   container: {
