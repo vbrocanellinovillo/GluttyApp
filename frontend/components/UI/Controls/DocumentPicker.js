@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Linking } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import * as Sharing from 'expo-sharing';
 import Button from './Button';
 import { Colors } from '../../../constants/colors';
 import Feather from '@expo/vector-icons/Feather';
 import Entypo from '@expo/vector-icons/Entypo';
-import { sendPdf, getAllMenues } from '../../../services/commerceService';
+import { sendPdf, getAllMenues, deletePdf, getPdfById } from '../../../services/commerceService';
 import { useSelector } from 'react-redux';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 
 export default function DocumentPickerComponent() {
   const token = useSelector((state) => state.auth.accessToken);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [uploadedMenues, setUploadedMenues] = useState([]);
-
+  
   // Cargar menús al montar el componente
   useEffect(() => {
     const fetchMenues = async () => {
@@ -30,7 +31,20 @@ export default function DocumentPickerComponent() {
     fetchMenues();
   }, [token]);
 
+  const enviarPdf = async (selectedDocuments, token) => {
+    try {
+      await sendPdf(selectedDocuments, token);
+      // Después de enviar los documentos, vacía el array de documentos seleccionados
+      setSelectedDocuments([]);
+      const response = await getAllMenues(token);
+      setUploadedMenues(response.menues);
+      console.log("array enviado:",response);
 
+    } catch (error) {
+      Alert.alert('Error al enviar los documentos', error.message);
+    }
+  };
+  
   const pickDocument = async () => {
     try {
       let result = await DocumentPicker.getDocumentAsync({ copyToCacheDirectory: true });
@@ -50,46 +64,103 @@ export default function DocumentPickerComponent() {
     }
   };
 
-  const removeDocument = (uri, document) => {
-    setSelectedDocuments(selectedDocuments.filter(doc => doc.uri !== uri));
-  };
+  const removeDocument = async (uri, id) => {
+    setSelectedDocuments(prevDocuments => prevDocuments.filter(doc => doc.uri !== uri));
 
-  const openPdfExternally = async (document) => {
-    try {
-      if (!(await Sharing.isAvailableAsync())) {
-        Alert.alert('Error', 'La función de compartir no está disponible en este dispositivo.');
-        return;
-      }
-      await Sharing.shareAsync(document.uri);
-    } catch (error) {
-      Alert.alert('Error', 'Hubo un problema al abrir el PDF.');
-      console.error('Error al compartir el PDF:', error);
+    setUploadedMenues(prevMenues => {
+      const updatedMenues = prevMenues.filter(doc => doc.id !== id);
+      return updatedMenues;
+    });
+
+    if (id !== undefined) {
+      
+      await deletePdf(token, id);      
     }
   };
 
-  return (
-    <View style={styles.container}>
-        {/* Mostrar menús previamente subidos */}
-        {uploadedMenues.length > 0 && uploadedMenues.map((menu, index) => (
-          <View key={index} style={styles.previewContainer}>
-            <View style={styles.row}>
-              <Feather style={styles.fileIcon} name="file" size={24} color="black" />
-              <View style={styles.textContainer}>
-                <Text style={styles.documentName}>{menu.file_name}</Text>
-                <Text style={styles.documentSize}>{(menu.file_size)} </Text>
-              </View>
-              <TouchableOpacity style={styles.iconWrapper} onPress={() => openPdfExternally(menu)}>
-                <Entypo name="eye" size={24} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconWrapper} onPress={() => removeDocument(menu.uri)}>
-                <Entypo name="squared-cross" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))}
+  const arrayBufferToBase64 = (buffer) => {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  };
 
-      {/* Mostrar documentos seleccionados */}
-      <Button style={styles.button} onPress={pickDocument}>Carga el .pdf de tu menú</Button>
+  const OpenPdfButton = async (id) => {
+    try {
+      // Obtener el blob del PDF desde el backend
+      const response = await getPdfById(id, token);
+  
+      if (!response.ok) {
+        throw new Error('Error al obtener el PDF del backend');
+      }
+  
+      // Convertir el blob a un archivo local
+      const fileUri = FileSystem.documentDirectory + 'temp.pdf';
+      
+      // Leer el blob como un array buffer
+      const arrayBuffer = await response.arrayBuffer();
+      
+      // Convertir array buffer a base64
+      const base64Data = arrayBufferToBase64(arrayBuffer);
+  
+      // Guardar el archivo PDF en el sistema de archivos
+      await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+  
+      // Verificar si el dispositivo puede compartir archivos
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri);
+      } else {
+        Alert.alert('Sharing no está disponible', 'No se puede compartir archivos en este dispositivo.');
+      }
+    } catch (error) {
+      console.error('Error al abrir el PDF:', error);
+    }
+  };
+
+  const openLocalPdf = async (document) => {
+    try {
+      // Verifica si el archivo PDF existe en la URI proporcionada
+      const fileInfo = await FileSystem.getInfoAsync(document.uri);
+      
+      // Abre el archivo PDF utilizando expo-sharing
+      await Sharing.shareAsync(fileInfo.uri);
+    } catch (error) {
+      console.error('Error al intentar compartir el PDF:', error.message);
+    }
+  };
+  
+  
+  return (
+    <ScrollView style={styles.container}>
+        <Button style={styles.button} onPress={pickDocument}>Carga el .pdf de tu menú</Button>
+
+        {/*Mostrar menús previamente subidos*/}
+        {uploadedMenues.length > 0 && uploadedMenues.map((menu, index) => (
+        <View key={index} style={styles.previewContainer}>
+          <View style={styles.row}>
+            <Feather style={styles.fileIcon} name="file" size={24} color="black" />
+            <View style={styles.textContainer}>
+              <Text style={styles.documentName}>{menu.file_name}</Text>
+              <Text style={styles.documentSize}>{(menu.file_size / 1024).toFixed(2)} MB</Text>
+            </View>
+            <TouchableOpacity style={styles.iconWrapper} onPress={() => OpenPdfButton(menu.id)}>
+              <Entypo name="eye" size={24} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconWrapper} onPress={() => removeDocument("", menu.id)}>
+              <Entypo name="squared-cross" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      ))}
+        
+
+      {/* Mostrar documentos seleccionados*/}
+      
       {selectedDocuments.length > 0 && selectedDocuments.map((document, index) => (
         <View key={index} style={styles.previewContainer}>
           <View style={styles.row}>
@@ -98,18 +169,19 @@ export default function DocumentPickerComponent() {
               <Text style={styles.documentName}>{document.name}</Text>
               <Text style={styles.documentSize}>{(document.size / (1024 * 1024)).toFixed(2)} MB</Text>
             </View>
-            <TouchableOpacity style={styles.iconWrapper} onPress={() => openPdfExternally(document)}>
+            <TouchableOpacity style={styles.iconWrapper} onPress={() => openLocalPdf(document)}>
               <Entypo name="eye" size={24} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconWrapper} onPress={() => removeDocument(document.uri, document)}>
+            <TouchableOpacity style={styles.iconWrapper} onPress={() => removeDocument(document.uri, "")}>
               <Entypo name="squared-cross" size={24} color="black" />
             </TouchableOpacity>
           </View>
         </View>
       ))}
-
-      <Button onPress={() => sendPdf(selectedDocuments, token)}>Guardar</Button>
-    </View>
+      <View styles={styles.contenedorBTN}>
+        <Button style={styles.botonGuardar} onPress={() => enviarPdf(selectedDocuments, token)}>Guardar</Button>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -154,4 +226,19 @@ const styles = StyleSheet.create({
   iconWrapper: {
     marginLeft: 15,
   },
+  botonGuardar: {
+    borderRadius: 20, // Ajusta el redondeado
+    paddingHorizontal: 20, // Reduce el espacio horizontal
+    paddingVertical: 10, // Reduce el espacio vertical
+    marginTop: 10, // Ajusta el margen superior
+    backgroundColor: Colors.pielcita,
+    alignSelf: 'center',
+    color: Colors.mJordan,
+  },
+  contenedorBTN: {
+    marginBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
+

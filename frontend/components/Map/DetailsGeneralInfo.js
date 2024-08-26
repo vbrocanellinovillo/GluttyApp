@@ -17,6 +17,6 @@ export default function DetailsGeneralInfo({ address, phone, optionalPhone }) {
 
 const styles = StyleSheet.create({
   infoContainer: {
-    gap: 10,
+    gap: 14,
   },
 });

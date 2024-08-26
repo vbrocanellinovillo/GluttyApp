@@ -24,7 +24,7 @@ export default function CommerceTabs() {
       <MaterialCommunityIcons
         name={icon}
         size={25}
-        color={routeName === selectedTab ? Colors.mJordan : Colors.oceanBlue}
+        color={routeName === selectedTab ? Colors.mJordan : Colors.locro}
       />
     );
   };
@@ -41,7 +41,7 @@ export default function CommerceTabs() {
             styles.tabText,
             selectedTab === routeName
               ? { color: Colors.mJordan }
-              : { color: Colors.oceanBlue },
+              : { color: Colors.locro },
           ]}
         >
           {routeName}
@@ -68,7 +68,7 @@ export default function CommerceTabs() {
             <TouchableOpacity onPress={() => navigate("Scanner")}>
               <MaterialIcons
                 name="groups"
-                color={isScanner ? Colors.mJordan : Colors.oceanBlue}
+                color={isScanner ? Colors.mJordan : Colors.locro}
                 size={25}
               />
             </TouchableOpacity>

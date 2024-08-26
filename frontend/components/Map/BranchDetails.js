@@ -7,7 +7,6 @@ import AditionalInfo from "./AditionalInfo";
 import PhotosContainer from "./PhotosContainer";
 import DetailsGeneralInfo from "./DetailsGeneralInfo";
 import ErrorBranchDetails from "./ErrorBranchDetails";
-import Button from "../UI/Controls/Button";
 
 const PHOTOS = [
   { photo: "http://dummyimage.com/227x100.png/5fa2dd/ffffff" },
@@ -18,7 +17,10 @@ const PHOTOS = [
   { photo: "http://dummyimage.com/149x100.png/cc0000/ffffff" },
 ];
 
-export default function BranchDetails({ branch, onDismiss }) {
+const DESCRIPTION =
+  "Esta es una descripción harcodeada que uso para probar hasta que suban los cambios en el back";
+
+export default function BranchDetails({ branch }) {
   if (!branch) return <ErrorBranchDetails />;
 
   return (
@@ -46,17 +48,13 @@ export default function BranchDetails({ branch, onDismiss }) {
           optionalPhone={branch.optional_phone}
         />
         <Divider />
-        <PhotosContainer photos={PHOTOS} />
+        <PhotosContainer photos={branch.pictures} />
         <Divider />
         <AditionalInfo
           onlyTakeAway={branch.just_takeaway}
           separatedKitchen={branch.separated_kitchen}
           description={branch.commerce_description}
         />
-        <Divider />
-        <Button backgroundColor="#aaa" onPress={onDismiss}>
-          Cerrar
-        </Button>
       </View>
     </View>
   );
@@ -77,7 +75,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     backgroundColor: "white",
-    padding: 14,
     borderRadius: 60,
     marginTop: -60,
     shadowColor: "black",
@@ -88,6 +85,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+    borderRadius: 60,
     objectFit: "contain",
   },
 

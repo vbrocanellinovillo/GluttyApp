@@ -34,7 +34,7 @@ export default function UserTabs() {
       <FontAwesome6
         name={icon}
         size={22}
-        color={routeName === selectedTab ? Colors.mJordan : Colors.oceanBlue}
+        color={routeName === selectedTab ? Colors.mJordan : Colors.locro}
       />
     );
   };
@@ -51,7 +51,7 @@ export default function UserTabs() {
             styles.tabText,
             selectedTab === routeName
               ? { color: Colors.mJordan }
-              : { color: Colors.oceanBlue },
+              : { color: Colors.locro },
           ]}
         >
           {routeName}
@@ -78,7 +78,7 @@ export default function UserTabs() {
             <TouchableOpacity onPress={() => navigate("Scanner")}>
               <Ionicons
                 name="scan"
-                color={isScanner ? Colors.mJordan : Colors.oceanBlue}
+                color={isScanner ? Colors.mJordan : Colors.locro}
                 size={25}
               />
             </TouchableOpacity>
