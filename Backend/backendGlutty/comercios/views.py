@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.conf import settings
 # from drf_yasg.utils import swagger_auto_schema
 from .models import User
-from comercios.models import Commerce, Branch
 from .serializers import *
 from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
@@ -26,6 +25,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from PyPDF2 import PdfReader
 from io import BytesIO
+from usuarios.image import upload_to_cloudinary
 
 def get_commerce_info(user):
     # Obtenemos el comercio asociado al usuario
@@ -86,6 +86,20 @@ def add_branch(request):
             )
             new_location.save()
             
+            # Manejar la imagen de perfil si se proporciona
+            images = request.FILES.get('image')
+            #print(str(image))
+            
+            if images:
+                try:
+                    for image in images:
+                        picture_link = upload_to_cloudinary(image)
+                        # PictureBranch.objects.create(branch=new_branch, photo_url=picture_link, public_id=upload_result['public_id'])
+                        # usuario.profile_picture = picture_link
+                        # usuario.save()
+                except Exception as e:
+                    raise ValidationError(f"Error al subir la imagen: {str(e)}")
+            
             return Response({"detail": "Sucursal cargada correctamente."}, status=status.HTTP_201_CREATED)
         else:
             return Response({"error:" f"No está habilitado a realizar esta función"}, status=status.HTTP_400_BAD_REQUEST)
@@ -104,6 +118,9 @@ def get_branch(request):
     try:
         branch = get_object_or_404(Branch, id=branch_id)
         branch_data = {
+            "commerce_name": branch.commerce.name,
+            "commerce_picture": branch.commerce.user.profile_picture,
+            "commerce_description": branch.commerce.description,
             "id": branch.id,
             "name": branch.name,
             "phone": branch.phone,
@@ -219,7 +236,7 @@ def upload_menu(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_menu(request):
-    menu_id = request.data.get("menu_id")
+    menu_id = request.data.get("id")
     if not menu_id:
         return Response({"error": "El ID del menú es requerido."}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -296,7 +313,7 @@ def get_all_menues(request):
 
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
     
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
@@ -362,9 +379,6 @@ def get_branches_address(request):
                 #"just_takeaway": branch.just_takeaway
             }
         
-        # Agregar los datos de las sucursales al diccionario de datos del comercio
-        # commerce_data["branches"] = branch_data
-        
         # Agregar el comercio completo a la lista de todos los comercios
             all_branches_data.append(branch_data)
             
@@ -384,7 +398,9 @@ def get_branches(request):
     try:
         all_branches_data = []
        #Se agregan todas las branches del comercio con el que se accede.
-        commerce = Commerce.objects.filter(username=username)
+        commerce = Commerce.objects.filter(user=user).first()
+        # Obtener un solo objeto de comercio asociado al usuario
+        #commerce = Commerce.objects.get(user=user)
         branches = Branch.objects.filter(is_active=True, commerce=commerce)
         for branch in branches:
             branch_data = {

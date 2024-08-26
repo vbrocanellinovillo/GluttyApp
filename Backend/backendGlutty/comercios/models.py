@@ -21,6 +21,12 @@ class Branch(models.Model):
     separated_kitchen= models.BooleanField(default=False)
     just_takeaway= models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    
+# Modelo LINKS FOTOS DE SUCURSAL
+class PictureBranch(models.Model):
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="photos")
+    photo_url = models.URLField(max_length=500, blank=True, null=True)
+    public_id = models.CharField(max_length=300, blank=False, default="")
 
 # Modelo MENÚ
 class Menu(models.Model):
