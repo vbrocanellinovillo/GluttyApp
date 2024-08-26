@@ -10,6 +10,7 @@ urlpatterns = [
     # path("get-menu/", get_menu, name="get_menu"),
     path("delete-menu/", delete_menu, name="delete_menu"),
     path("get-branches-address/", get_branches_address, name="get_branches_address"),
+    path("get-branches/", get_branches, name="get_branches"),
     path("get-menu/", get_menu, name="get_menu"),
     path("get-all-menues/", get_all_menues, name="get_all_menues"),
 ]

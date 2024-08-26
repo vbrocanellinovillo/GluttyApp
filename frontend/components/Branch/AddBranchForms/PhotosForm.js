@@ -62,15 +62,7 @@ export default function PhotosForm({ onBack, onNext }) {
     }
 
     if (!imageResult.canceled) {
-      const imageUri = imageResult.assets[0].uri;
-      const imageMimeType = imageResult.assets[0].mimeType;
-      const imageFileName = imageResult.assets[0].fileName;
-
-      const image = {
-        uri: imageUri,
-        mimeType: imageMimeType,
-        fileName: imageFileName,
-      };
+      const image = imageResult.assets[0];
 
       setImages((prevImages) => [...prevImages, image]);
     }

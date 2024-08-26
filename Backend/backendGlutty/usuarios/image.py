@@ -15,7 +15,8 @@ cloudinary.config(
 def upload_to_cloudinary(image):
     upload_result = cloudinary.uploader.upload(image)
     image_url = upload_result.get('secure_url')
+    public_id = upload_result.get('public_id')
 
     # Optimize delivery by resizing and applying auto-format and auto-quality
     optimize_url, _ = cloudinary_url(image_url, fetch_format="auto", quality="auto")
-    return optimize_url
+    return optimize_url, public_id

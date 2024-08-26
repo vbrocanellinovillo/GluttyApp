@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.conf import settings
 # from drf_yasg.utils import swagger_auto_schema
 from .models import User
-from comercios.models import Commerce, Branch
 from .serializers import *
 from django.db import transaction
 from django.views.decorators.csrf import csrf_exempt
@@ -26,6 +25,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from PyPDF2 import PdfReader
 from io import BytesIO
+from usuarios.image import upload_to_cloudinary
+from .validations import *
 
 def get_commerce_info(user):
     # Obtenemos el comercio asociado al usuario
@@ -70,8 +71,8 @@ def add_branch(request):
             new_branch = Branch.objects.create(
                         commerce=user_commerce,
                         name=request.data.get("name"),
-                        phone=request.data.get("phone"),
-                        optional_phone=request.data.get("optional_phone"),
+                        phone=validate_phone(request.data.get("phone")),
+                        optional_phone=validate_phone(request.data.get("optional_phone")),
                         separated_kitchen=request.data.get("separated_kitchen"),
                         just_takeaway=request.data.get("just_takeaway"),
                     )
@@ -85,6 +86,21 @@ def add_branch(request):
                 longitude=request.data.get("longitude"),
             )
             new_location.save()
+            
+            # Manejar la imagen de perfil si se proporciona
+            images = request.FILES.getlist('image')
+            print("imagen:" + str(images))
+            
+            if images:
+                try:
+                    #for image in images:
+                    print("hola"+str(images))
+                    for image in images:
+                        picture_link, public_id = upload_to_cloudinary(image)
+                        new_picture = PictureBranch.objects.create(branch=new_branch, photo_url=picture_link, public_id=public_id)
+                        new_picture.save()
+                except Exception as e:
+                    raise ValidationError(f"Error al subir la imagen: {str(e)}")
             
             return Response({"detail": "Sucursal cargada correctamente."}, status=status.HTTP_201_CREATED)
         else:
@@ -104,6 +120,9 @@ def get_branch(request):
     try:
         branch = get_object_or_404(Branch, id=branch_id)
         branch_data = {
+            "commerce_name": branch.commerce.name,
+            "commerce_picture": branch.commerce.user.profile_picture,
+            "commerce_description": branch.commerce.description,
             "id": branch.id,
             "name": branch.name,
             "phone": branch.phone,
@@ -114,6 +133,12 @@ def get_branch(request):
             "separated_kitchen": branch.separated_kitchen,
             "just_takeaway": branch.just_takeaway,
         }
+        photos_data = []
+        branch_pictures = PictureBranch.objects.filter(branch=branch)
+        for picture in branch_pictures:
+            photos_data.append(picture.photo_url)
+        branch_data["pictures"] = photos_data
+        
         return Response(branch_data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -219,7 +244,7 @@ def upload_menu(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_menu(request):
-    menu_id = request.data.get("menu_id")
+    menu_id = request.data.get("id")
     if not menu_id:
         return Response({"error": "El ID del menú es requerido."}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -296,7 +321,7 @@ def get_all_menues(request):
 
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
     
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
@@ -326,7 +351,7 @@ def delete_menu(request):
             
             # Eliminar el registro de la base de datos
             menu.delete()
-            return Response({"detail": "Menú eliminado correctamente."}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"detail": "Menú eliminado correctamente."}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "No se encontró el public_id para eliminar el archivo."}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
@@ -362,9 +387,6 @@ def get_branches_address(request):
                 #"just_takeaway": branch.just_takeaway
             }
         
-        # Agregar los datos de las sucursales al diccionario de datos del comercio
-        # commerce_data["branches"] = branch_data
-        
         # Agregar el comercio completo a la lista de todos los comercios
             all_branches_data.append(branch_data)
             
@@ -384,7 +406,9 @@ def get_branches(request):
     try:
         all_branches_data = []
        #Se agregan todas las branches del comercio con el que se accede.
-        commerce = Commerce.objects.filter(username=username)
+        commerce = Commerce.objects.filter(user=user).first()
+        # Obtener un solo objeto de comercio asociado al usuario
+        #commerce = Commerce.objects.get(user=user)
         branches = Branch.objects.filter(is_active=True, commerce=commerce)
         for branch in branches:
             branch_data = {

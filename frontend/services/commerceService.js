@@ -115,8 +115,6 @@ export async function getPdfById(id, token) {
 
 
 export async function addBranch(branch, token) {
-  console.log(branch);
-
   const requestUrl = url + "add-branch/";
 
   const formdata = new FormData();
@@ -132,7 +130,18 @@ export async function addBranch(branch, token) {
   formdata.append("address", branch.address);
   formdata.append("latitude", branch.coordinates.latitude);
   formdata.append("longitude", branch.coordinates.longitude);
-  // Queda lo de la ubicación y las fotos
+
+  if (branch.photos) {
+    branch.photos.forEach((photo) => {
+      console.log(photo);
+
+      formdata.append("image", {
+        uri: photo.uri,
+        name: photo.fileName || "photo",
+        type: photo.mimeType,
+      });
+    });
+  }
 
   const requestOptions = {
     method: "POST",
@@ -224,7 +233,7 @@ export async function update(
 
 export async function getBranch(id, token) {
   const formdata = new FormData();
-  formdata.append("branch_id", id)
+  formdata.append("branch_id", id);
 
   const requestOptions = {
     method: "POST",

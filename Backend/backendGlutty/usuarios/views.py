@@ -131,11 +131,11 @@ def register(request):
             
             # Manejar la imagen de perfil si se proporciona
             image = request.FILES.get('image')
-            #print(str(image))
+            print(str(image))
             
             if image:
                 try:
-                    picture_link = upload_to_cloudinary(image)
+                    picture_link, public_id = upload_to_cloudinary(image)
                     usuario.profile_picture = picture_link
                     usuario.save()
                 except Exception as e:
@@ -309,16 +309,21 @@ def update(request, user_id):
 
     if user_serializer.is_valid():
         user_serializer.save()
-        
         # Si el nombre de usuario ha cambiado, generamos un nuevo token
         if user.username != old_username:
             refresh = RefreshToken.for_user(user)
+            refresh['username'] = user.username  # Asegúrate de que el username en el token esté actualizado
             tokens = {
                 "refresh": str(refresh),
                 "access": str(refresh.access_token)
             }
         else:
             tokens = None
+            # {
+            #     "refresh": str(request.auth),
+            #     "access": str(token)
+            # }
+        
         
         # Procesar imagen si está presente
         image = request.FILES.get('image')

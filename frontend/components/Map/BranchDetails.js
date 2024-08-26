@@ -17,6 +17,9 @@ const PHOTOS = [
   { photo: "http://dummyimage.com/149x100.png/cc0000/ffffff" },
 ];
 
+const DESCRIPTION =
+  "Esta es una descripción harcodeada que uso para probar hasta que suban los cambios en el back";
+
 export default function BranchDetails({ branch }) {
   if (!branch) return <ErrorBranchDetails />;
 
@@ -24,11 +27,18 @@ export default function BranchDetails({ branch }) {
     <View style={styles.branch}>
       <View style={styles.imageRow}>
         <View style={styles.imageContainer}>
-          <Image source={{ uri: thumbGlutty }} style={styles.image} />
+          <Image
+            source={{
+              uri: branch.commerce_picture
+                ? branch.commerce_picture
+                : thumbGlutty,
+            }}
+            style={styles.image}
+          />
         </View>
       </View>
       <TextCommonsMedium style={styles.commerceName}>
-        Mc Donalds
+        {branch.commerce_name}
       </TextCommonsMedium>
       <View style={styles.details}>
         <Divider />
@@ -38,11 +48,12 @@ export default function BranchDetails({ branch }) {
           optionalPhone={branch.optional_phone}
         />
         <Divider />
-        <PhotosContainer photos={PHOTOS} />
+        <PhotosContainer photos={branch.pictures} />
         <Divider />
         <AditionalInfo
           onlyTakeAway={branch.just_takeaway}
           separatedKitchen={branch.separated_kitchen}
+          description={branch.commerce_description}
         />
       </View>
     </View>
@@ -52,7 +63,7 @@ export default function BranchDetails({ branch }) {
 const styles = StyleSheet.create({
   branch: {
     paddingHorizontal: 20,
-    gap: 10,
+    gap: 8,
   },
 
   imageRow: {
@@ -64,7 +75,6 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     backgroundColor: "white",
-    padding: 14,
     borderRadius: 60,
     marginTop: -60,
     shadowColor: "black",
@@ -75,17 +85,18 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+    borderRadius: 60,
     objectFit: "contain",
   },
 
   commerceName: {
     textAlign: "center",
-    fontSize: 28,
+    fontSize: 26,
     color: Colors.mJordan,
   },
 
   details: {
     marginTop: 10,
-    gap: 20,
+    gap: 18,
   },
 });

@@ -44,6 +44,9 @@ export async function register(userData, isCommerce) {
       : null
   );
 
+  console.log(userData.image);
+  
+
   if (isCommerce) {
     formdata.append("name", userData.name);
     formdata.append("cuit", userData.cuit);
