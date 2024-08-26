@@ -1,10 +1,11 @@
 import { Portal } from "react-native-paper";
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
+  runOnJS,
   SlideInDown,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import BranchDetails from "./BranchDetails";
@@ -16,6 +17,7 @@ const screenHeight = Dimensions.get("window").height;
 
 const MIN_HEIGHT = screenHeight * 0.38;
 const MAX_HEIGHT = screenHeight * 0.88;
+const CLOSE_THRESHOLD = screenHeight * 0.27;
 const MID_HEIGHT = screenHeight * 0.5;
 const WITH_SECTION = screenHeight * 0.62;
 const THREE_QUARTER_SECTION = screenHeight * 0.72;
@@ -34,7 +36,7 @@ export default function DetailsContainer({
   isError,
   isLoading,
 }) {
-  const height = useSharedValue(MID_HEIGHT);
+  const height = useSharedValue(MIN_HEIGHT);
   const [maxHeight, setMaxHeight] = useState(MAX_HEIGHT);
 
   const animatedHeight = useAnimatedStyle(() => {
@@ -43,13 +45,28 @@ export default function DetailsContainer({
     };
   });
 
-  const Pan = Gesture.Pan().onChange(({ y }) => {
-    const newHeight = height.value - y;
+  const Pan = Gesture.Pan()
+    .onChange(({ y }) => {
+      const newHeight = height.value - y;
 
-    if (newHeight >= MIN_HEIGHT && newHeight <= maxHeight) {
-      height.value = newHeight;
+      if (newHeight <= maxHeight) {
+        height.value = newHeight;
+      }
+    })
+    .onFinalize(() => {
+      if (height.value < CLOSE_THRESHOLD) {
+        height.value = withTiming(0, { duration: 100 }, () => {
+          runOnJS(onDismiss)();
+        });
+      }
+    });
+
+  // Para que cuando lo abra se valla a esa altura
+  useEffect(() => {
+    if (visible) {
+      height.value = withTiming(MID_HEIGHT);
     }
-  });
+  }, [visible]);
 
   /* useEffect(() => {
     if (branch) {
@@ -102,9 +119,7 @@ export default function DetailsContainer({
   }
 
   if (branch && !isLoading) {
-    console.log(branch);
-    
-    content = <BranchDetails branch={branch} onDismiss={onDismiss} />;
+    content = <BranchDetails branch={branch} />;
   }
 
   return (

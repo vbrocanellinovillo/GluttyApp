@@ -7,7 +7,6 @@ import AditionalInfo from "./AditionalInfo";
 import PhotosContainer from "./PhotosContainer";
 import DetailsGeneralInfo from "./DetailsGeneralInfo";
 import ErrorBranchDetails from "./ErrorBranchDetails";
-import Button from "../UI/Controls/Button";
 
 const PHOTOS = [
   { photo: "http://dummyimage.com/227x100.png/5fa2dd/ffffff" },
@@ -18,7 +17,7 @@ const PHOTOS = [
   { photo: "http://dummyimage.com/149x100.png/cc0000/ffffff" },
 ];
 
-export default function BranchDetails({ branch, onDismiss }) {
+export default function BranchDetails({ branch }) {
   if (!branch) return <ErrorBranchDetails />;
 
   return (
@@ -53,10 +52,6 @@ export default function BranchDetails({ branch, onDismiss }) {
           separatedKitchen={branch.separated_kitchen}
           description={branch.commerce_description}
         />
-        <Divider />
-        <Button backgroundColor="#aaa" onPress={onDismiss}>
-          Cerrar
-        </Button>
       </View>
     </View>
   );
