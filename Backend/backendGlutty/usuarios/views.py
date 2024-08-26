@@ -309,10 +309,11 @@ def update(request, user_id):
 
     if user_serializer.is_valid():
         user_serializer.save()
-        
+
         # Si el nombre de usuario ha cambiado, generamos un nuevo token
         if user.username != old_username:
             refresh = RefreshToken.for_user(user)
+            refresh['username'] = user.username  # Asegúrate de que el username en el token esté actualizado
             tokens = {
                 "refresh": str(refresh),
                 "access": str(refresh.access_token)
