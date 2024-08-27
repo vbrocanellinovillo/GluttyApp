@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     shadowColor: "black",
     shadowRadius: 5,
     shadowOpacity: 0.5,
+    elevation: 5
   },
 
   image: {

@@ -6,10 +6,11 @@ export default function MapMarker({ onPress, branch }) {
   return (
     <>
       {branch && (
-        <Marker coordinate={branch.coordinate}>
-          <TouchableOpacity
-            onPress={onPress ? onPress.bind(this, branch.id) : undefined}
-          >
+        <Marker
+          coordinate={branch.coordinate}
+          onPress={onPress ? onPress.bind(this, branch.id) : undefined}
+        >
+          <TouchableOpacity>
             <Image source={{ uri: thumbGlutty }} style={styles.gluttyMarker} />
           </TouchableOpacity>
         </Marker>
