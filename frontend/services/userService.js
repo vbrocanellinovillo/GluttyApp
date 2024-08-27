@@ -38,7 +38,7 @@ export async function register(userData, isCommerce) {
     userData.image
       ? {
           uri: userData.image.uri,
-          name: userData.image.fileName,
+          name: userData.image.fileName || "photo",
           type: userData.image.mimeType,
         }
       : null
