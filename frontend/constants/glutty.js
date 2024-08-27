@@ -21,3 +21,6 @@ export const userAddGlutty =
 
 export const userGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1723302388/Logo_Usuario_jgne7o.webp";
+
+export const gluttyMarker =
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1724727785/gluttyMarker_iyzzqh.webp";

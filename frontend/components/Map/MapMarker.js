@@ -1,5 +1,5 @@
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
-import { thumbGlutty } from "../../constants/glutty";
+import { gluttyMarker } from "../../constants/glutty";
 import { Marker } from "react-native-maps";
 
 export default function MapMarker({ onPress, branch }) {
@@ -11,7 +11,7 @@ export default function MapMarker({ onPress, branch }) {
           onPress={onPress ? onPress.bind(this, branch.id) : undefined}
         >
           <TouchableOpacity>
-            <Image source={{ uri: thumbGlutty }} style={styles.gluttyMarker} />
+            <Image source={{ uri: gluttyMarker }} style={styles.gluttyMarker} />
           </TouchableOpacity>
         </Marker>
       )}
