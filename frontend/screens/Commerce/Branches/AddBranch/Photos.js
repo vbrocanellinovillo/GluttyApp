@@ -54,7 +54,7 @@ export default function Photos({ navigation, route }) {
 
     try {
       const response = await addBranch(receivedBranch, token);
-      dispatch(commerceActions.addBranch({ branch: response.branch }));
+      dispatch(commerceActions.addBranch({ branch: response }));
       setIsError(false);
       setMessage("Sucursal cargada exitosamente");
       setShowModal(true);

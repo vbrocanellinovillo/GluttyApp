@@ -7,7 +7,7 @@ export default function FormHeader({ title }) {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../../assets/images/sin-gluten.webp")}
+          source={{uri: "https://res.cloudinary.com/dksmkvi49/image/upload/v1724716258/Logotipo2x_o2cyv8.webp" }}
           style={styles.image}
         />
       </View>
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
 
   imageContainer: {
-    width: 100,
+    width: 300,
     height: 100,
     borderRadius: 50,
     alignItems: "center",

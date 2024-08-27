@@ -8,6 +8,7 @@ import Button from "../UI/Controls/Button";
 import NavigationText from "../UI/Navigation/NavigationText";
 import { Formik } from "formik";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
+import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 
 export default function LoginForm({ onSubmit }) {
   function submitHandler({ username, password }) {
@@ -17,7 +18,7 @@ export default function LoginForm({ onSubmit }) {
   return (
     <DismissKeyboardContainer>
       <View style={styles.container}>
-        <FormHeader title="GLUTTY" />
+        <FormHeader/>
         <Formik
           initialValues={{ username: "", password: "" }}
           validate={({ username, password }) => {

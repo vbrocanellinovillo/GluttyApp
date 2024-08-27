@@ -54,7 +54,7 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
 
             // Ver de cuantos números tiene que ser el telefono
             if (phone.trim().length < 7 || phone.trim().length > 15) {
-              errors.phone = "Se requiere al menos un número de telefono";
+              errors.phone = "Se requiere al menos un número de teléfono";
             }
 
             return errors;
@@ -83,7 +83,7 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
               />
               <PhoneInput
                 defaultCode={{ code: "+54", flag: "🇦🇷" }}
-                label="Telefono 1"
+                label="Teléfono"
                 value={values.phone}
                 name="phone"
                 onChange={(phone) => setFieldValue("phone", phone)}
@@ -93,7 +93,7 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
               />
               <PhoneInput
                 defaultCode={{ code: "+54", flag: "🇦🇷" }}
-                label="Otro telefono (opcional)"
+                label="Otro teléfono (opcional)"
                 value={values.optionalPhone}
                 name="optionalPhone"
                 onChange={(optionalPhone) =>

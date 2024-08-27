@@ -37,9 +37,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 4,
     backgroundColor: "white",
-    paddingVertical: 20,
-    paddingRight: 20,
-    paddingLeft: 10
+    padding: 20,
+    gap: 10
   },
 
   pressed: {
@@ -50,6 +49,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
+    flex: 1,
+    paddingRight: 50
   },
 
   textContainer: {

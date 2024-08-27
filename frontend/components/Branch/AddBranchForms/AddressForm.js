@@ -43,7 +43,7 @@ export default function AddressForm({ onBack, onNext }) {
           fetchDetails
           query={{
             language: "es",
-            key: "AIzaSyCR7NE3OD2rkoQ18WF6B-ZLy9dkZIxoh2U"
+            key: API_KEY_GOOGLE
           }}
           onPress={getAddress}
           textInputProps={{

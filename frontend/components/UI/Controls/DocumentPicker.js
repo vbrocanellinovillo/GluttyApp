@@ -9,13 +9,23 @@ import { sendPdf, getAllMenues, deletePdf, getPdfById } from '../../../services/
 import { useSelector } from 'react-redux';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import GluttyModal from '../GluttyModal';
+import LoadingGlutty from '../Loading/LoadingGlutty';
 
 
 export default function DocumentPickerComponent() {
   const token = useSelector((state) => state.auth.accessToken);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [uploadedMenues, setUploadedMenues] = useState([]);
-  
+  const [isloading, setisloading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, serError] = useState("");
+
+  function closeModalHandler() {
+    setIsError(false);
+    serError("");
+  }
+
   // Cargar menús al montar el componente
   useEffect(() => {
     const fetchMenues = async () => {
@@ -33,15 +43,25 @@ export default function DocumentPickerComponent() {
 
   const enviarPdf = async (selectedDocuments, token) => {
     try {
+      setisloading(true);
       await sendPdf(selectedDocuments, token);
       // Después de enviar los documentos, vacía el array de documentos seleccionados
       setSelectedDocuments([]);
+    
       const response = await getAllMenues(token);
-      setUploadedMenues(response.menues);
+      if (response) {
+        setUploadedMenues(response.menues);
+        setisloading(false);
+        closeModalHandler();
+      }
+      
       console.log("array enviado:",response);
 
     } catch (error) {
       Alert.alert('Error al enviar los documentos', error.message);
+    } finally {
+      //setisloading(false);
+
     }
   };
   
@@ -181,6 +201,13 @@ export default function DocumentPickerComponent() {
       <View styles={styles.contenedorBTN}>
         <Button style={styles.botonGuardar} onPress={() => enviarPdf(selectedDocuments, token)}>Guardar</Button>
       </View>
+      <LoadingGlutty visible={isloading} color={Colors.vainilla} />
+      <GluttyModal
+        visible={isError}
+        isError={true}
+        message={error}
+        onClose={closeModalHandler}
+      />
     </ScrollView>
   );
 }
