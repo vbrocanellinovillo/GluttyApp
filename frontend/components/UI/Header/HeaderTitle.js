@@ -7,6 +7,6 @@ export default function HeaderTitle({ children, style }) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 26,
+    fontSize: 30,
   },
 });
