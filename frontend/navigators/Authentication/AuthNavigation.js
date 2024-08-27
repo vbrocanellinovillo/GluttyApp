@@ -3,6 +3,7 @@ import Login from "../../screens/Authentication/Login";
 import Register from "../../screens/Authentication/Register";
 import { Colors } from "../../constants/colors";
 import InitialScreen from "../../screens/Authentication/InitialScreen";
+import { ImageBackground } from "react-native";
 
 const AuthNav = createNativeStackNavigator();
 
@@ -10,7 +11,6 @@ export default function AuthNavigation() {
   return (
     <AuthNav.Navigator
       screenOptions={{
-        contentStyle: { backgroundColor: Colors.vainilla },
         headerShown: false,
       }}
     >
