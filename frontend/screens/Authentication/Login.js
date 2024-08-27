@@ -6,6 +6,7 @@ import { useState } from "react";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { Colors } from "../../constants/colors";
 import GluttyModal from "../../components/UI/GluttyModal";
+import { ImageBackground } from "react-native";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ export default function Login() {
     try {
       setisloading(true);
       const response = await login(usuario, contraseña);
-      
+
       dispatch(
         authActions.login({
           user: response.user,
@@ -42,7 +43,12 @@ export default function Login() {
   }
 
   return (
-    <>
+    <ImageBackground
+      source={{
+        uri: "https://res.cloudinary.com/dksmkvi49/image/upload/v1724723859/background_djisqg.webp",
+      }}
+      style={{ flex: 1 }}
+    >
       <LoadingGlutty visible={isloading} color={Colors.vainilla} />
       <GluttyModal
         visible={isError}
@@ -51,6 +57,6 @@ export default function Login() {
         onClose={closeModalHandler}
       />
       <LoginForm onSubmit={submitHandler} />
-    </>
+    </ImageBackground>
   );
 }

@@ -6,12 +6,12 @@ export default function PhonesContainer({ phone, optionalPhone }) {
   return (
     <View style={styles.phonesContainer}>
       <View>
-        <DetailTitle>Telefono</DetailTitle>
+        <DetailTitle>Teléfono</DetailTitle>
         <DetailText>{phone}</DetailText>
       </View>
       {optionalPhone && (
         <View>
-          <DetailTitle>Otro telefono</DetailTitle>
+          <DetailTitle>Otro teléfono</DetailTitle>
           <DetailText>{optionalPhone}</DetailText>
         </View>
       )}

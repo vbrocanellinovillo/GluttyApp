@@ -1,8 +1,9 @@
-import { ImageBackground, StyleSheet, View, Image } from "react-native";
-import { superMarketGlutty } from "../../constants/glutty";
+import { StyleSheet, View, Image } from "react-native";
 import { Colors } from "../../constants/colors";
 import Button from "../../components/UI/Controls/Button";
 import TextCommonsRegular from "../../components/UI/FontsTexts/TextCommonsRegular";
+import { LinearGradient } from "expo-linear-gradient";
+import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
 
 export default function InitialScreen({ navigation }) {
   function login() {
@@ -14,15 +15,17 @@ export default function InitialScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      
-      <ImageBackground
-        source={{ uri: superMarketGlutty }}
-        style={styles.image}
-        resizeMode="stretch"
-      ></ImageBackground>
+    <LinearGradient
+      colors={[Colors.locro, Colors.humita]}
+      style={styles.container}
+      start={{ x: 1, y: 0.75 }}
+      end={{ x: 0, y: 0.25 }}
+    >
+      <TextCommonsMedium style={styles.gluttyText}>Glutty.</TextCommonsMedium>
       <View style={styles.options}>
-        <TextCommonsRegular style={styles.title}>Comencemos...</TextCommonsRegular>
+        <TextCommonsRegular style={styles.title}>
+          Comencemos...
+        </TextCommonsRegular>
         <Button
           backgroundColor="white"
           style={styles.button}
@@ -32,7 +35,6 @@ export default function InitialScreen({ navigation }) {
           onPress={register}
         >
           Soy nuevo en Glutty
-          
         </Button>
         <Button
           backgroundColor="white"
@@ -44,22 +46,27 @@ export default function InitialScreen({ navigation }) {
         >
           Ya soy Glutty usuario
         </Button>
-        <TextCommonsRegular style={styles.textoDeAbajo}>O inicia sesión con</TextCommonsRegular>
-        
+        <TextCommonsRegular style={styles.textoDeAbajo}>
+          O inicia sesión con
+        </TextCommonsRegular>
+
         <View styles={styles.containerGoogle}>
-        <Image
-          source={{uri: "https://res.cloudinary.com/dksmkvi49/image/upload/v1724718349/2504739_1_ap6rwq.webp" }}
-          style={styles.imageGoogle}
-        />
+          <Image
+            source={{
+              uri: "https://res.cloudinary.com/dksmkvi49/image/upload/v1724718349/2504739_1_ap6rwq.webp",
+            }}
+            style={styles.imageGoogle}
+          />
         </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "space-between",
   },
 
   image: {
@@ -67,10 +74,17 @@ const styles = StyleSheet.create({
     width: 410,
   },
 
+  gluttyText: {
+    fontSize: 80,
+    color: Colors.mJordan,
+    marginTop: 100,
+    marginLeft: 30,
+    fontWeight: "800",
+  },
+
   options: {
     backgroundColor: Colors.locro,
     borderRadius: 30,
-    position: "absolute",
     bottom: 0,
     width: "100%",
     height: 300,
@@ -87,14 +101,15 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: "400",
   },
+
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: Colors.pielcita,
     textAlign: "left",
     letterSpacing: 0.5,
-    marginTop: 25
-  }, 
+    marginTop: 25,
+  },
   textoDeAbajo: {
     fontSize: 15,
     fontWeight: "500",
@@ -118,5 +133,4 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginTop: -17,
   },
-  
 });

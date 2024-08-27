@@ -6,6 +6,7 @@ import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { Colors } from "../../constants/colors";
 import GluttyModal from "../../components/UI/GluttyModal";
 import { useDispatch } from "react-redux";
+import { ImageBackground } from "react-native";
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -23,10 +24,10 @@ export default function Register() {
     try {
       setisloading(true);
       const registerResponse = await register(values, isCommerce);
-      
+
       const loginResponse = await login(values.username, values.password);
       console.log(loginResponse);
-      
+
       dispatch(
         authActions.login({
           user: loginResponse.user,
@@ -45,7 +46,12 @@ export default function Register() {
   }
 
   return (
-    <>
+    <ImageBackground
+      source={{
+        uri: "https://res.cloudinary.com/dksmkvi49/image/upload/v1724723859/background_djisqg.webp",
+      }}
+      style={{flex: 1}}
+    >
       <LoadingGlutty visible={isloading} color={Colors.vainilla} />
       <GluttyModal
         visible={isError}
@@ -54,6 +60,6 @@ export default function Register() {
         onClose={closeModalHandler}
       />
       <RegisterForm onSubmit={submitHandler} />
-    </>
+    </ImageBackground>
   );
 }
