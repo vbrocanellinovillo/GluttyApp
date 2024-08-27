@@ -1,34 +1,25 @@
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import BranchItem from "./BranchItem";
-import { useSelector } from "react-redux";
-import { Text } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
-import GeneralInfo from "../../screens/Commerce/Branches/AddBranch/GeneralInfo";
 
-export default function BranchesList() {
-
-  const userData = useSelector((state) => state.auth.userData);
-  const BRANCH = userData.Branches
-  const navigation = useNavigation();
-
-  const handlePress = (branch) =>{
-    console.log("Aprieta")
-  }
+export default function BranchesList({ branches }) {
+  const handlePress = (branch) => {
+    console.log("Aprieta");
+  };
   return (
     <FlatList
-      data={BRANCH}
+      data={branches}
       renderItem={({ item }) => (
-        <BranchItem 
-          name={item.name} 
-          address={item.address} 
-          onPress={()=>handlePress(item)}
-          />
+        <BranchItem
+          name={item.name}
+          address={item.address}
+          onPress={() => handlePress(item)}
+        />
       )}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item) => (item.id ? item.id.toString() : Math.random())}
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     />
-    )
+  );
 }
 
 const styles = StyleSheet.create({

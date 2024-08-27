@@ -329,7 +329,7 @@ def update(request, user_id):
         image = request.FILES.get('image')
         if image:
             print("entra a if image")
-            picture_link = upload_to_cloudinary(image)
+            picture_link, link = upload_to_cloudinary(image)
             user.profile_picture = picture_link
             user.save()
         

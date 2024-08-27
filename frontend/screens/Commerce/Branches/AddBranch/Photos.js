@@ -4,12 +4,14 @@ import GluttyModal from "../../../../components/UI/GluttyModal";
 import LoadingGlutty from "../../../../components/UI/Loading/LoadingGlutty";
 import { Colors } from "../../../../constants/colors";
 import { addBranch } from "../../../../services/commerceService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { commerceActions } from "../../../../context/commerce";
 
 export default function Photos({ navigation, route }) {
   const receivedBranch = route.params.branch;
 
   const token = useSelector((state) => state.auth.accessToken);
+  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -52,6 +54,7 @@ export default function Photos({ navigation, route }) {
 
     try {
       const response = await addBranch(receivedBranch, token);
+      dispatch(commerceActions.addBranch({ branch: response }));
       setIsError(false);
       setMessage("Sucursal cargada exitosamente");
       setShowModal(true);
