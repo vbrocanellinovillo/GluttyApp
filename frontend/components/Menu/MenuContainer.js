@@ -8,7 +8,7 @@ export default function MenuContainer() {
   return (
     <DismissKeyboardContainer>
       <View style={styles.menu}>
-        <MenuLinksSection />
+      <MenuLinksSection />
         <Divider style={styles.divider}/>
       </View>
     </DismissKeyboardContainer>

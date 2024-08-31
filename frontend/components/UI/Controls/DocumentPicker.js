@@ -60,7 +60,7 @@ export default function DocumentPickerComponent() {
     } catch (error) {
       Alert.alert('Error al enviar los documentos', error.message);
     } finally {
-      //setisloading(false);
+      setisloading(false);
 
     }
   };
@@ -84,20 +84,37 @@ export default function DocumentPickerComponent() {
     }
   };
 
+
   const removeDocument = async (uri, id) => {
-    setSelectedDocuments(prevDocuments => prevDocuments.filter(doc => doc.uri !== uri));
-
-    setUploadedMenues(prevMenues => {
-      const updatedMenues = prevMenues.filter(doc => doc.id !== id);
-      return updatedMenues;
-    });
-
-    if (id !== undefined) {
-      
-      await deletePdf(token, id);      
-    }
+    Alert.alert(
+      "Eliminar archivo",
+      "¿Estás seguro de que deseas eliminar este archivo?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Eliminar",
+          onPress: async () => {
+            setSelectedDocuments(prevDocuments => prevDocuments.filter(doc => doc.uri !== uri));
+  
+            setUploadedMenues(prevMenues => {
+              const updatedMenues = prevMenues.filter(doc => doc.id !== id);
+              return updatedMenues;
+            });
+  
+            if (id !== undefined) {
+              await deletePdf(token, id);
+            }
+          },
+          style: "destructive",
+        },
+      ],
+      { cancelable: false }
+    );
   };
-
+  
   const arrayBufferToBase64 = (buffer) => {
     let binary = '';
     const bytes = new Uint8Array(buffer);
