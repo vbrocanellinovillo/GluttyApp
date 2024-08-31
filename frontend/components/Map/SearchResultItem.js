@@ -4,6 +4,8 @@ import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Colors } from "../../constants/colors";
 
 export default function SearchResultItem({ item }) {
+  const hasSeparatedKitchen = item.separated_kitchen;
+
   return (
     <Pressable style={styles.container}>
       <Image
@@ -12,11 +14,18 @@ export default function SearchResultItem({ item }) {
       />
       <View style={styles.infoContainer}>
         <TextCommonsMedium style={styles.commerceName}>
-          Mc Donald's
+          {item.commerce_name}
         </TextCommonsMedium>
         <TextCommonsRegular style={styles.infoText}>
-          Mc Donald's Centro - Av Cólon
+          {item.branch_name} - {item.address}
         </TextCommonsRegular>
+        {hasSeparatedKitchen && (
+          <View style={styles.extraInfo}>
+            <TextCommonsMedium style={styles.extraText}>
+              Con cocina separada
+            </TextCommonsMedium>
+          </View>
+        )}
       </View>
     </Pressable>
   );
@@ -24,28 +33,29 @@ export default function SearchResultItem({ item }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
+    paddingVertical: 14,
     paddingHorizontal: 10,
     backgroundColor: "white",
     borderRadius: 10,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
+    shadowOpacity: 0.6,
+    shadowRadius: 4,
     flexDirection: "row",
     gap: 10,
   },
 
   image: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     objectFit: "contain",
-    borderRadius: 30,
+    borderRadius: 35,
   },
 
   infoContainer: {
-    paddingVertical: 4,
-    gap: 4,
+    gap: 6,
+    alignItems: "flex-start",
+    justifyContent: "center"
   },
 
   commerceName: {
@@ -55,8 +65,23 @@ const styles = StyleSheet.create({
   },
 
   infoText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "500",
     color: "#777",
+  },
+
+  extraInfo: {
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    backgroundColor: "green",
+    marginTop: 4,
+    minWidth: 140
+  },
+
+  extraText: {
+    color: Colors.whiteGreen,
   },
 });

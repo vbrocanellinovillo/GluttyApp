@@ -270,57 +270,64 @@ export async function getBranches(token) {
   }
 }
 
-function getData() {
+async function getData() {
+  await sleep(5000);
+
   const locations = [
     {
       id: 1,
-      latitude: -11.9314714,
-      longitude: -76.7024635,
+      latitude: -31.4201,
+      longitude: -64.1888,
       commerce_name: "Bubblemix",
-      branch_name: "Chosica",
+      branch_name: "Córdoba Centro",
       address: "3993 Linden Place",
       separated_kitchen: true,
       only_takeaway: false,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
     },
     {
       id: 2,
-      latitude: 41.131963,
-      longitude: 120.6976779,
+      latitude: -31.4238,
+      longitude: -64.1851,
       commerce_name: "Yodoo",
-      branch_name: "Shaguotun",
+      branch_name: "Córdoba Norte",
       address: "4681 Rowland Parkway",
       separated_kitchen: true,
       only_takeaway: true,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
     },
     {
       id: 3,
-      latitude: 24.9936281,
-      longitude: 121.3009798,
+      latitude: -31.4265,
+      longitude: -64.183,
       commerce_name: "Oyonder",
-      branch_name: "Taoyuan",
+      branch_name: "Córdoba Sur",
       address: "646 Tomscot Trail",
       separated_kitchen: true,
       only_takeaway: true,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
     },
     {
       id: 4,
-      latitude: 38.0987438,
-      longitude: 23.8790184,
+      latitude: -31.429,
+      longitude: -64.1872,
       commerce_name: "Kwimbee",
-      branch_name: "Diónysos",
+      branch_name: "Córdoba Este",
       address: "7 Troy Way",
       separated_kitchen: true,
       only_takeaway: true,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
     },
     {
       id: 5,
-      latitude: -7.4111208,
-      longitude: 108.1221146,
+      latitude: -31.4321,
+      longitude: -64.1913,
       commerce_name: "Eidel",
-      branch_name: "Sukasenang",
+      branch_name: "Córdoba Oeste",
       address: "0 Northport Street",
       separated_kitchen: false,
       only_takeaway: true,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
     },
   ];
 
@@ -328,13 +335,10 @@ function getData() {
 }
 
 export async function getSearchData(searchTerm, token) {
-  await sleep(5000);
   try {
-    const data = getData();
+    const data = await getData();
     return data;
   } catch (error) {
-    throw new Error(error.message)
+    throw new Error(error.message);
   }
-  const data = getData();
-  return data;
 }
