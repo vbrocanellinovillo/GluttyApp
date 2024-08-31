@@ -4,11 +4,11 @@ import MapChip from "./MapChip";
 export default function MapChipsContainer({ chips }) {
   return (
     <View style={styles.container}>
-      {chips.map((chip) => {
-        <MapChip key={chip.id} icon={chip.icon}>
+      {chips.map((chip) => (
+        <MapChip icon={chip.icon} key={chip.id}>
           {chip.name}
-        </MapChip>;
-      })}
+        </MapChip>
+      ))}
     </View>
   );
 }
@@ -17,5 +17,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     gap: 10,
+    marginTop: -14,
+    marginBottom: 20
   },
 });

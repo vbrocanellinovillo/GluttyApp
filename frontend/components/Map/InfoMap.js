@@ -50,6 +50,7 @@ export default function InfoMap({ branches, location }) {
         region={userLocation}
         style={styles.map}
         onPress={() => Keyboard.dismiss()}
+        userInterfaceStyle="light"
       >
         {branches &&
           branches.map((branch) => (

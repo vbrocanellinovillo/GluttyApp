@@ -9,8 +9,8 @@ import SearchResultItem from "./SearchResultItem";
 import MapChipsContainer from "./MapChipsContainer";
 
 const CHIPS = [
-  { id: 1, name: "Cocina separada", icon: "" },
-  { id: 2, name: "Solo TakeAway", icon: "" },
+  { id: 1, name: "Cocina separada", icon: "restaurant" },
+  { id: 2, name: "Solo TakeAway", icon: "delivery-dining" },
 ];
 
 export default function MapSearch() {
@@ -54,21 +54,22 @@ export default function MapSearch() {
 
   return (
     <View style={styles.container}>
-      <Input
-        inputContainerStyle={styles.search}
-        rightIcon={{
-          type: "ionicons",
-          name: `${icon}`,
-          color: Colors.mJordan,
-          size: 30,
-          onPress: clearSearch,
-        }}
-        value={searchTerm}
-        onChangeText={handleChangeText}
-        placeholder="Busca tus lugares favoritos!"
-      />
+        <Input
+          inputContainerStyle={styles.search}
+          rightIcon={{
+            type: "ionicons",
+            name: `${icon}`,
+            color: Colors.mJordan,
+            size: 30,
+            onPress: clearSearch,
+          }}
+          value={searchTerm}
+          onChangeText={handleChangeText}
+          placeholder="Busca tus lugares favoritos!"
+        />
       <MapChipsContainer chips={CHIPS} />
       <View style={styles.resultsList}>
+        <SearchResultItem />
         <SearchResultItem />
         <SearchResultItem />
         <SearchResultItem />
@@ -85,6 +86,7 @@ const styles = StyleSheet.create({
     left: 18,
     right: 18,
     zIndex: 1,
+    paddingHorizontal: 10,
   },
 
   search: {
@@ -97,11 +99,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 10,
     fontSize: 26,
+    marginHorizontal: -10
   },
 
   resultsList: {
     gap: 16,
-    paddingHorizontal: 10,
-    marginTop: -14,
   },
 });
