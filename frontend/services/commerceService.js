@@ -1,6 +1,7 @@
 import { backendUrl } from "../constants/backend";
 import { Coordinates } from "../models/Coordinates";
 import { httpRequest } from "../utils/http";
+import { sleep } from "../utils/utilFunctions";
 
 const url = backendUrl + "comercios/";
 const urlUs = backendUrl + "usuarios/";
@@ -267,4 +268,73 @@ export async function getBranches(token) {
   } catch (error) {
     throw new Error(error.message);
   }
+}
+
+function getData() {
+  const locations = [
+    {
+      id: 1,
+      latitude: -11.9314714,
+      longitude: -76.7024635,
+      commerce_name: "Bubblemix",
+      branch_name: "Chosica",
+      address: "3993 Linden Place",
+      separated_kitchen: true,
+      only_takeaway: false,
+    },
+    {
+      id: 2,
+      latitude: 41.131963,
+      longitude: 120.6976779,
+      commerce_name: "Yodoo",
+      branch_name: "Shaguotun",
+      address: "4681 Rowland Parkway",
+      separated_kitchen: true,
+      only_takeaway: true,
+    },
+    {
+      id: 3,
+      latitude: 24.9936281,
+      longitude: 121.3009798,
+      commerce_name: "Oyonder",
+      branch_name: "Taoyuan",
+      address: "646 Tomscot Trail",
+      separated_kitchen: true,
+      only_takeaway: true,
+    },
+    {
+      id: 4,
+      latitude: 38.0987438,
+      longitude: 23.8790184,
+      commerce_name: "Kwimbee",
+      branch_name: "Diónysos",
+      address: "7 Troy Way",
+      separated_kitchen: true,
+      only_takeaway: true,
+    },
+    {
+      id: 5,
+      latitude: -7.4111208,
+      longitude: 108.1221146,
+      commerce_name: "Eidel",
+      branch_name: "Sukasenang",
+      address: "0 Northport Street",
+      separated_kitchen: false,
+      only_takeaway: true,
+    },
+  ];
+
+  return locations;
+}
+
+export async function getSearchData(searchTerm, token) {
+  await sleep(5000);
+  try {
+    const data = getData();
+    return data;
+  } catch (error) {
+    throw new Error(error.message)
+  }
+  const data = getData();
+  return data;
 }

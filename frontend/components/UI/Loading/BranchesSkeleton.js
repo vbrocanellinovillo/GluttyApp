@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../../constants/colors";
 
 export default function BranchesSkeleton() {
-  const items = Array.from({ length: 20 }, (_, index) => `Item ${index + 1}`);
+  const items = Array.from({ length: 6 }, (_, index) => `Item ${index + 1}`);
 
   return (
     <View style={styles.container}>

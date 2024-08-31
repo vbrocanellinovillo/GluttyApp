@@ -10,7 +10,6 @@ export default function MenuContainer() {
       <View style={styles.menu}>
         <MenuLinksSection />
         <Divider style={styles.divider}/>
-        <SpecificProductsSection />
       </View>
     </DismissKeyboardContainer>
   );
