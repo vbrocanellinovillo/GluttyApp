@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 asgiref==3.8.1
 certifi==2024.7.4
 cffi==1.16.0
@@ -35,3 +36,5 @@ typing_extensions==4.12.2
 tzdata==2024.1
 uritemplate==4.1.1
 urllib3==2.2.2
+=======
+>>>>>>> Stashed changes
