@@ -9,24 +9,84 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 from django.conf import settings
-# from drf_yasg.utils import swagger_auto_schema
-from .models import User
-from .serializers import *
-from django.db import transaction
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.exceptions import ValidationError
 import cloudinary.uploader
 import cloudinary.api
 from django.core.files.storage import default_storage
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import status
 from PyPDF2 import PdfReader
 from io import BytesIO
 from usuarios.image import upload_to_cloudinary
 from .validations import *
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import Q
+from .serializers import CommerceSerializer, BranchSerializer, LocationSerializer
+from comercios.models import Commerce, Branch
+from comercios.serializers import CommerceSerializer, BranchSerializer
+from django.db import transaction
+
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def search_commerce(request):
+    try:
+        query = request.data.get("q", None)
+        separated_kitchen = request.data.get("separated_kitchen", None)
+        just_takeaway = request.data.get("just_takeaway", None)
+
+        # Inicializar el filtro de sucursales
+        branch_filter = Q(is_active=True)
+        commerce_filter = Q()
+
+        if separated_kitchen is not None:
+            branch_filter &= Q(separated_kitchen=separated_kitchen)
+
+        if just_takeaway is not None:
+            branch_filter &= Q(just_takeaway=just_takeaway)
+
+        # Verificar si se proporcionó una consulta de búsqueda
+        if query:
+            search_query = SearchQuery(query, config='spanish')
+            # Buscar los comercios que cumplen con los filtros adicionales y la búsqueda
+            commerces = Commerce.objects.filter(
+                commerce_filter,
+                Q(search_vector=search_query)
+            ).distinct()
+            
+            # Obtener sucursales relacionadas con estos comercios y aplicar los filtros adicionales
+            branches = Branch.objects.filter(
+                commerce__in=commerces,
+                is_active=True
+            ).filter(branch_filter).select_related('commerce', 'location')
+
+        else:
+            # Si no se proporcionó consulta, solo aplicar filtros a las sucursales
+            branches = Branch.objects.filter(
+                branch_filter
+            ).select_related('commerce', 'location')
+
+            # Obtener los comercios relacionados con las sucursales filtradas
+            commerces = Commerce.objects.filter(
+                id__in=branches.values('commerce')
+            ).distinct()
+
+        # Serializar los datos
+        commerce_serializer = CommerceSerializer(commerces, many=True)
+        branch_serializer = BranchSerializer(branches, many=True)
+
+        results = {
+            "commerces": commerce_serializer.data,
+            "branches": branch_serializer.data,
+        }
+
+        return Response(results, status=200)
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return Response(
+            {"error": "Ocurrió un error interno en el servidor."}, status=500
+        )
+
 
 def get_commerce_info(user):
     # Obtenemos el comercio asociado al usuario

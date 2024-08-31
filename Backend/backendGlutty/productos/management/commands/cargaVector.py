@@ -1,34 +1,37 @@
-# productos/management/commands/cargavector.py
 from django.core.management.base import BaseCommand
-from django.contrib.postgres.search import SearchVector, SearchQuery
-from productos.models import Producto
+from django.contrib.postgres.search import SearchVector
+from comercios.models import Commerce
 
 class Command(BaseCommand):
-    help = 'Actualiza el campo search_vector para todos los productos.'
+    help = 'Actualiza el campo search_vector para todos los comercios.'
 
     def handle(self, *args, **options):
-        productos = Producto.objects.all()
+        # Obtener todos los comercios
+        commerces = Commerce.objects.all()
 
-        for producto in productos:
-            marca_nombre = producto.get_marca_nombre()
-            tipo_nombre = producto.tipo.nombre if producto.tipo else ''
-            
-            contenido_busqueda = ' '.join(filter(None, [
-                producto.nombre,
-                producto.denominacion,
-                producto.rnpa,
-                marca_nombre,
-                tipo_nombre
+        # Lista para almacenar las actualizaciones
+        updates = []
+
+        for commerce in commerces:
+            # Construir el contenido de búsqueda
+            search_content = ' '.join(filter(None, [
+                commerce.name,
+                commerce.cuit,
+                commerce.description,
             ]))
-            
-            search_vector = SearchVector(
-                SearchQuery(contenido_busqueda, config='spanish')
+
+            # Crear el SearchVector a partir del contenido de búsqueda
+            search_vector = SearchVector(search_content, config='spanish')
+
+            # Agregar a la lista de actualizaciones
+            updates.append(
+                Commerce(
+                    id=commerce.id,
+                    search_vector=search_vector
+                )
             )
-            
-            producto.search_vector = search_vector
-            producto.save(update_fields=['search_vector'])
-            print()
-        
-        self.stdout.write(self.style.SUCCESS('Se ha actualizado correctamente el search_vector para todos los productos.'))
 
+        # Actualizar todos los comercios en un solo comando
+        Commerce.objects.bulk_update(updates, ['search_vector'])
 
+        self.stdout.write(self.style.SUCCESS('Se ha actualizado correctamente el search_vector para todos los comercios.'))
