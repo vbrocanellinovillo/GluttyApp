@@ -11,6 +11,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import GluttyModal from '../GluttyModal';
 import LoadingGlutty from '../Loading/LoadingGlutty';
+//import Pdf from 'react-native-pdf';
 
 
 export default function DocumentPickerComponent() {
@@ -125,6 +126,26 @@ export default function DocumentPickerComponent() {
     return window.btoa(binary);
   };
 
+  // Visualización de pdf
+
+ /* const PDFViewer = ({ fileUri }) => {
+    return (
+      <View style={{ flex: 1 }}>
+        <Pdf
+          source={{ uri: fileUri }}
+          onLoadComplete={(numberOfPages, filePath) => {
+            console.log(`Loaded PDF with ${numberOfPages} pages`);
+          }}
+          onError={(error) => {
+            console.log(error);
+          }}
+          style={{ flex: 1, width: Dimensions.get('window').width }}
+        />
+      </View>
+    );
+  };
+  */
+
   const OpenPdfButton = async (id) => {
     try {
       // Obtener el blob del PDF desde el backend
@@ -185,7 +206,7 @@ export default function DocumentPickerComponent() {
               <Text style={styles.documentName}>{menu.file_name}</Text>
               <Text style={styles.documentSize}>{(menu.file_size / 1024).toFixed(2)} MB</Text>
             </View>
-            <TouchableOpacity style={styles.iconWrapper} onPress={() => OpenPdfButton(menu.id)}>
+            <TouchableOpacity style={styles.iconWrapper} onPress={() => PDFViewer(menu.uri)}>
               <Entypo name="eye" size={24} color="black" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconWrapper} onPress={() => removeDocument("", menu.id)}>
