@@ -5,8 +5,10 @@ import { Input } from "@rneui/themed";
 import * as Haptics from "expo-haptics";
 import { getSearchData } from "../../services/commerceService";
 import { useSelector } from "react-redux";
-import SearchResultItem from "./SearchResultItem";
 import MapChipsContainer from "./MapChipsContainer";
+import SearchResultsList from "./SearchResultsList";
+import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
+import GluttyModal from "../UI/GluttyModal";
 
 const CHIPS = [
   { id: 1, name: "Cocina separada", icon: "restaurant" },
@@ -22,6 +24,12 @@ export default function MapSearch() {
 
   const [searchData, setSearhData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  function toggleErrorModal() {
+    setIsError(false);
+    setSearchTerm("");
+  }
 
   useEffect(() => {
     async function searchPlaces() {
@@ -32,9 +40,11 @@ export default function MapSearch() {
 
       setIsLoading(true);
       try {
-        const data = getSearchData(searchTerm, token);
+        const data = await getSearchData(searchTerm, token);
+        setSearhData(data);
+        setIsError(false);
       } catch (error) {
-        console.log(error);
+        setIsError(true);
       } finally {
         setIsLoading(false);
       }
@@ -53,29 +63,33 @@ export default function MapSearch() {
   }
 
   return (
-    <View style={styles.container}>
-        <Input
-          inputContainerStyle={styles.search}
-          rightIcon={{
-            type: "ionicons",
-            name: `${icon}`,
-            color: Colors.mJordan,
-            size: 30,
-            onPress: clearSearch,
-          }}
-          value={searchTerm}
-          onChangeText={handleChangeText}
-          placeholder="Busca tus lugares favoritos!"
-        />
-      <MapChipsContainer chips={CHIPS} />
-      <View style={styles.resultsList}>
-        <SearchResultItem />
-        <SearchResultItem />
-        <SearchResultItem />
-        <SearchResultItem />
-        <SearchResultItem />
-      </View>
-    </View>
+    <>
+      <DismissKeyboardContainer>
+        <View style={styles.container}>
+          <Input
+            inputContainerStyle={styles.search}
+            rightIcon={{
+              type: "ionicons",
+              name: `${icon}`,
+              color: Colors.mJordan,
+              size: 30,
+              onPress: clearSearch,
+            }}
+            value={searchTerm}
+            onChangeText={handleChangeText}
+            placeholder="Busca tus lugares favoritos!"
+          />
+          <MapChipsContainer chips={CHIPS} />
+          <SearchResultsList searchResults={searchData} isLoading={isLoading} />
+        </View>
+      </DismissKeyboardContainer>
+      <GluttyModal
+        visible={isError}
+        isError={true}
+        message="Ocurrio un error en la busqueda. Por favor intente de nuevo más tarde"
+        onClose={toggleErrorModal}
+      />
+    </>
   );
 }
 
@@ -99,10 +113,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.7,
     shadowRadius: 10,
     fontSize: 26,
-    marginHorizontal: -10
-  },
-
-  resultsList: {
-    gap: 16,
+    marginHorizontal: -10,
   },
 });

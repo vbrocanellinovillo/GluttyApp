@@ -6,6 +6,7 @@ import MainHeader from "../../components/UI/Header/MainHeader";
 import Menu from "../../screens/Commerce/Menu/Menu";
 import Branches from "../../screens/Commerce/Branches/Branches";
 import CommerceProfile from "../../screens/Commerce/CommerceProfile";
+import { ViewBranch } from "../../screens/Commerce/Branches/EditBranch/ViewBranch";
 
 export default function CommerceTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -95,6 +96,12 @@ export default function CommerceTabs() {
         name="UserData"
         component={CommerceProfile}
         options={{ title: "Mis datos" }}
+      />
+      
+      <CurvedBottomBarExpo.Screen
+        name="Consultar Sucursal"
+        component={ViewBranch}
+        options={{ title: "Consultar sucursal" }}
       />
       
     </CurvedBottomBarExpo.Navigator>
