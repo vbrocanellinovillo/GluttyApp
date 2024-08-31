@@ -127,8 +127,8 @@ export default function DocumentPickerComponent() {
   };
 
   // Visualización de pdf
-
- /* const PDFViewer = ({ fileUri }) => {
+/*
+const PDFViewer = ({ fileUri }) => {
     return (
       <View style={{ flex: 1 }}>
         <Pdf
@@ -206,7 +206,7 @@ export default function DocumentPickerComponent() {
               <Text style={styles.documentName}>{menu.file_name}</Text>
               <Text style={styles.documentSize}>{(menu.file_size / 1024).toFixed(2)} MB</Text>
             </View>
-            <TouchableOpacity style={styles.iconWrapper} onPress={() => PDFViewer(menu.uri)}>
+            <TouchableOpacity style={styles.iconWrapper} onPress={() => PDFViewer(menu.id)}>
               <Entypo name="eye" size={24} color="black" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconWrapper} onPress={() => removeDocument("", menu.id)}>
