@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 
-export default function BranchItem({ name, address, onPress }) {
+export default function BranchItem({ id, name, address, onPress }) {
   return (
     <Pressable
       style={({ pressed }) =>

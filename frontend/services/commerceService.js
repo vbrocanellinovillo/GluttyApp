@@ -1,6 +1,7 @@
 import { backendUrl } from "../constants/backend";
 import { Coordinates } from "../models/Coordinates";
 import { httpRequest } from "../utils/http";
+import { sleep } from "../utils/utilFunctions";
 
 const url = backendUrl + "comercios/";
 const urlUs = backendUrl + "usuarios/";
@@ -264,6 +265,79 @@ export async function getBranches(token) {
   try {
     const response = await httpRequest(requestUrl, requestOptions);
     return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function getData() {
+  await sleep(5000);
+
+  const locations = [
+    {
+      id: 1,
+      latitude: -31.4201,
+      longitude: -64.1888,
+      commerce_name: "Bubblemix",
+      branch_name: "Córdoba Centro",
+      address: "3993 Linden Place",
+      separated_kitchen: true,
+      only_takeaway: false,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
+    },
+    {
+      id: 2,
+      latitude: -31.4238,
+      longitude: -64.1851,
+      commerce_name: "Yodoo",
+      branch_name: "Córdoba Norte",
+      address: "4681 Rowland Parkway",
+      separated_kitchen: true,
+      only_takeaway: true,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
+    },
+    {
+      id: 3,
+      latitude: -31.4265,
+      longitude: -64.183,
+      commerce_name: "Oyonder",
+      branch_name: "Córdoba Sur",
+      address: "646 Tomscot Trail",
+      separated_kitchen: true,
+      only_takeaway: true,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
+    },
+    {
+      id: 4,
+      latitude: -31.429,
+      longitude: -64.1872,
+      commerce_name: "Kwimbee",
+      branch_name: "Córdoba Este",
+      address: "7 Troy Way",
+      separated_kitchen: true,
+      only_takeaway: true,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
+    },
+    {
+      id: 5,
+      latitude: -31.4321,
+      longitude: -64.1913,
+      commerce_name: "Eidel",
+      branch_name: "Córdoba Oeste",
+      address: "0 Northport Street",
+      separated_kitchen: false,
+      only_takeaway: true,
+      photo: "https://source.unsplash.com/random/300x200?food,restaurant",
+    },
+  ];
+
+  return locations;
+}
+
+export async function getSearchData(searchTerm, token) {
+  try {
+    const data = await getData();
+    return data;
   } catch (error) {
     throw new Error(error.message);
   }

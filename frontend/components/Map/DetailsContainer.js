@@ -134,8 +134,6 @@ export default function DetailsContainer({
   }
 
   if (branch && !isLoading) {
-    console.log(branch);
-
     content = <BranchDetails branch={branch} />;
   }
 

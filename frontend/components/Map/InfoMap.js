@@ -1,12 +1,13 @@
-import { StyleSheet } from "react-native";
+import { Keyboard, StyleSheet } from "react-native";
 import MapView from "react-native-maps";
 import MapMarker from "./MapMarker";
 import { useState } from "react";
 import DetailsContainer from "./DetailsContainer";
 import { getBranch } from "../../services/commerceService";
 import { useSelector } from "react-redux";
+import MapSearch from "./MapSearch";
 
-export default function InfoMap({ branches, location }) {
+export default function InfoMap({ branches, location, onFilterSearch }) {
   const userLocation = {
     latitude: location.latitude ? location.latitude : -31.4262,
     longitude: location.longitude ? location.longitude : -64.1888,
@@ -44,7 +45,13 @@ export default function InfoMap({ branches, location }) {
 
   return (
     <>
-      <MapView region={userLocation} style={styles.map}>
+      <MapSearch />
+      <MapView
+        region={userLocation}
+        style={styles.map}
+        onPress={() => Keyboard.dismiss()}
+        userInterfaceStyle="light"
+      >
         {branches &&
           branches.map((branch) => (
             <MapMarker branch={branch} key={branch.id} onPress={openDetails} />
