@@ -1,21 +1,17 @@
 from django.core.management.base import BaseCommand
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchQuery, SearchRank
 from comercios.models import Commerce
+from django.db.models import F
 
 class Command(BaseCommand):
-    help = 'Actualiza el campo search_vector para todos los comercios.'
+    help = 'Search and rank Commerce records based on the search vector'
 
-    def handle(self, *args, **options):
-        commerces = Commerce.objects.all()
+    def handle(self, *args, **kwargs):
+        query = 'mc donalds'  # Adjust this as needed
+        search_query = SearchQuery(query, config='spanish')
+        results = Commerce.objects.annotate(rank=SearchRank(F('search_vector'), search_query)).filter(rank__gte=0.1).order_by('-rank')
 
-        for commerce in commerces:
-            search_content = ' '.join(filter(None, [
-                commerce.name or '',
-                commerce.description or '',
-            ]))
+        # Debugging output
+        for commerce in results:
+            self.stdout.write(self.style.SUCCESS(f"{commerce.name} - {commerce.search_vector}"))
 
-            search_vector = SearchVector(search_content, config='spanish')
-            commerce.search_vector = search_vector
-            commerce.save(update_fields=['search_vector'])
-
-        self.stdout.write(self.style.SUCCESS('Se ha actualizado correctamente el search_vector para todos los comercios.'))
