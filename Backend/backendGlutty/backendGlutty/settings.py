@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -147,13 +149,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Configuration
+# Cargar variables de entorno desde el archivo .env
+load_dotenv()
+
+# Configuration cloudinary
 CLOUDINARY = {
-    'cloud_name': 'dc7sftc2n',
-    'api_key': '893994145379559',
-    'api_secret': '7dJQGAsg9Z-P6c3Dmt89F3phUU0',
+    'cloud_name': os.getenv('CLOUD_NAME'),
+    'api_key': os.getenv('API_KEY_CLOUDINARY'),
+    'api_secret': os.getenv('API_SECRET_CLOUDINARY'),
 }
-    
+
+# Emails
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 

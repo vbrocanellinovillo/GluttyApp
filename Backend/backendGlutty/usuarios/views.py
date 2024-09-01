@@ -18,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.exceptions import ValidationError
 from comercios.views import get_commerce_info
+from django.core.mail import send_mail
 # from drf_yasg.utils import swagger_auto_schema
 
 # def apiOverView(request):
@@ -40,80 +41,42 @@ class UsuarioAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UsuarioSerializer
 
-# @csrf_exempt
-# @api_view(['POST'])
-# @permission_classes([AllowAny])
-# def cargar_foto(request):
-#     try:
-#         print("hasta acá sí llega")
-#         picture_link = upload_to_cloudinary(request)
-#         return Response({"url": picture_link}, status=status.HTTP_201_CREATED)
-#     except Exception as e:
-#         print("hay un error: " + str(e))
-#         return Response({"error": "no se pudo cargar la foto."}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def send_verification_code(request):
+    user_id = request.data.get('user_id')
+    if not user_id:
+        return Response({"error": "user_id es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    user = get_object_or_404(User, id=user_id)
+    verification_code = user.generate_verification_code()
+    
+    send_mail(
+        'Tu código de verificación GLUTTY',
+        f'El código de verificación para poder activar tu cuenta es: {verification_code}.',
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        fail_silently=False,
+    )
+    
+    return Response({"message": "Código de verificación enviado."}, status=status.HTTP_200_OK)
 
-# @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})
-# @api_view(['POST'])
-# @permission_classes([AllowAny])
-# @transaction.atomic
-# @permission_classes([AllowAny])
-# def register(request):
-#     """
-#     Metodo para registrar un usuario, con email y contraseña.
-#     """
-#     # Crear usuario y comercio o celíaco
-#     serializer = UsuarioSerializer(data=request.data)
-        
-#     if serializer.is_valid():
-#         serializer.save()
-#         usuario_data = serializer.data
-#         usuario = User.objects.filter(username=usuario_data["username"]).first()
-        
-#         image = request.FILES.get('image')
-#         if image:
-#             picture_link = upload_to_cloudinary(image)
-#             usuario.profile_picture = picture_link
-#             usuario.save()
-        
-#         Session.objects.create(user=usuario) # Crear una sesión para el nuevo usuario
-#         # Validar si es comercio o persona y en base a eso realizar el registro
-#         if usuario.is_commerce:
-#             commerce = Commerce.objects.create(user=usuario, 
-#                                                 name=request.data.get("name"),
-#                                                 cuit=request.data.get("cuit"),
-#                                                 description=request.data.get("description"))
-            
-#             commerce.save()
-            
-#             # login_data = {
-#             # "username": usuario.username,
-#             # "password": request.data.get("password")
-#             # }
-#             # login_request = request._request
-#             # login_request.POST = login_data
-#             # login_response = login(login_request)
-                   
-#             return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
-#         else:
-#             celiac = Celiac.objects.create(user=usuario,
-#                                             first_name=request.data.get("first_name"),
-#                                             last_name=request.data.get("last_name"),
-#                                             sex=request.data.get("sex"),
-#                                             date_birth=request.data.get("date_birth"))
-#             celiac.save()
-            
-#             # login_data = {
-#             # "username": usuario.username,
-#             # "password": request.data.get("password")
-#             # }
-#             # login_request = request._request
-#             # login_request.POST = login_data
-#             # login_response = login(login_request)
-                   
-#             return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
-        
-#     #Si el serializaer.is_valid da error
-#     return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def verify_code(request):
+    code = request.data.get('code')
+    user_id = request.data.get('user_id')
+    
+    user = get_object_or_404(User, id=user_id)
+    
+    if user.verification_code == code and timezone.now() < user.verification_code_expires:
+        user.is_verified = True
+        user.verification_code = None
+        user.verification_code_expires = None
+        user.save()
+        return Response({"message": "Verification successful."}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Invalid or expired verification code."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -213,6 +176,9 @@ def login(request):
 
     if not usuario.is_active:
         raise AuthenticationFailed("Cuenta eliminada.")
+    
+    if not usuario.is_verified:
+        raise AuthenticationFailed("Cuenta no verificada.")
     
     # Reiniciar los intentos de inicio de sesión y marcar la sesión como inicializada
     sesion.session_initialized = True

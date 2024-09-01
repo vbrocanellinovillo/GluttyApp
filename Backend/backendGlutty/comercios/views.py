@@ -65,13 +65,17 @@ def add_branch(request):
     try:
         if user.is_commerce:
             user_commerce = Commerce.objects.filter(user=user).first()
+             
+            optional_phone = request.data.get("optional_phone")
+            if optional_phone:
+                validate_phone(optional_phone)
             
             # Crear nueva sucursal
             new_branch = Branch.objects.create(
                         commerce=user_commerce,
                         name=request.data.get("name"),
                         phone=validate_phone(request.data.get("phone")),
-                        optional_phone=validate_phone(request.data.get("optional_phone")),
+                        optional_phone=optional_phone,
                         separated_kitchen=request.data.get("separated_kitchen"),
                         just_takeaway=request.data.get("just_takeaway"),
                     )

@@ -3,6 +3,9 @@ import datetime
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from .managers import *
+import datetime
+import string
+import random
 
 # Create your models here.
 # Clase para guardar datos generales
@@ -12,7 +15,10 @@ class User(AbstractUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_commerce = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
     profile_picture = models.CharField(blank=True)
+    verification_code = models.CharField(max_length=6, blank=True, null=True)
+    verification_code_expires = models.DateTimeField(blank=True, null=True)
 
     objects = CustomUserManager()
 
@@ -21,6 +27,13 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+    def generate_verification_code(self):
+        code = ''.join(random.choices(string.digits, k=6))
+        self.verification_code = code
+        self.verification_code_expires = timezone.now() + datetime.timedelta(hours=1)
+        self.save()
+        return code
     
 # Clase para guardar datos específicos de la Persona celíaca
 class Celiac(models.Model):
