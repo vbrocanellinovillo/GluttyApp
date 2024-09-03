@@ -38,10 +38,10 @@ const styles = StyleSheet.create({
       flexDirection: 'row',  // Coloca el título y el ícono en la misma fila
       justifyContent: 'space-between',  // Asegura que el título esté a la izquierda y el ícono a la derecha
       alignItems: 'center',  // Centra verticalmente el título y el ícono
-      marginBottom: 10,
+      paddingTop: 5,
     },
     title: {
-      padding: 5,
+      marginTop: 5,
       fontSize: 20,
       marginBottom: 10,
       color: Colors.locro,

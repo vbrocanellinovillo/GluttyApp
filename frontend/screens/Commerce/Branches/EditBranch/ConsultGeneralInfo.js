@@ -6,11 +6,11 @@ import FormControl from "../../../../components/UI/Controls/FormControl";
 import PhoneInput from "../../../../components/UI/Controls/PhoneInput";
 import CheckboxControl from "../../../../components/UI/Controls/CheckboxControl";
 
-export function ConsultGeneralInfo(branch) {
+export function ConsultGeneralInfo({branch}) {
     console.log("branch", branch);
     return (
         <BranchDataItem title="Información General" onPressPrencil={""}>
-            <View styles={styles.datos}>
+            <View style={styles.datos}>
                 <Form>
                     <FormControl
                     label="Nombre"
@@ -18,18 +18,7 @@ export function ConsultGeneralInfo(branch) {
                     name="name"
                     //autoCapitalize="words"
                     />
-                    <PhoneInput
-                    defaultCode={{ code: "+54", flag: "🇦🇷" }}
-                    label="Teléfono"
-                    value={branch.phone}
-                    name="phone"
-                    />
-                    <PhoneInput
-                    defaultCode={{ code: "+54", flag: "🇦🇷" }}
-                    label="Otro teléfono (opcional)"
-                    value={branch.optionalPhone}
-                    name="optionalPhone"
-                    />
+                    
                     <View style={styles.checkboxServices}>
                     <TextCommonsRegular style={styles.checkboxServicesText}>
                         Servicios Ofrecidos
@@ -37,14 +26,14 @@ export function ConsultGeneralInfo(branch) {
                     <CheckboxControl
                         title="Cocina separada"
                         name="separatedKitchen"
-                        checked={branch.separatedKitchen}
+                        checked={branch.separated_kitchen}
                         setChecked={setFieldValue}
                         style={styles.checkbox}
                     />
                     <CheckboxControl
                         title="Solo TakeAway"
                         name="onlyTakeAway"
-                        checked={branch.onlyTakeAway}
+                        checked={branch.just_takeaway}
                         setChecked={setFieldValue}
                         style={styles.checkbox}
                     />
@@ -57,21 +46,21 @@ export function ConsultGeneralInfo(branch) {
 
 const styles = StyleSheet.create({
     datos: {
-        marginVertical: 20,
+        //marginVertical: 20,
+        
     },
     checkboxServices: {
-        flexDirection: "row",
-        justifyContent: "space-between",
+        flexDirection: "column",
+        //justifyContent: "space-between",
         marginVertical: 10,
     },
     checkboxServicesText: {
-        fontSize: 18,
+        fontSize: 15,
     },
     checkbox: {
         backgroundColor: "white",
         borderWidth: 1,
         borderColor: "#ccc",
-        padding: 10,
         borderRadius: 10,
     },
 });

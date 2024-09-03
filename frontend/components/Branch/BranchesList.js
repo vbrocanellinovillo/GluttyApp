@@ -6,10 +6,10 @@ import { useNavigation } from "@react-navigation/native";
 export default function BranchesList({ branches }) {
   const navigation = useNavigation()
 
-  /*const handlePress = (branch) => {
-
+  const handlePress = (branch) => {
     navigation.navigate("Consultar Sucursal", {branch});
-  };*/
+  };
+  
   return (
     <FlatList
       data={branches}
@@ -18,7 +18,7 @@ export default function BranchesList({ branches }) {
           id = {item.id}
           name={item.name}
           address={item.address}
-          onPress={navigation.navigate("Consultar Sucursal", {item})}
+          onPress={() => handlePress(item)}
         />
       )}
       keyExtractor={(item) => (item.id ? item.id.toString() : Math.random())}
