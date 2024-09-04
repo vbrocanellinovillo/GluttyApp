@@ -7,7 +7,7 @@ export default function BranchesList({ branches }) {
   const navigation = useNavigation()
 
   const handlePress = (branch) => {
-    navigation.navigate("Consultar Sucursal", {branch});
+    navigation.navigate("Mi Sucursal", {branch});
   };
   
   return (

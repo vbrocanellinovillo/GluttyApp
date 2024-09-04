@@ -99,9 +99,9 @@ export default function CommerceTabs() {
       />
       
       <CurvedBottomBarExpo.Screen
-        name="Consultar Sucursal"
+        name="Mi Sucursal"
         component={ViewBranch}
-        options={{ title: "Consultar sucursal" }}
+        options={{ title: "Mi sucursal" }}
       />
       
     </CurvedBottomBarExpo.Navigator>

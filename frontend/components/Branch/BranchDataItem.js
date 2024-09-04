@@ -26,11 +26,11 @@ export default function BranchDataItem({onPressPrencil, title, children}) {
 const styles = StyleSheet.create({
     container: {
       paddingHorizontal: 20,
-      marginTop: 30,
+      marginTop: 20,
       borderRadius: 10,
       borderColor: 'lightgrey',
       borderWidth: 2,
-      //marginBottom: 20,
+      marginBottom: -10,
       //elevation: 2,
       margin: 20,
     },
