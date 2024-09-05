@@ -1,13 +1,13 @@
 from django.db import models
 from usuarios.models import Celiac  # Importamos la relación con el celiaco
 
-class EstudioSangre(models.Model):
+class BloodTest(models.Model):
     # Relación con el celiaco
     celiac = models.ForeignKey(Celiac, on_delete=models.CASCADE, related_name='estudios')
 
     # Datos específicos del estudio
-    fecha_estudio = models.DateField()  # Fecha del estudio
-    fecha_registro = models.DateField(auto_now_add=True)  # Fecha en que se registra en el sistema
+    test_date = models.DateField()  # Fecha del estudio
+    registration_date = models.DateField(auto_now_add=True)  # Fecha en que se registra en el sistema
     
     # Valores de los estudios
     atTG_IgA = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, verbose_name='IgA anti Transglutaminasa')
@@ -34,16 +34,16 @@ class EstudioSangre(models.Model):
         verbose_name_plural = "Estudios de Sangre"
 
     def __str__(self):
-        return f"Estudio de {self.celiac.first_name} {self.celiac.last_name} - {self.fecha_estudio}"
+        return f"Estudio de {self.celiac.first_name} {self.celiac.last_name} - {self.test_date}"
 
 class VariableEstudio(models.Model):
-    SEXO = (("M", "Masculino"), ("F", "Femenino"), ("N/A", "No Aplica"))
+    SEX = (("M", "Masculino"), ("F", "Femenino"), ("N/A", "No Aplica"))
 
-    nombre = models.CharField(max_length=100)
-    valor_minimo = models.DecimalField(max_digits=5, decimal_places=2)
-    valor_maximo = models.DecimalField(max_digits=5, decimal_places=2)
-    depende_de_sexo = models.CharField(max_length=10, choices=SEXO, default="N/A")
-    depende_de_edad = models.CharField(max_length=20, blank=True, null=True)  # Por ejemplo "18-60 años"
+    name = models.CharField(max_length=100)
+    min_value = models.DecimalField(max_digits=5, decimal_places=2)
+    max_value = models.DecimalField(max_digits=5, decimal_places=2)
+    depends_on_sex = models.CharField(max_length=10, choices=SEX, default="N/A")
+    depends_on_age = models.CharField(max_length=20, blank=True, null=True)  # Por ejemplo "18-60 años"
 
     class Meta:
         verbose_name = "Variable de Estudio"
