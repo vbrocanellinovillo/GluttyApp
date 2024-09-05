@@ -35,6 +35,8 @@ export default function Map() {
   const [onlyTakeAway, setOnlyTakeAway] = useState(false);
   const [search, setSearch] = useState("");
 
+  const [hideSearchResults, setHideSearchResults] = useState(false);
+
   function closeModalHandler() {
     setShowModal(false);
     serError("");
@@ -48,6 +50,14 @@ export default function Map() {
   async function toggleOnlyTakeAway() {
     setOnlyTakeAway(!onlyTakeAway);
     await handleSearch(search);
+  }
+
+  function handleHideSearchResults() {
+    setHideSearchResults(true);
+  }
+
+  function handleShowSearchResults() {
+    setHideSearchResults(false);
   }
 
   const [location, setLocation] = useState({
@@ -127,8 +137,6 @@ export default function Map() {
 
       setSearchData(branches);
       setMapData(mapData);
-      console.log(data.branches);
-
       setIsError(false);
     } catch (error) {
       setIsError(true);
@@ -156,8 +164,15 @@ export default function Map() {
           onlyTakeAway={onlyTakeAway}
           toggleSeparatedKitchen={toggleSeparatedKitchen}
           toggleOnlyTakeAway={toggleOnlyTakeAway}
+          hideResults={hideSearchResults}
+          handleHideSearchResults={handleHideSearchResults}
+          handleShowSearchResults={handleShowSearchResults}
         />
-        <InfoMap location={location} branches={mapData} />
+        <InfoMap
+          location={location}
+          branches={mapData}
+          onPress={handleHideSearchResults}
+        />
       </>
     </>
   );

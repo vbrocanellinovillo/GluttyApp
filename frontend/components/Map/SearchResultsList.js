@@ -17,18 +17,21 @@ import { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 
-RESULTS_HEIGHT = 600;
+RESULTS_HEIGHT = 450;
 
 export default function SearchResultsList({
   searchResults,
   isLoading,
   focused,
+  hideResults,
+  handleHideSearchResults,
+  handleShowSearchResults,
 }) {
   if (isLoading) return <MapSearchSkeleton />;
 
   if (!searchResults && !isLoading) return <></>;
 
-  const resultsHeight = useSharedValue(RESULTS_HEIGHT);
+  const resultsHeight = useSharedValue(0);
 
   const animatedHeight = useAnimatedStyle(() => {
     return {
@@ -46,11 +49,9 @@ export default function SearchResultsList({
     };
   });
 
-  const [hideResults, setHideResults] = useState(false);
-
   useEffect(() => {
     if (focused) {
-      setHideResults(false);
+      handleShowSearchResults();
     } else if (!focused && hideResults) {
       resultsHeight.value = 0;
     }
@@ -58,47 +59,33 @@ export default function SearchResultsList({
 
   useEffect(() => {
     if (hideResults) {
-      resultsHeight.value = 30;
+      resultsHeight.value = 0;
       rotate.value = 0;
     } else {
-      resultsHeight.value = RESULTS_HEIGHT;
+      if (searchResults) {
+        const newHeight = searchResults.length * 100;
+        if (newHeight > 450) {
+          resultsHeight.value = 450;
+        } else {
+          resultsHeight.value = newHeight;
+        }
+      }
       rotate.value = 180;
     }
-  }, [hideResults]);
+  }, [hideResults, searchResults]);
 
-  function hideResultsList() {
-    setHideResults(true);
-  }
-
-  function showResults() {
-    setHideResults(false);
-  }
 
   return (
     <>
       {searchResults && searchResults.length > 0 && (
         <>
           <Animated.View style={animatedHeight}>
-            <View style={styles.resultsContainer}>
-              <FlatList
-                data={searchResults}
-                renderItem={({ item }) => <SearchResultItem item={item} />}
-                keyExtractor={(item) => item.id.toString()}
-                contentContainerStyle={styles.resultsList}
-              />
-            </View>
-            {hideResults && (
-              <TouchableOpacity onPress={showResults}>
-                <Animated.View style={[styles.icon, rotateStyle]}>
-                  <Ionicons
-                    name="chevron-down"
-                    color={Colors.mJordan}
-                    size={24}
-                  />
-                </Animated.View>
-              </TouchableOpacity>
-            )}
-            <Pressable style={styles.backdrop} onPress={hideResultsList} />
+            <FlatList
+              data={searchResults}
+              renderItem={({ item }) => <SearchResultItem item={item} />}
+              keyExtractor={(item) => item.id.toString()}
+              contentContainerStyle={styles.resultsList}
+            />
           </Animated.View>
         </>
       )}
@@ -107,17 +94,9 @@ export default function SearchResultsList({
 }
 
 const styles = StyleSheet.create({
-  resultsContainer: {
-    flex: 3,
-  },
-
   resultsList: {
     gap: 12,
     paddingBottom: 20,
-  },
-
-  backdrop: {
-    flex: 1,
   },
 
   icon: {

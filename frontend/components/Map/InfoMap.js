@@ -7,7 +7,7 @@ import { getBranch } from "../../services/commerceService";
 import { useSelector } from "react-redux";
 import MapSearch from "./MapSearch";
 
-export default function InfoMap({ branches, location, onSearch, searchData }) {
+export default function InfoMap({ branches, location, onPress }) {
   const userLocation = {
     latitude: location.latitude ? location.latitude : -31.4262,
     longitude: location.longitude ? location.longitude : -64.1888,
@@ -43,12 +43,17 @@ export default function InfoMap({ branches, location, onSearch, searchData }) {
     setShowDetails(false);
   }
 
+  function handleMapPress() {
+    Keyboard.dismiss();
+    onPress();
+  }
+
   return (
     <>
       <MapView
         region={userLocation}
         style={styles.map}
-        onPress={() => Keyboard.dismiss()}
+        onPress={handleMapPress}
         userInterfaceStyle="light"
       >
         {branches &&

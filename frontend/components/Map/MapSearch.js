@@ -14,6 +14,9 @@ export default function MapSearch({
   onlyTakeAway,
   toggleSeparatedKitchen,
   toggleOnlyTakeAway,
+  hideResults,
+  handleHideSearchResults,
+  handleShowSearchResults,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +40,7 @@ export default function MapSearch({
   }, [searchTerm]);
 
   function handleChangeText(text) {
+    handleShowSearchResults();
     setSearchTerm(text);
   }
 
@@ -81,6 +85,9 @@ export default function MapSearch({
           searchResults={searchData}
           isLoading={isLoading}
           focused={focused}
+          hideResults={hideResults}
+          handleHideSearchResults={handleHideSearchResults}
+          handleShowSearchResults={handleShowSearchResults}
         />
       </View>
     </DismissKeyboardContainer>
