@@ -2,6 +2,7 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Colors } from "../../constants/colors";
+import { userGlutty } from "../../constants/glutty";
 
 export default function SearchResultItem({ item }) {
   const hasSeparatedKitchen = item.separated_kitchen;
@@ -9,7 +10,7 @@ export default function SearchResultItem({ item }) {
   return (
     <Pressable style={styles.container}>
       <Image
-        source={{ uri: "https://pbs.twimg.com/media/FkRmDFdXwAcUZGB.jpg" }}
+        source={{ uri: item.profile_picture || userGlutty }}
         style={styles.image}
       />
       <View style={styles.infoContainer}>
@@ -55,7 +56,8 @@ const styles = StyleSheet.create({
   infoContainer: {
     gap: 6,
     alignItems: "flex-start",
-    justifyContent: "center"
+    justifyContent: "center",
+    paddingRight: 80
   },
 
   commerceName: {

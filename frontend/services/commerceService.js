@@ -334,10 +334,30 @@ async function getData() {
   return locations;
 }
 
-export async function getSearchData(searchTerm, token) {
+export async function getSearchData(
+  searchTerm,
+  separatedKitchen,
+  onlyTakeAway,
+  token
+) {
+  const requestOptions = {
+    method: "POST",
+    body: JSON.stringify({
+      q: searchTerm,
+      separated_kitchen: separatedKitchen,
+      just_takeaway: onlyTakeAway,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const requestUrl = url + "search-commerce/";
+
   try {
-    const data = await getData();
-    return data;
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
   } catch (error) {
     throw new Error(error.message);
   }

@@ -3,48 +3,31 @@ import { Colors } from "../../constants/colors";
 import { useEffect, useState } from "react";
 import { Input } from "@rneui/themed";
 import * as Haptics from "expo-haptics";
-import { getSearchData } from "../../services/commerceService";
-import { useSelector } from "react-redux";
 import MapChipsContainer from "./MapChipsContainer";
 import SearchResultsList from "./SearchResultsList";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
-import GluttyModal from "../UI/GluttyModal";
 
-const CHIPS = [
-  { id: 1, name: "Cocina separada", icon: "restaurant" },
-  { id: 2, name: "Solo TakeAway", icon: "delivery-dining" },
-];
-
-export default function MapSearch() {
+export default function MapSearch({
+  onSearch,
+  searchData,
+  separatedKitchen,
+  onlyTakeAway,
+  toggleSeparatedKitchen,
+  toggleOnlyTakeAway,
+}) {
   const [searchTerm, setSearchTerm] = useState("");
-  const token = useSelector((state) => state.auth.accessToken);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [focused, setFocused] = useState(false);
 
   const hasSearchTerm = searchTerm.trim().length !== 0;
   const icon = hasSearchTerm ? "close" : "search";
 
-  const [searchData, setSearhData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-
-  function toggleErrorModal() {
-    setIsError(false);
-    setSearchTerm("");
-  }
-
   useEffect(() => {
     async function searchPlaces() {
-      if (!hasSearchTerm) {
-        setSearhData([]);
-        return;
-      }
-
       setIsLoading(true);
       try {
-        const data = await getSearchData(searchTerm, token);
-        setSearhData(data);
-        setIsError(false);
-      } catch (error) {
-        setIsError(true);
+        await onSearch(searchTerm);
       } finally {
         setIsLoading(false);
       }
@@ -62,34 +45,45 @@ export default function MapSearch() {
     setSearchTerm("");
   }
 
+  function focusSearch() {
+    setFocused(true);
+  }
+
+  function blurSearch() {
+    setFocused(false);
+  }
+
   return (
-    <>
-      <DismissKeyboardContainer>
-        <View style={styles.container}>
-          <Input
-            inputContainerStyle={styles.search}
-            rightIcon={{
-              type: "ionicons",
-              name: `${icon}`,
-              color: Colors.mJordan,
-              size: 30,
-              onPress: clearSearch,
-            }}
-            value={searchTerm}
-            onChangeText={handleChangeText}
-            placeholder="Busca tus lugares favoritos!"
-          />
-          <MapChipsContainer chips={CHIPS} />
-          <SearchResultsList searchResults={searchData} isLoading={isLoading} />
-        </View>
-      </DismissKeyboardContainer>
-      <GluttyModal
-        visible={isError}
-        isError={true}
-        message="Ocurrio un error en la busqueda. Por favor intente de nuevo más tarde"
-        onClose={toggleErrorModal}
-      />
-    </>
+    <DismissKeyboardContainer>
+      <View style={styles.container}>
+        <Input
+          inputContainerStyle={styles.search}
+          rightIcon={{
+            type: "ionicons",
+            name: `${icon}`,
+            color: Colors.mJordan,
+            size: 30,
+            onPress: clearSearch,
+          }}
+          value={searchTerm}
+          onChangeText={handleChangeText}
+          placeholder="Busca tus lugares favoritos!"
+          onFocus={focusSearch}
+          onBlur={blurSearch}
+        />
+        <MapChipsContainer
+          separatedKitchen={separatedKitchen}
+          onlyTakeAway={onlyTakeAway}
+          toggleSeparatedKitchen={toggleSeparatedKitchen}
+          toggleOnlyTakeAway={toggleOnlyTakeAway}
+        />
+        <SearchResultsList
+          searchResults={searchData}
+          isLoading={isLoading}
+          focused={focused}
+        />
+      </View>
+    </DismissKeyboardContainer>
   );
 }
 
