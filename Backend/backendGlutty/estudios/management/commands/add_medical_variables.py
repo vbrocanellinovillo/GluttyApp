@@ -3,27 +3,27 @@ from estudios.models import VariableEstudio
 
 # Valores para las pruebas de celiaquía y otras pruebas complementarias
 variables = [
-    {"nombre": "IgA anti Transglutaminasa", "valor_minimo": 0, "valor_maximo": 10, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "IgG anti Gliadina Deaminada", "valor_minimo": 0, "valor_maximo": 15, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "Anticuerpos antiendomisio (EMA)", "valor_minimo": 0, "valor_maximo": 0, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "Hemoglobina", "valor_minimo": 12, "valor_maximo": 16, "depende_de_sexo": "F", "depende_de_edad": None},
-    {"nombre": "Hemoglobina", "valor_minimo": 13, "valor_maximo": 18, "depende_de_sexo": "M", "depende_de_edad": None},
-    {"nombre": "Hematocrito", "valor_minimo": 36, "valor_maximo": 46, "depende_de_sexo": "F", "depende_de_edad": None},
-    {"nombre": "Hematocrito", "valor_minimo": 41, "valor_maximo": 53, "depende_de_sexo": "M", "depende_de_edad": None},
-    {"nombre": "Ferritina", "valor_minimo": 20, "valor_maximo": 250, "depende_de_sexo": "M", "depende_de_edad": None},
-    {"nombre": "Ferritina", "valor_minimo": 10, "valor_maximo": 120, "depende_de_sexo": "F", "depende_de_edad": None},
-    {"nombre": "Hierro Sérico", "valor_minimo": 30, "valor_maximo": 160, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "Vitamina B12", "valor_minimo": 200, "valor_maximo": 900, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "Calcio Sérico", "valor_minimo": 8.6, "valor_maximo": 10.0, "depende_de_sexo": "N/A", "depende_de_edad": "18-60 años"},
-    {"nombre": "Vitamina D", "valor_minimo": 30, "valor_maximo": 100, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "ALT (alanina aminotransferasa)", "valor_minimo": 5, "valor_maximo": 38, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "AST (aspartato aminotransferasa)", "valor_minimo": 5, "valor_maximo": 35, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "Colesterol Total", "valor_minimo": 0, "valor_maximo": 200, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "Colesterol LDL", "valor_minimo": 0, "valor_maximo": 120, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "Colesterol HDL", "valor_minimo": 40, "valor_maximo": 100, "depende_de_sexo": "M", "depende_de_edad": None},
-    {"nombre": "Colesterol HDL", "valor_minimo": 50, "valor_maximo": 100, "depende_de_sexo": "F", "depende_de_edad": None},
-    {"nombre": "Triglicéridos", "valor_minimo": 0, "valor_maximo": 150, "depende_de_sexo": "N/A", "depende_de_edad": None},
-    {"nombre": "Glucemia", "valor_minimo": 70, "valor_maximo": 100, "depende_de_sexo": "N/A", "depende_de_edad": None}
+    {"name": "IgA anti Transglutaminasa", "min_value": 0, "max_value": 10, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "IgG anti Gliadina Deaminada", "min_value": 0, "max_value": 15, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "Anticuerpos antiendomisio (EMA)", "min_value": 0, "max_value": 0, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "Hemoglobina", "min_value": 12, "max_value": 16, "depends_on_sex": "F", "depends_on_age": None},
+    {"name": "Hemoglobina", "min_value": 13, "max_value": 18, "depends_on_sex": "M", "depends_on_age": None},
+    {"name": "Hematocrito", "min_value": 36, "max_value": 46, "depends_on_sex": "F", "depends_on_age": None},
+    {"name": "Hematocrito", "min_value": 41, "max_value": 53, "depends_on_sex": "M", "depends_on_age": None},
+    {"name": "Ferritina", "min_value": 20, "max_value": 250, "depends_on_sex": "M", "depends_on_age": None},
+    {"name": "Ferritina", "min_value": 10, "max_value": 120, "depends_on_sex": "F", "depends_on_age": None},
+    {"name": "Hierro Sérico", "min_value": 30, "max_value": 160, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "Vitamina B12", "min_value": 200, "max_value": 900, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "Calcio Sérico", "min_value": 8.6, "max_value": 10.0, "depends_on_sex": "N/A", "depends_on_age": "18-60 años"},
+    {"name": "Vitamina D", "min_value": 30, "max_value": 100, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "ALT (alanina aminotransferasa)", "min_value": 5, "max_value": 38, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "AST (aspartato aminotransferasa)", "min_value": 5, "max_value": 35, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "Colesterol Total", "min_value": 0, "max_value": 200, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "Colesterol LDL", "min_value": 0, "max_value": 120, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "Colesterol HDL", "min_value": 40, "max_value": 100, "depends_on_sex": "M", "depends_on_age": None},
+    {"name": "Colesterol HDL", "min_value": 50, "max_value": 100, "depends_on_sex": "F", "depends_on_age": None},
+    {"name": "Triglicéridos", "min_value": 0, "max_value": 150, "depends_on_sex": "N/A", "depends_on_age": None},
+    {"name": "Glucemia", "min_value": 70, "max_value": 100, "depends_on_sex": "N/A", "depends_on_age": None}
 ]
 
 class Command(BaseCommand):
