@@ -13,7 +13,6 @@ urlpatterns = [
     path("update/<int:user_id>/", update, name="update"),
     path("change-password/", changePassword, name="change-password"),
     path("send-verification-code/", send_verification_code, name="send-verification-code"),
-    path("send-verification-code/", send_verification_code, name="send-verification-code"),
     path("verify-code/", verify_code, name="verify-code"),
     path("delete/", delete, name="delete"),
     path("logout/", logout, name="logout"),
