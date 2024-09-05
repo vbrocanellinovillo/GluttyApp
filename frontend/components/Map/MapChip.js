@@ -3,25 +3,23 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 
-export default function MapChip({ chip, isSelected, onSelect }) {
-  const selected = isSelected(chip);
-
+export default function MapChip({ children, icon, isSelected, onSelect }) {
   return (
     <Pressable
       style={({ pressed }) =>
         pressed ? [styles.container, styles.pressed] : styles.container
       }
-      onPress={onSelect.bind(this, chip)}
+      onPress={onSelect}
     >
       <View
         style={[
           styles.chip,
-          { backgroundColor: selected ? Colors.pielcita : "white" },
+          { backgroundColor: isSelected ? Colors.pielcita : "white" },
         ]}
       >
-        <MaterialIcons name={chip.icon} size={24} color={Colors.mJordan} />
+        <MaterialIcons name={icon} size={24} color={Colors.mJordan} />
         <TextCommonsMedium style={styles.chiptText}>
-          {chip.name}
+          {children}
         </TextCommonsMedium>
       </View>
     </Pressable>
