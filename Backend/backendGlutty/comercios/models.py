@@ -23,7 +23,8 @@ class Commerce(models.Model):
         self.search_vector = SearchVector('name', 'cuit', 'description', config='spanish')
         super().save(*args, **kwargs)
             
-    
+    def getName(self):
+        return self.name
 
     # menu_url = models.URLField(max_length=500, blank=True, null=True)
     # menu_pages = models.IntegerField(blank=True, null=True)

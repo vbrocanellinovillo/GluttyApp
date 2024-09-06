@@ -44,6 +44,9 @@ class Celiac(models.Model):
     sex = models.CharField(max_length=50, choices=SEXOS, default="MALE")
     date_birth = models.DateField(blank=False)
     
+    def getFirstName(self):
+        return self.first_name
+    
 class Session(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="session")
     session_initialized = models.BooleanField(default=False)

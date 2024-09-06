@@ -35,7 +35,6 @@ from django.core.mail import send_mail
 #         'Usuario en sesion':'/usuario/',
 #     }
 
-
 # Create your views here.
 class UsuarioAPIView(generics.ListCreateAPIView):
     queryset = User.objects.all()
@@ -44,16 +43,32 @@ class UsuarioAPIView(generics.ListCreateAPIView):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def send_verification_code(request):
-    user_id = request.data.get('user_id')
-    if not user_id:
-        return Response({"error": "user_id es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+    username = request.data.get('username')
+    if not username:
+        return Response({"error": "username es requerido."}, status=status.HTTP_400_BAD_REQUEST)
     
-    user = get_object_or_404(User, id=user_id)
+    user = get_object_or_404(User, username=username)
     verification_code = user.generate_verification_code()
     
+    if user.is_commerce:
+        commerce = get_object_or_404(Commerce, user=user)
+        greeting_name = commerce.getName()
+    else:
+        celiac = get_object_or_404(Celiac, user=user)
+        greeting_name = celiac.getFirstName()  # Nombre de la persona.
+
+    message = f"""
+    ¡Hola {greeting_name}! ¡Gracias por elegir Glutty!
+
+    Tu código de verificación es: {verification_code}. Ingrésalo en la app para poder activar tu cuenta.
+
+    Te agradecemos nuevamente,
+    Equipo Glutty.
+    """
+    
     send_mail(
-        'Tu código de verificación GLUTTY',
-        f'El código de verificación para poder activar tu cuenta es: {verification_code}.',
+        'Tu código de verificación Glutty',
+        message,
         settings.DEFAULT_FROM_EMAIL,
         [user.email],
         fail_silently=False,
@@ -65,9 +80,9 @@ def send_verification_code(request):
 @permission_classes([AllowAny])
 def verify_code(request):
     code = request.data.get('code')
-    user_id = request.data.get('user_id')
+    username = request.data.get('username')
     
-    user = get_object_or_404(User, id=user_id)
+    user = get_object_or_404(User, username=username)
     
     if user.verification_code == code and timezone.now() < user.verification_code_expires:
         user.is_verified = True
