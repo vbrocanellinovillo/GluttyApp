@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = { blurHeader: false };
+const initialState = { blurHeader: false, medicalDetails: false };
 
 const uiSlice = createSlice({
   name: "ui",
@@ -8,6 +8,10 @@ const uiSlice = createSlice({
   reducers: {
     toggleBlurHeader(state) {
       state.blurHeader = !state.blurHeader;
+    },
+
+    toggleMedicalDetails(state) {
+      state.medicalDetails = !state.medicalDetails;
     },
   },
 });

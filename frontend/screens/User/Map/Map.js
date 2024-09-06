@@ -110,14 +110,17 @@ export default function Map() {
     }, [token])
   );
 
+  useEffect(() => {
+    async function filter() {
+      await handleSearch(search);
+    }
+
+    filter();
+  }, [separatedKitchen, onlyTakeAway]);
+
   async function handleSearch(searchTerm) {
     setSearch(searchTerm);
     try {
-      if (searchTerm.trim().length === 0) {
-        setSearchData([]);
-        return;
-      }
-
       const data = await getSearchData(
         searchTerm,
         separatedKitchen,
@@ -135,7 +138,12 @@ export default function Map() {
         },
       }));
 
-      setSearchData(branches);
+      if (searchTerm.trim().length === 0) {
+        setSearchData([]);
+      } else {
+        setSearchData(branches);
+      }
+
       setMapData(mapData);
       setIsError(false);
     } catch (error) {

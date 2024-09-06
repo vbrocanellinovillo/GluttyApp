@@ -1,5 +1,5 @@
 import { Portal } from "react-native-paper";
-import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -10,9 +10,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import BranchDetails from "./BranchDetails";
-import LoadingMapBranchDetails from "../UI/Loading/LoadingMapBranchDetails";
-import ErrorBranchDetails from "./ErrorBranchDetails";
 import { useEffect, useState } from "react";
 
 const screenHeight = Dimensions.get("window").height;
@@ -27,13 +24,7 @@ const HALF_SECTION = screenHeight * 0.53;
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export default function DetailsContainer({
-  visible,
-  onDismiss,
-  branch,
-  isError,
-  isLoading,
-}) {
+export default function InfoMedicalContainer({ visible, onDismiss }) {
   const height = useSharedValue(MIN_HEIGHT);
   const [maxHeight, setMaxHeight] = useState(MAX_HEIGHT);
 
@@ -72,27 +63,6 @@ export default function DetailsContainer({
     }
   }, [visible]);
 
-
-  useEffect(() => {
-    if (!isLoading && !isError) {
-      height.value = withSpring(MAX_HEIGHT);
-    }
-  }, [isLoading]);
-
-  let content = <></>;
-
-  if (isLoading) {
-    content = <LoadingMapBranchDetails />;
-  }
-
-  if (isError) {
-    content = <ErrorBranchDetails />;
-  }
-
-  if (branch && !isLoading) {
-    content = <BranchDetails branch={branch} />;
-  }
-
   return (
     <>
       {visible && (
@@ -106,7 +76,7 @@ export default function DetailsContainer({
             />
             <GestureDetector gesture={Pan}>
               <Animated.View style={[styles.container, animatedHeight]}>
-                {content}
+                <Text>contenido choto</Text>
               </Animated.View>
             </GestureDetector>
           </View>

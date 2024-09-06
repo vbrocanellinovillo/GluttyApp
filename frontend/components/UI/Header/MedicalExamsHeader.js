@@ -4,10 +4,14 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import {} from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "../../../constants/colors";
+import { useDispatch } from "react-redux";
+import { uiActions } from "../../../context/ui";
 
 export default function MedicalExamsHeader({ navigation, route, options }) {
+  const dispatch = useDispatch();
+
   function showInfo() {
-    navigation.navigate("MedicalExamsInfo");
+    dispatch(uiActions.toggleMedicalDetails());
   }
 
   const name = route.name;

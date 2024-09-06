@@ -9,6 +9,7 @@ import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import { getUser } from "../../../services/userService";
 import MedicalExamsContainer from "../../../components/MedicalExams/MedicalExamsContainer";
+import InfoMedicalContainer from "../../../components/MedicalExams/InfoMedicalContainer";
 
 export default function MedicalExams() {
   const token = useSelector((state) => state.auth.accessToken);
@@ -36,10 +37,15 @@ export default function MedicalExams() {
     getUserMedicalData();
   }, []);
 
-// <ScreenCenter>
-    //   <Title>Estudios medicos</Title>
-    //   <BoxingGlutty width={400} height={400} />
-    // </ScreenCenter>
+  // <ScreenCenter>
+  //   <Title>Estudios medicos</Title>
+  //   <BoxingGlutty width={400} height={400} />
+  // </ScreenCenter>
 
-  return <MedicalExamsContainer />
+  return (
+    <>
+      <MedicalExamsContainer />
+      <InfoMedicalContainer visible={false} />
+    </>
+  );
 }
