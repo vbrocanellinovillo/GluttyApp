@@ -24,6 +24,60 @@ from comercios.models import Commerce, Branch
 from comercios.serializers import CommerceSerializer, BranchSerializer
 from django.db import transaction
 
+# @api_view(["POST"])
+# @permission_classes([IsAuthenticated])
+# def search_commerce(request):
+#     try:
+#         query = request.data.get("q", "").strip()
+#         separated_kitchen = request.data.get("separated_kitchen", None)
+#         just_takeaway = request.data.get("just_takeaway", None)
+
+#         # Filtros base para sucursales activas
+#         branch_filter = Q(is_active=True)
+
+#         if separated_kitchen is not None:
+#             branch_filter &= Q(separated_kitchen=separated_kitchen)
+#         if just_takeaway is not None:
+#             branch_filter &= Q(just_takeaway=just_takeaway)
+
+#         if query:
+#             # Filtro por coincidencia de nombre, cuit o descripción en Commerce,
+#             # o dirección en Location, o nombre de la sucursal en Branch
+#             branch_filter &= (
+#                 Q(commerce__name__icontains=query) |
+#                 Q(commerce__cuit__icontains=query) |
+#                 Q(commerce__description__icontains=query) |
+#                 Q(location__address__icontains=query) |
+#                 Q(name__icontains=query)
+#             )
+
+#         branches = Branch.objects.filter(branch_filter).select_related('commerce', 'location')
+
+#         # Preparar los datos de respuesta
+#         response_data = {"branches": []}
+
+#         for branch in branches:
+#             location = branch.location
+#             branch_data = {
+#                 "id": branch.id,
+#                 "branch_name": branch.name,
+#                 "address": location.address if location else None,
+#                 "separated_kitchen": branch.separated_kitchen,
+#                 "just_takeaway": branch.just_takeaway,
+#                 "latitude": location.latitude if location else None,
+#                 "longitude": location.longitude if location else None,
+#                 "commerce_name": branch.commerce.name,
+#                 "profile_picture": branch.commerce.user.profile_picture
+#             }
+#             response_data["branches"].append(branch_data)
+
+#         return Response(response_data, status=200)
+
+#     except Exception as e:
+#         import traceback
+#         print(f"Error: {str(e)}")
+#         print(traceback.format_exc())
+#         return Response({"error": "Ocurrió un error interno en el servidor."}, status=500)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -36,10 +90,13 @@ def search_commerce(request):
         # Filtros base para sucursales activas
         branch_filter = Q(is_active=True)
 
-        if separated_kitchen is not None:
-            branch_filter &= Q(separated_kitchen=separated_kitchen)
-        if just_takeaway is not None:
-            branch_filter &= Q(just_takeaway=just_takeaway)
+        # Aplicar filtro solo si separated_kitchen es True (si es False o None, no se aplica)
+        if separated_kitchen is True:
+            branch_filter &= Q(separated_kitchen=True)
+
+        # Aplicar filtro solo si just_takeaway es True (si es False o None, no se aplica)
+        if just_takeaway is True:
+            branch_filter &= Q(just_takeaway=True)
 
         if query:
             # Filtro por coincidencia de nombre, cuit o descripción en Commerce,
@@ -79,8 +136,6 @@ def search_commerce(request):
         print(f"Error: {str(e)}")
         print(traceback.format_exc())
         return Response({"error": "Ocurrió un error interno en el servidor."}, status=500)
-
-
 
 
 def get_commerce_info(user):

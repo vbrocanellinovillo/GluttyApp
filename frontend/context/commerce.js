@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { updateBranch } from "../services/commerceService";
 
 const initialState = { branches: [] };
 
@@ -14,6 +15,11 @@ const commerceSlice = createSlice({
       const newBranch = action.payload.branch;
       state.branches = [...state.branches, newBranch];
     },
+
+    updateBranch(state,action){
+      state.branches.find(branch => branch.id === branchId)
+    }
+
   },
 });
 
