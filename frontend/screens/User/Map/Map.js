@@ -11,7 +11,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import {
   getMapPoints,
   getSearchData,
-  mapSearch,
 } from "../../../services/commerceService";
 import InfoMap from "../../../components/Map/InfoMap";
 import MapSearch from "../../../components/Map/MapSearch";
@@ -31,25 +30,11 @@ export default function Map() {
 
   // Search
   const [searchData, setSearchData] = useState([]);
-  const [separatedKitchen, setSeparatedKitchen] = useState(false);
-  const [onlyTakeAway, setOnlyTakeAway] = useState(false);
-  const [search, setSearch] = useState("");
-
   const [hideSearchResults, setHideSearchResults] = useState(false);
 
   function closeModalHandler() {
     setShowModal(false);
     serError("");
-  }
-
-  async function toggleSeparatedKitchen() {
-    setSeparatedKitchen(!separatedKitchen);
-    await handleSearch(search);
-  }
-
-  async function toggleOnlyTakeAway() {
-    setOnlyTakeAway(!onlyTakeAway);
-    await handleSearch(search);
   }
 
   function handleHideSearchResults() {
@@ -110,16 +95,7 @@ export default function Map() {
     }, [token])
   );
 
-  useEffect(() => {
-    async function filter() {
-      await handleSearch(search);
-    }
-
-    filter();
-  }, [separatedKitchen, onlyTakeAway]);
-
-  async function handleSearch(searchTerm) {
-    setSearch(searchTerm);
+  async function handleSearch(searchTerm, separatedKitchen, onlyTakeAway) {
     try {
       const data = await getSearchData(
         searchTerm,
@@ -168,10 +144,6 @@ export default function Map() {
         <MapSearch
           onSearch={handleSearch}
           searchData={searchData}
-          separatedKitchen={separatedKitchen}
-          onlyTakeAway={onlyTakeAway}
-          toggleSeparatedKitchen={toggleSeparatedKitchen}
-          toggleOnlyTakeAway={toggleOnlyTakeAway}
           hideResults={hideSearchResults}
           handleHideSearchResults={handleHideSearchResults}
           handleShowSearchResults={handleShowSearchResults}

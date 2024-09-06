@@ -10,10 +10,6 @@ import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 export default function MapSearch({
   onSearch,
   searchData,
-  separatedKitchen,
-  onlyTakeAway,
-  toggleSeparatedKitchen,
-  toggleOnlyTakeAway,
   hideResults,
   handleHideSearchResults,
   handleShowSearchResults,
@@ -23,21 +19,27 @@ export default function MapSearch({
 
   const [focused, setFocused] = useState(false);
 
+  const [separatedKitchen, setSeparatedKitchen] = useState(false);
+  const [onlyTakeAway, setOnlyTakeAway] = useState(false);
+
   const hasSearchTerm = searchTerm.trim().length !== 0;
   const icon = hasSearchTerm ? "close" : "search";
 
   useEffect(() => {
     async function searchPlaces() {
-      setIsLoading(true);
+      if (searchTerm.trim().length !== 0) {
+        setIsLoading(true);
+      }
+      
       try {
-        await onSearch(searchTerm);
+        await onSearch(searchTerm, separatedKitchen, onlyTakeAway);
       } finally {
         setIsLoading(false);
       }
     }
 
     searchPlaces();
-  }, [searchTerm]);
+  }, [searchTerm, separatedKitchen, onlyTakeAway]);
 
   function handleChangeText(text) {
     handleShowSearchResults();
@@ -55,6 +57,14 @@ export default function MapSearch({
 
   function blurSearch() {
     setFocused(false);
+  }
+
+  function toggleSeparatedKitchen() {
+    setSeparatedKitchen(!separatedKitchen);
+  }
+
+  function toggleOnlyTakeAway() {
+    setOnlyTakeAway(!onlyTakeAway);
   }
 
   return (
