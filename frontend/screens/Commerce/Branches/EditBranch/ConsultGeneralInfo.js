@@ -6,11 +6,21 @@ import FormControl from "../../../../components/UI/Controls/FormControl";
 import PhoneInput from "../../../../components/UI/Controls/PhoneInput";
 import CheckboxControl from "../../../../components/UI/Controls/CheckboxControl";
 import { Colors } from "../../../../constants/colors";
+import { ViewBranch } from "./ViewBranch";
+import { useNavigation } from "@react-navigation/native";
+
+
+
 
 export function ConsultGeneralInfo({branch}) {
+    const navigation = useNavigation()
+    const handlePress = (branch) => {
+        navigation.navigate("GeneralInfo", {branch});
+        console.log("AAAAA")
+    };
     console.log("branch", branch);
     return (
-        <BranchDataItem title="Información General" onPressPrencil={""}>
+        <BranchDataItem title="Información General" onPressPrencil={() => handlePress(branch)}>
             <View style={styles.datos}>
                 <Form>
                     <View style={styles.inputs}>

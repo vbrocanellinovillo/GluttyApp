@@ -7,13 +7,15 @@ import { useNavigation } from "@react-navigation/native";
 export default function BranchDataItem({onPressPrencil, title, children}) {
     const navigate = useNavigation();
 
+
+
     return (  
       <View style={styles.container}>
         <View style={styles.header}>
         <TextCommonsMedium style={styles.title}>{title}</TextCommonsMedium>
         
         <TouchableOpacity style={styles.iconWrapper}>
-          <AntDesign name="edit" size={24} color="black" onPress={""} />
+          <AntDesign name="edit" size={24} color="black" onPress={onPressPrencil} />
         </TouchableOpacity>
         </View>
         

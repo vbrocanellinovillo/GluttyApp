@@ -9,7 +9,7 @@ import TextCommonsRegular from "../../UI/FontsTexts/TextCommonsRegular";
 import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
 import PhoneInput from "../../UI/Controls/PhoneInput";
 
-export default function GeneralInfoForm({ onNext, onCancel }) {
+export default function GeneralInfoForm({ onNext, onCancel, branch }) {
   function submitHandler({
     name,
     phone,
@@ -28,6 +28,7 @@ export default function GeneralInfoForm({ onNext, onCancel }) {
     onNext(name, phone, optionalPhone, separatedKitchen, onlyTakeAway);
   }
 
+  //INITIAL VALUES TENGO QUE AGREGAR LOS VALORES CUANDO PASO LA BRANCH.
   return (
     <DismissKeyboardContainer>
       <ScrollView contentContainerStyle={styles.container}>
