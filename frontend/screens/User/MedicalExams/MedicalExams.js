@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import { getUser } from "../../../services/userService";
+import MedicalExamsContainer from "../../../components/MedicalExams/MedicalExamsContainer";
 
 export default function MedicalExams() {
   const token = useSelector((state) => state.auth.accessToken);
@@ -40,5 +41,5 @@ export default function MedicalExams() {
     //   <BoxingGlutty width={400} height={400} />
     // </ScreenCenter>
 
-  return (<MedicalExamsContainer />  );
+  return <MedicalExamsContainer />
 }

@@ -9,7 +9,8 @@ import Products from "../../../screens/User/Products/Products";
 import Map from "../../../screens/User/Map/Map";
 import Profile from "../../../screens/Profile/Profile";
 import PrivacityAndSecurity from "../../../screens/Profile/PrivacityAndSecurity";
-import MedicalExams from "../../../screens/User/MedicalExams";
+import MedicalExamsStack from "../MedicalExamsStack";
+import MedicalExamsHeader from "../../../components/UI/Header/MedicalExamsHeader";
 
 export default function UserTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -103,7 +104,16 @@ export default function UserTabs() {
       <CurvedBottomBarExpo.Screen
         name="Estudios"
         position="RIGHT"
-        component={MedicalExams}
+        component={MedicalExamsStack}
+        options={{
+          header: ({ navigation, route, options }) => (
+            <MedicalExamsHeader
+              navigation={navigation}
+              route={route}
+              options={options}
+            />
+          ),
+        }}
       />
       <CurvedBottomBarExpo.Screen
         name="Mapa"

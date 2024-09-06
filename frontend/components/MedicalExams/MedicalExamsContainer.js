@@ -1,8 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import AddBranchButton from "./AddBranchButton";
-import BranchesList from "./BranchesList";
 import { useSelector } from "react-redux";
-import NoBranches from "./NoBranches";
 import ErrorFetchingMedicalExams from "./ErrorFetchingMedicalExams";
 
 export default function MedicalExamsContainer({ isLoading, isError }) {
@@ -19,16 +16,15 @@ export default function MedicalExamsContainer({ isLoading, isError }) {
   }
 
   if (!isLoading && !isError && branches && branches.length > 0) {
-    content = <BranchesList branches={branches} />;
+    content = <View></View>
   }
   
   if (!isLoading && !isError && branches && branches.length == 0) {
-    content = <NoBranches />;
+    content = <View></View>
   }
 
   return (
     <View style={styles.container}>
-      <AddBranchButton />
       {content}
     </View>
   );
