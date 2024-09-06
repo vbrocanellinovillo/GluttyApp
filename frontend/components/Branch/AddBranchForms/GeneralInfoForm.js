@@ -34,11 +34,11 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
       <ScrollView contentContainerStyle={styles.container}>
         <Formik
           initialValues={{
-            name: "",
-            phone: "",
-            optionalPhone: "",
-            separatedKitchen: false,
-            onlyTakeAway: false,
+            name: branch?.name,
+            phone: branch?.phone,
+            optionalPhone: branch?.optionalPhone,
+            separatedKitchen: branch?.separatedKitchen ?? false,
+            onlyTakeAway: branch?.onlyTakeAway ?? false,
           }}
           validate={({
             name,
