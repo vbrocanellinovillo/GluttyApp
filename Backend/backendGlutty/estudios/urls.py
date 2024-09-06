@@ -1,6 +1,7 @@
 from django.urls import include, path
 #from .views import *
 from rest_framework import routers
+from .views import *
 
 # #Crear los routers
 # router = routers.SimpleRouter()
@@ -12,6 +13,6 @@ from rest_framework import routers
 
 # Incluir las URLs de los routers en urlpatterns
 urlpatterns = [
-#     # path('', include(router.urls)),
-#     path("register/", register_study, name="register_study"),
+    # path('', include(router.urls)),
+    path("register/", register_study, name="register_study"),
 ]
