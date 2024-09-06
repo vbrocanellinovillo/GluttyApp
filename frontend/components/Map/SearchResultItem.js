@@ -3,12 +3,31 @@ import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Colors } from "../../constants/colors";
 import { userGlutty } from "../../constants/glutty";
+import * as Haptics from "expo-haptics";
+import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../constants/map";
 
-export default function SearchResultItem({ item }) {
+export default function SearchResultItem({ item, onPress }) {
   const hasSeparatedKitchen = item.separated_kitchen;
 
+  function handlePress() {
+    Haptics.selectionAsync();
+    const coordinate = {
+      latitude: item.latitude,
+      longitude: item.longitude,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
+    };
+    const location = { id: item.id, coordinate: coordinate };
+    onPress(location);
+  }
+
   return (
-    <Pressable style={styles.container}>
+    <Pressable
+      style={({ pressed }) =>
+        pressed ? [styles.container, styles.pressed] : styles.container
+      }
+      onPress={handlePress}
+    >
       <Image
         source={{ uri: item.profile_picture || userGlutty }}
         style={styles.image}
@@ -46,6 +65,10 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 
+  pressed: {
+    opacity: 0.7,
+  },
+
   image: {
     width: 70,
     height: 70,
@@ -57,7 +80,7 @@ const styles = StyleSheet.create({
     gap: 6,
     alignItems: "flex-start",
     justifyContent: "center",
-    paddingRight: 80
+    paddingRight: 80,
   },
 
   commerceName: {
@@ -80,7 +103,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "green",
     marginTop: 4,
-    minWidth: 140
+    minWidth: 140,
   },
 
   extraText: {

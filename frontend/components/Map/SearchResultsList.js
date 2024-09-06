@@ -1,10 +1,4 @@
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import SearchResultItem from "./SearchResultItem";
 import MapSearchSkeleton from "../UI/Loading/MapSearchSkeleton";
 import Animated, {
@@ -13,9 +7,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { useEffect, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "../../constants/colors";
+import { useEffect } from "react";
 
 RESULTS_HEIGHT = 450;
 
@@ -26,6 +18,7 @@ export default function SearchResultsList({
   hideResults,
   handleHideSearchResults,
   handleShowSearchResults,
+  onChangeLocation,
 }) {
   if (isLoading) return <MapSearchSkeleton />;
 
@@ -36,16 +29,6 @@ export default function SearchResultsList({
   const animatedHeight = useAnimatedStyle(() => {
     return {
       height: withTiming(resultsHeight.value, { duration: 400 }),
-    };
-  });
-
-  const rotate = useSharedValue(0);
-
-  const rotateStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { rotate: withSpring(`${rotate.value}deg`, { stiffness: 300 }) },
-      ],
     };
   });
 
@@ -60,7 +43,6 @@ export default function SearchResultsList({
   useEffect(() => {
     if (hideResults) {
       resultsHeight.value = 0;
-      rotate.value = 0;
     } else {
       if (searchResults) {
         const newHeight = searchResults.length * 100;
@@ -70,10 +52,12 @@ export default function SearchResultsList({
           resultsHeight.value = newHeight;
         }
       }
-      rotate.value = 180;
     }
   }, [hideResults, searchResults]);
 
+  function changeLocation(location) {
+    onChangeLocation(location);
+  }
 
   return (
     <>
@@ -82,7 +66,9 @@ export default function SearchResultsList({
           <Animated.View style={animatedHeight}>
             <FlatList
               data={searchResults}
-              renderItem={({ item }) => <SearchResultItem item={item} />}
+              renderItem={({ item }) => (
+                <SearchResultItem item={item} onPress={changeLocation} />
+              )}
               keyExtractor={(item) => item.id.toString()}
               contentContainerStyle={styles.resultsList}
             />

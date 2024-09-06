@@ -13,6 +13,7 @@ export default function MapSearch({
   hideResults,
   handleHideSearchResults,
   handleShowSearchResults,
+  onChangeLocation,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function MapSearch({
       if (searchTerm.trim().length !== 0) {
         setIsLoading(true);
       }
-      
+
       try {
         await onSearch(searchTerm, separatedKitchen, onlyTakeAway);
       } finally {
@@ -67,6 +68,10 @@ export default function MapSearch({
     setOnlyTakeAway(!onlyTakeAway);
   }
 
+  function changeLocation(location) {
+    onChangeLocation(location);
+  }
+
   return (
     <DismissKeyboardContainer>
       <View style={styles.container}>
@@ -98,6 +103,7 @@ export default function MapSearch({
           hideResults={hideResults}
           handleHideSearchResults={handleHideSearchResults}
           handleShowSearchResults={handleShowSearchResults}
+          onChangeLocation={changeLocation}
         />
       </View>
     </DismissKeyboardContainer>

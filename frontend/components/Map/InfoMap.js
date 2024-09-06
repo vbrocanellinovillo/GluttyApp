@@ -1,19 +1,20 @@
 import { Keyboard, StyleSheet } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { AnimatedRegion } from "react-native-maps";
 import MapMarker from "./MapMarker";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DetailsContainer from "./DetailsContainer";
 import { getBranch } from "../../services/commerceService";
 import { useSelector } from "react-redux";
-import MapSearch from "./MapSearch";
+import { AnimatedMapView } from "react-native-maps/lib/MapView";
+import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../constants/map";
 
-export default function InfoMap({ branches, location, onPress }) {
-  const userLocation = {
+export default function InfoMap({ branches, location, onPress, newRegion }) {
+  const userLocation = new AnimatedRegion({
     latitude: location.latitude ? location.latitude : -31.4262,
     longitude: location.longitude ? location.longitude : -64.1888,
-    latitudeDelta: 0.02,
-    longitudeDelta: 0.02,
-  };
+    latitudeDelta: LATITUDE_DELTA,
+    longitudeDelta: LONGITUDE_DELTA,
+  });
 
   const [showDetails, setShowDetails] = useState(false);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
@@ -23,6 +24,14 @@ export default function InfoMap({ branches, location, onPress }) {
   const [isError, setIsError] = useState(false);
 
   const token = useSelector((state) => state.auth.accessToken);
+
+  const mapRef = useRef();
+
+  useEffect(() => {
+    if (mapRef) {
+      mapRef.current?.animateToRegion(newRegion);
+    }
+  }, [newRegion]);
 
   async function openDetails(id) {
     setShowDetails(true);
@@ -50,17 +59,18 @@ export default function InfoMap({ branches, location, onPress }) {
 
   return (
     <>
-      <MapView
+      <AnimatedMapView
         region={userLocation}
         style={styles.map}
         onPress={handleMapPress}
         userInterfaceStyle="light"
+        ref={mapRef}
       >
         {branches &&
           branches.map((branch) => (
             <MapMarker branch={branch} key={branch.id} onPress={openDetails} />
           ))}
-      </MapView>
+      </AnimatedMapView>
       <DetailsContainer
         onDismiss={closeDetails}
         visible={showDetails}

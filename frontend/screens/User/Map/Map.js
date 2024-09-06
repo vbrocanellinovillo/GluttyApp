@@ -8,10 +8,7 @@ import { useSelector } from "react-redux";
 import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  getMapPoints,
-  getSearchData,
-} from "../../../services/commerceService";
+import { getMapPoints, getSearchData } from "../../../services/commerceService";
 import InfoMap from "../../../components/Map/InfoMap";
 import MapSearch from "../../../components/Map/MapSearch";
 
@@ -31,6 +28,8 @@ export default function Map() {
   // Search
   const [searchData, setSearchData] = useState([]);
   const [hideSearchResults, setHideSearchResults] = useState(false);
+
+  const [newRegion, setNewRegion] = useState(undefined);
 
   function closeModalHandler() {
     setShowModal(false);
@@ -131,6 +130,13 @@ export default function Map() {
     }
   }
 
+  function changeLocation(location) {
+    if (!location) return;
+
+    setNewRegion(location.coordinate);
+    handleHideSearchResults();
+  }
+
   return (
     <>
       <LoadingGlutty visible={isloading} />
@@ -147,11 +153,13 @@ export default function Map() {
           hideResults={hideSearchResults}
           handleHideSearchResults={handleHideSearchResults}
           handleShowSearchResults={handleShowSearchResults}
+          onChangeLocation={changeLocation}
         />
         <InfoMap
           location={location}
           branches={mapData}
           onPress={handleHideSearchResults}
+          newRegion={newRegion}
         />
       </>
     </>

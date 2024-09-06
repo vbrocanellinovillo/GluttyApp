@@ -2,14 +2,20 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
+import * as Haptics from "expo-haptics";
 
 export default function MapChip({ children, icon, isSelected, onSelect }) {
+  function handleSelect() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onSelect();
+  }
+
   return (
     <Pressable
       style={({ pressed }) =>
         pressed ? [styles.container, styles.pressed] : styles.container
       }
-      onPress={onSelect}
+      onPress={handleSelect}
     >
       <View
         style={[
