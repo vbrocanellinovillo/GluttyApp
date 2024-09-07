@@ -19,7 +19,7 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
   }) {
     
     // Si el telefono solo es codigo de pais lo borro (maximo 3 caracteres por codigo, ademas del +)
-    if (optionalPhone.trim().length < 5) {
+    if (optionalPhone && optionalPhone.trim().length < 5) {
       optionalPhone = "";
     }
 

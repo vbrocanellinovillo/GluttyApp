@@ -25,18 +25,23 @@ export default function PhoneInput({
   const [showCountryPicker, setShowCountryPicker] = useState(false);
 
   // Extraer el número de teléfono sin el código de país
-  const phoneNumber = value.startsWith(countryCode)
-    ? value.slice(countryCode.length)
-    : value;
+  let phoneNumber;
+  if (value) {
+    phoneNumber = value.startsWith(countryCode)
+      ? value.slice(countryCode.length)
+      : value;
+  }
 
   useEffect(() => {
     // Actualizar el valor completo cuando cambie el código de país
-    const newPhoneNumber = value.startsWith(countryCode)
-      ? value.slice(countryCode.length)
-      : value.replace(/^\+\d+/, ""); // Eliminar el código de país anterior
+    if (countryCode && value) {
+      const newPhoneNumber = value.startsWith(countryCode)
+        ? value.slice(countryCode.length)
+        : value.replace(/^\+\d+/, ""); // Eliminar el código de país anterior
 
-    const updatedValue = countryCode + newPhoneNumber;
-    onChange(updatedValue);
+      const updatedValue = countryCode + newPhoneNumber;
+      onChange(updatedValue);
+    }
   }, [countryCode]);
 
   function toggleCountryPicker() {

@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
    
 });*/
 import React from "react";
-import BranchDataItem from "../../../../components/Branch/BranchDataItem";
+import BranchDataItem from "../BranchDataItem";
 import { View, StyleSheet, Image, ScrollView } from "react-native";
 
 export function ConsultPhotos({ branch }) {

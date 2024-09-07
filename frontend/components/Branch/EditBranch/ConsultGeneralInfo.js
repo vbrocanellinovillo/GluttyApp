@@ -1,20 +1,21 @@
-import BranchDataItem from "../../../../components/Branch/BranchDataItem";
+import BranchDataItem from "../BranchDataItem";
 import { View, StyleSheet, setFieldValue } from "react-native";
-import TextCommonsRegular from "../../../../components/UI/FontsTexts/TextCommonsRegular";
-import Form from "../../../../components/UI/Forms/Form";
-import FormControl from "../../../../components/UI/Controls/FormControl";
-import PhoneInput from "../../../../components/UI/Controls/PhoneInput";
-import CheckboxControl from "../../../../components/UI/Controls/CheckboxControl";
-import { Colors } from "../../../../constants/colors";
+import TextCommonsRegular from "../../UI/FontsTexts/TextCommonsRegular";
+import Form from "../../UI/Forms/Form";
+import FormControl from "../../UI/Controls/FormControl";
+import CheckboxControl from "../../UI/Controls/CheckboxControl";
 import { useNavigation } from "@react-navigation/native";
 
 export function ConsultGeneralInfo({ branch }) {
   const navigation = useNavigation();
+
   const handlePress = (branch) => {
-    navigation.navigate("GeneralInfo", { branch });
-    console.log("AAAAA");
+    navigation.navigate("EditBranchStack", {
+      screen: "EditGeneralInfo",
+      params: { branch },
+    });
   };
-  console.log("branch", branch);
+
   return (
     <BranchDataItem
       title="Información General"

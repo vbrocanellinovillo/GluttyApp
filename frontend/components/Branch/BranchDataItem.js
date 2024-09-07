@@ -2,13 +2,8 @@ import { StyleSheet, View, Button, TouchableOpacity } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Colors } from "../../constants/colors";
-import { useNavigation } from "@react-navigation/native";
 
 export default function BranchDataItem({onPressPrencil, title, children}) {
-    const navigate = useNavigation();
-
-
-
     return (  
       <View style={styles.container}>
         <View style={styles.header}>
