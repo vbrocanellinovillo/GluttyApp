@@ -28,9 +28,14 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
   const mapRef = useRef();
 
   useEffect(() => {
-    if (mapRef) {
-      mapRef.current?.animateToRegion(newRegion);
+    async function searchPlace() {
+      if (mapRef && newRegion) {
+        mapRef.current?.animateToRegion(newRegion.coordinate);
+        await openDetails(newRegion.id);
+      }
     }
+
+    searchPlace();
   }, [newRegion]);
 
   async function openDetails(id) {

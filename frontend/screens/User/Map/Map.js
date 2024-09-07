@@ -133,7 +133,7 @@ export default function Map() {
   function changeLocation(location) {
     if (!location) return;
 
-    setNewRegion(location.coordinate);
+    setNewRegion(location);
     handleHideSearchResults();
   }
 
