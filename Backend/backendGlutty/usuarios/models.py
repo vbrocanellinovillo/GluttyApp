@@ -10,7 +10,7 @@ import random
 # Create your models here.
 # Clase para guardar datos generales
 class User(AbstractUser):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(default='')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -31,7 +31,7 @@ class User(AbstractUser):
     def generate_verification_code(self):
         code = ''.join(random.choices(string.digits, k=6))
         self.verification_code = code
-        self.verification_code_expires = timezone.now() + datetime.timedelta(hours=1)
+        self.verification_code_expires = timezone.now() + datetime.timedelta(minutes=5)
         self.save()
         return code
     
@@ -46,6 +46,12 @@ class Celiac(models.Model):
     
     def getFirstName(self):
         return self.first_name
+    
+    def getLastName(self):
+        return self.last_name
+    
+    def getDateBirth(self):
+        return self.date_birth
     
 class Session(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="session")
