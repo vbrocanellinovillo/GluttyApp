@@ -36,9 +36,9 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
           initialValues={{
             name: branch?.name,
             phone: branch?.phone,
-            optionalPhone: branch?.optionalPhone,
-            separatedKitchen: branch?.separatedKitchen ?? false,
-            onlyTakeAway: branch?.onlyTakeAway ?? false,
+            optionalPhone: branch?.optional_phone || " ",
+            separatedKitchen: branch.separated_kitchen,
+            onlyTakeAway: branch.just_takeaway,
           }}
           validate={({
             name,

@@ -7,11 +7,11 @@ import { useState } from "react";
 import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
 import { API_KEY_GOOGLE } from "@env";
 
-export default function AddressForm({ onBack, onNext }) {
+export default function AddressForm({ onBack, onNext, branch }) {
   const [address, setAddress] = useState("");
   const [coordinates, setCoordinates] = useState({
-    latitude: undefined,
-    longitude: undefined,
+    latitude: branch.latitude,
+    longitude: branch.longitude,
   });
 
   const [error, setError] = useState(false);
@@ -41,6 +41,7 @@ export default function AddressForm({ onBack, onNext }) {
       <View style={styles.container}>
         <GooglePlacesAutocomplete
           fetchDetails
+          
           query={{
             language: "es",
             key: "AIzaSyCR7NE3OD2rkoQ18WF6B-ZLy9dkZIxoh2U"
@@ -62,7 +63,7 @@ export default function AddressForm({ onBack, onNext }) {
           )}
         />
         <FormButtonsGroup
-          prev="Anterior"
+          prev="Cancelar"
           next="Siguiente"
           onPrev={onBack}
           onNext={handleSubmit}

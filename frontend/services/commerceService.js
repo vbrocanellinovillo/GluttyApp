@@ -232,12 +232,14 @@ export async function update(
 }
 
 
-//Actualización en el update
+//Actualización en la branch
 export async function updateBranch(
   branch,
   id,
   token
 ) {
+  console.log("entra?")
+
   const formdata = new FormData();
   formdata.append("name", branch.name);
   formdata.append("phone", branch.phone);
@@ -245,9 +247,13 @@ export async function updateBranch(
   formdata.append("separated_kitchen", branch.separatedKitchen ? "True" : "False");
   formdata.append("just_takeaway", branch.onlyTakeAway ? "True" : "False");
   formdata.append("address", branch.address);
-  formdata.append("latitude", branch.coordinates.latitude);
-  formdata.append("longitude", branch.coordinates.longitude);
+  formdata.append("latitude", branch.latitude);
+  formdata.append("longitude", branch.longitude);
+  formdata.append("branch_id", id)
 
+  console.log("el formdata:")
+  //console.log(formdata)
+    
   const requestOptions = {
     method: "PUT",
     body: formdata,
@@ -257,13 +263,14 @@ export async function updateBranch(
     },
   };
   console.log("LPM MADREEE");
-  const requestUrl = urlUs + `update/${id}/`;
+  const requestUrl = url + `update-branch/`;
   try {
     console.log("BOCA LA CONCHA DE TU MADREEE");
     const response = await httpRequest(requestUrl, requestOptions);
 
     return response;
   } catch (error) {
+    console.log("SALEESTEERRORLPM")
     throw new Error(error.message);
   }
 }
