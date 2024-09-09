@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ScannerHeader from "../../../components/Scanner/ScannerHeader";
 import Scan from "../../../screens/User/Scan/Scan";
 import UserDrawer from "./UserDrawer";
+import { EmailVerification } from "../../../screens/Authentication/EmailVerification";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ export default function MainUserStack() {
           headerTransparent: true,
         }}
       />
+      
     </Stack.Navigator>
   );
 }

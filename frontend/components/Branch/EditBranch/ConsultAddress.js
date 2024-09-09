@@ -9,7 +9,7 @@ export function ConsultAddress({ branch }) {
   const navigation = useNavigation();
 
   const handlePress = (branch) => {
-    navigation.navigate("EditBranchStack", { screen: "EditAddress" });
+    navigation.navigate("EditBranchStack", { screen: "EditAddress", params: { branch }, });
   };
 
   return (

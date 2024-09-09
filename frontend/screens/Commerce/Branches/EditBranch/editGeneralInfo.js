@@ -2,8 +2,10 @@ import { useState } from "react";
 import GeneralInfoForm from "../../../../components/Branch/AddBranchForms/GeneralInfoForm";
 import { updateBranch } from "../../../../services/commerceService";
 import { useSelector } from "react-redux";
+import LoadingGlutty from "../../../../components/UI/Loading/LoadingGlutty";
+import GluttyModal from "../../../../components/UI/GluttyModal";
 
-export default function GeneralInfo({ navigation, route }) {
+export default function EditGeneralInfo({ navigation, route }) {
   const [isloading, setisloading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -26,8 +28,10 @@ export default function GeneralInfo({ navigation, route }) {
 
     try {
       setisloading(true);
-      console.log("BID" + branch.id);
+      console.log("Branch" + branch.id);
+      console.log(branch)
       const response = await updateBranch(branch, branch.id, token);
+      console.log("La response: ")
       console.log(response);
     } catch (error) {
       setIsError(true);
@@ -44,11 +48,28 @@ export default function GeneralInfo({ navigation, route }) {
 
   const branch = route.params.branch;
 
+
+  function closeModalHandler() {
+    setShowModal(false);
+  }
+
+  console.log("error de booleans: ")
+  console.log(branch)
   return (
-    <GeneralInfoForm
+    <>
+      <GluttyModal
+        isError={isError}
+        message={message}
+        onClose={closeModalHandler}
+        visible={showModal}
+      />
+      <LoadingGlutty visible={isloading} />
+      <GeneralInfoForm
       onNext={saveUpdatesBranch}
       onCancel={cancel}
       branch={branch}
-    />
+      />
+    </>
+
   );
 }

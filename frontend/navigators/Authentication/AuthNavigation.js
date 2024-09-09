@@ -4,6 +4,7 @@ import Register from "../../screens/Authentication/Register";
 import { Colors } from "../../constants/colors";
 import InitialScreen from "../../screens/Authentication/InitialScreen";
 import { ImageBackground } from "react-native";
+import { EmailVerification } from "../../screens/Authentication/EmailVerification";
 
 const AuthNav = createNativeStackNavigator();
 
@@ -17,6 +18,9 @@ export default function AuthNavigation() {
       <AuthNav.Screen name="Initial" component={InitialScreen} />
       <AuthNav.Screen name="Login" component={Login} />
       <AuthNav.Screen name="Register" component={Register} />
+      <AuthNav.Screen name="EmailVerification"
+        component={EmailVerification}
+      />
     </AuthNav.Navigator>
   );
 }
