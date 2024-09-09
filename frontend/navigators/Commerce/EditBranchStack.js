@@ -6,6 +6,7 @@ import EditPhotos from "../../screens/Commerce/Branches/EditBranch/EditPhotos";
 const Stack = createNativeStackNavigator();
 
 export default function EditBranchStack() {
+  // agregue un comentario
   return (
     <Stack.Navigator>
       <Stack.Screen name="EditGeneralInfo" component={GeneralInfo} />
