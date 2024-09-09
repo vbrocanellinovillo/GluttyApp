@@ -1,7 +1,7 @@
 import ScreenCenter from "../../../components/UI/ScreenCenter";
 import BoxingGlutty from "../../../components/UI/SVGGlutty/BoxingGlutty";
 import Title from "../../../components/UI/Title";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { update } from "../../../services/userService";
 import { authActions } from "../../../context/auth";
 import { useState, useEffect } from "react";
@@ -10,9 +10,16 @@ import GluttyModal from "../../../components/UI/GluttyModal";
 import { getUser } from "../../../services/userService";
 import MedicalExamsContainer from "../../../components/MedicalExams/MedicalExamsContainer";
 import InfoMedicalContainer from "../../../components/MedicalExams/InfoMedicalContainer";
+import { uiActions } from "../../../context/ui";
 
 export default function MedicalExams() {
   const token = useSelector((state) => state.auth.accessToken);
+  const showMedicalInfo = useSelector((state) => state.ui.medicalDetails);
+
+  const dispatch = useDispatch();
+  function showInfoMedicalExams() {
+    dispatch(uiActions.toggleMedicalDetails());
+  }
 
   const [isloading, setisloading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -45,7 +52,8 @@ export default function MedicalExams() {
   return (
     <>
       <MedicalExamsContainer />
-      <InfoMedicalContainer visible={false} />
+      <InfoMedicalContainer visible={showMedicalInfo} onDismiss={showInfoMedicalExams} />
+      
     </>
   );
 }
