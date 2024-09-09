@@ -7,9 +7,11 @@ import { Colors } from "../../constants/colors";
 import GluttyModal from "../../components/UI/GluttyModal";
 import { useDispatch } from "react-redux";
 import { ImageBackground } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Register() {
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const [isloading, setisloading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -24,25 +26,30 @@ export default function Register() {
     try {
       setisloading(true);
       const registerResponse = await register(values, isCommerce);
+      console.log(registerResponse);
+      username = values.username;
+      email = values.email;
+      navigation.navigate("EmailVerification", { username, email });
 
-      const loginResponse = await login(values.username, values.password);
-      console.log(loginResponse);
+      //const loginResponse = await login(values.username, values.password);
+      //console.log(loginResponse);
 
-      dispatch(
-        authActions.login({
-          user: loginResponse.user,
-          accessToken: loginResponse.access_token,
-          refreshToken: loginResponse.refresh_token,
-          image: loginResponse.profile_picture,
-          isCommerce: loginResponse.is_commerce,
-        })
-      );
+      // dispatch(
+      //   authActions.login({
+      //     user: loginResponse.user,
+      //     accessToken: loginResponse.access_token,
+      //     refreshToken: loginResponse.refresh_token,
+      //     image: loginResponse.profile_picture,
+      //     isCommerce: loginResponse.is_commerce,
+      //   })
+      //);
     } catch (error) {
       serError(error.message);
       setIsError(true);
+      console.log(error);
     } finally {
-      setisloading(false);
-    }
+       setisloading(false);
+     }
   }
 
   return (

@@ -170,3 +170,42 @@ export async function getUser(token) {
       throw new Error(error.message);
     }
 }
+
+export async function sendVerificationMail(username) { 
+  const formdata = new FormData();
+  formdata.append("username", username);
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+  };
+
+  const requestUrl = url + "send-verification-code/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function verifyCode(username, verificationCode) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+  formdata.append("code", verificationCode);
+  
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+  };
+  
+  const requestUrl = url + "verify-code/";
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+
+}
