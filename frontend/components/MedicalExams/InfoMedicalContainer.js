@@ -76,7 +76,15 @@ export default function InfoMedicalContainer({ visible, onDismiss }) {
             />
             <GestureDetector gesture={Pan}>
               <Animated.View style={[styles.container, animatedHeight]}>
-                <Text>contenido choto</Text>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text>Información sobre estudios medicos</Text>
+                </View>
               </Animated.View>
             </GestureDetector>
           </View>

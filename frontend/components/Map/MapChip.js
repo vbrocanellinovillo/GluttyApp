@@ -23,7 +23,7 @@ export default function MapChip({ children, icon, isSelected, onSelect }) {
           { backgroundColor: isSelected ? Colors.pielcita : "white" },
         ]}
       >
-        <MaterialIcons name={icon} size={24} color={Colors.mJordan} />
+        <MaterialIcons name={icon} size={22} color={Colors.mJordan} />
         <TextCommonsMedium style={styles.chiptText}>
           {children}
         </TextCommonsMedium>
@@ -42,9 +42,10 @@ const styles = StyleSheet.create({
   },
 
   chip: {
-    alignItems: "center",
-    borderRadius: 12,
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
     gap: 10,
     paddingVertical: 14,
     paddingHorizontal: 10,
@@ -55,6 +56,8 @@ const styles = StyleSheet.create({
   },
 
   chiptText: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: "400",
+    flexShrink: 1
   },
 });
