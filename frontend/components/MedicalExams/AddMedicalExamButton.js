@@ -8,15 +8,15 @@ import * as Haptics from "expo-haptics";
 export default function AddMedicalExamButton() {
   const navigation = useNavigation();
 
-  function navigateNewBranch() {
+  function navigateNewMedicalExam() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     //ver
-    navigation.navigate("AddBranchStack");
+    navigation.navigate("BloodTest");
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPress={navigateNewBranch}>
+    <TouchableOpacity style={styles.container} onPress={navigateNewMedicalExam}>
       <TextCommonsMedium style={styles.text}>Nuevo Estudio</TextCommonsMedium>
       <Ionicons
         name="add-circle-sharp"
