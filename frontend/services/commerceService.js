@@ -250,10 +250,8 @@ export async function updateBranch(
   formdata.append("latitude", branch.latitude);
   formdata.append("longitude", branch.longitude);
   formdata.append("branch_id", id)
-
-  console.log("el formdata:")
-  //console.log(formdata)
-    
+  console.log("-"*30)
+  console.log(formdata)
   const requestOptions = {
     method: "PUT",
     body: formdata,
@@ -262,7 +260,6 @@ export async function updateBranch(
       Authorization: `Bearer ${token}`,
     },
   };
-  console.log("LPM MADREEE");
   const requestUrl = url + `update-branch/`;
   try {
     console.log("BOCA LA CONCHA DE TU MADREEE");
