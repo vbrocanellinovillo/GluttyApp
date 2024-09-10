@@ -56,12 +56,10 @@ export function EmailVerification() {
   };
 
     const resendCode = () => {
-        if (timeLeft === 0) {
-            sendVerificationMail(email); // Sólo reenviar si el temporizador ha terminado
-            setTimeLeft(300); // Reiniciar el temporizador a 5 minutos
-        } else {
-            console.log("Espera a que el temporizador termine para reenviar el código");
-        }
+        Alert.alert("Código enviado", "Se ha enviado el código a: "+ email)
+        sendVerificationMail(username); // Sólo reenviar si el temporizador ha terminado
+        setTimeLeft(300); // Reiniciar el temporizador a 5 minutos
+        
     };
 
     const verifyCodeIngresado = () => {
