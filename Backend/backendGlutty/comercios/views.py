@@ -284,18 +284,25 @@ def update_branch(request):
         user = request.user
         if not user.is_commerce or branch.commerce.user != user:
             return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_403_FORBIDDEN)
-
+        
         # Actualizar la sucursal con los datos proporcionados
         branch.name = request.data.get("name", branch.name)
         branch.phone = request.data.get("phone", branch.phone)
         branch.optional_phone = request.data.get("optional_phone", branch.optional_phone)
-        branch.location.address = request.data.get("address", branch.location.address)
-        branch.location.latitude = request.data.get("latitude", branch.location.latitude)
-        branch.location.longitude = request.data.get("longitude", branch.location.longitude)
+        # location.address = request.data.get("address", location.address)
+        # location.latitude = request.data.get("latitude", location.latitude)
+        # location.longitude = request.data.get("longitude", location.longitude)
         branch.separated_kitchen = request.data.get("separated_kitchen", branch.separated_kitchen)
         branch.just_takeaway = request.data.get("just_takeaway", branch.just_takeaway)
-        
         branch.save()
+        
+        # Actualizar la ubicación relacionada (Location)
+        location = branch.getLocation()
+        location_serializer = LocationSerializer(location, data=request.data, partial=True)
+        if location_serializer.is_valid():
+            location_serializer.save()
+        else:
+            return Response({"error": location_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"detail": "Sucursal actualizada correctamente."}, status=status.HTTP_200_OK)
     except ValidationError as e:

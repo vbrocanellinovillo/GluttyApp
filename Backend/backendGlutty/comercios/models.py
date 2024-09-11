@@ -39,6 +39,9 @@ class Branch(models.Model):
     separated_kitchen= models.BooleanField(default=False)
     just_takeaway= models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    
+    def getLocation(self):
+        return self.location
 
 # Modelo LINKS FOTOS DE SUCURSAL
 class PictureBranch(models.Model):
@@ -58,4 +61,3 @@ class Location(models.Model):
     address = models.CharField(max_length=255, blank=False)
     latitude =  models.FloatField(blank=False, null=False)
     longitude = models.FloatField(blank=False, null=False)
-         
