@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import LoadingGlutty from "../../../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../../../components/UI/GluttyModal";
 
-export default function EditGeneralInfo({ navigation, route }) {
+export default function EditAddress({ navigation, route }) {
   const [isloading, setisloading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -13,35 +13,21 @@ export default function EditGeneralInfo({ navigation, route }) {
 
   const token = useSelector((state) => state.auth.accessToken);
 
-  async function saveUpdatesBranch(
-    latitude,
-    longitude
-  ) {
-      (branch.latitude = latitude),
-      (branch.longitude = longitude);
-
-    try {
-      setisloading(true);
-      console.log("Branch" + branch.id);
-      console.log(branch)
-      const response = await updateBranch(branch, branch.id, token);
-      console.log("La response: ")
-      console.log(response);
-    } catch (error) {
-      setIsError(true);
-      setMessage(error.message);
-      setShowModal(true);
-    } finally {
-      setisloading(false);
-    }
-  }
+  // Verificar que `branch` está correctamente definido
+  const branch = route.params?.branch;
+  console.log("LA BRANCH ES ESTA:   ", branch);
 
   function cancel() {
     navigation.navigate("CommerceDrawer");
   }
 
-  const branch = route.params.branch;
-
+  // Cambiado para usar el `branch` de `route.params` directamente
+  function goNext(address, coordinates) {
+    branch.address = address
+    branch.latitude = coordinates.latitude
+    branch.longitude = coordinates.longitude
+    navigation.navigate("EditMapConfirmation", { params: { branch } });
+  }
 
   function closeModalHandler() {
     setShowModal(false);
@@ -57,11 +43,10 @@ export default function EditGeneralInfo({ navigation, route }) {
       />
       <LoadingGlutty visible={isloading} />
       <AddressForm
-      onNext={saveUpdatesBranch}
-      onBack={cancel}
-      branch={branch}
+        onNext={goNext}
+        onBack={cancel}
+        branch={branch} // Pasando `branch` a `AddressForm`
       />
     </>
-
   );
 }

@@ -1,4 +1,4 @@
-import BranchDataItem from "..//BranchDataItem";
+import BranchDataItem from "../BranchDataItem";
 import { View, StyleSheet } from "react-native";
 import Form from "../../UI/Forms/Form";
 import FormControl from "../../UI/Controls/FormControl";
@@ -8,8 +8,12 @@ import { useNavigation } from "@react-navigation/native";
 export function ConsultAddress({ branch }) {
   const navigation = useNavigation();
 
-  const handlePress = (branch) => {
-    navigation.navigate("EditBranchStack", { screen: "EditAddress", params: { branch }, });
+  // Modificar para que la función reciba el objeto branch
+  const handlePress = () => {
+    navigation.navigate("EditBranchStack", { 
+      screen: "EditAddress", 
+      params: { branch }
+    });
   };
 
   return (
@@ -19,7 +23,7 @@ export function ConsultAddress({ branch }) {
           <FormControl
             label="Dirección"
             name="Direccion"
-            value={branch.address}
+            value={branch.address} // Asegúrate de que el objeto branch tiene una propiedad 'address'
             editable={false}
             style={styles.direccion}
           />
