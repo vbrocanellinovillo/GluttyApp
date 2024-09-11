@@ -1,16 +1,11 @@
-import ScreenCenter from "../../../components/UI/ScreenCenter";
-import BoxingGlutty from "../../../components/UI/SVGGlutty/BoxingGlutty";
-import Title from "../../../components/UI/Title";
 import { useDispatch, useSelector } from "react-redux";
-import { update } from "../../../services/userService";
-import { authActions } from "../../../context/auth";
 import { useState, useEffect } from "react";
-import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
-import GluttyModal from "../../../components/UI/GluttyModal";
 import { getUser } from "../../../services/userService";
 import MedicalExamsContainer from "../../../components/MedicalExams/MedicalExamsContainer";
 import InfoMedicalContainer from "../../../components/MedicalExams/InfoMedicalContainer";
 import { uiActions } from "../../../context/ui";
+import ScreenCenter from "../../../components/UI/ScreenCenter";
+import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
 
 export default function MedicalExams() {
   const token = useSelector((state) => state.auth.accessToken);
@@ -52,8 +47,16 @@ export default function MedicalExams() {
   return (
     <>
       <MedicalExamsContainer />
-      <InfoMedicalContainer visible={showMedicalInfo} onDismiss={showInfoMedicalExams} />
-      
+      <InfoMedicalContainer
+        visible={showMedicalInfo}
+        onDismiss={showInfoMedicalExams}
+      >
+        <ScreenCenter>
+          <TextCommonsMedium>
+            Información sobre estudios medicos
+          </TextCommonsMedium>
+        </ScreenCenter>
+      </InfoMedicalContainer>
     </>
   );
 }

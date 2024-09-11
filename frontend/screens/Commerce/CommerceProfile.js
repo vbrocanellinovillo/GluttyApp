@@ -48,9 +48,7 @@ export default function CommerceProfile() {
   async function submitHandler(cuit, name, email, username, description) {
     try {
       setisloading(true);
-      console.log("UID" + user.id)
       const response = await update(cuit, name, email, username, description, user.id,token);
-      console.log(response)
 
       if (response.tokens){
         const nuevaData = await getUser(response.tokens.access);

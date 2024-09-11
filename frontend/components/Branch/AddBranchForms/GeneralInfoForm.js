@@ -23,8 +23,6 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
       optionalPhone = "";
     }
 
-    console.log(phone);
-    console.log(optionalPhone);
     onNext(name, phone, optionalPhone, separatedKitchen, onlyTakeAway);
   }
 
@@ -36,9 +34,9 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
           initialValues={{
             name: branch?.name,
             phone: branch?.phone,
-            optionalPhone: branch?.optional_phone || " ",
-            separatedKitchen: branch.separated_kitchen,
-            onlyTakeAway: branch.just_takeaway,
+            optionalPhone: branch?.optional_phone,
+            separatedKitchen: branch?.separated_kitchen,
+            onlyTakeAway: branch?.just_takeaway,
           }}
           validate={({
             name,
