@@ -47,9 +47,6 @@ export default function BloodTest() {
 
 
      return(
-    //     <View> 
-    //         <Text>Estudio de sangre nuevo</Text>
-    //     </View>
         
         <DismissKeyboardContainer>
 
