@@ -1,13 +1,13 @@
 import { useSelector } from "react-redux";
 import { getBranch } from "../../../../services/commerceService";
 import { useState, useEffect } from "react";
-import LoadingGlutty from "../../../../components/UI/Loading/LoadingGlutty";
 import { Colors } from "../../../../constants/colors";
-import { Alert, ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import TextCommonsRegular from "../../../../components/UI/FontsTexts/TextCommonsRegular";
 import { ConsultAddress } from "../../../../components/Branch/EditBranch/ConsultAddress";
 import { ConsultGeneralInfo } from "../../../../components/Branch/EditBranch/ConsultGeneralInfo";
 import { ConsultPhotos } from "../../../../components/Branch/EditBranch/ConsultPhotos";
+import ViewBranchSkeleton from "../../../../components/UI/Loading/ViewBranchSkeleton";
 
 export function ViewBranch({ route }) {
   const [branch, setBranch] = useState(undefined);
@@ -34,11 +34,12 @@ export function ViewBranch({ route }) {
     }
   }, [id, token]);
 
-  
+  if (isloading) {
+    return <ViewBranchSkeleton />;
+  }
 
   return (
     <>
-      <LoadingGlutty visible={isloading} />
       {branch && (
         <>
           <TextCommonsRegular style={styles.title}>
