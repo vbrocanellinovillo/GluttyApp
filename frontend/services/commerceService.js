@@ -193,44 +193,6 @@ export async function getMapPoints(token) {
   }
 }
 
-/* HACER ESTA FUNCIÓN PARA UPDATE DE COMERCIO*/
-export async function update(
-  username,
-  name,
-  cuit,
-  description,
-  email,
-  id,
-  token
-) {
-  const formdata = new FormData();
-  formdata.append("username", username);
-  formdata.append("name", name);
-  formdata.append("cuit", cuit);
-  formdata.append("description", description);
-  formdata.append("email", email);
-
-  const requestOptions = {
-    method: "PUT",
-    body: formdata,
-    redirect: "follow",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  console.log("LPM MADREEE");
-  const requestUrl = urlUs + `update/${id}/`;
-  try {
-    console.log("BOCA LA CONCHA DE TU MADREEE");
-    const response = await httpRequest(requestUrl, requestOptions);
-
-    return response;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-}
-
-
 //Actualización en la branch
 export async function updateBranch(
   branch,

@@ -1,127 +1,107 @@
-import { useDispatch, useSelector } from "react-redux";
 import CommerceProfileForm from "./CommerceProfileForm";
-import { authActions } from "../../context/auth";
-import { useState, useEffect } from "react";
-import LoadingGlutty from "../UI/Loading/LoadingGlutty";
-import GluttyModal from "../UI/GluttyModal";
 import NoUserData from "./NoUserData";
 import UserDataSkeleton from "../UI/Loading/UserDataSkeleton";
 import UserProfileForm from "./UserProfileForm";
-import { getUser, update } from "../../services/userService";
-import { useNavigation } from "@react-navigation/native";
 import UserImage from "../UI/UserImage/UserImage";
 import { ScrollView, StyleSheet, View } from "react-native";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
+import {
+  launchCameraAsync,
+  launchImageLibraryAsync,
+  MediaTypeOptions,
+  PermissionStatus,
+  useCameraPermissions,
+  useMediaLibraryPermissions,
+} from "expo-image-picker";
+import { useRef, useState } from "react";
+import BottomSheet from "@devvie/bottom-sheet";
+import ImageSheetOptions from "../UI/UserImage/ImageSheetOptions";
+import { Portal } from "react-native-paper";
 
-export default function UpdateProfile({ isCommerce }) {
-  const token = useSelector((state) => state.auth.accessToken);
-  const refreshtoken = useSelector((state) => state.auth.refreshToken);
-  const dispatch = useDispatch();
+export default function UpdateProfile({
+  isCommerce,
+  onSubmit,
+  userData,
+  isFetching,
+}) {
+  // Manejo de la imagen
+  const sheetRef = useRef();
 
-  const user = useSelector((state) => state.auth.userData);
-  const [showModal, setShowModal] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [message, setMessage] = useState("");
-  const [userData, setUserData] = useState(null);
+  const [cameraPermissions, requestCameraPermissions] = useCameraPermissions();
+  const [galleryPermissions, requestGalleryPermissions] =
+    useMediaLibraryPermissions();
 
-  const [isFetching, setIsFetching] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [takenImage, setTakenImage] = useState(undefined);
 
-  const updateMessage = isCommerce
-    ? "Datos de comercio actualizados correctamente"
-    : "Datos de cuenta actualizados correctamente";
-
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    async function getUserData() {
-      try {
-        setIsFetching(true);
-        const response = await getUser(token);
-        setUserData(response);
-        setIsError(false);
-      } catch (error) {
-        setIsError(true);
-        setMessage(error.message);
-        setShowModal(true);
-      } finally {
-        setIsFetching(false);
+  async function checkPermissions(option) {
+    if (option === "Take Photo") {
+      if (cameraPermissions.status === PermissionStatus.GRANTED) {
+        return true;
       }
-    }
 
-    getUserData();
-  }, [token]);
-
-  function closeModalHandler() {
-    setShowModal(false);
-    if (!isError) {
-      if (isCommerce) {
-        navigation.navigate("Sucursales", { screen: "Branches" });
-      } else {
-        navigation.navigate("Home");
+      const response = await requestCameraPermissions();
+      return response.granted;
+    } else {
+      if (galleryPermissions.status === PermissionStatus.GRANTED) {
+        return true;
       }
+
+      const response = await requestGalleryPermissions();
+      return response.granted;
     }
   }
 
-  async function submitHandler(userData) {
-    setIsUpdating(true);
-    try {
-      const response = await update(user.id, isCommerce, userData, token);
+  async function selectImage(option) {
+    sheetRef.current?.close();
+    const permissionStatus = await checkPermissions(option);
 
-      if (response.tokens) {
-        const nuevaData = await getUser(response.tokens.access);
-        setUserData(nuevaData);
-        dispatch(
-          authActions.updateUser({
-            user: response.user,
-            accessToken: response.tokens.access,
-            refreshToken: response.tokens.refresh,
-          })
-        );
-      } else {
-        const nuevaData = await getUser(token);
-        setUserData(nuevaData);
-        dispatch(
-          authActions.updateUser({
-            user: response.user,
-            accessToken: token,
-            refreshToken: refreshtoken,
-          })
-        );
-      }
+    if (!permissionStatus) return;
 
-      setIsError(false);
-      setMessage(updateMessage);
-      setShowModal(true);
-    } catch (error) {
-      setIsError(true);
-      setMessage(error.message);
-      setShowModal(true);
-    } finally {
-      setIsUpdating(false);
+    let imageResult;
+    let options = {
+      allowsEditing: true,
+      mediaTypes: MediaTypeOptions.Images,
+    };
+
+    if (option === "Take Image") {
+      imageResult = await launchCameraAsync(options);
+    } else {
+      imageResult = await launchImageLibraryAsync(options);
     }
+
+    if (!imageResult.canceled) {
+      setTakenImage(imageResult.assets[0]);
+    }
+  }
+
+  function openImageOptions() {
+    sheetRef.current?.open();
   }
 
   if (isFetching) {
     return <UserDataSkeleton />;
   }
 
-  if (!userData) {
+  if (!userData && !isFetching) {
     return <NoUserData />;
   }
 
+  function submitHandler(values) {
+    values = { ...values, image: takenImage };
+    onSubmit(values);
+  }
+
   return (
-    <>
-      <GluttyModal
-        isError={isError}
-        message={message}
-        onClose={closeModalHandler}
-        visible={showModal}
-      />
-      <DismissKeyboardContainer>
+    <DismissKeyboardContainer>
+      <>
         <ScrollView>
           <View style={styles.imageContainer}>
-            <UserImage dimensions={160} isForm />
+            <UserImage
+              dimensions={160}
+              isForm
+              onPress={openImageOptions}
+              source={takenImage && takenImage.uri}
+            />
           </View>
           {isCommerce ? (
             <CommerceProfileForm
@@ -137,9 +117,16 @@ export default function UpdateProfile({ isCommerce }) {
             />
           )}
         </ScrollView>
-      </DismissKeyboardContainer>
-      <LoadingGlutty visible={isUpdating} />
-    </>
+        <Portal>
+          <BottomSheet ref={sheetRef} height={200}>
+            <ImageSheetOptions
+              onTakeImage={selectImage.bind(this, "Take Image")}
+              onPickImage={selectImage.bind(this, "Pick Image")}
+            />
+          </BottomSheet>
+        </Portal>
+      </>
+    </DismissKeyboardContainer>
   );
 }
 

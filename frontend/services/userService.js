@@ -18,7 +18,6 @@ export async function login(username, password) {
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);
-    console.log(response);
     return response;
   } catch (error) {
     throw new Error(error.message);
@@ -43,8 +42,6 @@ export async function register(userData, isCommerce) {
         }
       : null
   );
-
-  console.log(userData.image);
 
   if (isCommerce) {
     formdata.append("name", userData.name);
@@ -80,6 +77,17 @@ export async function update(id, isCommerce, userData, token) {
   const formdata = new FormData();
   formdata.append("username", userData.username);
   formdata.append("email", userData.email);
+
+  formdata.append(
+    "image",
+    userData.image
+      ? {
+          uri: userData.image.uri,
+          name: userData.image.fileName || "photo",
+          type: userData.image.mimeType,
+        }
+      : null
+  );
 
   if (isCommerce) {
     formdata.append("name", userData.name);

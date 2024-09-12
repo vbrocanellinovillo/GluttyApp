@@ -12,6 +12,7 @@ import { ConsultPhotos } from "../../../../components/Branch/EditBranch/ConsultP
 export function ViewBranch({ route }) {
   const [branch, setBranch] = useState(undefined);
   const [isloading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const id = route.params.branch.id;
   const token = useSelector((state) => state.auth.accessToken);
@@ -23,8 +24,7 @@ export function ViewBranch({ route }) {
         const branchData = await getBranch(id, token); // Espera la promesa con await
         setBranch(branchData);
       } catch (error) {
-        console.error("Error caught in catch block:", error);
-        Alert.alert("Error al cargar la branch seleccionada", error.message);
+        setIsError(true);
       } finally {
         setIsLoading(false);
       }
@@ -33,6 +33,8 @@ export function ViewBranch({ route }) {
       cargarBranch();
     }
   }, [id, token]);
+
+  
 
   return (
     <>

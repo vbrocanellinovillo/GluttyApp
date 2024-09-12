@@ -1,6 +1,5 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import Form from "../UI/Forms/Form";
-import FormHeader from "../UI/Forms/FormHeader";
 import FormTitle from "../UI/Forms/FormTitle";
 import FormControl from "../UI/Controls/FormControl";
 import FormGroup from "../UI/Forms/FormGroup";
@@ -28,7 +27,6 @@ export default function UserProfileForm({ onSubmit, user, celiac }) {
         style={styles.container}
         contentContainerStyle={{ alignItems: "center" }}
       >
-        <FormHeader title="icono futuro" />
         <Formik
           initialValues={{
             username: user?.username,

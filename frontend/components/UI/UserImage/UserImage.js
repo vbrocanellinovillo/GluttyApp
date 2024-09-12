@@ -1,10 +1,17 @@
-import { StyleSheet, Pressable, Image, View } from "react-native";
+import { StyleSheet, Pressable, View } from "react-native";
+import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
 import { useSelector } from "react-redux";
 import { userAddGlutty, userGlutty } from "../../../constants/glutty";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 
-export default function UserImage({ onPress, dimensions, style, isForm }) {
+export default function UserImage({
+  onPress,
+  dimensions,
+  style,
+  isForm,
+  source,
+}) {
   const borderRadius = dimensions / 2;
   //const image =
   //  "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg";
@@ -15,6 +22,9 @@ export default function UserImage({ onPress, dimensions, style, isForm }) {
     onPress();
   }
 
+  const blurhash =
+    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
   return (
     <Pressable
       onPress={pressImageHandler}
@@ -22,9 +32,8 @@ export default function UserImage({ onPress, dimensions, style, isForm }) {
     >
       {image ? (
         <Image
-          source={{
-            uri: image,
-          }}
+          placeholder={{ blurhash }}
+          source={source ? { uri: source } : image}
           style={[
             styles.userImage,
             { width: dimensions, height: dimensions, borderRadius },
