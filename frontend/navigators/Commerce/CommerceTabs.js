@@ -4,10 +4,9 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import MainHeader from "../../components/UI/Header/MainHeader";
 import Menu from "../../screens/Commerce/Menu/Menu";
-import Branches from "../../screens/Commerce/Branches/Branches";
-import CommerceProfile from "../../screens/Commerce/CommerceProfile";
-import { ViewBranch } from "../../screens/Commerce/Branches/EditBranch/ViewBranch";
 import BranchesStack from "./BranchesStack";
+import Profile from "../../screens/Profile/Profile";
+import PrivacityAndSecurity from "../../screens/Profile/PrivacityAndSecurity";
 
 export default function CommerceTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -92,11 +91,15 @@ export default function CommerceTabs() {
         position="RIGHT"
         component={Menu}
       />
-
       <CurvedBottomBarExpo.Screen
         name="UserData"
-        component={CommerceProfile}
+        component={Profile}
         options={{ title: "Mis datos" }}
+      />
+      <CurvedBottomBarExpo.Screen
+        name="PrivacityAndSecurity"
+        component={PrivacityAndSecurity}
+        options={{ title: "Privacidad y Seguridad" }}
       />
     </CurvedBottomBarExpo.Navigator>
   );

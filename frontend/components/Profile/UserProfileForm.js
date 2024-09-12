@@ -17,16 +17,9 @@ const sexos = [
   { label: "Otro", value: "OTHER" },
 ];
 
-export default function ProfileForm({ onSubmit, user }) {
-  function submitHandler({
-    nombreUsuario,
-    nombre,
-    apellido,
-    sexo,
-    fechaNacimiento,
-    email,
-  }) {
-    onSubmit(nombreUsuario, nombre, apellido, sexo, fechaNacimiento, email);
+export default function UserProfileForm({ onSubmit, user, celiac }) {
+  function submitHandler(values) {
+    onSubmit(values);
   }
 
   return (
@@ -38,40 +31,40 @@ export default function ProfileForm({ onSubmit, user }) {
         <FormHeader title="icono futuro" />
         <Formik
           initialValues={{
-            nombreUsuario: user.username,
-            nombre: user.first_name,
-            apellido: user.last_name,
-            sexo: user.gender,
-            fechaNacimiento: user.dateBirth,
-            email: user.email,
+            username: user?.username,
+            firstName: celiac?.first_name,
+            lastName: celiac?.last_name,
+            sex: celiac?.sex,
+            dateBirth: celiac?.date_birth,
+            email: user?.email,
           }}
           validate={({
-            nombreUsuario,
-            nombre,
-            apellido,
-            sexo,
-            fechaNacimiento,
+            username,
+            firstName,
+            lastName,
+            sex,
+            dateBirth,
             email,
           }) => {
             const errors = {};
-            if (nombreUsuario.trim() === "") {
-              errors.nombreUsuario = "Nombre de usuario requerido";
+            if (username.trim() === "") {
+              errors.username = "Nombre de usuario requerido";
             }
 
-            if (nombre.trim() === "") {
-              errors.nombre = "Nombre requerido";
+            if (firstName.trim() === "") {
+              errors.firstName = "Nombre requerido";
             }
 
-            if (apellido.trim() === "") {
-              errors.apellido = "Apellido requerido";
+            if (lastName.trim() === "") {
+              errors.lastName = "Apellido requerido";
             }
 
-            if (sexo.trim() === "") {
-              errors.sexo = "Genero requerido";
+            if (sex.trim() === "") {
+              errors.sex = "Sexo requerido";
             }
 
-            if (fechaNacimiento === undefined) {
-              errors.fechaNacimiento = "Fecha requerida";
+            if (dateBirth === undefined) {
+              errors.dateBirth = "Fecha requerida";
             }
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -96,48 +89,48 @@ export default function ProfileForm({ onSubmit, user }) {
               <FormTitle>Usuario</FormTitle>
               <FormControl
                 label="Nombre usuario"
-                value={values.nombreUsuario}
-                name="nombreUsuario"
+                value={values.username}
+                name="username"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                errors={errors.nombreUsuario}
-                touched={touched.nombreUsuario}
+                errors={errors.username}
+                touched={touched.username}
               />
               <FormControl
                 label="Nombre"
-                value={values.nombre}
-                name="nombre"
+                value={values.firstName}
+                name="firstName"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                errors={errors.nombre}
-                touched={touched.nombre}
+                errors={errors.firstName}
+                touched={touched.firstName}
               />
               <FormControl
                 label="Apellido"
-                value={values.apellido}
-                name="apellido"
+                value={values.lastName}
+                name="lastName"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                errors={errors.apellido}
-                touched={touched.apellido}
+                errors={errors.lastName}
+                touched={touched.lastName}
               />
               <FormGroup>
                 <Combobox
                   data={sexos}
                   placeholder="Genero"
-                  onChange={(item) => setFieldValue("sexo", item)}
-                  value={values.sexo}
-                  touched={touched.sexo}
-                  errors={errors.sexo}
-                  name="sexo"
+                  onChange={(item) => setFieldValue("sex", item)}
+                  value={values.sex}
+                  touched={touched.sex}
+                  errors={errors.sex}
+                  name="sex"
                   handleBlur={handleBlur}
                 />
                 <DatePicker
                   placeholder="Fecha nacimiento"
-                  onChange={(date) => setFieldValue("fechaNacimiento", date)}
-                  touched={touched.fechaNacimiento}
-                  errors={errors.fechaNacimiento}
-                  value={values.fechaNacimiento}
+                  onChange={(date) => setFieldValue("dateBirth", date)}
+                  touched={touched.dateBirth}
+                  errors={errors.dateBirth}
+                  value={values.dateBirth}
                 />
               </FormGroup>
               <FormControl

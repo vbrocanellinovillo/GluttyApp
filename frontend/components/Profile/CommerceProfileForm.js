@@ -1,21 +1,14 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import Form from "../UI/Forms/Form";
-import FormHeader from "../UI/Forms/FormHeader";
 import FormTitle from "../UI/Forms/FormTitle";
 import FormControl from "../UI/Controls/FormControl";
-import FormGroup from "../UI/Forms/FormGroup";
 import Button from "../UI/Controls/Button";
 import { Colors } from "../../constants/colors";
-import Combobox from "../UI/Controls/Combobox";
-import DatePicker from "../UI/Controls/DatePicker";
 import { Formik } from "formik";
-import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 
 export default function CommerceProfileForm({ onSubmit, user, commerce }) {
-  function submitHandler({ cuit, name, email, username, description }) {
-    console.log("usuario: " + username)
-    console.log(cuit + name + email + username + description)
-    onSubmit(username, name, cuit, description, email);
+  function submitHandler(values) {
+    onSubmit(values);
   }
 
   return (
@@ -31,10 +24,9 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
           cuit: commerce.cuit,
           description: commerce.description,
         }}
-        
         validate={({ username, email, name }) => {
           const errors = {};
-          
+
           if (username.trim() === "") {
             errors.username = "Nombre de usuario requerido";
           }
@@ -47,7 +39,7 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
           if (name.trim() === "") {
             errors.name = "Nombre de comercio requerido";
           }
-          // FALTAN VALIDACIONES 
+          // FALTAN VALIDACIONES
           return errors;
         }}
         onSubmit={submitHandler}
@@ -62,7 +54,6 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
         }) => (
           <Form>
             <FormTitle>Datos de Comercio</FormTitle>
-
             <FormControl
               label="Nombre de Comercio"
               value={values.name}
@@ -72,7 +63,6 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
               errors={errors.name}
               touched={touched.name}
             />
-
             <FormControl
               label="Nombre usuario"
               value={values.username}
@@ -82,7 +72,6 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
               errors={errors.username}
               touched={touched.username}
             />
-
             <FormControl
               label="Email"
               value={values.email}
@@ -112,7 +101,6 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
               //errors={errors.}
               //touched={touched.email}
             />
-
             <View style={styles.buttonContainer}>
               <Button
                 backgroundColor={Colors.locro}

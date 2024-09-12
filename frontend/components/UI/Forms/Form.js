@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
-export default function Form({ children }) {
+export default function Form({ children, style }) {
   return (
     <Animated.View
-      style={styles.form}
+      style={[styles.form, style]}
       entering={FadeIn}
       exiting={FadeOut}
     >

@@ -8,7 +8,7 @@ export default function MedicalExamsStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="MedicalExams" component={MedicalExams} />
-      <Stack.Screen name = "BloodTest" component = {BloodTest}/>
+      <Stack.Screen name="BloodTest" component={BloodTest} />
     </Stack.Navigator>
   );
 }

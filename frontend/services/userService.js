@@ -45,7 +45,6 @@ export async function register(userData, isCommerce) {
   );
 
   console.log(userData.image);
-  
 
   if (isCommerce) {
     formdata.append("name", userData.name);
@@ -77,27 +76,29 @@ export async function register(userData, isCommerce) {
   }
 }
 
-export async function update(
-  username,
-  name,
-  lastName,
-  sex,
-  dateBirth,
-  email,
-  id
-) {
+export async function update(id, isCommerce, userData, token) {
   const formdata = new FormData();
-  formdata.append("username", username);
-  formdata.append("first_name", name);
-  formdata.append("last_name", lastName);
-  formdata.append("gender", sex);
-  formdata.append("dateBirth", dateBirth);
-  formdata.append("email", email);
+  formdata.append("username", userData.username);
+  formdata.append("email", userData.email);
+
+  if (isCommerce) {
+    formdata.append("name", userData.name);
+    formdata.append("cuit", userData.cuit);
+    formdata.append("description", userData.description);
+  } else {
+    formdata.append("first_name", userData.firstName);
+    formdata.append("last_name", userData.lastName);
+    formdata.append("gender", userData.sex);
+    formdata.append("dateBirth", userData.dateBirth);
+  }
 
   const requestOptions = {
     method: "PUT",
     body: formdata,
     redirect: "follow",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
 
   const requestUrl = url + `update/${id}/`;
@@ -162,16 +163,15 @@ export async function getUser(token) {
     },
   };
   const requestUrl = url + `get-user/`;
-    try {
-      const response = await httpRequest(requestUrl, requestOptions);
-      console.log("COMERCIO: " + response);
-      return response;
-    } catch (error) {
-      throw new Error(error.message);
-    }
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
-export async function sendVerificationMail(username) { 
+export async function sendVerificationMail(username) {
   const formdata = new FormData();
   formdata.append("username", username);
 
@@ -194,12 +194,12 @@ export async function verifyCode(username, verificationCode) {
   const formdata = new FormData();
   formdata.append("username", username);
   formdata.append("code", verificationCode);
-  
+
   const requestOptions = {
     method: "POST",
     body: formdata,
   };
-  
+
   const requestUrl = url + "verify-code/";
   try {
     const response = await httpRequest(requestUrl, requestOptions);
@@ -207,5 +207,4 @@ export async function verifyCode(username, verificationCode) {
   } catch (error) {
     throw new Error(error.message);
   }
-
 }

@@ -1,7 +1,6 @@
 import { backendUrl } from "../constants/backend";
 import { Coordinates } from "../models/Coordinates";
 import { httpRequest } from "../utils/http";
-import { sleep } from "../utils/utilFunctions";
 
 const url = backendUrl + "comercios/";
 const urlUs = backendUrl + "usuarios/";
