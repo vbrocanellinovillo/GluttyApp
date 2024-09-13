@@ -11,3 +11,21 @@ export function formatDateToYYYYMMDD(date) {
   // Combina en el formato deseado
   return `${year}-${month}-${day}`;
 }
+
+export const getMonthName = (monthNumber) => {
+  const months = [
+    "ENE",
+    "FEB",
+    "MAR",
+    "ABR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AGO",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DIC",
+  ];
+  return months[monthNumber - 1];
+};

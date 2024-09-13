@@ -2,10 +2,36 @@ import { StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import ErrorFetchingMedicalExams from "./ErrorFetchingMedicalExams";
 import AddMedicalExamButton from "./AddMedicalExamButton";
+import MedicalExamsList from "./MedicalExamsList";
+
+const Exams = [
+  {
+    id: 1,
+    date: "2000-09-08",
+    dr: "Messi",
+    hospital: "Oulton",
+  },
+  {
+    id: 2,
+    date: "2000-09-08",
+    dr: "Messi",
+    hospital: "Oulton",
+  },
+  {
+    id: 3,
+    date: "2000-09-08",
+    dr: "Messi",
+    hospital: "Oulton",
+  },
+  {
+    id: 4,
+    date: "2000-09-08",
+    dr: "Messi",
+    hospital: "Oulton",
+  },
+];
 
 export default function MedicalExamsContainer({ isLoading, isError }) {
-  //const branches = useSelector((state) => state.commerce.branches);
-
   let content;
 
   if (isLoading) {
@@ -13,22 +39,16 @@ export default function MedicalExamsContainer({ isLoading, isError }) {
   }
 
   if (isError) {
-    content = <ErrorFetchingMedicalExams />
+    content = <ErrorFetchingMedicalExams />;
   }
 
-  // if (!isLoading && !isError && branches && branches.length > 0) {
-  //   content = <View></View>
-  // }
-  
-  // if (!isLoading && !isError && branches && branches.length == 0) {
-  //   content = <View></View>
-  // }
+  if (!isLoading && Exams) {
+    content = <MedicalExamsList medicalExmas={Exams} />;
+  }
 
   return (
     <View style={styles.container}>
-      <AddMedicalExamButton>
-        
-      </AddMedicalExamButton>
+      <AddMedicalExamButton></AddMedicalExamButton>
       {content}
     </View>
   );

@@ -1,10 +1,9 @@
-import { FlatList, StyleSheet } from "react-native";
-import BranchItem from "./BranchItem";
-import { ViewBranch } from "../../screens/Commerce/Branches/EditBranch/ViewBranch";
+import { FlatList, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import MedicalExamItem from "./MedicalExamsItem";
 
-export default function MedicalExams({ medicalExmas }) {
-  const navigation = useNavigation()
+export default function MedicalExamsList({ medicalExmas }) {
+  const navigation = useNavigation();
 
   /*const handlePress = (branch) => {
 
@@ -14,14 +13,7 @@ export default function MedicalExams({ medicalExmas }) {
   return (
     <FlatList
       data={medicalExmas}
-      renderItem={({ item }) => (
-        <BranchItem
-          id = {item.id}
-          name={item.name}
-          address={item.address}
-          onPress={navigation.navigate("Consultar Sucursal", {item})}
-        />
-      )}
+      renderItem={({ item }) => <MedicalExamItem medicalExam={item} />}
       keyExtractor={(item) => (item.id ? item.id.toString() : Math.random())}
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}

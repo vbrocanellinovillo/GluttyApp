@@ -7,6 +7,7 @@ import { uiActions } from "../../../context/ui";
 import ScreenCenter from "../../../components/UI/ScreenCenter";
 import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
 
+
 export default function MedicalExams() {
   const token = useSelector((state) => state.auth.accessToken);
   const showMedicalInfo = useSelector((state) => state.ui.medicalDetails);
