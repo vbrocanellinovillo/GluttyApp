@@ -8,6 +8,7 @@ import { ConsultAddress } from "../../../../components/Branch/EditBranch/Consult
 import { ConsultGeneralInfo } from "../../../../components/Branch/EditBranch/ConsultGeneralInfo";
 import { ConsultPhotos } from "../../../../components/Branch/EditBranch/ConsultPhotos";
 import ViewBranchSkeleton from "../../../../components/UI/Loading/ViewBranchSkeleton";
+import ErrorViewBranch from "../../../../components/Branch/ErrorViewBranch";
 
 export function ViewBranch({ route }) {
   const [branch, setBranch] = useState(undefined);
@@ -23,6 +24,7 @@ export function ViewBranch({ route }) {
         setIsLoading(true);
         const branchData = await getBranch(id, token); // Espera la promesa con await
         setBranch(branchData);
+        setIsError(false);
       } catch (error) {
         setIsError(true);
       } finally {
@@ -36,6 +38,10 @@ export function ViewBranch({ route }) {
 
   if (isloading) {
     return <ViewBranchSkeleton />;
+  }
+
+  if (!isloading && isError) {
+    return <ErrorViewBranch />
   }
 
   return (
