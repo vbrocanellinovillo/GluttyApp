@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
-  Alert,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
@@ -24,7 +23,7 @@ export function EmailVerification() {
   const navigation = useNavigation();
 
   const [showModal, setShowModal] = useState(false);
-  let message = "";
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (!emailSent) {
@@ -70,7 +69,7 @@ export function EmailVerification() {
   };
 
   const resendCode = () => {
-    message = "Se ha enviado el codigo a: " + email;
+    setMessage("Se ha enviado el codigo a: " + email);
     setShowModal(true);
     sendVerificationMail(username); // Sólo reenviar si el temporizador ha terminado
     setTimeLeft(300); // Reiniciar el temporizador a 5 minutos
@@ -81,7 +80,7 @@ export function EmailVerification() {
 
     const verificar = verifyCode(username, code.join(""));
     console.log(verificar);
-    message = "Ha ingresado correctamente el código de verificación";
+    setMessage("Ha ingresado correctamente el código de verificación");
     setShowModal(true);
     navigation.navigate("Login");
   };
