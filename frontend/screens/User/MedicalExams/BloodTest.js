@@ -4,6 +4,7 @@ import Form from "../../../components/UI/Forms/Form";
 import FormTitle from "../../../components/UI/Forms/FormTitle";
 import FormControl from "../../../components/UI/Controls/FormControl";
 import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
+import MedicalControl from "../../../components/UI/Controls/MedicalControl";
 
 export default function BloodTest() {
   function submitHandler({
@@ -52,66 +53,56 @@ export default function BloodTest() {
         <Form style={styles.form}>
           <View style={styles.sectionContainer}>
             <FormTitle>Anticuerpos Celiaquía</FormTitle>
-            <View style={styles.control}>
-              <TextCommonsMedium>Ig A anti Transglutaminasa</TextCommonsMedium>
-              <FormControl name="igA" />
-            </View>
-            <View style={styles.control}>
-              <TextCommonsMedium>
-                Ig G anti Gliadina Deaminada
-              </TextCommonsMedium>
-              <FormControl name="igG" />
-            </View>
-            <View style={styles.control}>
-              <TextCommonsMedium>
-                Anticuerpos antiendomisio (EMA)
-              </TextCommonsMedium>
-              <FormControl name="ema" />
-            </View>
+            <MedicalControl label="Ig A anti Transglutaminasa" unit="U/ml" />
+            <MedicalControl label="Ig G anti Gliadina Deaminada" unit="U/ml" />
+            <MedicalControl label="Anticuerpos antiendomisio (EMA)" />
           </View>
 
           <View style={styles.sectionContainer}>
             <FormTitle>Hemograma Básico</FormTitle>
-            <FormControl label="Hemoglobina" name="hemoglobina" />
-            <FormControl label="Hematocrito" name="hematocrito" />
+            <MedicalControl label="Hemoglobina" unit="g/dL" />
+            <MedicalControl label="Hematocrito" unit="%" />
           </View>
 
           <View style={styles.sectionContainer}>
             <FormTitle>Ferritina y Herro Sérico</FormTitle>
-            <FormControl label="Ferritina" name="ferritina" />
-            <FormControl label="Hierro sérico/Ferremia" name="ferremia" />
+            <MedicalControl label="Ferritina" unit="ng/mL" />
+            <MedicalControl label="Hierro sérico/Ferremia" unit="µg/dL" />
           </View>
 
           <View style={styles.sectionContainer}>
             <FormTitle>Vitamina B12</FormTitle>
-            <FormControl label="Vitamina B12" name="vitB12" />
+            <MedicalControl label="Vitamina B12" unit="pg/mL" />
           </View>
 
           <View style={styles.sectionContainer}>
             <FormTitle>Calcio y Vitamina D</FormTitle>
-            <FormControl label="Calcio sérico/Calcemia" name="calcemia" />
-            <FormControl label="Vitamina D" name="vitD" />
+            <MedicalControl label="Calcio sérico/Calcemia" unit="mg/dL" />
+            <MedicalControl label="Vitamina D" unit="ng/mL" />
           </View>
 
           <View style={styles.sectionContainer}>
             <FormTitle>Función Hepática</FormTitle>
-            <FormControl label="ALT (alanina aminotransferasa)" name="alts" />
-            <FormControl label="AST (aspartato aminotransferasa)" name="ast" />
+            <MedicalControl
+              label="ALT (alanina aminotransferasa)"
+              unit="U/L"
+            />
+            <MedicalControl
+              label="AST (aspartato aminotransferasa)"
+              unit="U/L"
+            />
           </View>
 
           <View style={styles.sectionContainer}>
             <FormTitle>Perfil Lipídico</FormTitle>
-            <FormControl
+            <MedicalControl
               label="Colesterol total/Colesterolemia"
-              name="colesterolemia"
+              unit="mg/dL"
             />
-            <FormControl label="Colesterol LDL" name="colLDL" />
-            <FormControl label="Colesterol HDL" name="colHDL" />
-            <FormControl
-              label="Triglicéridos/Trigliceridemia"
-              name="trigliceridos"
-            />
-            <FormControl label="Glucemia" name="glucemia" />
+            <MedicalControl label="Colesterol LDL" unit="mg/dL" />
+            <MedicalControl label="Colesterol HDL" unit="mg/dL" />
+            <MedicalControl label="Triglicéridos/Trigliceridemia" unit="mg/dL" />
+            <MedicalControl label="Glucemia" unit="mg/dL" />
           </View>
         </Form>
       </ScrollView>
@@ -128,6 +119,7 @@ const styles = StyleSheet.create({
 
   form: {
     gap: 14,
+    paddingHorizontal: 0
   },
 
   buttonContainer: {
@@ -147,5 +139,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     shadowOffset: { width: 0, height: 1 },
     borderRadius: 10,
+    gap: 20
   },
 });
