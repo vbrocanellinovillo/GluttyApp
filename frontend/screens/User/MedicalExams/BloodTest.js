@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   },
 
   sectionContainer: {
-    padding: 20,
+    padding: 16,
     shadowColor: "black",
     shadowOpacity: 0.3,
     shadowRadius: 4,

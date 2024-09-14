@@ -1,7 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
-import FormControl from "./FormControl";
 import NumericInput from "./NumericInput";
 
 export default function MedicalControl({ label, unit }) {
@@ -26,7 +25,7 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 18,
     fontWeight: "500",
-    flex: 1.4,
+    flex: 1.3,
   },
 
   inputContainer: {
@@ -34,13 +33,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
-    gap: 16,
+    gap: 10,
   },
 
   unitStyle: {
     fontSize: 18,
     fontWeight: "400",
-    flex: 1,
+    flex: 0.8,
   },
 
   input: {
