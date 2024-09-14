@@ -3,12 +3,12 @@ import { StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import { GlobalStyles } from "../../../constants/styles";
 
-export default function Header({ children }) {
+export default function Header({ children, style }) {
   const blurHeader = useSelector((state) => state.ui.blurHeader);
 
   return (
     <>
-      <View style={styles.header}>{children}</View>
+      <View style={[styles.header, style]}>{children}</View>
       {blurHeader && <BlurView style={GlobalStyles.blur} intensity={1} />}
     </>
   );

@@ -105,15 +105,7 @@ export default function UserTabs() {
         name="Estudios"
         position="RIGHT"
         component={MedicalExamsStack}
-        options={{
-          header: ({ navigation, route, options }) => (
-            <MedicalExamsHeader
-              navigation={navigation}
-              route={route}
-              options={options}
-            />
-          ),
-        }}
+        options={{ headerShown: false }}
       />
       <CurvedBottomBarExpo.Screen
         name="Mapa"

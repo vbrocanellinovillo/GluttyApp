@@ -7,6 +7,7 @@ import { store } from "./context/store";
 import { PaperProvider } from "react-native-paper";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/http";
+import { StatusBar } from "expo-status-bar";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <PaperProvider>
+            <StatusBar style="dark" />
             <Index />
           </PaperProvider>
         </QueryClientProvider>

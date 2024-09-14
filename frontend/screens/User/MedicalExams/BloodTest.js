@@ -287,14 +287,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     gap: 20,
   },
-
-  combobox: {
-    backgroundColor: "#eee",
-    borderWidth: 0,
-    shadowColor: "black",
-    shadowRadius: 4,
-    shadowOpacity: 0.5,
-    shadowOffset: { width: 0, height: 0 },
-    elevation: 5,
-  },
 });
