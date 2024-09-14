@@ -2,24 +2,74 @@ import { StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 import NumericInput from "./NumericInput";
+import { Colors } from "../../../constants/colors";
+import { useState } from "react";
 
-export default function MedicalControl({ label, unit }) {
+export default function MedicalControl({
+  label,
+  unit,
+  value,
+  onChange,
+  errors,
+}) {
+  const [touched, setTouched] = useState(false);
+  const hasError = errors && touched;
+
+  function handleChange(value) {
+    onChange(value);
+  }
+
+  function handleBlur() {
+    setTouched(true);
+  }
+
   return (
-    <View style={styles.control}>
-      <TextCommonsMedium style={styles.textStyle}>{label}</TextCommonsMedium>
-      <View style={styles.inputContainer}>
-        <NumericInput containerStyle={styles.input}/>
-        <TextCommonsRegular style={styles.unitStyle}>{unit}</TextCommonsRegular>
+    <View style={styles.container}>
+      <View style={styles.control}>
+        <TextCommonsMedium
+          style={[
+            styles.textStyle,
+            { color: hasError ? Colors.redError : Colors.mJordan },
+          ]}
+        >
+          {label}
+        </TextCommonsMedium>
+        <View style={styles.inputContainer}>
+          <NumericInput
+            containerStyle={[
+              styles.input,
+              { shadowColor: hasError ? Colors.redError : Colors.mJordan },
+            ]}
+            defaultValue={value}
+            onChange={handleChange}
+            inputStyle={{ color: hasError ? Colors.redError : Colors.mJordan }}
+            onBlur={handleBlur}
+          />
+          <TextCommonsRegular
+            style={[
+              styles.unitStyle,
+              { color: hasError ? Colors.redError : Colors.mJordan },
+            ]}
+          >
+            {unit}
+          </TextCommonsRegular>
+        </View>
       </View>
+      {hasError && (
+        <TextCommonsMedium style={styles.errorText}>{errors}</TextCommonsMedium>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    marginVertical: 4,
+  },
+
   control: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 4
   },
 
   textStyle: {
@@ -44,5 +94,11 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
+  },
+
+  errorText: {
+    color: Colors.redError,
+    fontSize: 16,
+    marginTop: 10,
   },
 });

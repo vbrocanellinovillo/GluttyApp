@@ -2,6 +2,7 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../../constants/colors";
 import { useState } from "react";
+import * as Haptics from "expo-haptics";
 
 export default function NumericInput({
   containerStyle,
@@ -10,6 +11,8 @@ export default function NumericInput({
   iconStyle,
   value,
   defaultValue = 0,
+  onChange,
+  onBlur,
 }) {
   const [number, setNumber] = useState(value ? value : defaultValue);
   const [isFocused, setIsFocused] = useState(false);
@@ -18,17 +21,33 @@ export default function NumericInput({
   const showValue = number.toString().trim() === "" && !isFocused ? 0 : number;
 
   function increaseValue() {
+    Haptics.selectionAsync();
+
     setNumber((prevNumber) => (prevNumber += 1));
+    onChange(number + 1);
+    onBlur();
     if (!hasChanged) setHasChanged(true);
   }
 
   function decreaseValue() {
+    Haptics.selectionAsync();
     setNumber((prevNumber) => (prevNumber -= 1));
+    onChange(number - 1);
+    onBlur();
     if (!hasChanged) setHasChanged(true);
   }
 
   function changeNumberHandler(text) {
-    setNumber(text);
+    if (text.trim() == "") {
+      setNumber(text);
+      return;
+    }
+
+    const result = parseInt(text);
+
+    setNumber(result);
+    onChange(result);
+
     if (!hasChanged) setHasChanged(true);
   }
 
@@ -42,6 +61,14 @@ export default function NumericInput({
 
   function handleBlur() {
     setIsFocused(false);
+
+    if (!hasChanged) {
+      setNumber(defaultValue);
+    } else if (number === "") {
+      setNumber(defaultValue);
+    }
+
+    onBlur();
   }
 
   return (
@@ -94,6 +121,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
+    color: Colors.mJordan,
   },
 
   icons: {
