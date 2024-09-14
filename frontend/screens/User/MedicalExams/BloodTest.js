@@ -6,6 +6,12 @@ import MedicalControl from "../../../components/UI/Controls/MedicalControl";
 import { Formik } from "formik";
 import Button from "../../../components/UI/Controls/Button";
 import { Colors } from "../../../constants/colors";
+import Combobox from "../../../components/UI/Controls/Combobox";
+
+const ema = [
+  { label: "Positivo", value: "No ni" },
+  { label: "Negativo", value: "idea bro" },
+];
 
 export default function BloodTest() {
   function submitHandler({
@@ -87,6 +93,8 @@ export default function BloodTest() {
             setFieldValue,
             handleSubmit,
             errors,
+            touched,
+            handleBlur,
           }) => (
             <Form style={styles.form}>
               <View style={styles.sectionContainer}>
@@ -105,11 +113,16 @@ export default function BloodTest() {
                   onChange={(value) => setFieldValue("igG", value)}
                   errors={errors.igG}
                 />
-                <MedicalControl
-                  label="Anticuerpos antiendomisio (EMA)"
+                <Combobox
+                  data={ema}
+                  placeholder="Anticuerpos antiendomisio (EMA)"
+                  onChange={(item) => setFieldValue("ema", item)}
                   value={values.ema}
-                  onChange={(value) => setFieldValue("ema", value)}
+                  touched={touched.ema}
                   errors={errors.ema}
+                  name="ema"
+                  handleBlur={handleBlur}
+                  style={styles.combobox}
                 />
               </View>
 
@@ -280,5 +293,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     borderRadius: 10,
     gap: 20,
+  },
+
+  combobox: {
+    backgroundColor: "#eee",
+    borderWidth: 0,
+    shadowColor: "black",
+    shadowRadius: 4,
+    shadowOpacity: 0.5,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 5,
   },
 });

@@ -7,8 +7,6 @@ import DatePicker from "../UI/Controls/DatePicker";
 import Button from "../UI/Controls/Button";
 import { Colors } from "../../constants/colors";
 import NavigationText from "../UI/Navigation/NavigationText";
-import { useNavigation } from "@react-navigation/native";
-import EmailVerification from "../../screens/Authentication/EmailVerification";
 
 const sexes = [
   { label: "Masculino", value: "MALE" },

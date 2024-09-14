@@ -11,27 +11,31 @@ export default function Combobox({
   name,
   errors,
   touched,
+  containerStyle,
+  style,
+  placeholderColor,
 }) {
   function changeHandler(item) {
     onChange(item.value);
   }
 
-
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <Dropdown
         data={data}
         labelField="label"
         valueField="value"
         style={
           touched && errors
-            ? [styles.combobox, styles.formError]
-            : styles.combobox
+            ? [styles.combobox, styles.formError, style]
+            : [styles.combobox, style]
         }
         onChange={changeHandler}
         placeholder={placeholder}
         placeholderStyle={
-          touched && errors ? { color: Colors.redError } : { color: "#aaa" }
+          touched && errors
+            ? { color: Colors.redError }
+            : { color: placeholderColor ? placeholderColor : "#aaa" }
         }
         onBlur={() => handleBlur(name)}
         value={value}
@@ -56,7 +60,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.mJordan,
     borderRadius: 8,
     fontSize: 16,
-    marginBottom: 5
+    marginBottom: 5,
   },
 
   formError: {
