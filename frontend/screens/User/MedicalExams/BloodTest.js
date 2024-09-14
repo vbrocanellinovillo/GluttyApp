@@ -6,7 +6,7 @@ import MedicalControl from "../../../components/UI/Controls/MedicalControl";
 import { Formik } from "formik";
 import Button from "../../../components/UI/Controls/Button";
 import { Colors } from "../../../constants/colors";
-import Combobox from "../../../components/UI/Controls/Combobox";
+import RadioButtonsControl from "../../../components/UI/Controls/RadioButtonsControl";
 
 const ema = [
   { label: "Positivo", value: "No ni" },
@@ -61,7 +61,7 @@ export default function BloodTest() {
           initialValues={{
             igA: 15,
             igG: 15,
-            ema: 2,
+            ema: "",
             hemoglobina: 14,
             hematocrito: 42,
             ferritina: 100,
@@ -77,7 +77,7 @@ export default function BloodTest() {
             trigliceridos: 100,
             glucemia: 80,
           }}
-          validate={({ igA }) => {
+          validate={({ igA, ema }) => {
             const errors = {};
 
             if (igA < 10) {
@@ -93,8 +93,6 @@ export default function BloodTest() {
             setFieldValue,
             handleSubmit,
             errors,
-            touched,
-            handleBlur,
           }) => (
             <Form style={styles.form}>
               <View style={styles.sectionContainer}>
@@ -113,16 +111,11 @@ export default function BloodTest() {
                   onChange={(value) => setFieldValue("igG", value)}
                   errors={errors.igG}
                 />
-                <Combobox
-                  data={ema}
-                  placeholder="Anticuerpos antiendomisio (EMA)"
-                  onChange={(item) => setFieldValue("ema", item)}
+                <RadioButtonsControl
+                  title="Anticuerpos antiendomisio (EMA)"
+                  options={ema}
+                  onValueChange={(value) => setFieldValue("ema", value)}
                   value={values.ema}
-                  touched={touched.ema}
-                  errors={errors.ema}
-                  name="ema"
-                  handleBlur={handleBlur}
-                  style={styles.combobox}
                 />
               </View>
 
