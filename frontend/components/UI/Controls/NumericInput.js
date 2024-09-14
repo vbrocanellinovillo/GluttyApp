@@ -66,6 +66,7 @@ export default function NumericInput({
       setNumber(defaultValue);
     } else if (number === "") {
       setNumber(defaultValue);
+      onChange(defaultValue)
     }
 
     onBlur();

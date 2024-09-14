@@ -3,7 +3,7 @@ import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 import NumericInput from "./NumericInput";
 import { Colors } from "../../../constants/colors";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function MedicalControl({
   label,
@@ -14,6 +14,8 @@ export default function MedicalControl({
 }) {
   const [touched, setTouched] = useState(false);
   const hasError = errors && touched;
+
+  const defaultValue = useMemo(() => value, []);
 
   function handleChange(value) {
     onChange(value);
@@ -40,7 +42,7 @@ export default function MedicalControl({
               styles.input,
               { shadowColor: hasError ? Colors.redError : Colors.mJordan },
             ]}
-            defaultValue={value}
+            defaultValue={defaultValue}
             onChange={handleChange}
             inputStyle={{ color: hasError ? Colors.redError : Colors.mJordan }}
             onBlur={handleBlur}
