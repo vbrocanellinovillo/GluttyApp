@@ -4,6 +4,7 @@
   import { useSelector } from "react-redux";
   import LoadingGlutty from "../../../../components/UI/Loading/LoadingGlutty";
   import GluttyModal from "../../../../components/UI/GluttyModal";
+  import { useDispatch } from "react-redux";
 
   export default function EditMapConfirmation({ navigation, route }) {
     console.log(route)
@@ -26,9 +27,6 @@
         receivedBranch.address = selectedAddress
         receivedBranch.longitude = marker.longitude
 
-        console.log("la branch qu emanda")
-        console.log(receivedBranch)
-
       try {
         setisloading(true);
         console.log("Branch" + receivedBranch.id);
@@ -36,10 +34,12 @@
         const response = await updateBranch(receivedBranch, receivedBranch.id, token);
         setMessage(response.detail);
         setShowModal(true);
+        
       } catch (error) {
         setIsError(true);
         setMessage(error.message);
         setShowModal(true);
+
       } finally {
         setisloading(false);
       }
@@ -49,9 +49,15 @@
       navigation.navigate("EditAddress", { branch: receivedBranch });
     }
 
+    const dispatch = useDispatch()
 
     function closeModalHandler() {
+      console.log("Acatoy")
       setShowModal(false);
+      if (!isError) {
+        //dispatch(commerceActions.updateBranch({receivedBranch}))
+        navigation.navigate("CommerceDrawer");
+      }
     }
 
     return (
