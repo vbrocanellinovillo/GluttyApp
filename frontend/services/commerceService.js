@@ -194,25 +194,24 @@ export async function getMapPoints(token) {
 }
 
 //Actualización en la branch
-export async function updateBranch(
-  branch,
-  id,
-  token
-) {
-  console.log("entra?")
+export async function updateBranch(branch, id, token) {
+  console.log("entra?");
 
   const formdata = new FormData();
   formdata.append("name", branch.name);
   formdata.append("phone", branch.phone);
   formdata.append("optional_phone", branch.optionalPhone);
-  formdata.append("separated_kitchen", branch.separatedKitchen ? "True" : "False");
+  formdata.append(
+    "separated_kitchen",
+    branch.separatedKitchen ? "True" : "False"
+  );
   formdata.append("just_takeaway", branch.onlyTakeAway ? "True" : "False");
   formdata.append("address", branch.address);
   formdata.append("latitude", branch.latitude);
   formdata.append("longitude", branch.longitude);
-  formdata.append("branch_id", id)
-  console.log("-"*30)
-  console.log(formdata)
+  formdata.append("branch_id", id);
+  console.log("-" * 30);
+  console.log(formdata);
   const requestOptions = {
     method: "PUT",
     body: formdata,
@@ -228,13 +227,10 @@ export async function updateBranch(
 
     return response;
   } catch (error) {
-    console.log("SALEESTEERRORLPM")
+    console.log("SALEESTEERRORLPM");
     throw new Error(error.message);
   }
 }
-
-
-
 
 export async function getBranch(id, token) {
   const formdata = new FormData();
@@ -279,7 +275,8 @@ export async function getSearchData(
   searchTerm,
   separatedKitchen,
   onlyTakeAway,
-  token
+  token,
+  signal
 ) {
   const requestOptions = {
     method: "POST",
@@ -292,6 +289,7 @@ export async function getSearchData(
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    signal,
   };
 
   const requestUrl = url + "search-commerce/";

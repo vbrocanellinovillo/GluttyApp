@@ -11,6 +11,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { getMapPoints, getSearchData } from "../../../services/commerceService";
 import InfoMap from "../../../components/Map/InfoMap";
 import MapSearch from "../../../components/Map/MapSearch";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Map() {
   const [locationPermissions, requestLocationPermissions] =
@@ -28,6 +29,15 @@ export default function Map() {
   // Search
   const [searchData, setSearchData] = useState([]);
   const [hideSearchResults, setHideSearchResults] = useState(false);
+
+  const [isSearching, setIsSearching] = useState(false);
+
+  /* const { data: searchData, refetch } = useQuery({
+    queryKey: ["map-search", searchData],
+    queryFn: (searchTerm, separatedKitchen, onlyTakeAway, token, { signal }) =>
+      getSearchData(),
+    enabled: false,
+  }); */
 
   const [newRegion, setNewRegion] = useState(undefined);
 
@@ -94,13 +104,23 @@ export default function Map() {
     }, [token])
   );
 
-  async function handleSearch(searchTerm, separatedKitchen, onlyTakeAway) {
+  async function handleSearch(
+    searchTerm,
+    separatedKitchen,
+    onlyTakeAway,
+    signal
+  ) {
+    if (searchTerm.trim() !== "") {
+      setIsSearching(true);
+    }
+
     try {
       const data = await getSearchData(
         searchTerm,
         separatedKitchen,
         onlyTakeAway,
-        token
+        token,
+        signal
       );
 
       const branches = data.branches;
@@ -121,7 +141,13 @@ export default function Map() {
 
       setMapData(mapData);
       setIsError(false);
+      setIsSearching(false);
     } catch (error) {
+      if (error.message.includes("AbortError")) {
+        return;
+      }
+
+      setIsSearching(false);
       setIsError(true);
       serError(
         "Ocurrio un error en la busqueda. Por favor intente de nuevo más tarde"
@@ -154,6 +180,7 @@ export default function Map() {
           handleHideSearchResults={handleHideSearchResults}
           handleShowSearchResults={handleShowSearchResults}
           onChangeLocation={changeLocation}
+          isSearching={isSearching}
         />
         <InfoMap
           location={location}

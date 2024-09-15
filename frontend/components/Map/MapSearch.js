@@ -14,9 +14,9 @@ export default function MapSearch({
   handleHideSearchResults,
   handleShowSearchResults,
   onChangeLocation,
+  isSearching,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const [focused, setFocused] = useState(false);
 
@@ -27,19 +27,25 @@ export default function MapSearch({
   const icon = hasSearchTerm ? "close" : "search";
 
   useEffect(() => {
-    async function searchPlaces() {
-      if (searchTerm.trim().length !== 0) {
-        setIsLoading(true);
+    const controller = new AbortController();
+
+    const timer = setTimeout(() => {
+      async function searchPlaces() {
+        await onSearch(
+          searchTerm,
+          separatedKitchen,
+          onlyTakeAway,
+          controller.signal
+        );
       }
 
-      try {
-        await onSearch(searchTerm, separatedKitchen, onlyTakeAway);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+      searchPlaces();
+    }, 1000);
 
-    searchPlaces();
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [searchTerm, separatedKitchen, onlyTakeAway]);
 
   function handleChangeText(text) {
@@ -98,7 +104,7 @@ export default function MapSearch({
         />
         <SearchResultsList
           searchResults={searchData}
-          isLoading={isLoading}
+          isLoading={isSearching}
           focused={focused}
           hideResults={hideResults}
           handleHideSearchResults={handleHideSearchResults}
