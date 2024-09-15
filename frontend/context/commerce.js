@@ -18,8 +18,16 @@ const commerceSlice = createSlice({
     },
 
     updateBranch(state,action){
-      const branch = action.payload.branch;
-      newBranch = branch
+      const newBranch = action.payload.branch;
+      console.log("PrintLaBranch?")
+      console.log(newBranch)
+      // Encuentra el índice de la sucursal que quieres actualizar
+      const branchIndex = state.branches.findIndex(branch => branch.id === newBranch.id);
+      
+      if (branchIndex !== -1) {
+        // Si se encuentra la sucursal, reemplázala con la nueva
+        state.branches[branchIndex] = newBranch;
+      }
     }
 
   },
