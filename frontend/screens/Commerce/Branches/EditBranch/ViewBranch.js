@@ -9,6 +9,8 @@ import { ConsultGeneralInfo } from "../../../../components/Branch/EditBranch/Con
 import { ConsultPhotos } from "../../../../components/Branch/EditBranch/ConsultPhotos";
 import ViewBranchSkeleton from "../../../../components/UI/Loading/ViewBranchSkeleton";
 import ErrorViewBranch from "../../../../components/Branch/ErrorViewBranch";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export function ViewBranch({ route }) {
   const [branch, setBranch] = useState(undefined);
@@ -18,23 +20,28 @@ export function ViewBranch({ route }) {
   const id = route.params.branch.id;
   const token = useSelector((state) => state.auth.accessToken);
 
-  useEffect(() => {
-    const cargarBranch = async () => {
-      try {
-        setIsLoading(true);
-        const branchData = await getBranch(id, token); // Espera la promesa con await
-        setBranch(branchData);
-        setIsError(false);
-      } catch (error) {
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
+  useFocusEffect(
+    useCallback(() => {
+      const cargarBranch = async () => {
+        try {
+          setIsLoading(true);
+          const branchData = await getBranch(id, token); // Espera la promesa con await
+          setBranch(branchData);
+        } catch (error) {
+          setIsError(true);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+  
+      if (id && token) {
+        cargarBranch();
       }
-    };
-    if (id && token) {
-      cargarBranch();
-    }
-  }, [id, token]);
+    }, [id, token]) // Dependencias
+  );
+  
+
+
 
   if (isloading) {
     return <ViewBranchSkeleton />;
