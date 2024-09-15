@@ -26,6 +26,7 @@ export default function GluttyTips({ onPress }) {
 const styles = StyleSheet.create({
   container: {
     flex: 2,
+    alignItems: "flex-start",
   },
 
   pressed: {
