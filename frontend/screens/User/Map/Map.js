@@ -31,6 +31,7 @@ export default function Map() {
   const [hideSearchResults, setHideSearchResults] = useState(false);
 
   const [isSearching, setIsSearching] = useState(false);
+  const [prevTerm, setPrevTerm] = useState("");
 
   /* const { data: searchData, refetch } = useQuery({
     queryKey: ["map-search", searchData],
@@ -110,8 +111,18 @@ export default function Map() {
     onlyTakeAway,
     signal
   ) {
-    if (searchTerm.trim() !== "") {
+    if (searchTerm.trim() !== "" && !hideSearchResults) {
       setIsSearching(true);
+    }
+
+    if (searchTerm.trim() === "" && prevTerm.trim() === "") {
+      setisloading(true);
+    }
+
+    setPrevTerm(searchTerm);
+
+    if (searchTerm.trim() === "") {
+      setSearchData([]);
     }
 
     try {
@@ -133,9 +144,7 @@ export default function Map() {
         },
       }));
 
-      if (searchTerm.trim().length === 0) {
-        setSearchData([]);
-      } else {
+      if (searchTerm.trim() !== "") {
         setSearchData(branches);
       }
 
@@ -153,6 +162,8 @@ export default function Map() {
         "Ocurrio un error en la busqueda. Por favor intente de nuevo más tarde"
       );
       setShowModal(true);
+    } finally {
+      setisloading(false);
     }
   }
 
