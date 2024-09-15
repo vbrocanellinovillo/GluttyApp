@@ -14,16 +14,23 @@ export default function NumericInput({
   onChange,
   onBlur,
 }) {
-  const [number, setNumber] = useState(value ? value : defaultValue);
+  const [number, setNumber] = useState(value || defaultValue);
   const [isFocused, setIsFocused] = useState(false);
   const [hasChanged, setHasChanged] = useState(false);
 
-  const showValue = number.toString().trim() === "" && !isFocused ? 0 : number;
+  // const showValue = number.toString().trim() === "" && !isFocused ? 0 : number;
 
   function increaseValue() {
     Haptics.selectionAsync();
 
-    setNumber((prevNumber) => (prevNumber += 1));
+    setNumber((prevNumber) => {
+      if (prevNumber === "") {
+        return 1;
+      } else {
+        return (prevNumber += 1);
+      }
+    });
+
     onChange(number + 1);
     onBlur();
     if (!hasChanged) setHasChanged(true);
@@ -31,7 +38,15 @@ export default function NumericInput({
 
   function decreaseValue() {
     Haptics.selectionAsync();
-    setNumber((prevNumber) => (prevNumber -= 1));
+
+    setNumber((prevNumber) => {
+      if (prevNumber === "") {
+        return -1;
+      } else {
+        return (prevNumber -= 1);
+      }
+    });
+    
     onChange(number - 1);
     onBlur();
     if (!hasChanged) setHasChanged(true);
@@ -66,7 +81,7 @@ export default function NumericInput({
       setNumber(defaultValue);
     } else if (number === "") {
       setNumber(defaultValue);
-      onChange(defaultValue)
+      onChange(defaultValue);
     }
 
     onBlur();
@@ -77,7 +92,7 @@ export default function NumericInput({
       <TextInput
         style={[styles.input, inputStyle]}
         keyboardType="number-pad"
-        value={showValue.toString()}
+        value={number.toString()}
         onChangeText={changeNumberHandler}
         onFocus={handleFocus}
         onBlur={handleBlur}
