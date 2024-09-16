@@ -53,6 +53,9 @@ class Celiac(models.Model):
     def getDateBirth(self):
         return self.date_birth
     
+    def getAnalysis(self):
+        return self.estudios.all()
+    
 class Session(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="session")
     session_initialized = models.BooleanField(default=False)

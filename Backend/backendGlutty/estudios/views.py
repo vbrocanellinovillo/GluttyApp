@@ -1,11 +1,20 @@
+from django.forms import ValidationError
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from requests import Response
 from .models import BloodTest, BloodTestVariables, Celiac
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from decimal import Decimal, InvalidOperation
 from datetime import date
+from rest_framework import status
+from rest_framework.response import Response
+from usuarios.models import User
 import re
+import cloudinary.uploader
+import cloudinary.api
+import pdfplumber
 
 def calculate_age(birth_date):
     today = date.today()
@@ -49,8 +58,7 @@ def verify_value(variable_name, value, sex, age):
     
     except BloodTestVariables.DoesNotExist:
         return {"estado": "Variable no encontrada", "valor": value}
-
-
+    
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -74,6 +82,7 @@ def register_study(request):
                 return None
 
         # Recoger los valores ingresados para los estudios
+        lab = request.data.get("lab")
         atTG_IgA = safe_decimal(request.data.get("atTG_IgA"))
         aDGP_IgA = safe_decimal(request.data.get("aDGP_IgA"))
         antiendomisio = safe_decimal(request.data.get("antiendomisio"))
@@ -95,6 +104,7 @@ def register_study(request):
         estudio = BloodTest.objects.create(
             celiac=celiac,
             test_date=fecha_estudio,
+            lab=lab,
             atTG_IgA=atTG_IgA,
             aDGP_IgA=aDGP_IgA,
             antiendomisio=antiendomisio,
@@ -113,6 +123,28 @@ def register_study(request):
             glucemia=glucemia
         )
 
+        # Guardar si es que cargó un pdf del estudio
+        files = request.FILES.getlist('pdf')
+
+        # Subir y guardar cada menú
+        for file in files:
+            file_type = file.content_type
+
+            if file_type not in ["image/jpeg", "image/png", "application/pdf"]:
+                return Response({"error": "Formato de archivo no soportado. Solo se permiten imágenes y PDFs."}, status=status.HTTP_400_BAD_REQUEST)
+
+            upload_result = cloudinary.uploader.upload(
+                file,
+                resource_type='auto'
+            )
+            
+            url=upload_result['url']
+            public_id=upload_result['public_id']
+            
+            estudio.url = url
+            estudio.public_id = public_id
+            estudio.save()
+            
         # Comparar valores con los normales y agregar descripciones
         results = {}
         if atTG_IgA is not None:
@@ -149,3 +181,115 @@ def register_study(request):
             results["Glucemia"] = verify_value("Glucemia", glucemia, sexo, age)
 
         return JsonResponse({"estudio_id": estudio.id, "resultados": results})
+    
+
+# Función que devuelve los análisis encontrados
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_analysis(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        all_analysis_data = []
+       #Se agregan todas las branches del comercio con el que se accede.
+        celiac = Celiac.objects.filter(user=user).first()
+        
+        analysis = celiac.getAnalysis()
+
+        for an in analysis:
+            analysis_data = {
+                "id": an.id,
+                "date": an.getDate(),
+                "lab": an.getLab(),
+            }
+        
+        # Agregar el comercio completo a la lista de todos los comercios
+            all_analysis_data.append(analysis_data)
+            
+        # Devolver los datos    
+        return Response({"analysis": all_analysis_data}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_analysis(request):
+    analysis_id = request.data.get("analysis_id")
+    if not analysis_id:
+        return Response({"error": "El ID del análisis es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Encontrar la analysis que se quiere eliminar
+        analysis = get_object_or_404(BloodTest, id=analysis_id)
+
+        # Verificar si el usuario tiene permisos para actualizar la sucursal
+        user = request.user
+        if user.is_commerce or analysis.celiac.user != user:
+            return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_403_FORBIDDEN)
+
+        # Actualizar la sucursal con los datos proporcionados
+        analysis.delete()
+        return Response({"detail":"Se eliminó el análisis."}, status=status.HTTP_200_OK)
+                        
+    except ValidationError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def extract_pdf_text(request):
+    # Verificar si el archivo PDF fue enviado en la solicitud
+    pdf_file = request.FILES.get('file')
+
+    if not pdf_file:
+        return Response({"error": "No se ha enviado ningún archivo PDF."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Abrir el archivo PDF utilizando pdfplumber
+        with pdfplumber.open(pdf_file) as pdf:
+            text = ''
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                print(page_text)  # Verifica el contenido extraído de cada página
+                text += page_text
+        
+        values = extract_values_from_text(text)
+        
+        # Devolver el texto extraído
+        return Response({"valores encontrados": values}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error al procesar el archivo PDF: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def extract_values_from_text(text):
+    values = {}
+    patterns = {
+    'atTG_IgA': r'Anticuerpos IgA Anti-Transglutaminasa\s+([\d.]+)\s+U/mL',
+    'aDGP_IgA': r'Anticuerpos IgG Anti-Gliadinas Deaminadas\s+([\d.]+)\s+U/mL',
+    'antiendomisio': r'Antiendomisio\s*:\s*(\w+)',  # Necesito más contexto sobre cómo aparece en los análisis para ajustar
+    'hemoglobina': r'Hemoglobina\s+([\d.]+)\s+g/dL',
+    'hematocrito': r'Hematocrito\s+([\d.]+)\s+%',
+    'ferritina': r'Ferritina\s+([\d.]+)\s+ug/L',
+    'hierro_serico': r'Ferremia\s+([\d.]+)\s+ug/dL',  # Hierro Sérico también es llamado Ferremia
+    'vitamina_b12': r'Vitamina B-12\s+([\d.]+)\s+pg/mL',
+    'calcio_serico': r'Calcio Sérico\s+([\d.]+)\s+mg/dL',
+    'vitamina_d': r'Vitamina D\s*:\s*(\d+\.?\d*)',  # Asegúrate del formato exacto de vitamina D
+    'alt': r'ALT/GPT \(Alanina Aminotransferasa\)\s+([\d.]+)\s+U/L',
+    'ast': r'AST/GOT \(Aspartato Aminotransferasa\)\s+([\d.]+)\s+U/L',
+    'colesterol_total': r'Colesterol Total\s+([\d.]+)\s+mg/dL',
+    'colesterol_hdl': r'Colesterol HDL\s+([\d.]+)\s+mg/dL',
+    'trigliceridos': r'Triglicéridos\s+([\d.]+)\s+mg/dL',
+    'glucemia': r'Glucemia\s+([\d.]+)\s+mg/dL'
+}
+
+    for key, pattern in patterns.items():
+        match = re.search(pattern, text)
+        values[key] = match.group(1) if match else 'No encontrado'
+
+    return values

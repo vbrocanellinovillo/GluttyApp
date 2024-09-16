@@ -87,6 +87,7 @@ def search_commerce(request):
         separated_kitchen = request.data.get("separated_kitchen", None)
         just_takeaway = request.data.get("just_takeaway", None)
 
+        print('hola' + query)
         # Filtros base para sucursales activas
         branch_filter = Q(is_active=True)
 
@@ -114,7 +115,9 @@ def search_commerce(request):
         # Preparar los datos de respuesta
         response_data = {"branches": []}
 
+        i = 0
         for branch in branches:
+            i += 1
             location = branch.location
             branch_data = {
                 "id": branch.id,
@@ -127,6 +130,8 @@ def search_commerce(request):
                 "commerce_name": branch.commerce.name,
                 "profile_picture": branch.commerce.user.profile_picture
             }
+            print("esta es la query:" + query)
+            print("Encontradas: " + str(i))
             response_data["branches"].append(branch_data)
 
         return Response(response_data, status=200)
@@ -289,9 +294,6 @@ def update_branch(request):
         branch.name = request.data.get("name", branch.name)
         branch.phone = request.data.get("phone", branch.phone)
         branch.optional_phone = request.data.get("optional_phone", branch.optional_phone)
-        # location.address = request.data.get("address", location.address)
-        # location.latitude = request.data.get("latitude", location.latitude)
-        # location.longitude = request.data.get("longitude", location.longitude)
         branch.separated_kitchen = request.data.get("separated_kitchen", branch.separated_kitchen)
         branch.just_takeaway = request.data.get("just_takeaway", branch.just_takeaway)
         branch.save()

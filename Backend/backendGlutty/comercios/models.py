@@ -35,7 +35,6 @@ class Branch(models.Model):
     name = models.CharField(max_length=255, blank=False)
     phone = models.CharField(max_length=20, blank=False, default=None)
     optional_phone = models.CharField(max_length=20, blank=True, null=True)
-    #location = models.CharField(max_length=255, blank=False)
     separated_kitchen= models.BooleanField(default=False)
     just_takeaway= models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
