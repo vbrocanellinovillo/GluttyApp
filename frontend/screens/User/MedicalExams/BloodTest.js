@@ -10,7 +10,6 @@ import RadioButtonsControl from "../../../components/UI/Controls/RadioButtonsCon
 import FormControl from "../../../components/UI/Controls/FormControl";
 import DatePicker from "../../../components/UI/Controls/DatePicker";
 import { formatDateToYYYYMMDD } from "../../../utils/dateFunctions";
-import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../../../components/UI/FontsTexts/TextCommonsRegular";
 
 const ema = [

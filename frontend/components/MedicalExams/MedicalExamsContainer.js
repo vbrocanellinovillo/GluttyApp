@@ -7,25 +7,25 @@ const Exams = [
   {
     id: 1,
     date: "2000-09-08",
-    dr: "Messi",
+    exam: "Analisis de Sangre",
     hospital: "Oulton",
   },
   {
     id: 2,
     date: "2000-09-08",
-    dr: "Messi",
+    exam: "Analisis de Sangre",
     hospital: "Oulton",
   },
   {
     id: 3,
     date: "2000-09-08",
-    dr: "Messi",
+    exam: "Analisis de Sangre",
     hospital: "Oulton",
   },
   {
     id: 4,
     date: "2000-09-08",
-    dr: "Messi",
+    exam: "Analisis de Sangre",
     hospital: "Oulton",
   },
 ];
