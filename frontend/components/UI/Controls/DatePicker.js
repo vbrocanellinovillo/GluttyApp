@@ -10,6 +10,7 @@ export default function DatePicker({
   errors,
   touched,
   value,
+  style,
 }) {
   const [open, setOpen] = useState(false);
 
@@ -34,8 +35,8 @@ export default function DatePicker({
           onPress={showDatePicker}
           style={
             errors && touched
-              ? [styles.datePicker, styles.formError]
-              : styles.datePicker
+              ? [styles.datePicker, styles.formError, style]
+              : [styles.datePicker, style]
           }
         >
           <Text

@@ -73,6 +73,7 @@ export default function Profile() {
             user: response.user,
             accessToken: response.tokens.access,
             refreshToken: response.tokens.refresh,
+            image: nuevaData.user_data.profile_picture,
           })
         );
       } else {
@@ -83,6 +84,7 @@ export default function Profile() {
             user: response.user,
             accessToken: token,
             refreshToken: refreshtoken,
+            image: nuevaData.user_data.profile_picture,
           })
         );
       }

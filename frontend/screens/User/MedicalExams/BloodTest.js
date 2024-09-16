@@ -7,6 +7,11 @@ import { Formik } from "formik";
 import Button from "../../../components/UI/Controls/Button";
 import { Colors } from "../../../constants/colors";
 import RadioButtonsControl from "../../../components/UI/Controls/RadioButtonsControl";
+import FormControl from "../../../components/UI/Controls/FormControl";
+import DatePicker from "../../../components/UI/Controls/DatePicker";
+import { formatDateToYYYYMMDD } from "../../../utils/dateFunctions";
+import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
+import TextCommonsRegular from "../../../components/UI/FontsTexts/TextCommonsRegular";
 
 const ema = [
   { label: "Positivo", value: "No ni" },
@@ -54,6 +59,9 @@ export default function BloodTest() {
     );
   }
 
+  const today = new Date(Date.now());
+  const formatedDate = formatDateToYYYYMMDD(today);
+
   return (
     <DismissKeyboardContainer>
       <ScrollView contentContainerStyle={styles.container}>
@@ -76,6 +84,8 @@ export default function BloodTest() {
             colHDL: "",
             trigliceridos: "",
             glucemia: "",
+            laboratory: "",
+            date: formatedDate,
           }}
           validate={({ igA, ema }) => {
             const errors = {};
@@ -88,12 +98,7 @@ export default function BloodTest() {
           }}
           onSubmit={submitHandler}
         >
-          {({
-            values,
-            setFieldValue,
-            handleSubmit,
-            errors,
-          }) => (
+          {({ values, setFieldValue, handleSubmit, errors, touched }) => (
             <Form style={styles.form}>
               <View style={styles.sectionContainer}>
                 <FormTitle>Anticuerpos Celiaquía</FormTitle>
@@ -256,6 +261,34 @@ export default function BloodTest() {
                   errors={errors.glucemia}
                 />
               </View>
+
+              <View style={styles.sectionContainer}>
+                <FormTitle>Datos Generales</FormTitle>
+                <View>
+                  <TextCommonsRegular style={styles.label}>
+                    Laboratorio
+                  </TextCommonsRegular>
+                  <FormControl
+                    style={styles.formControl}
+                    value={values.laboratory}
+                    label="Laboratorio donde se realizo el estudio"
+                  />
+                </View>
+
+                <View>
+                  <TextCommonsRegular style={styles.label}>
+                    Fecha de realización
+                  </TextCommonsRegular>
+                  <DatePicker
+                    style={[styles.formControl, { width: "40%" }]}
+                    value={values.date}
+                    onChange={(date) => setFieldValue("date", date)}
+                    touched={touched.date}
+                    errors={errors.date}
+                  />
+                </View>
+              </View>
+
               <View style={styles.buttonContainer}>
                 <Button
                   backgroundColor={Colors.locro}
@@ -277,7 +310,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 20,
     alignItems: "center",
-    paddingBottom: 140,
+    paddingBottom: 380,
   },
 
   form: {
@@ -302,5 +335,21 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     borderRadius: 10,
     gap: 20,
+  },
+
+  formControl: {
+    backgroundColor: "#eee",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 5,
+    shadowOpacity: 0.5,
+    borderWidth: 0,
+    overflow: "visible",
+  },
+
+  label: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: Colors.mJordan,
   },
 });
