@@ -1,5 +1,4 @@
 import { StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
 import ErrorFetchingMedicalExams from "./ErrorFetchingMedicalExams";
 import AddMedicalExamButton from "./AddMedicalExamButton";
 import MedicalExamsList from "./MedicalExamsList";
@@ -58,7 +57,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     gap: 35,
-    marginTop: 40,
     paddingBottom: 200,
+    marginTop: 20
   },
 });

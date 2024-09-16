@@ -7,6 +7,11 @@ import { Formik } from "formik";
 import Button from "../../../components/UI/Controls/Button";
 import { Colors } from "../../../constants/colors";
 import RadioButtonsControl from "../../../components/UI/Controls/RadioButtonsControl";
+import FormControl from "../../../components/UI/Controls/FormControl";
+import DatePicker from "../../../components/UI/Controls/DatePicker";
+import { formatDateToYYYYMMDD } from "../../../utils/dateFunctions";
+import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
+import TextCommonsRegular from "../../../components/UI/FontsTexts/TextCommonsRegular";
 
 const ema = [
   { label: "Positivo", value: "No ni" },
@@ -54,28 +59,33 @@ export default function BloodTest() {
     );
   }
 
+  const today = new Date(Date.now());
+  const formatedDate = formatDateToYYYYMMDD(today);
+
   return (
     <DismissKeyboardContainer>
       <ScrollView contentContainerStyle={styles.container}>
         <Formik
           initialValues={{
-            igA: 15,
-            igG: 15,
+            igA: "",
+            igG: "",
             ema: "",
-            hemoglobina: 14,
-            hematocrito: 42,
-            ferritina: 100,
-            ferremia: 100,
-            vitB12: 450,
-            calcemia: 8.2,
-            vitD: 60,
-            alt: 20,
-            ast: 20,
-            colesterolemia: 100,
-            colLDL: 100,
-            colHDL: 100,
-            trigliceridos: 100,
-            glucemia: 80,
+            hemoglobina: "",
+            hematocrito: "",
+            ferritina: "",
+            ferremia: "",
+            vitB12: "",
+            calcemia: "",
+            vitD: "",
+            alt: "",
+            ast: "",
+            colesterolemia: "",
+            colLDL: "",
+            colHDL: "",
+            trigliceridos: "",
+            glucemia: "",
+            laboratory: "",
+            date: formatedDate,
           }}
           validate={({ igA, ema }) => {
             const errors = {};
@@ -88,12 +98,7 @@ export default function BloodTest() {
           }}
           onSubmit={submitHandler}
         >
-          {({
-            values,
-            setFieldValue,
-            handleSubmit,
-            errors,
-          }) => (
+          {({ values, setFieldValue, handleSubmit, errors, touched }) => (
             <Form style={styles.form}>
               <View style={styles.sectionContainer}>
                 <FormTitle>Anticuerpos Celiaquía</FormTitle>
@@ -101,6 +106,7 @@ export default function BloodTest() {
                   label="Ig A anti Transglutaminasa"
                   unit="U/ml"
                   value={values.igA}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("igA", value)}
                   errors={errors.igA}
                 />
@@ -108,6 +114,7 @@ export default function BloodTest() {
                   label="Ig G anti Gliadina Deaminada"
                   unit="U/ml"
                   value={values.igG}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("igG", value)}
                   errors={errors.igG}
                 />
@@ -125,6 +132,7 @@ export default function BloodTest() {
                   label="Hemoglobina"
                   unit="g/dL"
                   value={values.hemoglobina}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("hemoglobina", value)}
                   errors={errors.hemoglobina}
                 />
@@ -132,6 +140,7 @@ export default function BloodTest() {
                   label="Hematocrito"
                   unit="%"
                   value={values.hematocrito}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("hematocrito", value)}
                   errors={errors.hematocrito}
                 />
@@ -143,6 +152,7 @@ export default function BloodTest() {
                   label="Ferritina"
                   unit="ng/mL"
                   value={values.ferritina}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("ferritina", value)}
                   errors={errors.ferritina}
                 />
@@ -150,6 +160,7 @@ export default function BloodTest() {
                   label="Hierro sérico/Ferremia"
                   unit="µg/dL"
                   value={values.ferremia}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("ferremia", value)}
                   errors={errors.ferremia}
                 />
@@ -161,6 +172,7 @@ export default function BloodTest() {
                   label="Vitamina B12"
                   unit="pg/mL"
                   value={values.vitB12}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("vitB12", value)}
                   errors={errors.vitB12}
                 />
@@ -172,6 +184,7 @@ export default function BloodTest() {
                   label="Calcio sérico/Calcemia"
                   unit="mg/dL"
                   value={values.calcemia}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("calcemia", value)}
                   errors={errors.calcemia}
                 />
@@ -179,6 +192,7 @@ export default function BloodTest() {
                   label="Vitamina D"
                   unit="ng/mL"
                   value={values.vitD}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("vitD", value)}
                   errors={errors.vitD}
                 />
@@ -190,6 +204,7 @@ export default function BloodTest() {
                   label="ALT (alanina aminotransferasa)"
                   unit="U/L"
                   value={values.alt}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("alt", value)}
                   errors={errors.alt}
                 />
@@ -197,6 +212,7 @@ export default function BloodTest() {
                   label="AST (aspartato aminotransferasa)"
                   unit="U/L"
                   value={values.ast}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("ast", value)}
                   errors={errors.ast}
                 />
@@ -208,6 +224,7 @@ export default function BloodTest() {
                   label="Colesterol total/Colesterolemia"
                   unit="mg/dL"
                   value={values.colesterolemia}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("colesterolemia", value)}
                   errors={errors.colesterolemia}
                 />
@@ -215,6 +232,7 @@ export default function BloodTest() {
                   label="Colesterol LDL"
                   unit="mg/dL"
                   value={values.colLDL}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("colLDL", value)}
                   errors={errors.colLDL}
                 />
@@ -222,6 +240,7 @@ export default function BloodTest() {
                   label="Colesterol HDL"
                   unit="mg/dL"
                   value={values.colHDL}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("colHDL", value)}
                   errors={errors.colHDL}
                 />
@@ -229,6 +248,7 @@ export default function BloodTest() {
                   label="Triglicéridos/Trigliceridemia"
                   unit="mg/dL"
                   value={values.trigliceridos}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("trigliceridos", value)}
                   errors={errors.trigliceridos}
                 />
@@ -236,10 +256,39 @@ export default function BloodTest() {
                   label="Glucemia"
                   unit="mg/dL"
                   value={values.glucemia}
+                  defaultValue=""
                   onChange={(value) => setFieldValue("glucemia", value)}
                   errors={errors.glucemia}
                 />
               </View>
+
+              <View style={styles.sectionContainer}>
+                <FormTitle>Datos Generales</FormTitle>
+                <View>
+                  <TextCommonsRegular style={styles.label}>
+                    Laboratorio
+                  </TextCommonsRegular>
+                  <FormControl
+                    style={styles.formControl}
+                    value={values.laboratory}
+                    label="Laboratorio donde se realizo el estudio"
+                  />
+                </View>
+
+                <View>
+                  <TextCommonsRegular style={styles.label}>
+                    Fecha de realización
+                  </TextCommonsRegular>
+                  <DatePicker
+                    style={[styles.formControl, { width: "40%" }]}
+                    value={values.date}
+                    onChange={(date) => setFieldValue("date", date)}
+                    touched={touched.date}
+                    errors={errors.date}
+                  />
+                </View>
+              </View>
+
               <View style={styles.buttonContainer}>
                 <Button
                   backgroundColor={Colors.locro}
@@ -261,7 +310,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 20,
     alignItems: "center",
-    paddingBottom: 140,
+    paddingBottom: 380,
   },
 
   form: {
@@ -288,13 +337,19 @@ const styles = StyleSheet.create({
     gap: 20,
   },
 
-  combobox: {
+  formControl: {
     backgroundColor: "#eee",
-    borderWidth: 0,
     shadowColor: "black",
-    shadowRadius: 4,
-    shadowOpacity: 0.5,
     shadowOffset: { width: 0, height: 0 },
-    elevation: 5,
+    shadowRadius: 5,
+    shadowOpacity: 0.5,
+    borderWidth: 0,
+    overflow: "visible",
+  },
+
+  label: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: Colors.mJordan,
   },
 });

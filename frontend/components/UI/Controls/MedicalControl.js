@@ -11,11 +11,10 @@ export default function MedicalControl({
   value,
   onChange,
   errors,
+  defaultValue,
 }) {
   const [touched, setTouched] = useState(false);
   const hasError = errors && touched;
-
-  const defaultValue = useMemo(() => value, []);
 
   function handleChange(value) {
     onChange(value);
@@ -42,6 +41,7 @@ export default function MedicalControl({
               styles.input,
               { shadowColor: hasError ? Colors.redError : Colors.mJordan },
             ]}
+            value={value}
             defaultValue={defaultValue}
             onChange={handleChange}
             inputStyle={{ color: hasError ? Colors.redError : Colors.mJordan }}

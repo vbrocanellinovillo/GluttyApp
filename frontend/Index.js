@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import MainUserStack from "./navigators/User/Main/MainUserStack";
+import MainUserStack from "./navigators/User/MainUserStack";
 import AuthNavigation from "./navigators/Authentication/AuthNavigation";
 import { useEffect } from "react";
 import MainCommerceStack from "./navigators/Commerce/MainCommerceStack";

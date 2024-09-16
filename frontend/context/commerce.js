@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { updateBranch } from "../services/commerceService";
+import { act } from "react";
 
 const initialState = { branches: [] };
 
@@ -17,7 +18,16 @@ const commerceSlice = createSlice({
     },
 
     updateBranch(state,action){
-      state.branches.find(branch => branch.id === branchId)
+      const newBranch = action.payload.branch;
+      console.log("PrintLaBranch?")
+      console.log(newBranch)
+      // Encuentra el índice de la sucursal que quieres actualizar
+      const branchIndex = state.branches.findIndex(branch => branch.id === newBranch.id);
+      
+      if (branchIndex !== -1) {
+        // Si se encuentra la sucursal, reemplázala con la nueva
+        state.branches[branchIndex] = newBranch;
+      }
     }
 
   },
