@@ -5,7 +5,7 @@
   import LoadingGlutty from "../../../../components/UI/Loading/LoadingGlutty";
   import GluttyModal from "../../../../components/UI/GluttyModal";
   import { useDispatch } from "react-redux";
-
+  import { commerceActions } from "../../../../context/commerce";
   export default function EditMapConfirmation({ navigation, route }) {
     console.log(route)
     const receivedBranch = route.params?.params?.branch;
@@ -54,8 +54,9 @@
     function closeModalHandler() {
       console.log("Acatoy")
       setShowModal(false);
+      console.log(receivedBranch)
       if (!isError) {
-        //dispatch(commerceActions.updateBranch({receivedBranch}))
+        dispatch(commerceActions.updateBranch({ branch: receivedBranch }));
         navigation.navigate("CommerceDrawer");
       }
     }
