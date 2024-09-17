@@ -3,16 +3,12 @@ import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
 import { getMonthName } from "../../utils/dateFunctions";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Button from "../UI/Controls/Button";
+import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 
 export default function MedicalExamItem({ medicalExam, onPress }) {
-  const date = new Date(medicalExam.date);
+  const [year, monthNumber, day] = medicalExam.date.split("-");
 
-  const day = date.getDay();
-  const year = date.getFullYear();
-
-  const monthNumber = date.getMonth();
   const month = getMonthName(monthNumber);
 
   return (
@@ -32,18 +28,18 @@ export default function MedicalExamItem({ medicalExam, onPress }) {
         </View>
 
         <View style={styles.icons}>
+          <TextCommonsMedium style={styles.exam} numberOfLines={2}>
+            {medicalExam.exam}
+          </TextCommonsMedium>
           <View style={styles.iconContainer}>
-            <FontAwesome5 name="hospital" size={22} color="black" />
-            <TextCommonsMedium style={styles.iconText}>
+            <FontAwesome5
+              name="map-marker-alt"
+              size={22}
+              color={Colors.mJordan}
+            />
+            <TextCommonsRegular style={styles.iconText} numberOfLines={2}>
               {medicalExam.hospital}
-            </TextCommonsMedium>
-          </View>
-
-          <View style={styles.iconContainer}>
-            <FontAwesome6 name="user-doctor" size={22} color="black" />
-            <TextCommonsMedium style={styles.iconText}>
-              {medicalExam.dr}
-            </TextCommonsMedium>
+            </TextCommonsRegular>
           </View>
         </View>
       </View>
@@ -66,7 +62,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     backgroundColor: "white",
     padding: 20,
-    gap: 10,
+    gap: 20,
   },
 
   pressed: {
@@ -76,9 +72,9 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 30,
+    gap: 22,
     flex: 1,
-    paddingRight: 50,
+    paddingRight: 20,
   },
 
   textContainer: {
@@ -109,6 +105,7 @@ const styles = StyleSheet.create({
 
   icons: {
     gap: 12,
+    flexShrink: 1,
   },
 
   iconContainer: {
@@ -118,10 +115,18 @@ const styles = StyleSheet.create({
     padding: 2,
   },
 
-  iconText: {
-    fontSize: 20,
-    fontWeight: "500",
+  exam: {
+    fontSize: 18,
+    color: Colors.mJordan,
+    fontWeight: "600",
   },
 
-  buttonText: { fontWeight: "400", fontSize: 16 },
+  iconText: {
+    fontSize: 18,
+  },
+
+  buttonText: {
+    fontWeight: "400",
+    fontSize: 16,
+  },
 });

@@ -19,9 +19,12 @@ class Commerce(models.Model):
         ]
     
     def save(self, *args, **kwargs):
-        # Generar el search_vector
-        self.search_vector = SearchVector('name', 'cuit', 'description', config='spanish')
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  # Guardar primero el objeto sin el SearchVector
+        self.update_search_vector()  # Actualizar después de la creación
+
+    def update_search_vector(self):
+        vector = SearchVector('name', 'cuit', 'description', config='spanish')
+        Commerce.objects.filter(id=self.id).update(search_vector=vector)
             
     def getName(self):
         return self.name

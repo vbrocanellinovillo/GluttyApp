@@ -2,33 +2,35 @@ import { StyleSheet, View } from "react-native";
 import ErrorFetchingMedicalExams from "./ErrorFetchingMedicalExams";
 import AddMedicalExamButton from "./AddMedicalExamButton";
 import MedicalExamsList from "./MedicalExamsList";
+import { getMedicalExamsList } from "../../services/medicalExamService";
 
-const Exams = [
-  {
-    id: 1,
-    date: "2000-09-08",
-    dr: "Messi",
-    hospital: "Oulton",
-  },
-  {
-    id: 2,
-    date: "2000-09-08",
-    dr: "Messi",
-    hospital: "Oulton",
-  },
-  {
-    id: 3,
-    date: "2000-09-08",
-    dr: "Messi",
-    hospital: "Oulton",
-  },
-  {
-    id: 4,
-    date: "2000-09-08",
-    dr: "Messi",
-    hospital: "Oulton",
-  },
-];
+const token = "your_token_here";
+const Exams = getMedicalExamsList(token)
+//   {
+//     id: 1,
+//     date: "2000-09-08",
+//     exam: "Analisis de Sangre",
+//     hospital: "Oulton",
+//   },
+//   {
+//     id: 2,
+//     date: "2000-09-08",
+//     exam: "Analisis de Sangre",
+//     hospital: "Oulton",
+//   },
+//   {
+//     id: 3,
+//     date: "2000-09-08",
+//     exam: "Analisis de Sangre",
+//     hospital: "Oulton",
+//   },
+//   {
+//     id: 4,
+//     date: "2000-09-08",
+//     exam: "Analisis de Sangre",
+//     hospital: "Oulton",
+//   },
+// ];
 
 export default function MedicalExamsContainer({ isLoading, isError }) {
   let content;
