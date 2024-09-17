@@ -1,40 +1,46 @@
 import { StyleSheet, View } from "react-native";
 import { Skeleton } from "@rneui/themed";
+import PdfSkeleton from "./PdfSkeleton";
+import { Divider } from "react-native-paper";
 
 export default function MenuesSkeleton() {
-  const items = Array.from({ length: 20 }, (_, index) => `Item ${index + 1}`);
+  const items = Array.from({ length: 2 }, (_, index) => `Item ${index + 1}`);
 
   return (
     <View style={styles.container}>
-      {items.map((item) => (
-        <View style={styles.container}>
-          <Feather style={styles.fileIcon} name="file" size={24} color="#aaa" />
-          <View style={styles.textContainer}>
-            <Skeleton key={item} style={styles.skeleton} />
-          </View>
-          <View style={styles.actionIcons}>
-            <Entypo name="eye" size={24} color="#aaa" />
-            <Entypo name="squared-cross" size={24} color="#aaa" />
-          </View>
+      <View>
+        <Skeleton width={200} height={30} />
+        {items.map((item) => (
+          <PdfSkeleton key={item} />
+        ))}
+      </View>
+      <Divider />
+      <View>
+        <Skeleton width={200} height={30} />
+        {items.map((item) => (
+          <PdfSkeleton key={item} />
+        ))}
+        <View style={styles.buttonsSkeletonContainer}>
+          <Skeleton width="100%" height={30} />
+          <Skeleton width={140} height={30} />
         </View>
-      ))}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    flexDirection: "row",
-    gap: 6,
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 40,
+    marginBottom: 240,
+    gap: 20,
   },
 
-  textContainer: {
-    gap: 8,
-  },
-
-  actionIcons: {
-    marginLeft: 14,
+  buttonsSkeletonContainer: {
+    alignItems: "center",
+    marginTop: 16,
+    gap: 12
   },
 });

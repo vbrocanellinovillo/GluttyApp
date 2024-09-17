@@ -3,7 +3,6 @@ import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
 import { getMonthName } from "../../utils/dateFunctions";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Button from "../UI/Controls/Button";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 
