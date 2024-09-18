@@ -86,7 +86,8 @@ export default function DocumentPickerControl({
                   data={selectedDocuments}
                   renderItem={({ item }) => (
                     <PdfItem
-                      document={item}
+                      name={item.name}
+                      size={item.size}
                       onDelete={() => removeDocument(item)}
                     />
                   )}

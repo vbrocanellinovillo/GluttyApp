@@ -11,7 +11,11 @@ export default function MenuesList({ menues, onDelete }) {
     <FlatList
       data={menues}
       renderItem={({ item }) => (
-        <PdfItem document={item} onDelete={() => onDelete(item.id)} />
+        <PdfItem
+          name={item.file_name}
+          size={item.file_size}
+          onDelete={() => onDelete(item.id)}
+        />
       )}
       keyExtractor={(item) => item.id.toString()}
     />

@@ -2,7 +2,11 @@ import { StyleSheet, Pressable, Text, View } from "react-native";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { Colors } from "../../../constants/colors";
 import { useState } from "react";
-import { formatDateToYYYYMMDD } from "../../../utils/dateFunctions";
+import {
+  formatDateToYYYYMMDD,
+  formatShortMonth,
+  formatTime,
+} from "../../../utils/dateFunctions";
 
 export default function DatePicker({
   placeholder,
@@ -11,6 +15,9 @@ export default function DatePicker({
   touched,
   value,
   style,
+  placeholderStyle,
+  mode = "date",
+  format = "yyyy-mm-dd",
 }) {
   const [open, setOpen] = useState(false);
 
@@ -22,9 +29,32 @@ export default function DatePicker({
     setOpen(false);
   };
 
+  const formatDate = (date) => {
+    let formattedDate;
+    switch (mode) {
+      case "date":
+        if (format === "yyyy-mm-dd") {
+          formattedDate = formatDateToYYYYMMDD(date);
+        } else if (format === "short-month") {
+          formattedDate = formatShortMonth(date);
+        }
+
+        break;
+
+      case "time":
+        formattedDate = formatTime(date);
+        break;
+    }
+
+    return formattedDate;
+  };
+
+  console.log(value);
+  
+
   const handleConfirm = (date) => {
-    const formatedDate = formatDateToYYYYMMDD(date);
-    onChange(formatedDate);
+    const formattedDate = formatDate(date);
+    onChange(formattedDate);
     hideDatePicker();
   };
 
@@ -42,10 +72,14 @@ export default function DatePicker({
           <Text
             style={
               errors && touched
-                ? [styles.placeholder, { color: Colors.redError }]
+                ? [
+                    styles.placeholder,
+                    placeholderStyle,
+                    { color: Colors.redError },
+                  ]
                 : value
-                ? [styles.placeholder, { color: "black" }]
-                : [styles.placeholder, { color: "#aaa" }]
+                ? [styles.placeholder, { color: "black" }, placeholderStyle]
+                : [styles.placeholder, { color: "#aaa" }, placeholderStyle]
             }
           >
             {value ? value : placeholder}
@@ -54,7 +88,7 @@ export default function DatePicker({
             isVisible={open}
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
-            mode="date"
+            mode={mode}
           />
         </Pressable>
         {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
