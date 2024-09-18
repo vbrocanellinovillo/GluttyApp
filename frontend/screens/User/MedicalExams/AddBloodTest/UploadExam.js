@@ -29,7 +29,7 @@ export default function UploadExam({ navigation }) {
     try {
       const data = await sendMedicalPDF(pdf, token);
       const values = data.valores_encontrados;
-      navigation.navigate("BloodTest", { values });
+      navigation.navigate("BloodTest", { values, pdf });
     } catch (error) {
       setIsError(true);
     } finally {

@@ -3,9 +3,7 @@ import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import DatePicker from "./DatePicker";
 import { Colors } from "../../../constants/colors";
 import { useState } from "react";
-import {
-  formatShortMonth,
-} from "../../../utils/dateFunctions";
+import { formatShortMonth } from "../../../utils/dateFunctions";
 
 export default function DateControl({
   title,
@@ -22,7 +20,9 @@ export default function DateControl({
 
   function handleChangeDate(receivedDate) {
     setDate(receivedDate);
-    //onChange(formattedDate);
+    onChange(receivedDate);
+    console.log(receivedDate);
+    
   }
 
   return (

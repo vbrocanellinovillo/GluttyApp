@@ -53,3 +53,33 @@ export function formatShortMonth(date) {
     year: "numeric",
   });
 }
+
+export function formatShortToYYYYMMDD(dateString) {
+  // Dividir la cadena en partes (mes, día, año)
+  const [monthStr, day, year] = dateString.split(" ");
+
+  // Crear un mapa para convertir el mes de texto a número
+  const months = {
+    Jan: "01",
+    Feb: "02",
+    Mar: "03",
+    Apr: "04",
+    May: "05",
+    Jun: "06",
+    Jul: "07",
+    Aug: "08",
+    Sep: "09",
+    Oct: "10",
+    Nov: "11",
+    Dec: "12",
+  };
+
+  // Obtener el mes en formato numérico
+  const month = months[monthStr];
+
+  // Asegurarse de que el día tenga dos dígitos
+  const dayFormatted = String(day).padStart(2, "0");
+
+  // Devolver la fecha en formato "yyyy-mm-dd"
+  return `${year}-${month}-${dayFormatted}`;
+}

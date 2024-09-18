@@ -49,9 +49,6 @@ export default function DatePicker({
     return formattedDate;
   };
 
-  console.log(value);
-  
-
   const handleConfirm = (date) => {
     const formattedDate = formatDate(date);
     onChange(formattedDate);
