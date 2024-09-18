@@ -3,7 +3,7 @@ import { Feather, Entypo } from "@expo/vector-icons";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 import { Colors } from "../../../constants/colors";
 
-export default function PdfItem({ document, onVisualize, onDelete }) {
+export default function PdfItem({ name, size, onVisualize, onDelete }) {
   return (
     <View style={styles.previewContainer}>
       <View style={styles.row}>
@@ -15,10 +15,10 @@ export default function PdfItem({ document, onVisualize, onDelete }) {
         />
         <View style={styles.textContainer}>
           <TextCommonsRegular style={styles.documentName}>
-            {document.name}
+            {name}
           </TextCommonsRegular>
           <TextCommonsRegular style={styles.documentSize}>
-            {(document.size / 1024).toFixed(2)} MB
+            {(size / 1024).toFixed(2)} MB
           </TextCommonsRegular>
         </View>
         <TouchableOpacity style={styles.iconWrapper} onPress={onVisualize}>

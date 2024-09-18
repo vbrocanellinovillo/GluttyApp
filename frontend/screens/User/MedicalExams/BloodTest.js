@@ -11,6 +11,8 @@ import FormControl from "../../../components/UI/Controls/FormControl";
 import DatePicker from "../../../components/UI/Controls/DatePicker";
 import { formatDateToYYYYMMDD } from "../../../utils/dateFunctions";
 import TextCommonsRegular from "../../../components/UI/FontsTexts/TextCommonsRegular";
+import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
+import DateControl from "../../../components/UI/Controls/DateControl";
 
 const ema = [
   { label: "Positivo", value: "No ni" },
@@ -59,7 +61,6 @@ export default function BloodTest() {
   }
 
   const today = new Date(Date.now());
-  const formatedDate = formatDateToYYYYMMDD(today);
 
   return (
     <DismissKeyboardContainer>
@@ -84,7 +85,7 @@ export default function BloodTest() {
             trigliceridos: "",
             glucemia: "",
             laboratory: "",
-            date: formatedDate,
+            date: today,
           }}
           validate={({ igA, ema }) => {
             const errors = {};
@@ -99,6 +100,7 @@ export default function BloodTest() {
         >
           {({ values, setFieldValue, handleSubmit, errors, touched }) => (
             <Form style={styles.form}>
+              <DateControl title="Fecha de realización" value={values.date} />
               <View style={styles.sectionContainer}>
                 <FormTitle>Anticuerpos Celiaquía</FormTitle>
                 <MedicalControl
@@ -278,13 +280,7 @@ export default function BloodTest() {
                   <TextCommonsRegular style={styles.label}>
                     Fecha de realización
                   </TextCommonsRegular>
-                  <DatePicker
-                    style={[styles.formControl, { width: "40%" }]}
-                    value={values.date}
-                    onChange={(date) => setFieldValue("date", date)}
-                    touched={touched.date}
-                    errors={errors.date}
-                  />
+                  
                 </View>
               </View>
 
@@ -344,11 +340,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     borderWidth: 0,
     overflow: "visible",
-  },
-
-  label: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: Colors.mJordan,
   },
 });

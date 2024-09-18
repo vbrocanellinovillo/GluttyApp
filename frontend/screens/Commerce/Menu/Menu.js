@@ -25,6 +25,8 @@ export default function Menu() {
   const token = useSelector((state) => state.auth.accessToken);
 
   useEffect(() => {
+    console.log("entro al effect");
+
     async function fetchMenues() {
       setIsFetching(true);
       try {
@@ -80,8 +82,8 @@ export default function Menu() {
 
   if (errorFetching) {
     return (
-      <GluttyErrorScreen>
-        Ocurrio un error al cargar los menues. Por favor intente de nuevo más
+      <GluttyErrorScreen width={300} height={300}>
+        Ocurrio un error al cargar los menús. Por favor intente de nuevo más
         tarde
       </GluttyErrorScreen>
     );
