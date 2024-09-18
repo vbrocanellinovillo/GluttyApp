@@ -1,10 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
-import FormControl from "../UI/Controls/FormControl";
 import { Colors } from "../../constants/colors";
-import { Formik } from "formik";
-import * as Location from "expo-location";
-import Button from "../UI/Controls/Button";
 
 export default function SpecificProductsSection() {
   // async function geocode() {

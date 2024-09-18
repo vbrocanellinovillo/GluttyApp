@@ -6,10 +6,11 @@ class BloodTest(models.Model):
     celiac = models.ForeignKey(Celiac, on_delete=models.CASCADE, related_name='estudios')
 
     # Datos específicos del estudio
-    test_date = models.DateField()  # Fecha del estudio
+    test_date = models.DateField(blank=False)  # Fecha del estudio
+    lab = models.CharField(max_length=150, blank=False, default='No cargado') # Lugar en que se hizo el estudio
     registration_date = models.DateField(auto_now_add=True)  # Fecha en que se registra en el sistema
-    
-    
+    url = models.URLField(max_length=500, blank=True, null=True)
+    public_id = models.CharField(max_length=300, blank=True, default="")
     
     # Valores de los estudios
     atTG_IgA = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, verbose_name='IgA anti Transglutaminasa')
@@ -37,6 +38,12 @@ class BloodTest(models.Model):
 
     def __str__(self):
         return f"Estudio de {self.celiac.first_name} {self.celiac.last_name} - {self.test_date}"
+    
+    def getDate(self):
+        return self.test_date
+    
+    def getLab(self):
+        return self.lab
 
 class BloodTestVariables(models.Model):
     SEX = (("Male", "Male"), ("Female", "Female"), ("N/A", "No Aplica"))

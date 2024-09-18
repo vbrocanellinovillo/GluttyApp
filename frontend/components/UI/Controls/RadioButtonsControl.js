@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import { RadioButton } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
-import * as Haptics from "expo-haptics"
+import * as Haptics from "expo-haptics";
 
 export default function RadioButtonsControl({
   title,
@@ -11,7 +11,7 @@ export default function RadioButtonsControl({
   value,
 }) {
   function handleValueChange(value) {
-    Haptics.selectionAsync()
+    Haptics.selectionAsync();
     onValueChange(value);
   }
 

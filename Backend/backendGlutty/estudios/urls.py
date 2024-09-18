@@ -15,4 +15,6 @@ from .views import *
 urlpatterns = [
     # path('', include(router.urls)),
     path("register/", register_study, name="register_study"),
+    path("get-all-analysis/", get_analysis, name="get_analysis"),
+    path("extract-values-pdf/", extract_pdf_text, name="extract_values")
 ]

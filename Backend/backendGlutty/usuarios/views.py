@@ -193,7 +193,7 @@ def login(request):
         raise AuthenticationFailed("Cuenta eliminada.")
     
     if not usuario.is_verified:
-        raise AuthenticationFailed("Cuenta no verificada.")
+        raise AuthenticationFailed("Cuenta no verificada.", 403)
     
     # Reiniciar los intentos de inicio de sesión y marcar la sesión como inicializada
     sesion.session_initialized = True

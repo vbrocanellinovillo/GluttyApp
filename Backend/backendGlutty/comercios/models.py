@@ -19,9 +19,12 @@ class Commerce(models.Model):
         ]
     
     def save(self, *args, **kwargs):
-        # Generar el search_vector
-        self.search_vector = SearchVector('name', 'cuit', 'description', config='spanish')
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  # Guardar primero el objeto sin el SearchVector
+        self.update_search_vector()  # Actualizar después de la creación
+
+    def update_search_vector(self):
+        vector = SearchVector('name', 'cuit', 'description', config='spanish')
+        Commerce.objects.filter(id=self.id).update(search_vector=vector)
             
     def getName(self):
         return self.name
@@ -35,7 +38,6 @@ class Branch(models.Model):
     name = models.CharField(max_length=255, blank=False)
     phone = models.CharField(max_length=20, blank=False, default=None)
     optional_phone = models.CharField(max_length=20, blank=True, null=True)
-    #location = models.CharField(max_length=255, blank=False)
     separated_kitchen= models.BooleanField(default=False)
     just_takeaway= models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

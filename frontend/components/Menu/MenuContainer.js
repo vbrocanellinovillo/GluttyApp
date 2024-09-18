@@ -1,30 +1,23 @@
 import { StyleSheet, View } from "react-native";
-import MenuLinksSection from "./MenuLinksSection";
+import MyMenues from "./MyMenues";
+import AddMenues from "./AddMenues";
 import { Divider } from "react-native-paper";
-import SpecificProductsSection from "./SpecificProductsSection";
-import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 
-export default function MenuContainer() {
+export default function MenuContainer({ menues, onSave, onDelete }) {
   return (
-    <DismissKeyboardContainer>
-      <View style={styles.menu}>
-      <MenuLinksSection />
-        <Divider style={styles.divider}/>
-      </View>
-    </DismissKeyboardContainer>
+    <View style={styles.menu}>
+      <MyMenues menues={menues} onDelete={onDelete} />
+      <Divider />
+      <AddMenues onSave={onSave} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   menu: {
-    marginTop:70,
     flex: 1,
     paddingHorizontal: 20,
+    gap: 20,
+    marginBottom: 240,
   },
-  divider: {
-    marginTop:25, 
-    backgroundColor: "lightgray",
-    height: 3,  
-  
-  }
 });

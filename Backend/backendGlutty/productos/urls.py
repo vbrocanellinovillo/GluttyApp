@@ -14,4 +14,5 @@ from rest_framework import routers
 urlpatterns = [
     # path('', include(router.urls)),
     path("find/", find, name="find"),
+    path("find-by-barcode/", find_by_barcode, name="find_by_barcode")
 ]
