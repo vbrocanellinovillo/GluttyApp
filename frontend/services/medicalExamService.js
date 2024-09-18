@@ -112,3 +112,25 @@ export async function getMedicalExamById(id, token) {
         throw new Error(error.message);
       }
 }
+
+export async function deleteMedicalExam(id, token) {
+  const requestUrl = url + "delete-analysis/";
+  
+  const formdata = new FormData();
+  
+  formdata.append("analysis_id", id);
+  
+  const requestOptions = {
+    method: "DELETE",
+    body: formdata,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  }
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
