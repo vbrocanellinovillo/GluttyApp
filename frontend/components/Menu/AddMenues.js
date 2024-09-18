@@ -7,6 +7,7 @@ import { Colors } from "../../constants/colors";
 
 export default function AddMenues({ onSave }) {
   const [pickedDocuments, setPickedDocuments] = useState([]);
+  const [clear, setClear] = useState(false);
 
   function pickDocument(document) {
     setPickedDocuments([...pickedDocuments, document]);
@@ -20,6 +21,8 @@ export default function AddMenues({ onSave }) {
 
   function handleSave() {
     onSave(pickedDocuments);
+    setPickedDocuments([]);
+    setClear(!clear); // Lo uso para hacerle saber al document picker que limpie su lista de docs
   }
 
   return (
@@ -30,6 +33,7 @@ export default function AddMenues({ onSave }) {
         onPickDocument={pickDocument}
         onRemoveDocument={removeDocument}
         label="Carga el .pdf de tu menú"
+        clear={clear}
       />
       <View style={styles.contenedorBTN}>
         <Button style={styles.botonGuardar} onPress={handleSave}>

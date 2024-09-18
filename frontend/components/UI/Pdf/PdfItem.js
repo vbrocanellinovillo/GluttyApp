@@ -18,7 +18,7 @@ export default function PdfItem({ name, size, onVisualize, onDelete }) {
             {name}
           </TextCommonsRegular>
           <TextCommonsRegular style={styles.documentSize}>
-            {(size / 1024).toFixed(2)} MB
+            {size} MB
           </TextCommonsRegular>
         </View>
         <TouchableOpacity style={styles.iconWrapper} onPress={onVisualize}>

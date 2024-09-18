@@ -4,9 +4,7 @@ import DatePicker from "./DatePicker";
 import { Colors } from "../../../constants/colors";
 import { useState } from "react";
 import {
-  formatDateToYYYYMMDD,
   formatShortMonth,
-  formatTime,
 } from "../../../utils/dateFunctions";
 
 export default function DateControl({
@@ -24,11 +22,7 @@ export default function DateControl({
 
   function handleChangeDate(receivedDate) {
     setDate(receivedDate);
-    const date = new Date(receivedDate);
-    console.log(date);
-    
-
-    onChange(formattedDate);
+    //onChange(formattedDate);
   }
 
   return (

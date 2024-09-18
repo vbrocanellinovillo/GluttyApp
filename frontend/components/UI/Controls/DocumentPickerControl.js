@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import Button from "./Button";
@@ -13,6 +13,7 @@ export default function DocumentPickerControl({
   buttonStyle,
   buttonTextStyle,
   label,
+  clear,
 }) {
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(undefined);
@@ -24,6 +25,11 @@ export default function DocumentPickerControl({
     setIsError(false);
     setMessage("");
   };
+
+  useEffect(() => {
+    setSelectedDocuments([]);
+    setSelectedDocument();
+  }, [clear]);
 
   const pickDocument = async () => {
     try {
@@ -87,7 +93,7 @@ export default function DocumentPickerControl({
                   renderItem={({ item }) => (
                     <PdfItem
                       name={item.name}
-                      size={item.size}
+                      size={(item.size / Math.pow(1024, 2)).toFixed(2)}
                       onDelete={() => removeDocument(item)}
                     />
                   )}
