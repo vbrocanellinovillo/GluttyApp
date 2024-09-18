@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ScannerHeader from "../../components/Scanner/ScannerHeader";
 import Scan from "../../screens/User/Scan/Scan";
 import UserDrawer from "./UserDrawer";
+import AddBloodTestStack from "./AddBloodTestStack";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,11 @@ export default function MainUserStack() {
           header: ({ navigation }) => <ScannerHeader navigation={navigation} />,
           headerTransparent: true,
         }}
+      />
+      <Stack.Screen
+        name="AddBloodTestStack"
+        component={AddBloodTestStack}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

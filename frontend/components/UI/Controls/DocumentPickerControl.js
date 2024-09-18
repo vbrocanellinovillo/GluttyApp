@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
-import Button from "./Button";
 import { Colors } from "../../../constants/colors";
 import GluttyModal from "../GluttyModal";
 import PdfItem from "../Pdf/PdfItem";
+import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
+import Feather from "@expo/vector-icons/Feather";
 
 export default function DocumentPickerControl({
   multiple,
   onPickDocument,
   onRemoveDocument,
-  buttonStyle,
-  buttonTextStyle,
+  containerStyle,
+  textStyle,
   label,
   clear,
 }) {
@@ -78,13 +79,16 @@ export default function DocumentPickerControl({
   return (
     <>
       <>
-        <Button
-          style={[styles.button, buttonStyle]}
-          textStyle={buttonTextStyle}
-          onPress={pickDocument}
-        >
-          {label}
-        </Button>
+        <Pressable onPress={pickDocument}>
+          <View style={[styles.container, containerStyle]}>
+            <Feather name="upload" size={28} color={Colors.mJordan} />
+            {label && (
+              <TextCommonsMedium style={[styles.label, textStyle]}>
+                {label}
+              </TextCommonsMedium>
+            )}
+          </View>
+        </Pressable>
         {multiple
           ? selectedDocuments.length > 0 && (
               <View>
@@ -103,8 +107,9 @@ export default function DocumentPickerControl({
             )
           : selectedDocument && (
               <PdfItem
-                document={selectedDocument}
-                onDelete={() => removeDocument(item)}
+                name={selectedDocument.name}
+                size={selectedDocument.size}
+                onDelete={() => removeDocument(selectedDocument)}
               />
             )}
       </>
@@ -120,14 +125,21 @@ export default function DocumentPickerControl({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    padding: 20,
+    paddingVertical: 30,
+    backgroundColor: "white",
+    alignItems: "center",
+    borderRadius: 12,
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 3,
+    shadowOpacity: 0.2,
+    marginVertical: 10,
+    gap: 10,
   },
 
-  button: {
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 14,
-    backgroundColor: Colors.locro,
+  label: {
+    fontSize: 20,
+    color: Colors.mJordan,
   },
 });

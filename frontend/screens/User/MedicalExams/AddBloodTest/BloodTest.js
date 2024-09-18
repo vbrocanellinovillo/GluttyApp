@@ -1,18 +1,15 @@
 import { ScrollView, StyleSheet, View } from "react-native";
-import DismissKeyboardContainer from "../../../components/UI/Forms/DismissKeyboadContainer";
-import Form from "../../../components/UI/Forms/Form";
-import FormTitle from "../../../components/UI/Forms/FormTitle";
-import MedicalControl from "../../../components/UI/Controls/MedicalControl";
+import DismissKeyboardContainer from "../../../../components/UI/Forms/DismissKeyboadContainer";
+import Form from "../../../../components/UI/Forms/Form";
+import FormTitle from "../../../../components/UI/Forms/FormTitle";
+import MedicalControl from "../../../../components/UI/Controls/MedicalControl";
 import { Formik } from "formik";
-import Button from "../../../components/UI/Controls/Button";
-import { Colors } from "../../../constants/colors";
-import RadioButtonsControl from "../../../components/UI/Controls/RadioButtonsControl";
-import FormControl from "../../../components/UI/Controls/FormControl";
-import DatePicker from "../../../components/UI/Controls/DatePicker";
-import { formatDateToYYYYMMDD } from "../../../utils/dateFunctions";
-import TextCommonsRegular from "../../../components/UI/FontsTexts/TextCommonsRegular";
-import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
-import DateControl from "../../../components/UI/Controls/DateControl";
+import Button from "../../../../components/UI/Controls/Button";
+import { Colors } from "../../../../constants/colors";
+import RadioButtonsControl from "../../../../components/UI/Controls/RadioButtonsControl";
+import FormControl from "../../../../components/UI/Controls/FormControl";
+import TextCommonsRegular from "../../../../components/UI/FontsTexts/TextCommonsRegular";
+import DateControl from "../../../../components/UI/Controls/DateControl";
 
 const ema = [
   { label: "Positivo", value: "No ni" },

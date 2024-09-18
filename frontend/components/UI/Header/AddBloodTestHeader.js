@@ -1,15 +1,11 @@
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import HeaderTitle from "./HeaderTitle";
 import { Ionicons } from "@expo/vector-icons";
 import StepIndicator from "react-native-step-indicator";
 import { Colors } from "../../../constants/colors";
+import { doctorGlutty } from "../../../constants/glutty";
 
-const labels = [
-  "Información General",
-  "Dirección",
-  "Confirmar en mapa",
-  "Fotos (opcional)",
-];
+const labels = ["Carga tu estudio", "Completar datos"];
 
 const customStyles = {
   stepIndicatorSize: 25,
@@ -35,38 +31,29 @@ const customStyles = {
   currentStepLabelColor: "#fe7013",
 };
 
-export default function AddBranchHeader({ navigation, route, options }) {
+export default function AddBloodTestHeader({ route }) {
   const name = route.name;
-  const title = options.title;
-
-  //const currentPosition = route.params?.position;
 
   let currentPosition;
   switch (name) {
-    case "GeneralInfo":
+    case "UploadExam":
       currentPosition = 0;
       break;
-    case "Address":
+    case "BloodTest":
       currentPosition = 1;
-      break;
-    case "MapConfirmation":
-      currentPosition = 2;
-      break;
-    case "Photos":
-      currentPosition = 3;
       break;
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Ionicons name="storefront" size={21} color={Colors.mJordan} />
-        <HeaderTitle style={styles.title}>Nueva Sucursal</HeaderTitle>
+        <HeaderTitle style={styles.title}>Nuevo estudio</HeaderTitle>
+        <Image source={{ uri: doctorGlutty }} style={styles.image} />
       </View>
       <StepIndicator
         customStyles={customStyles}
         labels={labels}
-        stepCount={4}
+        stepCount={2}
         currentPosition={currentPosition}
       />
     </View>
@@ -75,15 +62,22 @@ export default function AddBranchHeader({ navigation, route, options }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 40,
+    paddingHorizontal: 30,
     paddingTop: 70,
     gap: 50,
   },
 
   titleContainer: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
     gap: 14,
+  },
+
+  image: {
+    width: 70,
+    height: 70,
+    objectFit: "contain",
   },
 
   title: {

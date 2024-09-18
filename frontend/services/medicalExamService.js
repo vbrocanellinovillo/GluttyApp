@@ -9,7 +9,7 @@ export async function sendMedicalPDF(pdf, token) {
   
     const formdata = new FormData();
     
-    formdata.append("pdf", pdf);
+    formdata.append("file", pdf);
     
     const requestOptions = {
       method: "POST",
