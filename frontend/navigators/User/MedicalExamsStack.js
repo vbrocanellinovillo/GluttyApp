@@ -1,6 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MedicalExams from "../../screens/User/MedicalExams/MedicalExams";
-import BloodTest from "../../screens/User/MedicalExams/BloodTest";
 import MedicalStatistics from "../../screens/User/MedicalExams/MedicalStatistics";
 import MedicalStatisticsHeader from "../../components/UI/Header/MedicalStatisticsHeader";
 import GluttyTips from "../../screens/User/MedicalExams/GluttyTips";
@@ -29,7 +28,6 @@ export default function MedicalExamsStack() {
         component={MedicalExams}
         options={{ animation: "fade_from_bottom" }}
       />
-      <Stack.Screen name="BloodTest" component={BloodTest} />
       <Stack.Screen name="GluttyTips" component={GluttyTips} />
       <Stack.Screen name="ViewMedicalExam" component={ViewMedicalExam} />
     </Stack.Navigator>
