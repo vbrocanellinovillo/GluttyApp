@@ -12,6 +12,7 @@ export default function MedicalControl({
   onChange,
   errors,
   defaultValue,
+  isConsulting
 }) {
   const [touched, setTouched] = useState(false);
   const hasError = errors && touched;
@@ -23,7 +24,7 @@ export default function MedicalControl({
   function handleBlur() {
     setTouched(true);
   }
-
+  console.log(isConsulting)
   return (
     <View style={styles.container}>
       <View style={styles.control}>
@@ -33,8 +34,13 @@ export default function MedicalControl({
             { color: hasError ? Colors.redError : Colors.mJordan },
           ]}
         >
-          {label}
+          
+          {isConsulting ? "está": label}
+          
         </TextCommonsMedium>
+
+        {isConsulting && <View style={{width:20, border:1, height:10}}/>}
+
         <View style={styles.inputContainer}>
           <NumericInput
             containerStyle={[
