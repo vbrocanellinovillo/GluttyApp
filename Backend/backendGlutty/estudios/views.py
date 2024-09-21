@@ -449,6 +449,6 @@ def extract_values_from_text(text):
         if match:
             values[key] = match.group(1)
         else:
-            values[key] = 'No encontrado'
+            values[key] = None
 
     return values

@@ -6,17 +6,14 @@ import GluttyModal from "../GluttyModal";
 import PdfItem from "../Pdf/PdfItem";
 import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import Feather from "@expo/vector-icons/Feather";
+import * as Haptics from "expo-haptics";
 
 export default function DocumentPickerControl({
-  multiple,
   onPickDocument,
-  onRemoveDocument,
   containerStyle,
   textStyle,
   label,
-  clear,
 }) {
-  const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(undefined);
 
   const [isError, setIsError] = useState(false);
@@ -27,12 +24,8 @@ export default function DocumentPickerControl({
     setMessage("");
   };
 
-  useEffect(() => {
-    setSelectedDocuments([]);
-    setSelectedDocument();
-  }, [clear]);
-
   const pickDocument = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     try {
       let result = await DocumentPicker.getDocumentAsync({
         copyToCacheDirectory: true,
@@ -47,12 +40,7 @@ export default function DocumentPickerControl({
           setMessage("Error, el archivo supera los 10 MB de tamaño");
           setIsError(true);
         } else {
-          if (multiple) {
-            setSelectedDocuments([...selectedDocuments, file]);
-          } else {
-            setSelectedDocument(file);
-          }
-
+          setSelectedDocument(file);
           if (onPickDocument) onPickDocument(file);
         }
       }
@@ -64,22 +52,13 @@ export default function DocumentPickerControl({
     }
   };
 
-  const removeDocument = async (document) => {
-    if (multiple) {
-      setSelectedDocuments((prevDocuments) =>
-        prevDocuments.filter((doc) => doc.uri !== document.uri)
-      );
-    } else {
-      setSelectedDocument(undefined);
-    }
-
-    if (onRemoveDocument) onRemoveDocument(document);
-  };
-
   return (
     <>
       <>
-        <Pressable onPress={pickDocument}>
+        <Pressable
+          onPress={pickDocument}
+          style={({ pressed }) => pressed && styles.pressed}
+        >
           <View style={[styles.container, containerStyle]}>
             <Feather name="upload" size={28} color={Colors.mJordan} />
             {label && (
@@ -89,29 +68,6 @@ export default function DocumentPickerControl({
             )}
           </View>
         </Pressable>
-        {multiple
-          ? selectedDocuments.length > 0 && (
-              <View>
-                <FlatList
-                  data={selectedDocuments}
-                  renderItem={({ item }) => (
-                    <PdfItem
-                      name={item.name}
-                      size={(item.size / Math.pow(1024, 2)).toFixed(2)}
-                      onDelete={() => removeDocument(item)}
-                    />
-                  )}
-                  keyExtractor={(item) => item.uri}
-                />
-              </View>
-            )
-          : selectedDocument && (
-              <PdfItem
-                name={selectedDocument.name}
-                size={selectedDocument.size}
-                onDelete={() => removeDocument(selectedDocument)}
-              />
-            )}
       </>
       <GluttyModal
         visible={isError}
@@ -136,6 +92,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     marginVertical: 10,
     gap: 10,
+  },
+
+  pressed: {
+    opacity: 0.4,
   },
 
   label: {

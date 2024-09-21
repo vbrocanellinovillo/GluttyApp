@@ -1,14 +1,13 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 import Form from "../UI/Forms/Form";
-import FormTitle from "../UI/Forms/FormTitle";
 import MedicalControl from "../UI/Controls/MedicalControl";
 import { Formik } from "formik";
 import RadioButtonsControl from "../UI/Controls/RadioButtonsControl";
 import FormControl from "../UI/Controls/FormControl";
 import DateControl from "../UI/Controls/DateControl";
 import FormButtonsGroup from "../UI/Controls/FormButtonsGroup";
-import { formatShortToYYYYMMDD } from "../../utils/dateFunctions";
+import { formatShortToYYYYMMDD, isFutureDate } from "../../utils/dateFunctions";
 import PdfIconItem from "../UI/Pdf/PdfIconItem";
 import FormSectionContainer from "../UI/Forms/FormSectionContainer";
 
@@ -22,6 +21,10 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
     // Ajuste de la fecha
     const formattedDate = formatShortToYYYYMMDD(values.date);
     values.date = formattedDate;
+
+    const valuesWithPdf = { ...values, pdf };
+
+    onSubmit(valuesWithPdf);
   }
 
   const today = new Date(Date.now());
@@ -31,8 +34,8 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
       <ScrollView contentContainerStyle={styles.container}>
         <Formik
           initialValues={{
-            igA: medicalExam?.aDGP_IgA,
-            igG: medicalExam?.atTG_IgA,
+            igA: medicalExam?.atTG_IgA,
+            igG: medicalExam?.aDGP_IgA,
             ema: medicalExam?.antiendomisio,
             hemoglobina: medicalExam?.hemoglobina,
             hematocrito: medicalExam?.hematocrito,
@@ -51,31 +54,44 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
             laboratory: "",
             date: today,
           }}
-          validate={({ igA, ema }) => {
+          validate={({ date }) => {
             const errors = {};
 
-            if (igA < 10) {
-              errors.igA = "anti trans debe ser mayor a 10";
+            const formattedDate = formatShortToYYYYMMDD(date);
+            if (isFutureDate(formattedDate)) {
+              errors.date = "Fecha futura";
             }
-
-            // Agregar validación de fecha futura (dios que paja)
 
             return errors;
           }}
           onSubmit={submitHandler}
         >
-          {({ values, setFieldValue, handleSubmit, errors, touched }) => (
+          {({
+            values,
+            setFieldValue,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            errors,
+            touched,
+          }) => (
             <Form style={styles.form}>
               <FormSectionContainer title="Datos Generales">
                 <DateControl
                   title="Fecha de realización"
                   value={values.date}
                   onChange={(date) => setFieldValue("date", date)}
+                  errors={errors.date}
                 />
                 <FormControl
                   style={styles.formControl}
                   value={values.laboratory}
                   label="Laboratorio"
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  errors={errors.laboratory}
+                  touched={touched.laboratory}
+                  name="laboratory"
                 />
               </FormSectionContainer>
 

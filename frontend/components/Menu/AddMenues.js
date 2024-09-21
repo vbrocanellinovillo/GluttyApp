@@ -1,4 +1,5 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
+import PdfItem from "../UI/Pdf/PdfItem";
 import SectionMenuTitle from "./SectionMenuTItle";
 import DocumentPickerControl from "../UI/Controls/DocumentPickerControl";
 import { useState } from "react";
@@ -7,7 +8,6 @@ import { Colors } from "../../constants/colors";
 
 export default function AddMenues({ onSave }) {
   const [pickedDocuments, setPickedDocuments] = useState([]);
-  const [clear, setClear] = useState(false);
 
   function pickDocument(document) {
     setPickedDocuments([...pickedDocuments, document]);
@@ -22,18 +22,30 @@ export default function AddMenues({ onSave }) {
   function handleSave() {
     onSave(pickedDocuments);
     setPickedDocuments([]);
-    setClear(!clear); // Lo uso para hacerle saber al document picker que limpie su lista de docs
   }
 
   return (
     <View style={styles.container}>
       <SectionMenuTitle>Pre-seleccionar menús</SectionMenuTitle>
+      {pickedDocuments && pickedDocuments.length > 0 && (
+        <View style={styles.documents}>
+          <FlatList
+            data={pickedDocuments}
+            renderItem={({ item }) => (
+              <PdfItem
+                name={item.name}
+                size={(item.size / Math.pow(1024, 2)).toFixed(2)}
+                onDelete={() => removeDocument(item)}
+              />
+            )}
+            keyExtractor={(item) => item.uri}
+          />
+        </View>
+      )}
       <DocumentPickerControl
-        multiple
         onPickDocument={pickDocument}
-        onRemoveDocument={removeDocument}
         label="Carga el .pdf de tu menú"
-        clear={clear}
+        containerStyle={styles.pickerStyle}
       />
       <View style={styles.contenedorBTN}>
         <Button style={styles.botonGuardar} onPress={handleSave}>
@@ -62,5 +74,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  documents: {
+    maxHeight: "60%"
+  },
+
+  pickerStyle: {
+    maxHeight: 110
   },
 });
