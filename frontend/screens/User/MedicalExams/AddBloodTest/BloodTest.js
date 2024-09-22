@@ -73,6 +73,7 @@ export default function BloodTest({ navigation, route }) {
         colHDL,
         trigliceridos,
         glucemia,
+        pdf
       );
       setIsError(false);
       setMessage("Estudio medico registrado correctamente!");
