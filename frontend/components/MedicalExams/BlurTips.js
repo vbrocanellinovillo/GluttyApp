@@ -10,7 +10,7 @@ export default function BlurTips({ visible, tips, onDismiss }) {
       <Portal>
         <BlurView style={GlobalStyles.blur} intensity={10}>
           <Modal transparent animationType="fade">
-            <GluttyTipsContainer onDismiss={onDismiss} />
+            <GluttyTipsContainer onDismiss={onDismiss} tips={tips} />
           </Modal>
         </BlurView>
       </Portal>
