@@ -3,6 +3,8 @@ import MyStudies from "../../../components/MedicalExams/MyStudies";
 import GluttyTips from "../../../components/MedicalExams/GluttyTips";
 import { useState } from "react";
 import BlurTips from "../../../components/MedicalExams/BlurTips";
+import StatisticsContainer from "../../../components/MedicalExams/StatisticsContainer";
+import { Colors } from "../../../constants/colors";
 
 const GLUTTY_TIPS = [
   {
@@ -29,6 +31,23 @@ const GLUTTY_TIPS = [
   },
 ];
 
+const STATISTICS = {
+  labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
+  datasets: [
+    {
+      data: [20, 45, 28, 80, 99, 43],
+      color: () => Colors.humita, // optional
+      strokeWidth: 2, // optional
+    },
+    {
+      data: [5, 15, 4, 30, 59, 22],
+      color: () => Colors.mJordan,
+      strokeWidth: 2, // optional
+    },
+  ],
+  legend: ["Glucosa", "Minimos"], // optional
+};
+
 export default function MedicalStatistics({ navigation }) {
   const [showGluttyTips, setShowGluttyTips] = useState(false);
   const [gluttyTips, setGluttyTips] = useState([]);
@@ -53,6 +72,7 @@ export default function MedicalStatistics({ navigation }) {
           <MyStudies onPress={navigateMyStudies} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
+        <StatisticsContainer data={STATISTICS} />
       </View>
       <BlurTips
         visible={showGluttyTips}
@@ -68,6 +88,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 25,
     paddingTop: 30,
+    gap: 30,
   },
 
   firstSection: {
