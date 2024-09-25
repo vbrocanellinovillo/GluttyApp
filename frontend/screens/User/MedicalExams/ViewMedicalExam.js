@@ -69,36 +69,14 @@ export default function ViewMedicalExam({ route }) {
           </View>
         </View>
 
-        {/*<ConsultMedicalVariable ={branch} />*/}
+        
       </View>
       <View style={{ padding: 20 }}>
         <Button backgroundColor={Colors.locro}>Ver PDF</Button>
       </View>
       <View>
         <FormSectionContainer title="Anticuerpos Celiaquía">
-          <MedicalControl
-            label="Ig A anti Transglutaminasa"
-            unit="U/ml"
-            value="ver"
-            defaultValue=""
-            onChange={(value) => setFieldValue("igA", value)}
-            isConsulting
-            //errors={errors.igA}
-          />
-          <MedicalControl
-            label="Ig G anti Gliadina Deaminada"
-            unit="U/ml"
-            value="ver"
-            defaultValue=""
-            onChange={(value) => setFieldValue("igG", value)}
-            //errors={errors.igG}
-          />
-          <RadioButtonsControl
-            title="Anticuerpos antiendomisio (EMA)"
-            //options="ver"
-            onValueChange={(value) => setFieldValue("ema", value)}
-            value="ver"
-          />
+          
           <MedicalValue label="Hemoglobina" min={2} max={7} value={4.5} />
         </FormSectionContainer>
       </View>
@@ -111,11 +89,15 @@ const styles = StyleSheet.create({
     flexDirection: "row", // Para alinear la caja de fecha y la info horizontalmente
     padding: 20,
     marginTop: -10,
-    margin: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    borderRadius: 12,
     alignItems: "center",
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "grey",
+    backgroundColor: "white",
+    shadowOffset: { width: 0, height: 3 },
+    shadowColor: "grey",
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   dateBox: {
     backgroundColor: Colors.humita,
