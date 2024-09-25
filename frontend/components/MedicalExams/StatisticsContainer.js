@@ -3,8 +3,17 @@ import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import SectionContainer from "../UI/SectionContainer";
 import { Colors } from "../../constants/colors";
 import { LineChart } from "react-native-chart-kit";
+import { useState } from "react";
+import Picker from "../UI/Controls/Picker";
 
 export default function StatisticsContainer({ data }) {
+  const options = [...Array(100).keys()].map((index) => ({
+    value: index,
+    label: index.toString(),
+  }));
+
+  const [value, setValue] = useState(0);
+
   return (
     <SectionContainer
       style={styles.container}
@@ -13,10 +22,12 @@ export default function StatisticsContainer({ data }) {
       <TextCommonsMedium style={styles.title}>
         Variable Médica
       </TextCommonsMedium>
+      <Picker data={options} />
       <LineChart
         data={data}
-        width={320} // from react-native
+        width={320}
         height={180}
+        bezier
         chartConfig={{
           decimalPlaces: 2, // optional, defaults to 2dp
           color: () => Colors.mJordan,
@@ -35,7 +46,6 @@ export default function StatisticsContainer({ data }) {
             display: "none",
           },
         }}
-        bezier
       />
     </SectionContainer>
   );
