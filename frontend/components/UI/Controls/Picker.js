@@ -1,8 +1,8 @@
 import WheelPicker from "@quidone/react-native-wheel-picker";
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { Portal } from "react-native-paper";
+import { Pressable } from "react-native";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
+import BlurContainer from "../BlurContainer";
 
 export default function Picker({ data, value }) {
   const [visible, setVisible] = useState(false);
@@ -16,11 +16,9 @@ export default function Picker({ data, value }) {
       <Pressable onPress={toggleVisible}>
         <TextCommonsRegular>holis</TextCommonsRegular>
       </Pressable>
-      {visible && (
-        <Portal>
-          <WheelPicker data={data} />
-        </Portal>
-      )}
+      <BlurContainer visible={visible} onDismiss={toggleVisible}>
+        <WheelPicker data={data} />
+      </BlurContainer>
     </>
   );
 }

@@ -3,8 +3,8 @@ import BlurContainer from "../UI/BlurContainer";
 
 export default function BlurTips({ visible, tips, onDismiss }) {
   return (
-    <BlurContainer visible={visible}>
-      <GluttyTipsContainer onDismiss={onDismiss} tips={tips} />
+    <BlurContainer visible={visible} onDismiss={onDismiss}>
+      <GluttyTipsContainer tips={tips} />
     </BlurContainer>
   );
 }
