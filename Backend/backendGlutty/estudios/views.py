@@ -83,7 +83,7 @@ def register_study(request):
     lab = request.data.get("lab")
     atTG_IgA = safe_decimal(request.data.get("atTG_IgA"))
     aDGP_IgA = safe_decimal(request.data.get("aDGP_IgA"))
-    antiendomisio = safe_decimal(request.data.get("antiendomisio"))
+    antiendomisio = request.data.get("antiendomisio")
     hemoglobina = safe_decimal(request.data.get("hemoglobina"))
     hematocrito = safe_decimal(request.data.get("hematocrito"))
     ferritina = safe_decimal(request.data.get("ferritina"))
