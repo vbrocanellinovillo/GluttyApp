@@ -79,6 +79,7 @@ def register_study(request):
         except (InvalidOperation, TypeError):
             return None
 
+    print(request.data)
     # Recoger los valores ingresados para los estudios
     test_date = request.data.get("test_date")
     lab = request.data.get("lab")

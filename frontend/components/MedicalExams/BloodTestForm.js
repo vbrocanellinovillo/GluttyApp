@@ -51,8 +51,8 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
             colHDL: medicalExam?.colesterol_hdl,
             trigliceridos: medicalExam?.trigliceridos,
             glucemia: medicalExam?.glucemia,
-            laboratory: "",
-            date: today,
+            laboratory: medicalExam?.lab,
+            date: medicalExam?.date || new Date(Date.now()),
           }}
           validate={({ date }) => {
             const errors = {};
