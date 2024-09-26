@@ -8,7 +8,7 @@ class BloodTest(models.Model):
 
     # Datos específicos del estudio
     test_date = models.DateField(blank=False)  # Fecha del estudio
-    lab = models.CharField(max_length=150, blank=False, default='Otro') # Lugar en que se hizo el estudio
+    lab = models.CharField(max_length=150, blank=False, null=True, default=null) # Lugar en que se hizo el estudio
     registration_date = models.DateField(auto_now_add=True)  # Fecha en que se registra en el sistema
     url = models.URLField(max_length=500, blank=True, null=True)
     public_id = models.CharField(max_length=300, blank=True, default="")
