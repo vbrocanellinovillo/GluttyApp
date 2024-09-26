@@ -1,7 +1,12 @@
 import { Pressable, StyleSheet } from "react-native";
 import * as Haptics from "expo-haptics";
 
-export default function SectionContainer({ style, onPress, children }) {
+export default function SectionContainer({
+  style,
+  pressedStyle,
+  onPress,
+  children,
+}) {
   function handlePress() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onPress();
@@ -11,10 +16,10 @@ export default function SectionContainer({ style, onPress, children }) {
     <Pressable
       style={({ pressed }) =>
         pressed
-          ? [styles.container, styles.pressed, style]
+          ? [styles.container, styles.pressed, style, pressedStyle]
           : [styles.container, style]
       }
-      onPress={handlePress}
+      onPress={onPress ? handlePress : () => undefined}
     >
       {children}
     </Pressable>

@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 
-
-export default function FormTitle({ children, color }) {
+export default function FormTitle({ children, color, style }) {
   return (
     <View style={styles.titleContainer}>
-      <Text style={[styles.title, { color }]}>{children}</Text>
+      <TextCommonsMedium style={[styles.title, { color }, style]}>
+        {children}
+      </TextCommonsMedium>
     </View>
   );
 }
@@ -12,7 +14,7 @@ export default function FormTitle({ children, color }) {
 const styles = StyleSheet.create({
   title: {
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "600",
   },
 
   titleContainer: {

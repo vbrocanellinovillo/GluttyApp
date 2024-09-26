@@ -5,32 +5,33 @@ import MedicalExamsList from "./MedicalExamsList";
 import { getMedicalExamsList } from "../../services/medicalExamService";
 
 const token = "your_token_here";
-const Exams = getMedicalExamsList(token)
-//   {
-//     id: 1,
-//     date: "2000-09-08",
-//     exam: "Analisis de Sangre",
-//     hospital: "Oulton",
-//   },
-//   {
-//     id: 2,
-//     date: "2000-09-08",
-//     exam: "Analisis de Sangre",
-//     hospital: "Oulton",
-//   },
-//   {
-//     id: 3,
-//     date: "2000-09-08",
-//     exam: "Analisis de Sangre",
-//     hospital: "Oulton",
-//   },
-//   {
-//     id: 4,
-//     date: "2000-09-08",
-//     exam: "Analisis de Sangre",
-//     hospital: "Oulton",
-//   },
-// ];
+//const Exams = getMedicalExamsList(token)
+const Exams = [
+   {
+     id: 1,
+     date: "2000-09-08",
+     exam: "Analisis de Sangre",
+     hospital: "Oulton",
+   },
+   {
+     id: 2,
+     date: "2000-09-08",
+     exam: "Analisis de Sangre",
+     hospital: "Oulton",
+   },
+   {
+     id: 3,
+     date: "2000-09-08",
+     exam: "Analisis de Sangre",
+     hospital: "Oulton",
+   },
+   {
+     id: 4,
+     date: "2000-09-08",
+     exam: "Analisis de Sangre",
+     hospital: "Oulton",
+   },
+ ];
 
 export default function MedicalExamsContainer({ isLoading, isError }) {
   let content;

@@ -10,8 +10,8 @@ import { API_KEY_GOOGLE } from "@env";
 export default function AddressForm({ onBack, onNext, branch }) {
   const [address, setAddress] = useState("");
   const [coordinates, setCoordinates] = useState({
-    latitude: branch.latitude,
-    longitude: branch.longitude,
+    latitude: branch?.latitude,
+    longitude: branch?.longitude,
   });
 
   const [error, setError] = useState(false);

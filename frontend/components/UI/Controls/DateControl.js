@@ -3,11 +3,8 @@ import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import DatePicker from "./DatePicker";
 import { Colors } from "../../../constants/colors";
 import { useState } from "react";
-import {
-  formatDateToYYYYMMDD,
-  formatShortMonth,
-  formatTime,
-} from "../../../utils/dateFunctions";
+import { formatShortMonth } from "../../../utils/dateFunctions";
+import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 
 export default function DateControl({
   title,
@@ -15,7 +12,6 @@ export default function DateControl({
   titleStyle,
   dateStyle,
   placeholderStyle,
-  touched,
   errors,
   value,
   onChange,
@@ -24,27 +20,44 @@ export default function DateControl({
 
   function handleChangeDate(receivedDate) {
     setDate(receivedDate);
-    const date = new Date(receivedDate);
-    console.log(date);
-    
-
-    onChange(formattedDate);
+    onChange(receivedDate);
   }
 
+  const hasError = errors !== undefined;
+
   return (
-    <View style={[styles.dateContainer, containerStyle]}>
-      <TextCommonsMedium style={[styles.title, titleStyle]}>
-        {title}
-      </TextCommonsMedium>
-      <DatePicker
-        onChange={handleChangeDate}
-        touched={touched}
-        errors={errors}
-        value={date}
-        format="short-month"
-        style={[styles.dateContol, dateStyle]}
-        placeholderStyle={[styles.dateStyle, placeholderStyle]}
-      />
+    <View>
+      <View style={[styles.dateContainer, containerStyle]}>
+        <TextCommonsMedium
+          style={
+            hasError
+              ? [styles.title, styles.errorText, titleStyle]
+              : [styles.title, titleStyle]
+          }
+        >
+          {title}
+        </TextCommonsMedium>
+        <DatePicker
+          onChange={handleChangeDate}
+          value={date}
+          format="short-month"
+          style={
+            hasError
+              ? [styles.dateContol, styles.errorControl, dateStyle]
+              : [styles.dateContol, dateStyle]
+          }
+          placeholderStyle={
+            hasError
+              ? [styles.dateStyle, styles.errorText, placeholderStyle]
+              : [styles.dateStyle, placeholderStyle]
+          }
+        />
+      </View>
+      {hasError && (
+        <TextCommonsRegular style={styles.errorText}>
+          {errors}
+        </TextCommonsRegular>
+      )}
     </View>
   );
 }
@@ -77,5 +90,15 @@ const styles = StyleSheet.create({
     color: Colors.oceanBlue,
     fontSize: 16,
     fontWeight: "500",
+  },
+
+  errorControl: {
+    shadowColor: Colors.redError,
+    shadowRadius: 6,
+    shadowOpacity: 0.6
+  },
+
+  errorText: {
+    color: Colors.redError,
   },
 });

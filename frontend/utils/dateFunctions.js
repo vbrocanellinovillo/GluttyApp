@@ -53,3 +53,50 @@ export function formatShortMonth(date) {
     year: "numeric",
   });
 }
+
+export function formatShortToYYYYMMDD(dateString) {
+  if (dateString instanceof Date) {
+    // Retornar la fecha en formato "yyyy-mm-dd"
+    return formatDateToYYYYMMDD(dateString);
+  }
+
+  // Dividir la cadena en partes (mes, día, año)
+  const [monthStr, day, year] = dateString.split(" ");
+
+  // Crear un mapa para convertir el mes de texto a número
+  const months = {
+    Jan: "01",
+    Feb: "02",
+    Mar: "03",
+    Apr: "04",
+    May: "05",
+    Jun: "06",
+    Jul: "07",
+    Aug: "08",
+    Sep: "09",
+    Oct: "10",
+    Nov: "11",
+    Dec: "12",
+  };
+
+  // Obtener el mes en formato numérico
+  const month = months[monthStr];
+
+  // Asegurarse de que el día tenga dos dígitos y eliminar espacios
+  const dayFormatted = String(day).trim().padStart(2, "0");
+
+  // Devolver la fecha en formato "yyyy-mm-dd"
+  return `${year}-${month}-${dayFormatted}`.replace(/,$/, "").trim();
+}
+
+export function isFutureDate(inputDate) {
+  // Creamos un objeto Date con la fecha ingresada
+  const enteredDate = new Date(inputDate);
+
+  // Obtenemos la fecha actual sin la parte de tiempo
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Establecemos la hora en 00:00:00 para comparar solo la fecha
+
+  // Comparamos las fechas
+  return enteredDate > today;
+}

@@ -5,27 +5,26 @@ import { getMonthName } from "../../utils/dateFunctions";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Button from "../UI/Controls/Button";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
+import { useNavigation } from "@react-navigation/native";
+import convertToMedicalDate from "./MedicalExamDateViewer";
+import MedicalExamDateViewer from "./MedicalExamDateViewer";
 
 export default function MedicalExamItem({ medicalExam, onPress }) {
-  const [year, monthNumber, day] = medicalExam.date.split("-");
+  const navigation = useNavigation()
+  console.log("onpress", onPress)
+  //const [year, monthNumber, day] = medicalExam.date.split("-");
 
-  const month = getMonthName(monthNumber);
+  //const month = getMonthName(monthNumber);
 
   return (
     <Pressable
       style={({ pressed }) =>
         pressed ? [styles.item, styles.pressed] : styles.item
       }
-      onPress={onPress}
+      
     >
       <View style={styles.detailsContainer}>
-        <View style={styles.dateContainer}>
-          <TextCommonsMedium style={styles.dateText}>{month}</TextCommonsMedium>
-          <TextCommonsMedium style={[styles.dateText, { fontSize: 30 }]}>
-            {day}
-          </TextCommonsMedium>
-          <TextCommonsMedium style={styles.dateText}>{year}</TextCommonsMedium>
-        </View>
+        <MedicalExamDateViewer date={medicalExam.date} />
 
         <View style={styles.icons}>
           <TextCommonsMedium style={styles.exam} numberOfLines={2}>
@@ -43,7 +42,7 @@ export default function MedicalExamItem({ medicalExam, onPress }) {
           </View>
         </View>
       </View>
-      <Button backgroundColor={Colors.locro} textStyle={styles.buttonText}>
+      <Button backgroundColor={Colors.locro} textStyle={styles.buttonText} onPress={onPress}>
         Ver detalles
       </Button>
     </Pressable>

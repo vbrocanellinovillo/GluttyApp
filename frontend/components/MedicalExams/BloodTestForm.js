@@ -1,63 +1,30 @@
 import { ScrollView, StyleSheet, View } from "react-native";
-import DismissKeyboardContainer from "../../../components/UI/Forms/DismissKeyboadContainer";
-import Form from "../../../components/UI/Forms/Form";
-import FormTitle from "../../../components/UI/Forms/FormTitle";
-import MedicalControl from "../../../components/UI/Controls/MedicalControl";
+import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
+import Form from "../UI/Forms/Form";
+import MedicalControl from "../UI/Controls/MedicalControl";
 import { Formik } from "formik";
-import Button from "../../../components/UI/Controls/Button";
-import { Colors } from "../../../constants/colors";
-import RadioButtonsControl from "../../../components/UI/Controls/RadioButtonsControl";
-import FormControl from "../../../components/UI/Controls/FormControl";
-import DatePicker from "../../../components/UI/Controls/DatePicker";
-import { formatDateToYYYYMMDD } from "../../../utils/dateFunctions";
-import TextCommonsRegular from "../../../components/UI/FontsTexts/TextCommonsRegular";
-import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
-import DateControl from "../../../components/UI/Controls/DateControl";
+import RadioButtonsControl from "../UI/Controls/RadioButtonsControl";
+import FormControl from "../UI/Controls/FormControl";
+import DateControl from "../UI/Controls/DateControl";
+import FormButtonsGroup from "../UI/Controls/FormButtonsGroup";
+import { formatShortToYYYYMMDD, isFutureDate } from "../../utils/dateFunctions";
+import PdfIconItem from "../UI/Pdf/PdfIconItem";
+import FormSectionContainer from "../UI/Forms/FormSectionContainer";
 
 const ema = [
-  { label: "Positivo", value: "No ni" },
-  { label: "Negativo", value: "idea bro" },
+  { label: "Positivo", value: "positivo" },
+  { label: "Negativo", value: "negativo" },
 ];
 
-export default function BloodTest() {
-  function submitHandler({
-    igA,
-    igG,
-    ema,
-    hemoglobina,
-    hematocrito,
-    ferritina,
-    ferremia,
-    vitB12,
-    calcemia,
-    vitD,
-    alt,
-    ast,
-    colesterolemia,
-    colLDL,
-    colHDL,
-    trigliceridos,
-    glucemia,
-  }) {
-    onsubmit(
-      igA,
-      igG,
-      ema,
-      hemoglobina,
-      hematocrito,
-      ferritina,
-      ferremia,
-      vitB12,
-      calcemia,
-      vitD,
-      alt,
-      ast,
-      colesterolemia,
-      colLDL,
-      colHDL,
-      trigliceridos,
-      glucemia
-    );
+export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
+  function submitHandler(values) {
+    // Ajuste de la fecha
+    const formattedDate = formatShortToYYYYMMDD(values.date);
+    values.date = formattedDate;
+
+    const valuesWithPdf = { ...values, pdf };
+
+    onSubmit(valuesWithPdf);
   }
 
   const today = new Date(Date.now());
@@ -67,42 +34,68 @@ export default function BloodTest() {
       <ScrollView contentContainerStyle={styles.container}>
         <Formik
           initialValues={{
-            igA: "",
-            igG: "",
-            ema: "",
-            hemoglobina: "",
-            hematocrito: "",
-            ferritina: "",
-            ferremia: "",
-            vitB12: "",
-            calcemia: "",
-            vitD: "",
-            alt: "",
-            ast: "",
-            colesterolemia: "",
-            colLDL: "",
-            colHDL: "",
-            trigliceridos: "",
-            glucemia: "",
+            igA: medicalExam?.atTG_IgA,
+            igG: medicalExam?.aDGP_IgA,
+            ema: medicalExam?.antiendomisio,
+            hemoglobina: medicalExam?.hemoglobina,
+            hematocrito: medicalExam?.hematocrito,
+            ferritina: medicalExam?.ferritina,
+            ferremia: medicalExam?.hierro_serico,
+            vitB12: medicalExam?.vitamina_b12,
+            calcemia: medicalExam?.calcio_serico,
+            vitD: medicalExam?.vitamina_d,
+            alt: medicalExam?.alt,
+            ast: medicalExam?.ast,
+            colesterolemia: medicalExam?.colesterol_total,
+            colLDL: medicalExam?.colesterol_ldl,
+            colHDL: medicalExam?.colesterol_hdl,
+            trigliceridos: medicalExam?.trigliceridos,
+            glucemia: medicalExam?.glucemia,
             laboratory: "",
             date: today,
           }}
-          validate={({ igA, ema }) => {
+          validate={({ date }) => {
             const errors = {};
 
-            if (igA < 10) {
-              errors.igA = "anti trans debe ser mayor a 10";
+            const formattedDate = formatShortToYYYYMMDD(date);
+            if (isFutureDate(formattedDate)) {
+              errors.date = "Fecha futura";
             }
 
             return errors;
           }}
           onSubmit={submitHandler}
         >
-          {({ values, setFieldValue, handleSubmit, errors, touched }) => (
+          {({
+            values,
+            setFieldValue,
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            errors,
+            touched,
+          }) => (
             <Form style={styles.form}>
-              <DateControl title="Fecha de realización" value={values.date} />
-              <View style={styles.sectionContainer}>
-                <FormTitle>Anticuerpos Celiaquía</FormTitle>
+              <FormSectionContainer title="Datos Generales">
+                <DateControl
+                  title="Fecha de realización"
+                  value={values.date}
+                  onChange={(date) => setFieldValue("date", date)}
+                  errors={errors.date}
+                />
+                <FormControl
+                  style={styles.formControl}
+                  value={values.laboratory}
+                  label="Laboratorio"
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  errors={errors.laboratory}
+                  touched={touched.laboratory}
+                  name="laboratory"
+                />
+              </FormSectionContainer>
+
+              <FormSectionContainer title="Anticuerpos Celiaquía">
                 <MedicalControl
                   label="Ig A anti Transglutaminasa"
                   unit="U/ml"
@@ -125,10 +118,9 @@ export default function BloodTest() {
                   onValueChange={(value) => setFieldValue("ema", value)}
                   value={values.ema}
                 />
-              </View>
+              </FormSectionContainer>
 
-              <View style={styles.sectionContainer}>
-                <FormTitle>Hemograma Básico</FormTitle>
+              <FormSectionContainer title="Hemograma Básico">
                 <MedicalControl
                   label="Hemoglobina"
                   unit="g/dL"
@@ -145,10 +137,9 @@ export default function BloodTest() {
                   onChange={(value) => setFieldValue("hematocrito", value)}
                   errors={errors.hematocrito}
                 />
-              </View>
+              </FormSectionContainer>
 
-              <View style={styles.sectionContainer}>
-                <FormTitle>Ferritina y Herro Sérico</FormTitle>
+              <FormSectionContainer title="Ferritina y Herro Sérico">
                 <MedicalControl
                   label="Ferritina"
                   unit="ng/mL"
@@ -165,10 +156,9 @@ export default function BloodTest() {
                   onChange={(value) => setFieldValue("ferremia", value)}
                   errors={errors.ferremia}
                 />
-              </View>
+              </FormSectionContainer>
 
-              <View style={styles.sectionContainer}>
-                <FormTitle>Vitamina B12</FormTitle>
+              <FormSectionContainer title="Vitamina B12">
                 <MedicalControl
                   label="Vitamina B12"
                   unit="pg/mL"
@@ -177,10 +167,9 @@ export default function BloodTest() {
                   onChange={(value) => setFieldValue("vitB12", value)}
                   errors={errors.vitB12}
                 />
-              </View>
+              </FormSectionContainer>
 
-              <View style={styles.sectionContainer}>
-                <FormTitle>Calcio y Vitamina D</FormTitle>
+              <FormSectionContainer title="Calcio y Vitamina D">
                 <MedicalControl
                   label="Calcio sérico/Calcemia"
                   unit="mg/dL"
@@ -197,10 +186,9 @@ export default function BloodTest() {
                   onChange={(value) => setFieldValue("vitD", value)}
                   errors={errors.vitD}
                 />
-              </View>
+              </FormSectionContainer>
 
-              <View style={styles.sectionContainer}>
-                <FormTitle>Función Hepática</FormTitle>
+              <FormSectionContainer title="Función Hepática">
                 <MedicalControl
                   label="ALT (alanina aminotransferasa)"
                   unit="U/L"
@@ -217,10 +205,9 @@ export default function BloodTest() {
                   onChange={(value) => setFieldValue("ast", value)}
                   errors={errors.ast}
                 />
-              </View>
+              </FormSectionContainer>
 
-              <View style={styles.sectionContainer}>
-                <FormTitle>Perfil Lipídico</FormTitle>
+              <FormSectionContainer title="Perfil Lipídico">
                 <MedicalControl
                   label="Colesterol total/Colesterolemia"
                   unit="mg/dL"
@@ -261,37 +248,21 @@ export default function BloodTest() {
                   onChange={(value) => setFieldValue("glucemia", value)}
                   errors={errors.glucemia}
                 />
-              </View>
+              </FormSectionContainer>
 
-              <View style={styles.sectionContainer}>
-                <FormTitle>Datos Generales</FormTitle>
-                <View>
-                  <TextCommonsRegular style={styles.label}>
-                    Laboratorio
-                  </TextCommonsRegular>
-                  <FormControl
-                    style={styles.formControl}
-                    value={values.laboratory}
-                    label="Laboratorio donde se realizo el estudio"
-                  />
-                </View>
-
-                <View>
-                  <TextCommonsRegular style={styles.label}>
-                    Fecha de realización
-                  </TextCommonsRegular>
-                  
-                </View>
-              </View>
+              {pdf && (
+                <FormSectionContainer title="PDF Cargado">
+                  <PdfIconItem name={pdf?.name} />
+                </FormSectionContainer>
+              )}
 
               <View style={styles.buttonContainer}>
-                <Button
-                  backgroundColor={Colors.locro}
-                  color={Colors.mJordan}
-                  onPress={handleSubmit}
-                >
-                  Confirmar
-                </Button>
+                <FormButtonsGroup
+                  prev="Anterior"
+                  next="Guardar"
+                  onNext={handleSubmit}
+                  onPrev={onPrev}
+                />
               </View>
             </Form>
           )}
@@ -319,17 +290,6 @@ const styles = StyleSheet.create({
 
   bottomText: {
     paddingBottom: 140,
-  },
-
-  sectionContainer: {
-    padding: 16,
-    shadowColor: "black",
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    backgroundColor: "white",
-    shadowOffset: { width: 0, height: 1 },
-    borderRadius: 10,
-    gap: 20,
   },
 
   formControl: {

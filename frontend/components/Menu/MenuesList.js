@@ -13,7 +13,7 @@ export default function MenuesList({ menues, onDelete }) {
       renderItem={({ item }) => (
         <PdfItem
           name={item.file_name}
-          size={item.file_size}
+          size={(item.file_size / 1024).toFixed(2)}
           onDelete={() => onDelete(item.id)}
         />
       )}
