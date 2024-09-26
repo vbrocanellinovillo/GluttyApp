@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
 import SectionContainer from "../UI/SectionContainer";
@@ -24,14 +24,14 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "600",
     textAlign: "center",
     color: Colors.mJordan,
   },
 
   number: {
-    fontSize: 34,
+    fontSize: 32,
     fontWeight: "300",
     color: Colors.mJordan,
   },

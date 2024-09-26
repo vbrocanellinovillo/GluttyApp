@@ -45,7 +45,7 @@ export default function StatisticsContainer({ data }) {
       <LineChart
         data={data}
         width={320}
-        height={180}
+        height={160}
         bezier
         chartConfig={{
           decimalPlaces: 2, // optional, defaults to 2dp
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "600",
     color: Colors.mJordan,
   },

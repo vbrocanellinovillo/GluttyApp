@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 25,
-    paddingTop: 30,
-    gap: 30,
+    paddingTop: 6,
+    gap: 22,
   },
 
   firstSection: {
