@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from requests import Response
-from .models import BloodTest, BloodTestVariables, Celiac
+from .models import *
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from decimal import Decimal, InvalidOperation
@@ -78,6 +78,7 @@ def register_study(request):
         except (InvalidOperation, TypeError):
             return None
 
+    print(request.data)
     # Recoger los valores ingresados para los estudios
     test_date = request.data.get("test_date")
     lab = request.data.get("lab")
@@ -143,7 +144,7 @@ def register_study(request):
 # Función que devuelve los análisis encontrados
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_analysis(request):
+def get_all_analysis(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     if not user:
@@ -170,6 +171,99 @@ def get_analysis(request):
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+# Función principal que trae el análisis
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_analysis(request):
+    # Obtener el ID del análisis del cuerpo de la solicitud
+    analysis_id = request.data.get('id', None)
+    
+    if analysis_id is None:
+        return Response({"error": "ID del análisis es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Obtener el análisis usando el ID
+    try:
+        analysis = get_object_or_404(BloodTest, id=analysis_id)
+    except BloodTest.DoesNotExist:
+        return Response({"error": "Análisis no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+    # Verificar que el análisis pertenezca al celíaco del usuario autenticado
+    if analysis.celiac.user != request.user:
+        return Response({"error": "No tienes permiso para acceder a este análisis."}, status=status.HTTP_403_FORBIDDEN)
+
+    # Obtener información del celiaco (sexo, edad)
+    celiac = analysis.celiac
+    sex = celiac.sex if celiac.sex is not None else "N/A"  # Sexo puede ser null
+    age = calculate_age(celiac.date_birth) if celiac.date_birth else None  # Si la fecha de nacimiento no existe
+
+    # Laboratorio donde se realizó el análisis
+    lab = analysis.lab
+
+    # Obtener todas las variables asociadas al análisis
+    variables = [
+        {"name": "IgA anti Transglutaminasa", "value": analysis.atTG_IgA},
+        {"name": "IgG anti Gliadina Deaminada", "value": analysis.aDGP_IgA},
+        {"name": "Anticuerpos antiendomisio (EMA)", "value": analysis.antiendomisio},
+        {"name": "Hemoglobina", "value": analysis.hemoglobina},
+        {"name": "Hematocrito", "value": analysis.hematocrito},
+        {"name": "Ferritina", "value": analysis.ferritina},
+        {"name": "Hierro Sérico", "value": analysis.hierro_serico},
+        {"name": "Vitamina B12", "value": analysis.vitamina_b12},
+        {"name": "Calcio Sérico", "value": analysis.calcio_serico},
+        {"name": "Vitamina D", "value": analysis.vitamina_d},
+        {"name": "ALT (alanina aminotransferasa)", "value": analysis.alt},
+        {"name": "AST (aspartato aminotransferasa)", "value": analysis.ast},
+        {"name": "Colesterol Total", "value": analysis.colesterol_total},
+        #{"name": "Colesterol LDL", "value": analysis.colesterol_ldl},
+        {"name": "Colesterol HDL", "value": analysis.colesterol_hdl},
+        {"name": "Triglicéridos", "value": analysis.trigliceridos},
+        {"name": "Glucemia", "value": analysis.glucemia}
+    ]
+    
+    # Contenedor para almacenar los resultados
+    analysis_data = {
+        "date": analysis.test_date,
+        "lab": lab,
+        "variables": []
+    }
+
+    # Procesar cada variable
+    for variable in variables:
+        if variable["value"] is not None:
+            # Filtrar valores de referencia basados en sexo y edad, si aplican
+            reference_values = ReferenceValues.objects.filter(
+                variable__name=variable["name"],
+                lab__name=lab,
+                sex__in=[sex, "N/A"]  # Sexo puede ser el valor específico o "N/A"
+            )
+            
+            if age is not None:
+                # Si la edad está disponible, filtrar también por rango de edad
+                reference_values = reference_values.filter(
+                    models.Q(min_age__lte=age) | models.Q(min_age__isnull=True),
+                    models.Q(max_age__gte=age) | models.Q(max_age__isnull=True)
+                )
+
+            if reference_values.exists():
+                ref = reference_values.first()
+                analysis_data["variables"].append({
+                    "variable_name": variable["name"],
+                    "value": variable["value"],
+                    "min_value": ref.min_value,
+                    "max_value": ref.max_value,
+                    "description": ref.variable.getDescription()
+                })
+            else:
+                analysis_data["variables"].append({
+                    "variable_name": variable["name"],
+                    "value": variable["value"],
+                    "min_value": None,
+                    "max_value": None,
+                    "description": "Valores de referencia no disponibles"
+                })
+    
+    return Response(analysis_data, status=200)
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
