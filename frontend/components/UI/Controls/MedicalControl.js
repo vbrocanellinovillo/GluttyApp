@@ -3,7 +3,7 @@ import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 import NumericInput from "./NumericInput";
 import { Colors } from "../../../constants/colors";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 export default function MedicalControl({
   label,
@@ -12,7 +12,7 @@ export default function MedicalControl({
   onChange,
   errors,
   defaultValue,
-  isConsulting
+  isConsulting,
 }) {
   const [touched, setTouched] = useState(false);
   const hasError = errors && touched;
@@ -24,7 +24,7 @@ export default function MedicalControl({
   function handleBlur() {
     setTouched(true);
   }
-  console.log(isConsulting)
+  console.log(isConsulting);
   return (
     <View style={styles.container}>
       <View style={styles.control}>
@@ -34,12 +34,10 @@ export default function MedicalControl({
             { color: hasError ? Colors.redError : Colors.mJordan },
           ]}
         >
-          
-          {isConsulting ? "está": label}
-          
+          {isConsulting ? "está" : label}
         </TextCommonsMedium>
 
-        {isConsulting && <View style={{width:20, border:1, height:10}}/>}
+        {isConsulting && <View style={{ width: 20, border: 1, height: 10 }} />}
 
         <View style={styles.inputContainer}>
           <NumericInput
@@ -83,11 +81,12 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 18,
     fontWeight: "500",
-    flex: 1.3,
+    flex: 1.1,
+    paddingRight: 12
   },
 
   inputContainer: {
-    flex: 1,
+    flex: 0.9,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
@@ -97,7 +96,7 @@ const styles = StyleSheet.create({
   unitStyle: {
     fontSize: 18,
     fontWeight: "400",
-    flex: 0.8,
+    flex: 1,
   },
 
   input: {

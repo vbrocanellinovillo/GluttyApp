@@ -63,7 +63,6 @@ def verify_value(variable_name, value, sex, age):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def register_study(request):
-    
     # Buscar celiaco para obtener sexo y edad
     try:
         user = request.user
@@ -125,61 +124,20 @@ def register_study(request):
     # Guardar si es que cargó un pdf del estudio
     files = request.FILES.getlist('pdf')
 
-    # Subir y guardar cada menú
     for file in files:
         file_type = file.content_type
-
         if file_type not in ["image/jpeg", "image/png", "application/pdf"]:
-            return Response({"error": "Formato de archivo no soportado. Solo se permiten imágenes y PDFs."}, status=status.HTTP_400_BAD_REQUEST)
-
-        upload_result = cloudinary.uploader.upload(
-            file,
-            resource_type='auto'
-        )
+            return JsonResponse({"error": "Formato de archivo no soportado. Solo se permiten imágenes y PDFs."}, status=400)
         
-        url=upload_result['url']
-        public_id=upload_result['public_id']
+        upload_result = cloudinary.uploader.upload(file, resource_type='auto')
+        url = upload_result['url']
+        public_id = upload_result['public_id']
         
         estudio.url = url
         estudio.public_id = public_id
         estudio.save()
-        
-    # Comparar valores con los normales y agregar descripciones
-    results = {}
-    if atTG_IgA is not None:
-        results["IgA anti Transglutaminasa"] = verify_value("IgA anti Transglutaminasa", atTG_IgA, sexo, age)
-    if aDGP_IgA is not None:
-        results["IgG anti Gliadina Deaminada"] = verify_value("IgG anti Gliadina Deaminada", aDGP_IgA, sexo, age)
-    if antiendomisio is not None:
-        results["Anticuerpos antiendomisio (EMA)"] = verify_value("Anticuerpos antiendomisio (EMA)", antiendomisio, sexo, age)
-    if hemoglobina is not None:
-        results["Hemoglobina"] = verify_value("Hemoglobina", hemoglobina, sexo, age)
-    if hematocrito is not None:
-        results["Hematocrito"] = verify_value("Hematocrito", hematocrito, sexo, age)
-    if ferritina is not None:
-        results["Ferritina"] = verify_value("Ferritina", ferritina, sexo, age)
-    if hierro_serico is not None:
-        results["Hierro Sérico"] = verify_value("Hierro Sérico", hierro_serico, sexo, age)
-    if vitamina_b12 is not None:
-        results["Vitamina B12"] = verify_value("Vitamina B12", vitamina_b12, sexo, age)
-    if calcio_serico is not None:
-        results["Calcio Sérico"] = verify_value("Calcio Sérico", calcio_serico, sexo, age)
-    if vitamina_d is not None:
-        results["Vitamina D"] = verify_value("Vitamina D", vitamina_d, sexo, age)
-    if alt is not None:
-        results["ALT"] = verify_value("ALT (alanina aminotransferasa)", alt, sexo, age)
-    if ast is not None:
-        results["AST"] = verify_value("AST (aspartato aminotransferasa)", ast, sexo, age)
-    if colesterol_total is not None:
-        results["Colesterol Total"] = verify_value("Colesterol Total", colesterol_total, sexo, age)
-    if colesterol_hdl is not None:
-        results["Colesterol HDL"] = verify_value("Colesterol HDL", colesterol_hdl, sexo, age)
-    if trigliceridos is not None:
-        results["Triglicéridos"] = verify_value("Triglicéridos", trigliceridos, sexo, age)
-    if glucemia is not None:
-        results["Glucemia"] = verify_value("Glucemia", glucemia, sexo, age)
-
-    return JsonResponse({"estudio_id": estudio.id, "resultados": results})
+    
+    return JsonResponse({"estudio_id": estudio.id, "message": "Estudio registrado exitosamente"})
     
 
 # Función que devuelve los análisis encontrados
