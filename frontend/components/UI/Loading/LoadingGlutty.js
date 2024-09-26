@@ -1,8 +1,17 @@
 import { Image, Modal, StyleSheet, View } from "react-native";
 import ScreenCenter from "../ScreenCenter";
 import { jumpingGlutty } from "../../../constants/glutty";
+import AnimatedText from "./AnimatedText";
+import { Colors } from "../../../constants/colors";
 
-export default function LoadingGlutty({ visible }) {
+export default function LoadingGlutty({
+  visible,
+  children,
+  textStyle,
+  initialColor,
+  changedColor,
+  duration,
+}) {
   return (
     <Modal
       visible={visible}
@@ -18,6 +27,16 @@ export default function LoadingGlutty({ visible }) {
               uri: jumpingGlutty,
             }}
           />
+          {children && (
+            <AnimatedText
+              textStyle={[styles.textStyle, textStyle]}
+              initialColor={initialColor || Colors.locro}
+              changedColor={changedColor || Colors.vainilla}
+              duration={duration || 420}
+            >
+              {children}
+            </AnimatedText>
+          )}
         </ScreenCenter>
       </View>
     </Modal>
@@ -40,5 +59,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+
+  textStyle: {
+    fontSize: 26,
   },
 });

@@ -2,8 +2,19 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather, Entypo } from "@expo/vector-icons";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 import { Colors } from "../../../constants/colors";
+import * as Haptics from "expo-haptics";
 
-export default function PdfItem({ document, onVisualize, onDelete }) {
+export default function PdfItem({ name, size, onVisualize, onDelete }) {
+  function handleVisualize() {
+    Haptics.selectionAsync();
+    onVisualize();
+  }
+
+  function handleDelete() {
+    Haptics.selectionAsync();
+    onDelete();
+  }
+
   return (
     <View style={styles.previewContainer}>
       <View style={styles.row}>
@@ -15,16 +26,16 @@ export default function PdfItem({ document, onVisualize, onDelete }) {
         />
         <View style={styles.textContainer}>
           <TextCommonsRegular style={styles.documentName}>
-            {document.name}
+            {name}
           </TextCommonsRegular>
           <TextCommonsRegular style={styles.documentSize}>
-            {(document.size / 1024).toFixed(2)} MB
+            {size} MB
           </TextCommonsRegular>
         </View>
-        <TouchableOpacity style={styles.iconWrapper} onPress={onVisualize}>
+        <TouchableOpacity style={styles.iconWrapper} onPress={handleVisualize}>
           <Entypo name="eye" size={24} color={Colors.mJordan} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconWrapper} onPress={onDelete}>
+        <TouchableOpacity style={styles.iconWrapper} onPress={handleDelete}>
           <Entypo name="squared-cross" size={24} color={Colors.mJordan} />
         </TouchableOpacity>
       </View>

@@ -88,15 +88,17 @@ WSGI_APPLICATION = 'backendGlutty.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'celinahunziker',
         'USER': 'celinahunziker',
         'PASSWORD': 'niHosDyld/ov4nus60',
-        'HOST': '200.69.137.167',  # Replace with your PostgreSQL server's address if necessary
-        'PORT': '54321',          # Leave empty to use the default PostgreSQL port (usually 5432)
-     }
+        'HOST': '200.69.137.167',
+        'PORT': '54321',
+        'CONN_MAX_AGE': 600,  # Reutiliza conexiones hasta por 10 minutos
+    }
 }
+
 
 
 # Password validation

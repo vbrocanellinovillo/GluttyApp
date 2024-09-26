@@ -1,20 +1,19 @@
-import { useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
-import Button from "./Button";
 import { Colors } from "../../../constants/colors";
 import GluttyModal from "../GluttyModal";
 import PdfItem from "../Pdf/PdfItem";
+import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
+import Feather from "@expo/vector-icons/Feather";
+import * as Haptics from "expo-haptics";
 
 export default function DocumentPickerControl({
-  multiple,
   onPickDocument,
-  onRemoveDocument,
-  buttonStyle,
-  buttonTextStyle,
+  containerStyle,
+  textStyle,
   label,
 }) {
-  const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(undefined);
 
   const [isError, setIsError] = useState(false);
@@ -26,6 +25,7 @@ export default function DocumentPickerControl({
   };
 
   const pickDocument = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     try {
       let result = await DocumentPicker.getDocumentAsync({
         copyToCacheDirectory: true,
@@ -40,12 +40,7 @@ export default function DocumentPickerControl({
           setMessage("Error, el archivo supera los 10 MB de tamaño");
           setIsError(true);
         } else {
-          if (multiple) {
-            setSelectedDocuments([...selectedDocuments, file]);
-          } else {
-            setSelectedDocument(file);
-          }
-
+          setSelectedDocument(file);
           if (onPickDocument) onPickDocument(file);
         }
       }
@@ -57,49 +52,22 @@ export default function DocumentPickerControl({
     }
   };
 
-  const removeDocument = async (document) => {
-    if (multiple) {
-      setSelectedDocuments((prevDocuments) =>
-        prevDocuments.filter((doc) => doc.uri !== document.uri)
-      );
-    } else {
-      setSelectedDocument(undefined);
-    }
-
-    if (onRemoveDocument) onRemoveDocument(document);
-  };
-
   return (
     <>
       <>
-        <Button
-          style={[styles.button, buttonStyle]}
-          textStyle={buttonTextStyle}
+        <Pressable
           onPress={pickDocument}
+          style={({ pressed }) => pressed && styles.pressed}
         >
-          {label}
-        </Button>
-        {multiple
-          ? selectedDocuments.length > 0 && (
-              <View>
-                <FlatList
-                  data={selectedDocuments}
-                  renderItem={({ item }) => (
-                    <PdfItem
-                      document={item}
-                      onDelete={() => removeDocument(item)}
-                    />
-                  )}
-                  keyExtractor={(item) => item.uri}
-                />
-              </View>
-            )
-          : selectedDocument && (
-              <PdfItem
-                document={selectedDocument}
-                onDelete={() => removeDocument(item)}
-              />
+          <View style={[styles.container, containerStyle]}>
+            <Feather name="upload" size={28} color={Colors.mJordan} />
+            {label && (
+              <TextCommonsMedium style={[styles.label, textStyle]}>
+                {label}
+              </TextCommonsMedium>
             )}
+          </View>
+        </Pressable>
       </>
       <GluttyModal
         visible={isError}
@@ -113,14 +81,25 @@ export default function DocumentPickerControl({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    padding: 20,
+    paddingVertical: 30,
+    backgroundColor: "white",
+    alignItems: "center",
+    borderRadius: 12,
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 3,
+    shadowOpacity: 0.2,
+    marginVertical: 10,
+    gap: 10,
   },
 
-  button: {
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 14,
-    backgroundColor: Colors.locro,
+  pressed: {
+    opacity: 0.4,
+  },
+
+  label: {
+    fontSize: 20,
+    color: Colors.mJordan,
   },
 });

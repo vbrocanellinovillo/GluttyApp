@@ -8,7 +8,7 @@ export default function GradientText(props) {
   return (
     <MaskedView maskElement={<Text {...props} />}>
       <LinearGradient
-        colors={[Colors.mJordan, Colors.locro]}
+        colors={props.colors ? props.colors : [Colors.mJordan, Colors.locro]}
         start={[0, 0]}
         end={[1, 0]}
       >

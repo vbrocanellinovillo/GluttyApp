@@ -4,9 +4,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import Button from "./Controls/Button";
 import { sadGlutty, smileGlutty, thumbGlutty } from "../../constants/glutty";
+import TextCommonsMedium from "./FontsTexts/TextCommonsMedium";
 
 export default function GluttyModal({
+  imageStyle,
+  imageContainerStyle,
+  imageTextStyle,
+  imageText,
   visible,
+  customGlutty,
   other,
   isError,
   message,
@@ -19,7 +25,7 @@ export default function GluttyModal({
   closeButtonText = "Cerrar",
   buttonsContainerStyle,
 }) {
-  const imageUri = other ? smileGlutty : isError ? sadGlutty : thumbGlutty;
+  const imageUri = customGlutty? customGlutty: other ? smileGlutty : isError ? sadGlutty : thumbGlutty;
 
   const icon = other
     ? { name: undefined, color: undefined }
@@ -32,7 +38,8 @@ export default function GluttyModal({
       <Dialog style={styles.dialog} onDismiss={onClose} visible={visible}>
         <Dialog.Content>
           <View style={styles.imageContainer}>
-            <Image source={{ uri: imageUri }} style={styles.image} />
+            <Image source={{ uri: imageUri }} style={[styles.image, imageStyle]} />
+            {imageText && <TextCommonsMedium>{imageText}</TextCommonsMedium>}
           </View>
           <View
             style={[

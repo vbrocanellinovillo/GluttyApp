@@ -388,7 +388,10 @@ def extract_values_from_text(text):
 
     for key, pattern in patterns.items():
         match = re.search(pattern, text)
-        values[key] = match.group(1) if match else 'No encontrado'
+        if match:
+            values[key] = match.group(1)
+        else:
+            values[key] = None
 
     return values
 

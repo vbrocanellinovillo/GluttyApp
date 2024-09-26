@@ -19,7 +19,7 @@ export default function RadioButtonsControl({
     <View style={styles.container}>
       <TextCommonsMedium style={styles.title}>{title}</TextCommonsMedium>
       <RadioButton.Group onValueChange={handleValueChange} value={value}>
-        {options.map((option, index) => (
+        {options && options.map((option, index) => (
           <RadioButton.Item
             key={index}
             mode="android"

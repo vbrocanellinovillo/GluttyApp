@@ -10,6 +10,7 @@ import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import MenuesSkeleton from "../../../components/UI/Loading/MenuesSkeleton";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
+import { Colors } from "../../../constants/colors";
 
 export default function Menu() {
   const [menues, setMenues] = useState([]);
@@ -20,41 +21,42 @@ export default function Menu() {
   const [isError, setIsError] = useState(false);
   const [errorFetching, setErrorFetching] = useState(false);
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [deleteId, setDeleteId] = useState();
+
   const [message, setMessage] = useState("");
 
   const token = useSelector((state) => state.auth.accessToken);
 
-  useEffect(() => {
-    async function fetchMenues() {
-      setIsFetching(true);
-      try {
-        const data = await getAllMenues(token);
-        setMenues(data.menues);
-        setIsError(false);
-      } catch (error) {
-        setErrorFetching(true);
-      } finally {
-        setIsFetching(false);
-      }
+  async function fetchMenues() {
+    try {
+      const data = await getAllMenues(token);
+      setMenues(data.menues);
+      setErrorFetching(false);
+    } catch (error) {
+      setErrorFetching(true);
     }
+  }
 
-    fetchMenues();
+  useEffect(() => {
+    setIsFetching(true);
+    try {
+      fetchMenues();
+    } finally {
+      setIsFetching(false);
+    }
   }, []);
 
   const closeModalHandler = () => {
     setIsError(false);
+    setMessage("");
   };
 
   const enviarPdf = async (selectedDocuments) => {
     setIsUpdating(true);
     try {
       await sendPdf(selectedDocuments, token);
-      // Después de enviar los documentos, vacía el array de documentos seleccionados
-      setMenues([]);
-
-      const response = await getAllMenues(token);
-      setMenues(response.menues);
-      setIsError(false);
+      fetchMenues();
     } catch (error) {
       setMessage(
         "Ocurrio un error al guardar los pdf. Por favor intente de nuevo más tarde"
@@ -65,10 +67,25 @@ export default function Menu() {
     }
   };
 
+  const handleConfirm = async () => {
+    setShowConfirmModal(false);
+    await deleteMenu(deleteId);
+  };
+
+  const handleCancel = () => {
+    setShowConfirmModal(false);
+  };
+
+  const confirmDelete = async (id) => {
+    setDeleteId(id);
+    setShowConfirmModal(true);
+  };
+
   const deleteMenu = async (id) => {
     setIsUpdating(true);
     try {
       await deletePdf(token, id);
+      fetchMenues();
     } catch (error) {
       setMessage(
         "Ocurrio un error al eliminar el pdf. Por favor intente de nuevo más tarde"
@@ -80,8 +97,8 @@ export default function Menu() {
 
   if (errorFetching) {
     return (
-      <GluttyErrorScreen>
-        Ocurrio un error al cargar los menues. Por favor intente de nuevo más
+      <GluttyErrorScreen width={300} height={300}>
+        Ocurrio un error al cargar los menús. Por favor intente de nuevo más
         tarde
       </GluttyErrorScreen>
     );
@@ -100,7 +117,26 @@ export default function Menu() {
         message={message}
         onClose={closeModalHandler}
       />
-      <MenuContainer menues={menues} onSave={enviarPdf} onDelete={deleteMenu} />
+      <GluttyModal
+        visible={showConfirmModal}
+        message="¿Seguro que desea borrar este pdf?"
+        other
+        onClose={handleCancel}
+        buttons={[
+          {
+            text: "Confirmar",
+            bg: "green",
+            color: Colors.whiteGreen,
+            onPress: handleConfirm,
+            id: 1,
+          },
+        ]}
+      />
+      <MenuContainer
+        menues={menues}
+        onSave={enviarPdf}
+        onDelete={confirmDelete}
+      />
     </>
   );
 }

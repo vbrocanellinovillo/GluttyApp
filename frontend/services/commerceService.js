@@ -3,11 +3,8 @@ import { Coordinates } from "../models/Coordinates";
 import { httpRequest } from "../utils/http";
 
 const url = backendUrl + "comercios/";
-const urlUs = backendUrl + "usuarios/";
 
 export async function sendPdf(selectedDocuments, token) {
-  console.log(selectedDocuments);
-
   const requestUrl = url + "upload-menu/";
 
   const formdata = new FormData();
@@ -46,9 +43,6 @@ export async function getAllMenues(token) {
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);
-    {
-      console.log("get all menues:", response);
-    }
     return response;
   } catch (error) {
     throw new Error(error.message);
@@ -57,7 +51,6 @@ export async function getAllMenues(token) {
 
 export async function deletePdf(token, id) {
   if (id === "") {
-    console.log("El ID está vacío. No se realizará ninguna acción.");
     return; // Sale de la función sin hacer nada más
   }
 
@@ -89,7 +82,6 @@ export async function getPdfById(id, token) {
   const formdata = new FormData();
 
   formdata.append("id", id);
-  console.log("token back", token);
 
   const requestOptions = {
     method: "POST",
@@ -132,8 +124,6 @@ export async function addBranch(branch, token) {
 
   if (branch.photos) {
     branch.photos.forEach((photo) => {
-      console.log(photo);
-
       formdata.append("image", {
         uri: photo.uri,
         name: photo.fileName || "photo",
@@ -195,8 +185,6 @@ export async function getMapPoints(token) {
 
 //Actualización en la branch
 export async function updateBranch(branch, id, token) {
-  console.log("entra?");
-
   const formdata = new FormData();
   formdata.append("name", branch.name);
   formdata.append("phone", branch.phone);
@@ -210,8 +198,7 @@ export async function updateBranch(branch, id, token) {
   formdata.append("latitude", branch.latitude);
   formdata.append("longitude", branch.longitude);
   formdata.append("branch_id", id);
-  console.log("-" * 30);
-  console.log(formdata);
+
   const requestOptions = {
     method: "PUT",
     body: formdata,
@@ -222,12 +209,10 @@ export async function updateBranch(branch, id, token) {
   };
   const requestUrl = url + `update-branch/`;
   try {
-    console.log("BOCA LA CONCHA DE TU MADREEE");
     const response = await httpRequest(requestUrl, requestOptions);
 
     return response;
   } catch (error) {
-    console.log("SALEESTEERRORLPM");
     throw new Error(error.message);
   }
 }
