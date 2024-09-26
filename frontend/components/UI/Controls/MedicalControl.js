@@ -24,7 +24,7 @@ export default function MedicalControl({
   function handleBlur() {
     setTouched(true);
   }
-  console.log(isConsulting);
+  
   return (
     <View style={styles.container}>
       <View style={styles.control}>
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
     flex: 1.1,
-    paddingRight: 12
+    paddingRight: 12,
   },
 
   inputContainer: {

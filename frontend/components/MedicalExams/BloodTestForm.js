@@ -12,8 +12,8 @@ import PdfIconItem from "../UI/Pdf/PdfIconItem";
 import FormSectionContainer from "../UI/Forms/FormSectionContainer";
 
 const ema = [
-  { label: "Positivo", value: "positivo" },
-  { label: "Negativo", value: "negativo" },
+  { label: "Positivo", value: "Positivo" },
+  { label: "Negativo", value: "Negativo" },
 ];
 
 export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
@@ -26,8 +26,6 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
 
     onSubmit(valuesWithPdf);
   }
-
-  const today = new Date(Date.now());
 
   return (
     <DismissKeyboardContainer>
@@ -51,8 +49,8 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
             colHDL: medicalExam?.colesterol_hdl,
             trigliceridos: medicalExam?.trigliceridos,
             glucemia: medicalExam?.glucemia,
-            laboratory: "",
-            date: today,
+            laboratory: medicalExam?.lab,
+            date: medicalExam?.date || new Date(Date.now()),
           }}
           validate={({ date }) => {
             const errors = {};
