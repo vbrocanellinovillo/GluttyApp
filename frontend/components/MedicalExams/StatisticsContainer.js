@@ -7,10 +7,29 @@ import { useState } from "react";
 import Picker from "../UI/Controls/Picker";
 
 export default function StatisticsContainer({ data }) {
-  const options = [...Array(100).keys()].map((index) => ({
+  /* const options = [...Array(100).keys()].map((index) => ({
     value: index,
     label: index.toString(),
-  }));
+  })); */
+
+  const options = [
+    {
+      value: 1,
+      label: "Ig A anti Transglutaminasa",
+    },
+    {
+      value: 2,
+      label: "Ig G anti Gliadina Deaminada",
+    },
+    {
+      value: 3,
+      label: "Hemoglobina",
+    },
+    {
+      value: 4,
+      label: "Glucosa",
+    },
+  ];
 
   const [value, setValue] = useState(0);
 

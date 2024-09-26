@@ -78,11 +78,11 @@ const styles = StyleSheet.create({
   },
 
   wheelPicker: {
-    backgroundColor: "#ddd",
+    backgroundColor: "#eee",
     borderRadius: 12,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
   },
 });
