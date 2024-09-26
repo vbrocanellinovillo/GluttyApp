@@ -1,4 +1,5 @@
 from django.db import models
+from sqlalchemy import null
 from usuarios.models import Celiac  # Importamos la relación con el celiaco
 
 class BloodTest(models.Model):
@@ -7,7 +8,7 @@ class BloodTest(models.Model):
 
     # Datos específicos del estudio
     test_date = models.DateField(blank=False)  # Fecha del estudio
-    lab = models.CharField(max_length=150, blank=False, default='No cargado') # Lugar en que se hizo el estudio
+    lab = models.CharField(max_length=150, blank=False, default='Otro') # Lugar en que se hizo el estudio
     registration_date = models.DateField(auto_now_add=True)  # Fecha en que se registra en el sistema
     url = models.URLField(max_length=500, blank=True, null=True)
     public_id = models.CharField(max_length=300, blank=True, default="")
@@ -45,6 +46,7 @@ class BloodTest(models.Model):
     def getLab(self):
         return self.lab
 
+# VARIABLES DE LOS ESTUDIOS
 class BloodTestVariables(models.Model):
     SEX = (("Male", "Male"), ("Female", "Female"), ("N/A", "No Aplica"))
 
@@ -60,4 +62,38 @@ class BloodTestVariables(models.Model):
         verbose_name_plural = "Variables de Estudio"
 
     def __str__(self):
-        return self.nombre
+        return self.name
+    
+# LABORATORIOS CARGADOS
+class Laboratory(models.Model):
+    name = models.CharField(max_length=300)
+    
+    def __str__(self):
+        return self.name
+    
+    def getName(self):
+        return self.name
+
+class Variable(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=300)
+
+    def __str__(self):
+        return self.name
+    
+    def getName(self):
+        return self.name
+    
+    def getDescription(self):
+        return self.description
+    
+class ReferenceValues(models.Model):
+    SEX = (("Male", "Male"), ("Female", "Female"), ("N/A", "No Aplica"))
+    
+    lab = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='variables')
+    variable = models.ForeignKey(Variable, on_delete=models.CASCADE)
+    min_value = models.DecimalField(max_digits=5, decimal_places=2)
+    max_value = models.DecimalField(max_digits=5, decimal_places=2)
+    sex = models.CharField(max_length=10, choices=SEX, default="N/A")
+    min_age = models.CharField(max_length=3, null=True, default=null)
+    max_age = models.CharField(max_length=3, null=True, default=null)
