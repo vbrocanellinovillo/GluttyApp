@@ -56,8 +56,8 @@ export async function registerMedicalExam(
 
   formdata.append("test_date", date);
   formdata.append("lab", lab);
-  formdata.append("ATTG_IgA", atTG_IgA);
-  formdata.append("ADGP_IgA", aDGP_IgA);
+  formdata.append("atTG_IgA", atTG_IgA);
+  formdata.append("aDGP_IgA", aDGP_IgA);
   formdata.append("antiendomisio", antiendomisio);
   formdata.append("hemoglobina", hemoglobina);
   formdata.append("hematocrito", hematocrito);
