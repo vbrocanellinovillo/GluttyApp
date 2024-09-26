@@ -1,10 +1,12 @@
 import { StyleSheet, View } from "react-native";
 import MyStudies from "../../../components/MedicalExams/MyStudies";
 import GluttyTips from "../../../components/MedicalExams/GluttyTips";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BlurTips from "../../../components/MedicalExams/BlurTips";
 import StatisticsContainer from "../../../components/MedicalExams/StatisticsContainer";
 import { Colors } from "../../../constants/colors";
+import { doctorGlutty } from "../../../constants/glutty";
+import GluttyModal from "../../../components/UI/GluttyModal";
 
 const GLUTTY_TIPS = [
   {
@@ -51,6 +53,22 @@ const STATISTICS = {
 export default function MedicalStatistics({ navigation }) {
   const [showGluttyTips, setShowGluttyTips] = useState(false);
   const [gluttyTips, setGluttyTips] = useState([]);
+  const [isloading, setisloading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    setMessage(
+      "Glutty no es un médico perra, no te hagas la viva con nosotros!"
+    );
+    setShowModal(true);
+  }, []);
+
+  function closeModalHandler() {
+    console.log("Acatoy");
+    setShowModal(false);
+  }
 
   function navigateMyStudies() {
     navigation.navigate("MedicalExams");
@@ -78,6 +96,14 @@ export default function MedicalStatistics({ navigation }) {
         visible={showGluttyTips}
         onDismiss={hideGluttyTips}
         tips={gluttyTips}
+      />
+      <GluttyModal
+        imageStyle={{ width: 80, height: 80 }}
+        other
+        customGlutty={doctorGlutty}
+        message={message}
+        onClose={closeModalHandler}
+        visible={showModal}
       />
     </>
   );
