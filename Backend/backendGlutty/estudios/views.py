@@ -143,7 +143,7 @@ def register_study(request):
 # Función que devuelve los análisis encontrados
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_analysis(request):
+def get_all_analysis(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     if not user:
