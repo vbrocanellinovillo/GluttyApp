@@ -7,6 +7,9 @@ import StatisticsContainer from "../../../components/MedicalExams/StatisticsCont
 import { Colors } from "../../../constants/colors";
 import { doctorGlutty } from "../../../constants/glutty";
 import GluttyModal from "../../../components/UI/GluttyModal";
+import NextStudyContainer from "../../../components/MedicalExams/NextStudyContainer";
+import BlurContainer from "../../../components/UI/BlurContainer";
+import BlurNextStudy from "../../../components/MedicalExams/BlurNextStudy";
 
 const GLUTTY_TIPS = [
   {
@@ -53,6 +56,9 @@ const STATISTICS = {
 export default function MedicalStatistics({ navigation }) {
   const [showGluttyTips, setShowGluttyTips] = useState(false);
   const [gluttyTips, setGluttyTips] = useState([]);
+
+  const [showNextStudy, setShowNextStudy] = useState(false);
+
   const [isloading, setisloading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -60,13 +66,12 @@ export default function MedicalStatistics({ navigation }) {
 
   useEffect(() => {
     setMessage(
-      "Glutty no es un médico perra, no te hagas la viva con nosotros!"
+      "Glutty es un médicardo perra, no te hagas la viva con nosotros!"
     );
     setShowModal(true);
   }, []);
 
   function closeModalHandler() {
-    console.log("Acatoy");
     setShowModal(false);
   }
 
@@ -83,6 +88,14 @@ export default function MedicalStatistics({ navigation }) {
     setShowGluttyTips(false);
   }
 
+  function openNextStudy() {
+    setShowNextStudy(true);
+  }
+
+  function hideNextStudy() {
+    setShowNextStudy(false);
+  }
+
   return (
     <>
       <View style={styles.container}>
@@ -91,12 +104,14 @@ export default function MedicalStatistics({ navigation }) {
           <GluttyTips onPress={openGluttyTips} />
         </View>
         <StatisticsContainer data={STATISTICS} />
+        <NextStudyContainer onPress={openNextStudy} />
       </View>
       <BlurTips
         visible={showGluttyTips}
         onDismiss={hideGluttyTips}
         tips={gluttyTips}
       />
+      <BlurNextStudy onDismiss={hideNextStudy} visible={showNextStudy} />
       <GluttyModal
         imageStyle={{ width: 80, height: 80 }}
         other
@@ -113,8 +128,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 25,
-    paddingTop: 6,
-    gap: 22,
+    gap: 16,
   },
 
   firstSection: {

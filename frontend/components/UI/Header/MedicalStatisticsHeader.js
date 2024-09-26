@@ -14,7 +14,7 @@ export default function MedicalStatisticsHeader() {
 
 const styles = StyleSheet.create({
   container: {
-    height: 180,
+    height: 175,
   },
 
   text: {
