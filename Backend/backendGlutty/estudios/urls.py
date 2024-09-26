@@ -16,6 +16,7 @@ urlpatterns = [
     # path('', include(router.urls)),
     path("register/", register_study, name="register_study"),
     path("get-all-analysis/", get_all_analysis, name="get_all_analysis"),
+    path("get-analysis/", get_analysis, name="get_analysis"),
     path("extract-values-pdf/", extract_medical_data, name="extract_values"),
     path("delete-analysis/", delete_analysis, name="delete_analysis"),
 ]
