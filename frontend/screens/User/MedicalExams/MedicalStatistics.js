@@ -101,6 +101,7 @@ export default function MedicalStatistics({ navigation }) {
       <ScrollView
         contentContainerStyle={styles.container}
         contentInsetAdjustmentBehavior="always"
+        contentInset={{ bottom: 5 }}
       >
         <View style={styles.firstSection}>
           <MyStudies onPress={navigateMyStudies} />
