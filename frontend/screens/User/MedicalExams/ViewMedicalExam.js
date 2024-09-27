@@ -75,9 +75,10 @@ export default function ViewMedicalExam({ route }) {
         <Button backgroundColor={Colors.locro}>Ver PDF</Button>
       </View>
       <View>
-        <FormSectionContainer title="Anticuerpos Celiaquía">
+        <FormSectionContainer>
           
           <MedicalValue label="Hemoglobina" min={2} max={7} value={4.5} />
+          <MedicalValue label="Glicosera" min={100} max={150} value={150} />
         </FormSectionContainer>
       </View>
     </View>

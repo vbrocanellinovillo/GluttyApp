@@ -52,10 +52,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingVertical: 20,
     paddingHorizontal: 30,
-    shadowColor: Colors.darkBlue,
-    shadowOffset: { width: 3, height: 4 },
+    shadowColor: "grey",
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.4,
-    shadowRadius: 3,
+    shadowRadius: 4,
   },
 
   text: {

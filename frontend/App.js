@@ -9,6 +9,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/http";
 import { StatusBar } from "expo-status-bar";
 
+
 export default function App() {
   return (
     <GestureHandlerRootView>
