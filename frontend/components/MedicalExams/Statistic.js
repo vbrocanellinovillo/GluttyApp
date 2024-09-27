@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import Picker from "../UI/Controls/Picker";
 import { Colors } from "../../constants/colors";
@@ -32,6 +32,8 @@ const FREQUENCIES = [
   { id: 4, value: "Mes" },
 ];
 
+const width = Dimensions.get("window").width;
+
 export default function Statistic({ initialData }) {
   const [data, setData] = useState(initialData);
   const [frequency, setFrecuency] = useState(1);
@@ -41,11 +43,11 @@ export default function Statistic({ initialData }) {
   }
 
   return (
-    <View style={styles.container}>
+    <>
       <Picker data={options} />
       <LineChart
         data={data}
-        width={320}
+        width={width - 100}
         height={160}
         bezier
         chartConfig={{
@@ -73,18 +75,14 @@ export default function Statistic({ initialData }) {
             key={freq.id}
             id={freq.id}
             onSelect={selectFrequency}
-            isSelected={freq.id === frequency} 
+            isSelected={freq.id === frequency}
           >
             {freq.value}
           </Frequency>
         ))}
       </Frequencies>
-    </View>
+    </>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    gap: 14,
-  },
-});
+const styles = StyleSheet.create({});

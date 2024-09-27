@@ -24,14 +24,14 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "600",
     textAlign: "center",
     color: Colors.mJordan,
   },
 
   number: {
-    fontSize: 32,
+    fontSize: 34,
     fontWeight: "300",
     color: Colors.mJordan,
   },

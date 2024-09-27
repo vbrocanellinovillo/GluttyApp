@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import MyStudies from "../../../components/MedicalExams/MyStudies";
 import GluttyTips from "../../../components/MedicalExams/GluttyTips";
 import { useState, useEffect } from "react";
@@ -98,14 +98,17 @@ export default function MedicalStatistics({ navigation }) {
 
   return (
     <>
-      <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        contentInsetAdjustmentBehavior="always"
+      >
         <View style={styles.firstSection}>
           <MyStudies onPress={navigateMyStudies} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
         <StatisticsContainer data={STATISTICS} />
         <NextStudyContainer onPress={openNextStudy} />
-      </View>
+      </ScrollView>
       <BlurTips
         visible={showGluttyTips}
         onDismiss={hideGluttyTips}
@@ -128,7 +131,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 25,
-    gap: 16,
+    paddingTop: 10,
+    gap: 30,
   },
 
   firstSection: {

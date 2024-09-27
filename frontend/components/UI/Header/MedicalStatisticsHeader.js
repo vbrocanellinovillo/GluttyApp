@@ -14,18 +14,18 @@ export default function MedicalStatisticsHeader() {
 
 const styles = StyleSheet.create({
   container: {
-    height: 175,
+    height: 165,
   },
 
   text: {
-    fontSize: 38,
+    fontSize: 36,
     fontWeight: "300",
     textAlign: "left"
   },
 
   image: {
-    width: 80,
-    height: 80,
+    width: 75,
+    height: 75,
     objectFit: "contain",
   },
 });

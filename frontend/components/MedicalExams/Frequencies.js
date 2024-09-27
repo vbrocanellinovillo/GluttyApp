@@ -7,8 +7,8 @@ export default function Frequencies({ children }) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    justifyContent: "center",
+    flexWrap: "wrap",
     gap: 20,
-    marginTop: 6
+    marginTop: 6,
   },
 });

@@ -1,9 +1,7 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import SectionContainer from "../UI/SectionContainer";
 import { Colors } from "../../constants/colors";
-import Picker from "../UI/Controls/Picker";
-import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import Statistic from "./Statistic";
 
 export default function StatisticsContainer({ data }) {
@@ -23,8 +21,9 @@ export default function StatisticsContainer({ data }) {
 const styles = StyleSheet.create({
   container: {
     alignItems: "flex-start",
+    flexWrap: "wrap",
     paddingVertical: 14,
-    paddingHorizontal: 14,
+    paddingHorizontal: 20,
     gap: 20,
   },
 

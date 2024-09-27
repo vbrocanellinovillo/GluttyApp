@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 2,
     alignItems: "flex-start",
+    justifyContent: "space-between"
   },
 
   pressed: {
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "600",
     color: Colors.mJordan,
   },
@@ -43,17 +44,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 4,
+    marginTop: 8,
   },
 
   image: {
-    width: 50,
-    height: 50,
+    width: 55,
+    height: 55,
     objectFit: "contain",
   },
 
   text: {
-    fontSize: 18,
+    fontSize: 20,
     textAlign: "center",
     flex: 0.8,
   },
