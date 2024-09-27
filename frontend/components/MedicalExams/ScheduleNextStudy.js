@@ -3,6 +3,9 @@ import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import WheelPicker from "@quidone/react-native-wheel-picker";
 import DialogContainer from "../UI/DialogContainer";
 import { Colors } from "../../constants/colors";
+import { useState } from "react";
+import * as Haptics from "expo-haptics";
+import Button from "../UI/Controls/Button";
 
 const options = [
   {
@@ -23,14 +26,31 @@ const options = [
   },
 ];
 
-export default function ScheduleNextStudy({ onDismiss }) {
+export default function ScheduleNextStudy({ onDismiss, time }) {
+  const [value, setValue] = useState(time || 2);
+
+  function handleValueChange(item) {
+    Haptics.selectionAsync();
+    setValue(item.item.value);
+  }
+
   return (
     <DialogContainer onDismiss={onDismiss} containerStyle={styles.container}>
       <TextCommonsMedium style={styles.title}>
         ¿Cuándo te realizarás tu proximo estudio médico?
       </TextCommonsMedium>
-      <WheelPicker data={options} />
-      <View />
+      <WheelPicker
+        data={options}
+        value={value}
+        onValueChanged={handleValueChange}
+        onValueChanging={() =>
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+        }
+        style={styles.wheelPicker}
+      />
+      <Button backgroundColor={Colors.locro} onPress={() => undefined}>
+        {time ? "Cancelar recordatorio" : "Agendar"}
+      </Button>
     </DialogContainer>
   );
 }
@@ -38,7 +58,6 @@ export default function ScheduleNextStudy({ onDismiss }) {
 const styles = StyleSheet.create({
   container: {
     gap: 10,
-    alignItems: "center",
   },
 
   title: {
@@ -46,5 +65,9 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: Colors.mJordan,
     textAlign: "center",
+  },
+
+  wheelPicker: {
+    marginTop: -15,
   },
 });
