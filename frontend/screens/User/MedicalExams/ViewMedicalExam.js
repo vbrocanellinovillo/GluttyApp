@@ -12,6 +12,7 @@ import FormSectionContainer from "../../../components/UI/Forms/FormSectionContai
 import MedicalControl from "../../../components/UI/Controls/MedicalControl";
 import RadioButtonsControl from "../../../components/UI/Controls/RadioButtonsControl";
 import MedicalValue from "../../../components/MedicalExams/MedicalValue";
+import RangeBar from "../../../components/MedicalExams/RangeBar";
 
 export default function ViewMedicalExam({ route }) {
   const [medicalExam, setMedicalExam] = useState(undefined);
@@ -60,7 +61,7 @@ export default function ViewMedicalExam({ route }) {
           <View style={styles.locationBox}>
             <MaterialCommunityIcons
               name="map-marker"
-              size={24}
+              size={24}descriptive
               color={Colors.mJordan}
             />
             <TextCommonsRegular style={styles.locationText}>
@@ -75,10 +76,10 @@ export default function ViewMedicalExam({ route }) {
         <Button backgroundColor={Colors.locro}>Ver PDF</Button>
       </View>
       <View>
-        <FormSectionContainer>
-          
-          <MedicalValue label="Hemoglobina" min={2} max={7} value={4.5} />
-          <MedicalValue label="Glicosera" min={100} max={150} value={150} />
+        <FormSectionContainer title="Variables Médicas">
+        
+         
+          <RangeBar label="Hematocrito" minBarraGris={0} maxBarraGris={100} normalMin={50} normalMax={80} currentValue={70} descrip="hola" />
         </FormSectionContainer>
       </View>
     </View>

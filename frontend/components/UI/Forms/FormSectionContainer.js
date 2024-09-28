@@ -17,7 +17,7 @@ export default function FormSectionContainer({
 
 const styles = StyleSheet.create({
   sectionContainer: {
-    marginVertical: 8,
+    margin: 15,
     padding: 20,
     shadowColor: "grey",
     shadowOpacity: 0.3,
