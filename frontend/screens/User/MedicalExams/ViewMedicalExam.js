@@ -9,10 +9,8 @@ import TextCommonsRegular from "../../../components/UI/FontsTexts/TextCommonsReg
 import MedicalExamDateViewer from "../../../components/MedicalExams/MedicalExamDateViewer";
 import Button from "../../../components/UI/Controls/Button";
 import FormSectionContainer from "../../../components/UI/Forms/FormSectionContainer";
-import MedicalControl from "../../../components/UI/Controls/MedicalControl";
-import RadioButtonsControl from "../../../components/UI/Controls/RadioButtonsControl";
-import MedicalValue from "../../../components/MedicalExams/MedicalValue";
 import RangeBar from "../../../components/MedicalExams/RangeBar";
+import ValorPosNeg from "../../../components/MedicalExams/ValorPosNeg";
 
 export default function ViewMedicalExam({ route }) {
   const [medicalExam, setMedicalExam] = useState(undefined);
@@ -25,25 +23,25 @@ export default function ViewMedicalExam({ route }) {
   const token = useSelector((state) => state.auth.accessToken);
   console.log(token);
 
-  //   useFocusEffect(
-  //     useCallback(() => {
-  //       const cargarEstudioMedico = async () => {
-  //         try {
-  //           setIsLoading(true);
-  //           const medicExam = await getMedicalExamById(id, token);
-  //           setMedicalExam(medicExam);
-  //         } catch (error) {
-  //           setIsError(true);
-  //         } finally {
-  //           setIsLoading(false);
-  //         }
-  //       };
+    //  useFocusEffect(
+    //    useCallback(() => {
+    //      const cargarEstudioMedico = async () => {
+    //      try {
+    //          setIsLoading(true);
+    //          const medicExam = await getMedicalExamById(id, token);
+    //          setMedicalExam(medicExam);
+    //        } catch (error) {
+    //          setIsError(true);
+    //        } finally {
+    //          setIsLoading(false);
+    //        }
+    //      };
 
-  //       if (id && token) {
-  //         cargarEstudioMedico();
-  //       }
-  //     }, [id, token])
-  //   );
+    //     if (id && token) {
+    //        cargarEstudioMedico();
+    //      }
+    //   }, [id, token])
+    //  );
   const date = "2024-06-21";
 
   return (
@@ -80,6 +78,7 @@ export default function ViewMedicalExam({ route }) {
         
          
           <RangeBar label="Hematocrito" minBarraGris={0} maxBarraGris={100} normalMin={50} normalMax={80} currentValue={70} descrip="hola" />
+          <ValorPosNeg label="Hematocrito" valor="Positivo" descrip={"El hematocrito es un valor que se usa para kdjhksjhf sdkjskd skdhskjd"}></ValorPosNeg>
         </FormSectionContainer>
       </View>
     </View>
