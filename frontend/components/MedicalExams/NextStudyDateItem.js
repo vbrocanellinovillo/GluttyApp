@@ -15,8 +15,8 @@ export default function NextStudyDateItem({ number, text }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     gap: 6,
+    minWidth: 50,
   },
 
   numberContainer: {

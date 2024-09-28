@@ -8,9 +8,8 @@ import { Colors } from "../../../constants/colors";
 import { doctorGlutty } from "../../../constants/glutty";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import NextStudyContainer from "../../../components/MedicalExams/NextStudyContainer";
-import BlurContainer from "../../../components/UI/BlurContainer";
 import BlurNextStudy from "../../../components/MedicalExams/BlurNextStudy";
-import { formatDateToYYYYMMDD } from "../../../utils/dateFunctions";
+import MedicalStatisticsSkeleton from "../../../components/UI/Loading/MedicalStatisticsSkeleton";
 
 const GLUTTY_TIPS = [
   {
@@ -100,21 +99,21 @@ export default function MedicalStatistics({ navigation }) {
   const currentDate = new Date();
   const futureDate = new Date(currentDate.setMonth(currentDate.getMonth() + 8));
 
-  const stringDate = formatDateToYYYYMMDD(futureDate);
+  if (isloading) return <MedicalStatisticsSkeleton />;
 
   return (
     <>
       <ScrollView
         contentContainerStyle={styles.container}
         contentInsetAdjustmentBehavior="always"
-        contentInset={{ bottom: 50 }}
+        contentInset={{ bottom: 80 }}
       >
         <View style={styles.firstSection}>
           <MyStudies onPress={navigateMyStudies} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
         <StatisticsContainer data={STATISTICS} />
-        <NextStudyContainer onPress={openNextStudy} date={stringDate} />
+        <NextStudyContainer onPress={openNextStudy} date={futureDate} />
       </ScrollView>
       <BlurTips
         visible={showGluttyTips}

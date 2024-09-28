@@ -1,13 +1,12 @@
 import { StyleSheet, View } from "react-native";
 import NextStudyDateItem from "./NextStudyDateItem";
 
-export default function NextStudyDate({ date }) {
-  const [year, month, number] = date.split("-");
+export default function NextStudyDate({ year, month, days }) {
   return (
     <View style={styles.container}>
       <NextStudyDateItem number={year} text="Años" />
       <NextStudyDateItem number={month} text="Meses" />
-      <NextStudyDateItem number={number} text="Dias" />
+      <NextStudyDateItem number={days} text="Dias" />
     </View>
   );
 }
@@ -17,6 +16,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
-    gap: 12,
+    gap: 14,
   },
 });
