@@ -82,9 +82,9 @@ def register_study(request):
     # Recoger los valores ingresados para los estudios
     test_date = request.data.get("test_date")
     lab = request.data.get("lab")
-    atTG_IgA = safe_decimal(request.data.get("atTG_IgA"))
-    aDGP_IgG = safe_decimal(request.data.get("aDGP_IgG"))
-    aDGP_IgA = safe_decimal(request.data.get("aDGP_IgA"))
+    atTG_IgA = request.data.get("atTG_IgA")
+    aDGP_IgG = request.data.get("aDGP_IgG")
+    aDGP_IgA = request.data.get("aDGP_IgA")
     antiendomisio = request.data.get("antiendomisio")
     hemoglobina = safe_decimal(request.data.get("hemoglobina"))
     hematocrito = safe_decimal(request.data.get("hematocrito"))
@@ -206,9 +206,9 @@ def get_analysis(request):
 
     # Obtener todas las variables asociadas al análisis
     variables = [
-        {"name": "IgA anti Transglutaminasa", "value": analysis.atTG_IgA},
-        {"name": "IgG anti Gliadina Deaminada", "value": analysis.aDGP_IgG},
-        {"name": "IgA anti Gliadina Deaminada", "value": analysis.aDGP_IgA},
+        {"name": "IgA Anti-Transglutaminasa", "value": analysis.atTG_IgA},
+        {"name": "IgG Anti-Gliadina Deaminada", "value": analysis.aDGP_IgG},
+        {"name": "IgA Anti-Gliadina", "value": analysis.aDGP_IgA},
         {"name": "Anticuerpos antiendomisio (EMA)", "value": analysis.antiendomisio},
         {"name": "Hemoglobina", "value": analysis.hemoglobina},
         {"name": "Hematocrito", "value": analysis.hematocrito},
@@ -240,8 +240,17 @@ def get_analysis(request):
             reference_values = ReferenceValues.objects.filter(
                 variable__name=variable["name"],
                 lab__name=lab,
-                sex__in=[sex, "N/A"]  # Sexo puede ser el valor específico o "N/A"
+                #sex__in=[sex, null]  # Sexo puede ser el valor específico o "N/A"
             )
+            print(f"Variable name: {variable['name']}")
+            print(f"Lab name: {lab}")
+            # print(f"Sex: {sex}")
+
+            print(str(reference_values))
+            
+            # Si sex no es None, agregar el filtro por sex
+            # if celiac.sex is not None:
+            #     reference_values = reference_values.filter(sex=celiac.sex)
             
             if age is not None:
                 # Si la edad está disponible, filtrar también por rango de edad
@@ -361,14 +370,46 @@ def get_initial_data(request):
         analysis = celiac.getAnalysis()
         analysis_count = analysis.count()
         
+        show_message = celiac.getShowMessage()
+        
+        initial_data["message"] = show_message
+        
         initial_data["analysis"] = analysis_count
         
         latest_analysis = celiac.getLatestAnalysis()
         
+        # Esto es lo que hay que cambiar
         initial_data["statistics"] = str(latest_analysis)
+        
             
         # Devolver los datos    
         return Response(initial_data, status=status.HTTP_200_OK)
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    
+# Función que cancela 
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_initial_data(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    celiac = Celiac.objects.filter(user=user).first()
+    
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    # Verificar que el análisis pertenezca al celíaco del usuario autenticado
+    if celiac.user != request.user:
+        return Response({"error": "No tienes permiso para acceder a esta funcionalidad."}, status=status.HTTP_403_FORBIDDEN)
+    try:
+        celiac.show_message = False
+        celiac.save()
+            
+        # Devolver los datos    
+        return Response({"": f"No se mostrará el mensaje nuevamente."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    

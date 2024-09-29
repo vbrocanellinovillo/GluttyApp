@@ -102,3 +102,6 @@ class ReferenceValues(models.Model):
     sex = models.CharField(max_length=10, null=True, choices=SEX, default=null)
     min_age = models.CharField(max_length=3, null=True, default=null)
     max_age = models.CharField(max_length=3, null=True, default=null)
+    
+    def __str__(self):
+        return f"{self.variable} + {str(self.min_value)} + {str(self.max_value)}"
