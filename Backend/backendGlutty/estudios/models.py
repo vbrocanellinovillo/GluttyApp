@@ -14,8 +14,9 @@ class BloodTest(models.Model):
     public_id = models.CharField(max_length=300, blank=True, default="")
     
     # Valores de los estudios
-    atTG_IgA = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, verbose_name='IgA anti Transglutaminasa')
-    aDGP_IgA = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, verbose_name='IgA anti Gliadina Deaminada')
+    atTG_IgA = models.CharField(max_length=8, null=True, blank=True, verbose_name='IgA anti Transglutaminasa')
+    aDGP_IgA = models.CharField(max_length=8, null=True, blank=True, verbose_name='IgA anti Gliadina Deaminada')
+    aDGP_IgG = models.CharField(max_length=8, null=True, blank=True, verbose_name='IgG anti Gliadina Deaminada')
     
     # Opcionales
     antiendomisio = models.CharField(max_length=10, null=True, blank=True, choices=[("Positivo", "Positivo"), ("Negativo", "Negativo")], verbose_name='Anticuerpos antiendomisio (EMA)')
@@ -30,6 +31,7 @@ class BloodTest(models.Model):
     ast = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, verbose_name='AST (aspartato aminotransferasa)')
     colesterol_total = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     colesterol_hdl = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    colesterol_ldl = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     trigliceridos = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     glucemia = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
@@ -45,6 +47,9 @@ class BloodTest(models.Model):
     
     def getLab(self):
         return self.lab
+    
+    def getRegistrationDate(self):
+        return self.registration_date
 
 # VARIABLES DE LOS ESTUDIOS
 class BloodTestVariables(models.Model):
@@ -88,12 +93,12 @@ class Variable(models.Model):
         return self.description
     
 class ReferenceValues(models.Model):
-    SEX = (("Male", "Male"), ("Female", "Female"), ("N/A", "No Aplica"))
+    SEX = (("Male", "Male"), ("Female", "Female"))
     
     lab = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='variables')
     variable = models.ForeignKey(Variable, on_delete=models.CASCADE)
-    min_value = models.DecimalField(max_digits=5, decimal_places=2)
-    max_value = models.DecimalField(max_digits=5, decimal_places=2)
-    sex = models.CharField(max_length=10, choices=SEX, default="N/A")
+    min_value = models.DecimalField(max_digits=5, null=True, decimal_places=2)
+    max_value = models.DecimalField(max_digits=6, null=True, decimal_places=2)
+    sex = models.CharField(max_length=10, null=True, choices=SEX, default=null)
     min_age = models.CharField(max_length=3, null=True, default=null)
     max_age = models.CharField(max_length=3, null=True, default=null)

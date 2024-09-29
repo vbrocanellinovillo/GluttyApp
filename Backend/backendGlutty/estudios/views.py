@@ -83,6 +83,7 @@ def register_study(request):
     test_date = request.data.get("test_date")
     lab = request.data.get("lab")
     atTG_IgA = safe_decimal(request.data.get("atTG_IgA"))
+    aDGP_IgG = safe_decimal(request.data.get("aDGP_IgG"))
     aDGP_IgA = safe_decimal(request.data.get("aDGP_IgA"))
     antiendomisio = request.data.get("antiendomisio")
     hemoglobina = safe_decimal(request.data.get("hemoglobina"))
@@ -96,6 +97,7 @@ def register_study(request):
     ast = safe_decimal(request.data.get("ast"))
     colesterol_total = safe_decimal(request.data.get("colesterol_total"))
     colesterol_hdl = safe_decimal(request.data.get("colesterol_hdl"))
+    colesterol_ldl = safe_decimal(request.data.get("colesterol_ldl"))
     trigliceridos = safe_decimal(request.data.get("trigliceridos"))
     glucemia = safe_decimal(request.data.get("glucemia"))
 
@@ -105,6 +107,7 @@ def register_study(request):
         test_date=test_date,
         lab=lab,
         atTG_IgA=atTG_IgA,
+        aDGP_IgG=aDGP_IgG,
         aDGP_IgA=aDGP_IgA,
         antiendomisio=antiendomisio,
         hemoglobina=hemoglobina,
@@ -118,6 +121,7 @@ def register_study(request):
         ast=ast,
         colesterol_total=colesterol_total,
         colesterol_hdl=colesterol_hdl,
+        colesterol_ldl=colesterol_ldl,
         trigliceridos=trigliceridos,
         glucemia=glucemia
     )
@@ -203,7 +207,8 @@ def get_analysis(request):
     # Obtener todas las variables asociadas al análisis
     variables = [
         {"name": "IgA anti Transglutaminasa", "value": analysis.atTG_IgA},
-        {"name": "IgG anti Gliadina Deaminada", "value": analysis.aDGP_IgA},
+        {"name": "IgG anti Gliadina Deaminada", "value": analysis.aDGP_IgG},
+        {"name": "IgA anti Gliadina Deaminada", "value": analysis.aDGP_IgA},
         {"name": "Anticuerpos antiendomisio (EMA)", "value": analysis.antiendomisio},
         {"name": "Hemoglobina", "value": analysis.hemoglobina},
         {"name": "Hematocrito", "value": analysis.hematocrito},
@@ -215,7 +220,7 @@ def get_analysis(request):
         {"name": "ALT (alanina aminotransferasa)", "value": analysis.alt},
         {"name": "AST (aspartato aminotransferasa)", "value": analysis.ast},
         {"name": "Colesterol Total", "value": analysis.colesterol_total},
-        #{"name": "Colesterol LDL", "value": analysis.colesterol_ldl},
+        {"name": "Colesterol LDL", "value": analysis.colesterol_ldl},
         {"name": "Colesterol HDL", "value": analysis.colesterol_hdl},
         {"name": "Triglicéridos", "value": analysis.trigliceridos},
         {"name": "Glucemia", "value": analysis.glucemia}
@@ -297,9 +302,10 @@ def extract_medical_data(request):
     
     # Definir patrones para las variables que queremos extraer
     patterns = {
-        "IgA anti Transglutaminasa": [r"transglutaminasa.*?\s([\d,.]+)"],
-        "IgG anti Gliadina Deaminada": [r"gliadina.*?\s([\d,.]+)"],
-        "Anticuerpos antiendomisio (EMA)": [r"antiendomisio.*?\s([\d,.]+)"],
+        "IgA anti Transglutaminasa": [r"transglutaminasa.*?(positivo|negativo|[\d,.]+)"],
+        "IgG anti Gliadina Deaminada": [r"igg.*?gliadin[ae]s?.*?\b(positivo|negativo|[\d,.]+)\b"],
+        "IgA anti Gliadina": [r"iga.*?gliadin[ae]s?.*?\b(positivo|negativo|[\d,.]+)\b"],
+        "Anticuerpos antiendomisio (EMA)": [r"anti[-\s]?endomisio.*?(positivo|negativo)", r"ema.*?(positivo|negativo)"],
         "Hemoglobina": [r"hemoglobina.*?\s([\d,.]+)"],
         "Hematocrito": [r"hematocrito.*?\s([\d,.]+)"],
         "Ferritina": [r"ferritina.*?\s([\d,.]+)"],
@@ -307,8 +313,8 @@ def extract_medical_data(request):
         "Vitamina B12": [r"vitamina b[-\s]?12.*?\s([\d,.]+)"],
         "Calcio sérico": [r"calcio.*?\s([\d,.]+)", r"calcemia.*?\s([\d,.]+)"],
         "Vitamina D": [r"vitamina d3?.*?\s([\d,.]+)", r"vitamina d total.*?\s([\d,.]+)"],
-        "ALT": [r"alt.*?\s([\d,.]+)"],
-        "AST": [r"ast.*?\s([\d,.]+)"],
+        "ALT": [r"alt.*?\s([\d,.]+)\s?U/L"],
+        "AST": [r"ast.*?\s([\d,.]+)\s?U/L"],
         "Colesterol total": [r"colesterol total.*?\s([\d,.]+)", r"colesterolemia.*?\s([\d,.]+)", r"colesterol.*?\s([\d,.]+)"],
         "Colesterol LDL": [r"colesterol ldl.*?\s([\d,.]+)", r"ldl col.*?\s([\d,.]+)", r"colesterol l\.d\.l.*?\s([\d,.]+)"],
         "Colesterol HDL": [r"colesterol hdl.*?\s([\d,.]+)", r"hdl col.*?\s([\d,.]+)", r"colesterol h\.d\.l.*?\s([\d,.]+)"],
@@ -336,5 +342,33 @@ def extract_value(text, patterns):
     for pattern in patterns:
         match = re.search(pattern, text, re.IGNORECASE)
         if match:
-            return match.group(1)
+            return match.group(1).upper()
     return None
+
+# Función que devuelve los análisis encontrados
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_initial_data(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        initial_data = {}
+       
+        celiac = Celiac.objects.filter(user=user).first()
+        
+        analysis = celiac.getAnalysis()
+        analysis_count = analysis.count()
+        
+        initial_data["analysis"] = analysis_count
+        
+        latest_analysis = celiac.getLatestAnalysis()
+        
+        initial_data["statistics"] = str(latest_analysis)
+            
+        # Devolver los datos    
+        return Response(initial_data, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

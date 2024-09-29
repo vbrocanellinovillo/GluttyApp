@@ -1,7 +1,13 @@
 from estudios.models import Laboratory, Variable
+from django.db import connection
+
+#Eliminar todas las variables existentes y restaurar los IDs
+with connection.cursor() as cursor:
+    cursor.execute("TRUNCATE TABLE estudios_variable RESTART IDENTITY CASCADE;")
+print("Todos los registros de la tabla Variable han sido eliminados y los IDs han sido restaurados.")
 
 # Cargar laboratorios
-labs = ["LACE", "Hospital Privado", "Sanatorio Allende"]
+labs = ["LACE", "Hospital Privado", "Sanatorio Allende", "HUMANA"]
 
 for lab in labs:
     lab_instance, created = Laboratory.objects.get_or_create(name=lab)
@@ -12,8 +18,9 @@ for lab in labs:
 
 # Cargar variables
 variables_data = [
-    {"name": "IgA anti Transglutaminasa", "description": "Anticuerpos utilizados para diagnosticar la enfermedad celíaca, ya que indican una respuesta inmunológica al gluten en personas con esta condición."},
-    {"name": "IgG anti Gliadina Deaminada", "description": "Anticuerpos que ayudan a detectar intolerancia al gluten, especialmente en personas que no producen suficiente IgA."},
+    {"name": "IgA Anti-Transglutaminasa", "description": "Anticuerpos utilizados para diagnosticar la enfermedad celíaca, ya que indican una respuesta inmunológica al gluten en personas con esta condición."},
+    {"name": "IgG Anti-Gliadina Deaminada", "description": "Anticuerpos que ayudan a detectar intolerancia al gluten, especialmente en personas que no producen suficiente IgA."},
+    {"name": "IgA Anti-Gliadina", "description": "Anticuerpos que responden a la gliadina, una proteína del gluten, usados en el diagnóstico de la enfermedad celíaca."},
     {"name": "Anticuerpos antiendomisio (EMA)", "description": "Anticuerpos específicos que se usan para confirmar la enfermedad celíaca, con alta precisión diagnóstica."},
     {"name": "Hemoglobina", "description": "Proteína en los glóbulos rojos que transporta oxígeno desde los pulmones al resto del cuerpo. Es esencial para mantener el cuerpo bien oxigenado."},
     {"name": "Hematocrito", "description": "Mide el porcentaje de glóbulos rojos en la sangre. Es una medida clave para entender la composición sanguínea."},
@@ -28,7 +35,7 @@ variables_data = [
     {"name": "Colesterol LDL", "description": "Conocido como 'colesterol malo', se transporta a través de la sangre y puede depositarse en las arterias."},
     {"name": "Colesterol HDL", "description": "'Colesterol bueno' que ayuda a transportar el colesterol desde las arterias hacia el hígado para su eliminación."},
     {"name": "Triglicéridos", "description": "Tipo de grasa presente en la sangre, derivada principalmente de los alimentos que consumes."},
-    {"name": "Glucemia", "description": "Nivel de glucosa en la sangre. La glucosa es la principal fuente de energía para las células del cuerpo."}
+    {"name": "Glucemia", "description": "Nivel de glucosa en la sangre. La glucosa es la principal fuente de energía para las células del cuerpo."},
 ]
 
 for var_data in variables_data:

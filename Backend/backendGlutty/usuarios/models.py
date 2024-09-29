@@ -56,6 +56,13 @@ class Celiac(models.Model):
     def getAnalysis(self):
         return self.estudios.all()
     
+    def getLatestAnalysis(self):
+        latest_analysis = self.getAnalysis().order_by('-registration_date').first()
+        if latest_analysis:
+            return latest_analysis
+        else:
+            return None
+    
 class Session(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="session")
     session_initialized = models.BooleanField(default=False)
