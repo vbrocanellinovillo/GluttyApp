@@ -18,6 +18,7 @@ urlpatterns = [
     path("get-all-analysis/", get_all_analysis, name="get_all_analysis"),
     path("get-analysis/", get_analysis, name="get_analysis"),
     path("get-initial-data/", get_initial_data, name="get_initial_data"),
+    path("save-medical-message/", save_medical_message, name="get_initial_data"),
     path("extract-values-pdf/", extract_medical_data, name="extract_values"),
     path("delete-analysis/", delete_analysis, name="delete_analysis"),
 ]

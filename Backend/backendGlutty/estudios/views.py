@@ -392,7 +392,7 @@ def get_initial_data(request):
 # Función que cancela 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def get_initial_data(request):
+def save_medical_message(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     celiac = Celiac.objects.filter(user=user).first()
