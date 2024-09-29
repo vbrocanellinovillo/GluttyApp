@@ -100,3 +100,30 @@ export function isFutureDate(inputDate) {
   // Comparamos las fechas
   return enteredDate > today;
 }
+
+export function getTimeDifference(date) {
+  const currentDate = new Date(Date.now());
+
+  let years = date.getFullYear() - currentDate.getFullYear();
+  let months = date.getMonth() - currentDate.getMonth();
+  let days = date.getDate() - currentDate.getDate();
+
+  // Ajuste si los días son negativos
+  if (days < 0) {
+    months -= 1;
+    const lastDayOfPreviousMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    ).getDate();
+    days += lastDayOfPreviousMonth;
+  }
+
+  // Ajuste si los meses son negativos
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return { years, months, days };
+}

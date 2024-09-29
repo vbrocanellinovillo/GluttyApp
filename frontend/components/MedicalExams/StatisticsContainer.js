@@ -1,38 +1,10 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import SectionContainer from "../UI/SectionContainer";
 import { Colors } from "../../constants/colors";
-import { LineChart } from "react-native-chart-kit";
-import { useState } from "react";
-import Picker from "../UI/Controls/Picker";
+import Statistic from "./Statistic";
 
 export default function StatisticsContainer({ data }) {
-  /* const options = [...Array(100).keys()].map((index) => ({
-    value: index,
-    label: index.toString(),
-  })); */
-
-  const options = [
-    {
-      value: 1,
-      label: "Ig A anti Transglutaminasa",
-    },
-    {
-      value: 2,
-      label: "Ig G anti Gliadina Deaminada",
-    },
-    {
-      value: 3,
-      label: "Hemoglobina",
-    },
-    {
-      value: 4,
-      label: "Glucosa",
-    },
-  ];
-
-  const [value, setValue] = useState(0);
-
   return (
     <SectionContainer
       style={styles.container}
@@ -41,31 +13,7 @@ export default function StatisticsContainer({ data }) {
       <TextCommonsMedium style={styles.title}>
         Variable Médica
       </TextCommonsMedium>
-      <Picker data={options} />
-      <LineChart
-        data={data}
-        width={320}
-        height={160}
-        bezier
-        chartConfig={{
-          decimalPlaces: 2, // optional, defaults to 2dp
-          color: () => Colors.mJordan,
-          labelColor: () => Colors.mJordan,
-          style: {},
-          propsForDots: {
-            r: "6",
-          },
-          backgroundGradientFrom: "white",
-          backgroundGradientTo: "white",
-          fillShadowGradientFrom: Colors.mJordan,
-          fillShadowGradientTo: Colors.pielcita,
-          backgroundGradientFromOpacity: 1,
-          fillShadowGradientToOpacity: 0.8,
-          propsForBackgroundLines: {
-            display: "none",
-          },
-        }}
-      />
+      <Statistic initialData={data} />
     </SectionContainer>
   );
 }
@@ -73,7 +21,8 @@ export default function StatisticsContainer({ data }) {
 const styles = StyleSheet.create({
   container: {
     alignItems: "flex-start",
-    paddingVertical: 20,
+    flexWrap: "wrap",
+    paddingVertical: 14,
     paddingHorizontal: 20,
     gap: 20,
   },
