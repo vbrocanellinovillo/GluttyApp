@@ -420,16 +420,16 @@ def get_statistics(request):
 
     # Mapeo de nombres de variables
     VARIABLE_MAP = {
-        "IgA anti Transglutaminasa": "atTG_IgA",
-        "IgA anti Gliadina Deaminada": "aDGP_IgA",
-        "IgG anti Gliadina Deaminada": "aDGP_IgG",
+        "IgA Anti-Transglutaminasa": "atTG_IgA",
+        "IgG Anti-Gliadina Deaminada": "aDGP_IgA",
+        "IgA Anti-Gliadina": "aDGP_IgG",
         "Anticuerpos antiendomisio (EMA)": "antiendomisio",
         "Hemoglobina": "hemoglobina",
         "Hematocrito": "hematocrito",
         "Ferritina": "ferritina",
-        "Hierro Serico": "hierro_serico",
+        "Hierro Sérico": "hierro_serico",
         "Vitamina B12": "vitamina_b12",
-        "Calcio Serico": "calcio_serico",
+        "Calcio Sérico": "calcio_serico",
         "Vitamina D": "vitamina_d",
         "ALT (alanina aminotransferasa)": "alt",
         "AST (aspartato aminotransferasa)": "ast",
