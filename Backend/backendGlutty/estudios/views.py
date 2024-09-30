@@ -18,10 +18,12 @@ import pdfplumber
 import random
 from .serializers import GluttyTipsSerializer
 from django.db.models import Q
+from datetime import timedelta
+from django.utils import timezone
 
-def calculate_age(birth_date):
-    today = date.today()
-    return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+def calculate_age(birth_date, test_date = date.today()):
+    # Calcula la edad en la fecha del estudio
+    return test_date.year - birth_date.year - ((test_date.month, test_date.day) < (birth_date.month, birth_date.day))
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -326,7 +328,7 @@ def get_laboratories(request):
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 def get_reference_values(celiac, analysis):
-    age = calculate_age(celiac.date_birth) if celiac.date_birth else None  # Si la fecha de nacimiento no existe
+    age = calculate_age(celiac.date_birth, analysis.test_date) if celiac.date_birth else None  # Si la fecha de nacimiento no existe
 
     # Laboratorio donde se realizó el análisis
     lab = analysis.lab
@@ -406,8 +408,107 @@ def get_reference_values(celiac, analysis):
                 })
                 
     return analysis_data
-    
+
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_statistics(request):
+    variable_name = request.data.get('variable_name', None)
+    period = request.data.get('period', None)
+
+    if variable_name is None:
+        return Response({"error": "El nombre de la variable es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Mapeo de nombres de variables
+    VARIABLE_MAP = {
+        "IgA anti Transglutaminasa": "atTG_IgA",
+        "IgA anti Gliadina Deaminada": "aDGP_IgA",
+        "IgG anti Gliadina Deaminada": "aDGP_IgG",
+        "Anticuerpos antiendomisio (EMA)": "antiendomisio",
+        "Hemoglobina": "hemoglobina",
+        "Hematocrito": "hematocrito",
+        "Ferritina": "ferritina",
+        "Hierro Serico": "hierro_serico",
+        "Vitamina B12": "vitamina_b12",
+        "Calcio Serico": "calcio_serico",
+        "Vitamina D": "vitamina_d",
+        "ALT (alanina aminotransferasa)": "alt",
+        "AST (aspartato aminotransferasa)": "ast",
+        "Colesterol Total": "colesterol_total",
+        "Colesterol HDL": "colesterol_hdl",
+        "Colesterol LDL": "colesterol_ldl",
+        "Triglicéridos": "trigliceridos",
+        "Glucemia": "glucemia",
+    }
+
+    # Obtener el nombre del campo del modelo correspondiente
+    variable_field_name = VARIABLE_MAP.get(variable_name)
+
+    if not variable_field_name:
+        return Response({"error": "Nombre de variable no válido."}, status=status.HTTP_400_BAD_REQUEST)
+
+    celiac = request.user.celiac
+
+    today = timezone.now().date()
+    start_date = None
+    if period == '3 meses':
+        start_date = today - timedelta(days=90)
+    elif period == '6 meses':
+        start_date = today - timedelta(days=180)
+    elif period == '1 año':
+        start_date = today - timedelta(days=365)
+
+    analyses = BloodTest.objects.filter(celiac=celiac, test_date__gte=start_date) if start_date else BloodTest.objects.filter(celiac=celiac)
+
+    variable_data = []
+    for analysis in analyses:
+        value = getattr(analysis, variable_field_name, None)  # Usar el nombre de campo correcto
+        if value is not None:
+            reference_values = ReferenceValues.objects.filter(
+                variable__name=variable_name,
+                lab__name=analysis.lab
+            ).filter(Q(sex__isnull=True) | Q(sex=celiac.sex))
+
+            age = calculate_age(celiac.date_birth, analysis.test_date) if celiac.date_birth else None
+            
+            if age is not None:
+                reference_values = reference_values.filter(
+                    Q(min_age__lte=age) | Q(min_age__isnull=True),
+                    Q(max_age__gte=age) | Q(max_age__isnull=True)
+                )
+            else:
+                reference_values = reference_values.filter(Q(min_age__isnull=True) & Q(max_age__isnull=True))
+
+            if not reference_values.exists():
+                reference_values = ReferenceValues.objects.filter(
+                    variable__name=variable_name,
+                    lab__name=analysis.lab,
+                    sex__isnull=True,
+                    min_age__isnull=True,
+                    max_age__isnull=True
+                )
+
+            min_value = None
+            max_value = None
+            
+            if reference_values.exists():
+                ref = reference_values.first()
+                min_value = ref.min_value
+                max_value = ref.max_value
+            
+            variable_data.append({
+                "date": analysis.test_date,
+                "value": value,
+                "min_value": min_value,
+                "max_value": max_value,
+                "lab": analysis.lab
+            })
+
+    return Response(variable_data, status=200)
+
+
+
+    
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_glutty_tips(request):
     # Obtener todos los GluttyTips

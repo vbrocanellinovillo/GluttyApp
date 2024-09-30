@@ -23,4 +23,5 @@ urlpatterns = [
     path("save-medical-message/", save_medical_message, name="save_medical_message"),
     path("extract-values-pdf/", extract_medical_data, name="extract_values"),
     path("delete-analysis/", delete_analysis, name="delete_analysis"),
+    path("get-statistics/", get_statistics, name="get_statistics"),
 ]
