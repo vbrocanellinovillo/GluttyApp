@@ -37,9 +37,9 @@ export default function GluttyModal({
     <Portal>
       <Dialog style={styles.dialog} onDismiss={onClose} visible={visible}>
         <Dialog.Content>
-          <View style={styles.imageContainer}>
+          <View style={[styles.imageContainer, imageContainerStyle]}>
             <Image source={{ uri: imageUri }} style={[styles.image, imageStyle]} />
-            {imageText && <TextCommonsMedium>{imageText}</TextCommonsMedium>}
+            {imageText && <TextCommonsMedium style={imageTextStyle}>{imageText}</TextCommonsMedium>}
           </View>
           <View
             style={[

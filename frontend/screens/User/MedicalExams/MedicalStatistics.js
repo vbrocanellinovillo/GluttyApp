@@ -66,12 +66,14 @@ export default function MedicalStatistics({ navigation }) {
 
   useEffect(() => {
     setMessage(
-      "Glutty es un médicardo perra, no te hagas la viva con nosotros!"
+      "Glutty no es un doctor o personal médico. Siempre seguí los consejos de tu médico de cabecera."
     );
+
     setShowModal(true);
   }, []);
 
   function closeModalHandler() {
+    //Aca deberia actualizar un valor del usuario dejando el boolean de T&C como true. Ponele qsy
     setShowModal(false);
   }
 
@@ -128,6 +130,10 @@ export default function MedicalStatistics({ navigation }) {
         message={message}
         onClose={closeModalHandler}
         visible={showModal}
+        imageText={"¡Recorda!"}
+        imageTextStyle={{ fontSize: 40, fontWeight: "600", textAlign: "center", marginVertical: 10 }}
+        closeButtonText="¡Entendido!"
+        closeButtonColor="#000"
       />
     </>
   );
