@@ -5,7 +5,7 @@ import { useSharedValue } from "react-native-reanimated";
 import { useRef } from "react";
 import { Colors } from "../../constants/colors";
 
-export default function TipsCarousel({ tips }) {
+export default function TipsCarousel({ tips, height }) {
   const progress = useSharedValue(0);
   const carouselRef = useRef();
 
@@ -21,7 +21,7 @@ export default function TipsCarousel({ tips }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height }]}>
       <Carousel
         ref={carouselRef}
         width={300}
@@ -54,7 +54,6 @@ export default function TipsCarousel({ tips }) {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    height: 400,
   },
 
   dotsContainer: {
