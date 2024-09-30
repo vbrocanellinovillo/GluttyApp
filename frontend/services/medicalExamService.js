@@ -115,9 +115,10 @@ export async function getMedicalExamById(id, token) {
 
   const formdata = new FormData();
 
-  formdata.append("id_analysis", id);
+  formdata.append("id", id);
 
   const requestOptions = {
+    body: formdata,
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
