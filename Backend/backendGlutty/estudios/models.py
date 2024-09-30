@@ -102,3 +102,10 @@ class ReferenceValues(models.Model):
     sex = models.CharField(max_length=10, null=True, choices=SEX, default=null)
     min_age = models.CharField(max_length=3, null=True, default=null)
     max_age = models.CharField(max_length=3, null=True, default=null)
+    
+class GluttyTips(models.Model):
+    tip = models.CharField(max_length=400, blank=False, null=False)
+    image = models.URLField(max_length=500, blank=True, null=True)
+    
+    def __str__(self):
+        return self.tip

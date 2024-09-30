@@ -15,6 +15,9 @@ import re
 import cloudinary.uploader
 import cloudinary.api
 import pdfplumber
+import random
+from .serializers import GluttyTipsSerializer
+
 
 def calculate_age(birth_date):
     today = date.today()
@@ -372,3 +375,25 @@ def get_initial_data(request):
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_glutty_tips(request):
+    # Obtener todos los GluttyTips
+    all_tips = list(GluttyTips.objects.all())
+    
+    # Seleccionar 4 tips aleatorios
+    if len(all_tips) < 4:
+        selected_tips = random.sample(all_tips, len(all_tips))  # Si hay menos de 4, selecciona todos
+    else:
+        selected_tips = random.sample(all_tips, 4)
+
+    # Serializar los tips seleccionados
+    serializer = GluttyTipsSerializer(selected_tips, many=True)
+    
+    # Crear la respuesta
+    response_data = {
+        "glutty_tips": serializer.data
+    }
+    
+    return Response(response_data, status=200)
