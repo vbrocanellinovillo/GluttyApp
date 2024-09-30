@@ -10,8 +10,12 @@ import GluttyModal from "../../../components/UI/GluttyModal";
 import NextStudyContainer from "../../../components/MedicalExams/NextStudyContainer";
 import BlurNextStudy from "../../../components/MedicalExams/BlurNextStudy";
 import MedicalStatisticsSkeleton from "../../../components/UI/Loading/MedicalStatisticsSkeleton";
-import { saveMedicalMessage } from "../../../services/medicalExamService";
+import {
+  getInitialData,
+  saveMedicalMessage,
+} from "../../../services/medicalExamService";
 import { useSelector } from "react-redux";
+
 
 const STATISTICS = {
   labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
@@ -31,27 +35,67 @@ const STATISTICS = {
 };
 
 export default function MedicalStatistics({ navigation }) {
+  // Blur views
   const [showGluttyTips, setShowGluttyTips] = useState(false);
-
   const [showNextStudy, setShowNextStudy] = useState(false);
+
   const token = useSelector((state) => state.auth.accessToken);
+
+  // Get initial data
+  const [data, setData] = useState();
   const [isloading, setisloading] = useState(false);
   const [isError, setIsError] = useState(false);
+
+  // Disclaimer
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
+  const [isAccepting, setIsAccepting] = useState(false);
 
   useEffect(() => {
-    setMessage(
-      "Glutty no es un doctor o personal médico. Siempre seguí los consejos de tu médico de cabecera."
-    );
-    //aca el condicional
-    setShowModal(true);
+    getData();
   }, []);
 
-  function closeModalHandler() {
-    //Aca deberia actualizar un valor del usuario dejando el boolean de T&C como true. Ponele qsy
-    saveMedicalMessage(token);
-    setShowModal(false);
+  useEffect(() => {
+    if (data && data.message) {
+      setMessage(
+        "Glutty no es un doctor o personal médico. Siempre seguí los consejos de tu médico de cabecera."
+      );
+      setShowModal(true);
+    }
+  }, [data]);
+
+  async function getData() {
+    setisloading(true);
+    try {
+      const data = await getInitialData(token);
+
+      const variablesArray = data.variables.split(", ").map((variable) => ({
+        value: variable,
+        label: variable,
+      }));
+
+      const updatedData = {
+        ...data,
+        options: variablesArray,
+      };
+
+      setData(updatedData);
+    } catch (error) {
+      setIsError(true);
+    } finally {
+      setisloading(false);
+    }
+  }
+
+  async function closeModalHandler() {
+    setIsAccepting(true);
+    try {
+      await saveMedicalMessage(token);
+    } catch (error) {
+    } finally {
+      setIsAccepting(false);
+      setShowModal(false);
+    }
   }
 
   function navigateMyStudies() {
@@ -87,16 +131,13 @@ export default function MedicalStatistics({ navigation }) {
         contentInset={{ bottom: 80 }}
       >
         <View style={styles.firstSection}>
-          <MyStudies onPress={navigateMyStudies} />
+          <MyStudies onPress={navigateMyStudies} number={data?.analysis} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
-        <StatisticsContainer data={STATISTICS} />
+        <StatisticsContainer data={STATISTICS} variables={data?.options} />
         <NextStudyContainer onPress={openNextStudy} date={futureDate} />
       </ScrollView>
-      <BlurTips
-        visible={showGluttyTips}
-        onDismiss={hideGluttyTips}
-      />
+      <BlurTips visible={showGluttyTips} onDismiss={hideGluttyTips} />
       <BlurNextStudy onDismiss={hideNextStudy} visible={showNextStudy} />
       <GluttyModal
         imageStyle={{ width: 80, height: 80 }}
@@ -106,14 +147,10 @@ export default function MedicalStatistics({ navigation }) {
         onClose={closeModalHandler}
         visible={showModal}
         imageText={"¡Recorda!"}
-        imageTextStyle={{
-          fontSize: 40,
-          fontWeight: "600",
-          textAlign: "center",
-          marginVertical: 10,
-        }}
+        imageTextStyle={styles.imageTextStyle}
         closeButtonText="¡Entendido!"
-        closeButtonColor="#000"
+        closeButtonColor={Colors.mJordan}
+        isLoading={isAccepting}
       />
     </>
   );
@@ -130,5 +167,13 @@ const styles = StyleSheet.create({
   firstSection: {
     flexDirection: "row",
     gap: 20,
+  },
+
+  imageTextStyle: {
+    fontSize: 40,
+    fontWeight: "600",
+    textAlign: "center",
+    marginVertical: 10,
+    color: Colors.mJordan,
   },
 });

@@ -23,7 +23,9 @@ export default function Picker({ data, value }) {
           pressed ? [styles.container, styles.pressed] : [styles.container]
         }
       >
-        <TextCommonsRegular style={styles.valueText}>value</TextCommonsRegular>
+        <TextCommonsRegular style={styles.valueText}>
+          {value}
+        </TextCommonsRegular>
         <Ionicons name="chevron-down" color={Colors.mJordan} size={18} />
       </Pressable>
       <BlurContainer
@@ -34,6 +36,7 @@ export default function Picker({ data, value }) {
       >
         <WheelPicker
           data={data}
+          value={value}
           style={styles.wheelPicker}
           onValueChanging={() =>
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)

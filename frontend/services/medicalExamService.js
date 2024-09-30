@@ -188,3 +188,20 @@ export async function getGluttyTips(token) {
     throw new Error(error.message);
   }
 }
+
+export async function getInitialData(token) {
+  const requestUrl = url + "get-initial-data/";
+
+  const requestOptions = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}

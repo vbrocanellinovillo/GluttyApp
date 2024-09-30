@@ -3,13 +3,13 @@ import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
 import SectionContainer from "../UI/SectionContainer";
 
-export default function MyStudies({ onPress }) {
+export default function MyStudies({ onPress, number }) {
   return (
     <SectionContainer style={styles.container} onPress={onPress}>
       <TextCommonsMedium style={styles.text}>
         Mis estudios cargados
       </TextCommonsMedium>
-      <TextCommonsMedium style={styles.number}>3</TextCommonsMedium>
+      <TextCommonsMedium style={styles.number}>{number}</TextCommonsMedium>
     </SectionContainer>
   );
 }

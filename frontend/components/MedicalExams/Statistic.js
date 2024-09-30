@@ -6,25 +6,6 @@ import { Colors } from "../../constants/colors";
 import Frequencies from "./Frequencies";
 import Frequency from "./Frequency";
 
-const options = [
-  {
-    value: 1,
-    label: "Ig A anti Transglutaminasa",
-  },
-  {
-    value: 2,
-    label: "Ig G anti Gliadina Deaminada",
-  },
-  {
-    value: 3,
-    label: "Hemoglobina",
-  },
-  {
-    value: 4,
-    label: "Glucosa",
-  },
-];
-
 const FREQUENCIES = [
   { id: 1, value: "Año" },
   { id: 2, value: "Semestre" },
@@ -34,7 +15,7 @@ const FREQUENCIES = [
 
 const width = Dimensions.get("window").width;
 
-export default function Statistic({ initialData }) {
+export default function Statistic({ initialData, variables }) {
   const [data, setData] = useState(initialData);
   const [frequency, setFrecuency] = useState(1);
 
@@ -42,9 +23,11 @@ export default function Statistic({ initialData }) {
     setFrecuency(id);
   }
 
+  const initialValue = variables && variables[0].value;
+
   return (
     <>
-      <Picker data={options} />
+      <Picker data={variables} value={initialValue} />
       <LineChart
         data={data}
         width={width - 100}

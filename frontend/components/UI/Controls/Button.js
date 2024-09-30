@@ -1,10 +1,4 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
@@ -14,6 +8,8 @@ import Animated, {
 import * as Haptics from "expo-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
+import { ActivityIndicator } from "react-native-paper";
+import { Colors } from "../../../constants/colors";
 
 export default function Button({
   children,
@@ -27,6 +23,7 @@ export default function Button({
   iconSize,
   iconColor,
   opacityPress,
+  isLoading,
 }) {
   const scale = useSharedValue(1);
 
@@ -45,6 +42,7 @@ export default function Button({
     onPress();
   }
 
+
   return (
     <Pressable
       onPress={pressHandler}
@@ -59,18 +57,26 @@ export default function Button({
             style,
           ]}
         >
-          {leftIcon ? (
-            <Ionicons name={leftIcon} size={iconSize} color={iconColor} />
+          {isLoading ? (
+            <ActivityIndicator size="small" color={Colors.mJordan} />
           ) : (
-            <View />
-          )}
-          <TextCommonsRegular style={[styles.buttonText, { color }, textStyle]}>
-            {children}
-          </TextCommonsRegular>
-          {rightIcon ? (
-            <Ionicons name={rightIcon} size={iconSize} color={iconColor} />
-          ) : (
-            <View />
+            <>
+              {leftIcon ? (
+                <Ionicons name={leftIcon} size={iconSize} color={iconColor} />
+              ) : (
+                <View />
+              )}
+              <TextCommonsRegular
+                style={[styles.buttonText, { color }, textStyle]}
+              >
+                {children}
+              </TextCommonsRegular>
+              {rightIcon ? (
+                <Ionicons name={rightIcon} size={iconSize} color={iconColor} />
+              ) : (
+                <View />
+              )}
+            </>
           )}
         </Animated.View>
       </GestureDetector>

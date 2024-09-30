@@ -1,10 +1,10 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import SectionContainer from "../UI/SectionContainer";
 import { Colors } from "../../constants/colors";
 import Statistic from "./Statistic";
 
-export default function StatisticsContainer({ data }) {
+export default function StatisticsContainer({ data, variables }) {
   return (
     <SectionContainer
       style={styles.container}
@@ -13,7 +13,7 @@ export default function StatisticsContainer({ data }) {
       <TextCommonsMedium style={styles.title}>
         Variable Médica
       </TextCommonsMedium>
-      <Statistic initialData={data} />
+      <Statistic initialData={data} variables={variables} />
     </SectionContainer>
   );
 }

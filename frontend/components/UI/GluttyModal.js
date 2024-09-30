@@ -24,8 +24,15 @@ export default function GluttyModal({
   closeButtonBg,
   closeButtonText = "Cerrar",
   buttonsContainerStyle,
+  isLoading,
 }) {
-  const imageUri = customGlutty? customGlutty: other ? smileGlutty : isError ? sadGlutty : thumbGlutty;
+  const imageUri = customGlutty
+    ? customGlutty
+    : other
+    ? smileGlutty
+    : isError
+    ? sadGlutty
+    : thumbGlutty;
 
   const icon = other
     ? { name: undefined, color: undefined }
@@ -38,8 +45,15 @@ export default function GluttyModal({
       <Dialog style={styles.dialog} onDismiss={onClose} visible={visible}>
         <Dialog.Content>
           <View style={[styles.imageContainer, imageContainerStyle]}>
-            <Image source={{ uri: imageUri }} style={[styles.image, imageStyle]} />
-            {imageText && <TextCommonsMedium style={imageTextStyle}>{imageText}</TextCommonsMedium>}
+            <Image
+              source={{ uri: imageUri }}
+              style={[styles.image, imageStyle]}
+            />
+            {imageText && (
+              <TextCommonsMedium style={imageTextStyle}>
+                {imageText}
+              </TextCommonsMedium>
+            )}
           </View>
           <View
             style={[
@@ -58,6 +72,7 @@ export default function GluttyModal({
                   color={closeButtonColor}
                   onPress={onClose}
                   style={closeButtonStyle}
+                  isLoading={isLoading}
                 >
                   {closeButtonText}
                 </Button>
@@ -74,6 +89,7 @@ export default function GluttyModal({
                     color={button.color}
                     style={button.style}
                     onPress={button.onPress ? button.onPress : () => undefined}
+                    isLoading={isLoading}
                   >
                     {button.text}
                   </Button>
