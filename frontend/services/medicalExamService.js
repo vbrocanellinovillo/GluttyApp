@@ -205,3 +205,20 @@ export async function getInitialData(token) {
     throw new Error(error.message);
   }
 }
+
+export async function getLabs(token) {
+  const requestUrl = url + "get-laboratories/";
+
+  const requestOptions = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
