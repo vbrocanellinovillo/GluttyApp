@@ -28,7 +28,9 @@ export default function UploadExam({ navigation }) {
     setIsLoading(true);
     try {
       const data = await sendMedicalPDF(pdf, token);
-      const values = data.valores_encontrados;
+      const values = data["valores encontrados"];
+      console.log(values);
+
       navigation.navigate("BloodTest", { values, pdf });
     } catch (error) {
       setIsError(true);

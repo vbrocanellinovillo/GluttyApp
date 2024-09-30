@@ -91,7 +91,7 @@ export default function NumericInput({
     <View style={[styles.container, containerStyle]}>
       <TextInput
         style={[styles.input, inputStyle]}
-        keyboardType="number-pad"
+        keyboardType="numeric"
         value={number.toString()}
         onChangeText={changeNumberHandler}
         onFocus={handleFocus}

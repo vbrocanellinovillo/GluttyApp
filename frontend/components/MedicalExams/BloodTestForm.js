@@ -32,23 +32,23 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
       <ScrollView contentContainerStyle={styles.container}>
         <Formik
           initialValues={{
-            igA: medicalExam?.atTG_IgA,
-            igG: medicalExam?.aDGP_IgA,
-            ema: medicalExam?.antiendomisio,
-            hemoglobina: medicalExam?.hemoglobina,
-            hematocrito: medicalExam?.hematocrito,
-            ferritina: medicalExam?.ferritina,
-            ferremia: medicalExam?.hierro_serico,
-            vitB12: medicalExam?.vitamina_b12,
-            calcemia: medicalExam?.calcio_serico,
-            vitD: medicalExam?.vitamina_d,
-            alt: medicalExam?.alt,
-            ast: medicalExam?.ast,
-            colesterolemia: medicalExam?.colesterol_total,
-            colLDL: medicalExam?.colesterol_ldl,
-            colHDL: medicalExam?.colesterol_hdl,
-            trigliceridos: medicalExam?.trigliceridos,
-            glucemia: medicalExam?.glucemia,
+            igA: medicalExam?.["IgA anti Transglutaminasa"],
+            igG: medicalExam?.["IgG anti Gliadina Deaminada"],
+            ema: medicalExam?.["Anticuerpos antiendomisio (EMA)"],
+            hemoglobina: medicalExam?.["Hemoglobina"],
+            hematocrito: medicalExam?.["Hematocrito"],
+            ferritina: medicalExam?.["Ferritina"],
+            ferremia: medicalExam?.["Hierro sérico"],
+            vitB12: medicalExam?.["Vitamina B12"],
+            calcemia: medicalExam?.["Calcio sérico"],
+            vitD: medicalExam?.["Vitamina D"],
+            alt: medicalExam?.["ALT"],
+            ast: medicalExam?.["AST"],
+            colesterolemia: medicalExam?.["Colesterol total"],
+            colLDL: medicalExam?.["Colesterol LDL"],
+            colHDL: medicalExam?.["Colesterol HDL"],
+            trigliceridos: medicalExam?.["Triglicéridos"],
+            glucemia: medicalExam?.["Glucemia"],
             laboratory: medicalExam?.lab,
             date: medicalExam?.date || new Date(Date.now()),
           }}
@@ -273,13 +273,14 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf }) {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 20,
-    alignItems: "center",
     paddingBottom: 380,
+    paddingHorizontal: 16,
   },
 
   form: {
     gap: 14,
     paddingHorizontal: 0,
+    width: "100%",
   },
 
   buttonContainer: {
