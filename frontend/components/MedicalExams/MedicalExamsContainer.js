@@ -1,56 +1,54 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
+import { useState, useEffect } from "react";  // Importar useState y useEffect
 import ErrorFetchingMedicalExams from "./ErrorFetchingMedicalExams";
 import AddMedicalExamButton from "./AddMedicalExamButton";
 import MedicalExamsList from "./MedicalExamsList";
 import { getMedicalExamsList } from "../../services/medicalExamService";
+import { useSelector } from "react-redux";
+import LoadingGlutty from "../UI/Loading/LoadingGlutty";
+import { Colors } from "../../constants/colors";
 
-const token = "your_token_here";
-//const Exams = getMedicalExamsList(token)
-const Exams = [
-   {
-     id: 1,
-     date: "2000-09-08",
-     exam: "Analisis de Sangre",
-     hospital: "Oulton",
-   },
-   {
-     id: 2,
-     date: "2000-09-08",
-     exam: "Analisis de Sangre",
-     hospital: "Oulton",
-   },
-   {
-     id: 3,
-     date: "2000-09-08",
-     exam: "Analisis de Sangre",
-     hospital: "Oulton",
-   },
-   {
-     id: 4,
-     date: "2000-09-08",
-     exam: "Analisis de Sangre",
-     hospital: "Oulton",
-   },
- ];
 
-export default function MedicalExamsContainer({ isLoading, isError }) {
+export function MedicalExamsContainer({ isLoading, isError }) {
+  const [exams, setExams] = useState(undefined);  
+  const [loading, setLoading] = useState(false);  // Estado de loading local
+  const token = useSelector((state) => state.auth.accessToken); 
+
+  useEffect(() => {
+    async function fetchMedicalExams() {
+       
+      try {
+        setLoading(true); // Empezar la carga
+        const response = await getMedicalExamsList(token);
+        setExams(response);  // Guardar los exámenes en el estado
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);  // Terminar la carga
+      }
+    }
+    if (isLoading) {
+      fetchMedicalExams();
+    }
+  }, [isLoading, token]);  // Ejecutar cuando isLoading o token cambie
+
   let content;
 
-  if (isLoading) {
-    content = <MedicalExamsSkeleton />;
+  if (loading) {
+    content = <LoadingGlutty visible={loading} color={Colors.vainilla} />
   }
 
   if (isError) {
     content = <ErrorFetchingMedicalExams />;
   }
 
-  if (!isLoading && Exams) {
-    content = <MedicalExamsList medicalExmas={Exams} />;
+  if (!loading && exams) {
+    content = <MedicalExamsList medicalExams={exams.analysis} />;
   }
 
   return (
     <View style={styles.container}>
-      <AddMedicalExamButton></AddMedicalExamButton>
+      <AddMedicalExamButton />
       {content}
     </View>
   );

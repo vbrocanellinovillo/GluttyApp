@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import MedicalExamItem from "./MedicalExamsItem";
 import ViewMedicalExam from "../../screens/User/MedicalExams/ViewMedicalExam";
 
-export default function MedicalExamsList({ medicalExmas }) {
+export default function MedicalExamsList({ medicalExams }) {
   const navigation = useNavigation();
 
   const handlePress = (id) => {
@@ -12,7 +12,7 @@ export default function MedicalExamsList({ medicalExmas }) {
 
   return (
     <FlatList
-      data={medicalExmas}
+      data={medicalExams}
       renderItem={({ item }) => <MedicalExamItem medicalExam={item} onPress={() => handlePress(item.id)}/>}
       keyExtractor={(item) => (item.id ? item.id.toString() : Math.random())}
       contentContainerStyle={styles.container}

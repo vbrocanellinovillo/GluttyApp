@@ -11,7 +11,6 @@ import MedicalExamDateViewer from "./MedicalExamDateViewer";
 
 export default function MedicalExamItem({ medicalExam, onPress }) {
   const navigation = useNavigation()
-  console.log("onpress", onPress)
   //const [year, monthNumber, day] = medicalExam.date.split("-");
 
   //const month = getMonthName(monthNumber);
@@ -28,7 +27,7 @@ export default function MedicalExamItem({ medicalExam, onPress }) {
 
         <View style={styles.icons}>
           <TextCommonsMedium style={styles.exam} numberOfLines={2}>
-            {medicalExam.exam}
+            {"Analisis de Sangre"}
           </TextCommonsMedium>
           <View style={styles.iconContainer}>
             <FontAwesome5
@@ -37,7 +36,7 @@ export default function MedicalExamItem({ medicalExam, onPress }) {
               color={Colors.mJordan}
             />
             <TextCommonsRegular style={styles.iconText} numberOfLines={2}>
-              {medicalExam.hospital}
+              {medicalExam.lab}
             </TextCommonsRegular>
           </View>
         </View>

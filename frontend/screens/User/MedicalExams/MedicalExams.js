@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { getUser } from "../../../services/userService";
-import MedicalExamsContainer from "../../../components/MedicalExams/MedicalExamsContainer";
 import InfoMedicalContainer from "../../../components/MedicalExams/InfoMedicalContainer";
 import { uiActions } from "../../../context/ui";
 import ScreenCenter from "../../../components/UI/ScreenCenter";
 import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
+import { Text } from "react-native";
+import { MedicalExamsContainer } from "../../../components/MedicalExams/MedicalExamsContainer";
 
 
 export default function MedicalExams() {
@@ -27,8 +28,9 @@ export default function MedicalExams() {
     async function getUserMedicalData() {
       try {
         setisloading(true);
-        const response = getUser(token);
-        setUserData(response);
+        const response = await getUser(token);
+        //console.log("response", response);
+        setUserMedicalData(response);
         setIsError(false);
       } catch (error) {
         setIsError(true);
@@ -47,7 +49,10 @@ export default function MedicalExams() {
 
   return (
     <>
-      <MedicalExamsContainer />
+      <MedicalExamsContainer 
+        isLoading={isloading}
+        isError={isError}
+      />
       <InfoMedicalContainer
         visible={showMedicalInfo}
         onDismiss={showInfoMedicalExams}

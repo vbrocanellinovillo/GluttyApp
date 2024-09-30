@@ -9,7 +9,7 @@ export default function FormSectionContainer({
 }) {
   return (
     <View style={[styles.sectionContainer, style]}>
-      <FormTitle style={titleStyle}>{title}</FormTitle>
+      {/*<FormTitle style={titleStyle}>{title}</FormTitle>*/}
       {children}
     </View>
   );
@@ -26,5 +26,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     borderRadius: 10,
     gap: 20,
+    
   },
 });
