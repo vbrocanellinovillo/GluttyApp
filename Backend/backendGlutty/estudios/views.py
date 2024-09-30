@@ -172,6 +172,32 @@ def get_all_analysis(request):
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+    
+def get_non_null_variables(user):    
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=404)
+    
+    celiac = Celiac.objects.filter(user=user).first()
+    
+    if not celiac:
+        return Response({"error": "No se encontró el celiaco asociado al usuario."}, status=404)
+    
+    # Obtener todos los estudios de sangre relacionados con el celiaco
+    blood_tests = BloodTest.objects.filter(celiac=celiac)
+
+    non_null_variables = set()  # Usamos un set para evitar duplicados
+    
+    # Iterar sobre todos los estudios del celiaco
+    for test in blood_tests:
+        # Iterar sobre el mapeo de variables y comprobar si alguna no es nula
+        for friendly_name, field_name in VARIABLE_MAP.items():
+            if getattr(test, field_name) is not None:  # Si la variable no es nula
+                non_null_variables.add(friendly_name)
+    
+    if non_null_variables:
+        return list(non_null_variables)
+    
+    
 # Función principal que trae el análisis
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -301,10 +327,11 @@ def get_initial_data(request):
         
         latest_analysis = celiac.getLatestAnalysis()
         
-        initial_data["variables"] = "IgA Anti-Transglutaminasa, IgG Anti-Gliadina Deaminada, IgA Anti-Gliadina, Anticuerpos antiendomisio (EMA), Hemoglobina, Hematocrito, Ferritina, Hierro Sérico, Vitamina B12, Calcio Sérico, Vitamina D, ALT (alanina aminotransferasa), AST (aspartato aminotransferasa), Colesterol Total, Colesterol HDL, Colesterol LDL, Triglicéridos, Glucemia"
+        initial_data["variables"] = get_non_null_variables(user)
         
         # Esto es lo que hay que cambiar
-        initial_data["statistics"] = str(latest_analysis)
+        initial_data["statistics"] = latest_analysis.get_random_non_null_variable()
+        print(latest_analysis.get_random_non_null_variable())
         
         # Devolver los datos    
         return Response(initial_data, status=status.HTTP_200_OK)

@@ -1,6 +1,28 @@
 from django.db import models
 from sqlalchemy import null
 from usuarios.models import Celiac  # Importamos la relación con el celiaco
+import random
+
+VARIABLE_MAP = {
+    "IgA Anti-Transglutaminasa": "atTG_IgA",
+    "IgG Anti-Gliadina Deaminada": "aDGP_IgA",
+    "IgA Anti-Gliadina": "aDGP_IgG",
+    "Anticuerpos antiendomisio (EMA)": "antiendomisio",
+    "Hemoglobina": "hemoglobina",
+    "Hematocrito": "hematocrito",
+    "Ferritina": "ferritina",
+    "Hierro Sérico": "hierro_serico",
+    "Vitamina B12": "vitamina_b12",
+    "Calcio Sérico": "calcio_serico",
+    "Vitamina D": "vitamina_d",
+    "ALT (alanina aminotransferasa)": "alt",
+    "AST (aspartato aminotransferasa)": "ast",
+    "Colesterol Total": "colesterol_total",
+    "Colesterol HDL": "colesterol_hdl",
+    "Colesterol LDL": "colesterol_ldl",
+    "Triglicéridos": "trigliceridos",
+    "Glucemia": "glucemia",
+}
 
 class BloodTest(models.Model):
     # Relación con el celiaco
@@ -50,6 +72,21 @@ class BloodTest(models.Model):
     
     def getRegistrationDate(self):
         return self.registration_date
+    
+    def get_random_non_null_variable(self):
+        """
+        Retorna el nombre amigable de una variable aleatoria no nula.
+        Si no hay ninguna, retorna None.
+        """
+        # Filtramos los campos que no son nulos
+        non_null_fields = [(friendly_name, field_name) for friendly_name, field_name in VARIABLE_MAP.items() if getattr(self, field_name) is not None]
+        
+        if non_null_fields:
+            # Seleccionamos una variable aleatoria no nula
+            friendly_name, field_name = random.choice(non_null_fields)
+            return friendly_name
+        
+        return None  # En caso de que todos los campos sean nulos
     
 # LABORATORIOS CARGADOS
 class Laboratory(models.Model):
