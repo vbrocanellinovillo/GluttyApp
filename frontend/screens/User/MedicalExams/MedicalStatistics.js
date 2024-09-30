@@ -10,6 +10,8 @@ import GluttyModal from "../../../components/UI/GluttyModal";
 import NextStudyContainer from "../../../components/MedicalExams/NextStudyContainer";
 import BlurNextStudy from "../../../components/MedicalExams/BlurNextStudy";
 import MedicalStatisticsSkeleton from "../../../components/UI/Loading/MedicalStatisticsSkeleton";
+import { saveMedicalMessage } from "../../../services/medicalExamService";
+import { useSelector } from "react-redux";
 
 const GLUTTY_TIPS = [
   {
@@ -58,7 +60,7 @@ export default function MedicalStatistics({ navigation }) {
   const [gluttyTips, setGluttyTips] = useState([]);
 
   const [showNextStudy, setShowNextStudy] = useState(false);
-
+  const token = useSelector((state) => state.auth.accessToken);
   const [isloading, setisloading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -68,12 +70,13 @@ export default function MedicalStatistics({ navigation }) {
     setMessage(
       "Glutty no es un doctor o personal médico. Siempre seguí los consejos de tu médico de cabecera."
     );
-
+    //aca el condicional
     setShowModal(true);
   }, []);
 
   function closeModalHandler() {
     //Aca deberia actualizar un valor del usuario dejando el boolean de T&C como true. Ponele qsy
+    saveMedicalMessage(token)
     setShowModal(false);
   }
 
