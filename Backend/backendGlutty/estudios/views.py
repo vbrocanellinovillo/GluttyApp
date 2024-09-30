@@ -15,50 +15,11 @@ import re
 import cloudinary.uploader
 import cloudinary.api
 import pdfplumber
+from django.db.models import Q
 
 def calculate_age(birth_date):
     today = date.today()
     return today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-
-def verify_value(variable_name, value, sex, age):
-    try:
-        # Filtrar la variable por nombre y considerar el sexo y rango de edad si corresponde
-        variables = BloodTestVariables.objects.filter(name=variable_name).filter(
-            # Buscar variables que coincidan con el sexo o sean "N/A" para sexo
-            depends_on_sex__in=[sex, "N/A"]
-        )
-
-        # Si no hay variables disponibles, retornar no encontrada
-        if not variables.exists():
-            return {"estado": "Variable no encontrada", "valor": value}
-
-        # Si hay variables, debemos verificar si alguna depende de la edad
-        if age is not None:
-            variables_con_edad = variables.filter(depends_on_age__isnull=False)
-
-            # Si la variable depende de la edad, verificar el rango de edad
-            if variables_con_edad.exists():
-                for variable in variables_con_edad:
-                    age_range = variable.depends_on_age.split('-')
-                    min_age = int(re.sub(r'\D', '', age_range[0]))  # Solo dejar dígitos
-                    max_age = int(re.sub(r'\D', '', age_range[1]))
-                    if min_age <= age <= max_age:
-                        break
-                else:
-                    return {"estado": "Fuera de rango de edad", "valor": value, "descripcion": "No apto para edad"}
-
-        # Evaluar el valor con respecto a los valores mínimos y máximos
-        variable = variables.first()
-        if value < variable.min_value:
-            return {"estado": "Por debajo de lo normal", "valor": value, "descripcion": variable.description}
-        elif value > variable.max_value:
-            return {"estado": "Por encima de lo normal", "valor": value, "descripcion": variable.description}
-        else:
-            return {"estado": "Normal", "valor": value, "descripcion": variable.description}
-    
-    except BloodTestVariables.DoesNotExist:
-        return {"estado": "Variable no encontrada", "valor": value}
-    
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -198,84 +159,7 @@ def get_analysis(request):
 
     # Obtener información del celiaco (sexo, edad)
     celiac = analysis.celiac
-    sex = celiac.sex if celiac.sex is not None else "N/A"  # Sexo puede ser null
-    age = calculate_age(celiac.date_birth) if celiac.date_birth else None  # Si la fecha de nacimiento no existe
-
-    # Laboratorio donde se realizó el análisis
-    lab = analysis.lab
-
-    # Obtener todas las variables asociadas al análisis
-    variables = [
-        {"name": "IgA Anti-Transglutaminasa", "value": analysis.atTG_IgA},
-        {"name": "IgG Anti-Gliadina Deaminada", "value": analysis.aDGP_IgG},
-        {"name": "IgA Anti-Gliadina", "value": analysis.aDGP_IgA},
-        {"name": "Anticuerpos antiendomisio (EMA)", "value": analysis.antiendomisio},
-        {"name": "Hemoglobina", "value": analysis.hemoglobina},
-        {"name": "Hematocrito", "value": analysis.hematocrito},
-        {"name": "Ferritina", "value": analysis.ferritina},
-        {"name": "Hierro Sérico", "value": analysis.hierro_serico},
-        {"name": "Vitamina B12", "value": analysis.vitamina_b12},
-        {"name": "Calcio Sérico", "value": analysis.calcio_serico},
-        {"name": "Vitamina D", "value": analysis.vitamina_d},
-        {"name": "ALT (alanina aminotransferasa)", "value": analysis.alt},
-        {"name": "AST (aspartato aminotransferasa)", "value": analysis.ast},
-        {"name": "Colesterol Total", "value": analysis.colesterol_total},
-        {"name": "Colesterol LDL", "value": analysis.colesterol_ldl},
-        {"name": "Colesterol HDL", "value": analysis.colesterol_hdl},
-        {"name": "Triglicéridos", "value": analysis.trigliceridos},
-        {"name": "Glucemia", "value": analysis.glucemia}
-    ]
-    
-    # Contenedor para almacenar los resultados
-    analysis_data = {
-        "date": analysis.test_date,
-        "lab": lab,
-        "variables": []
-    }
-
-    # Procesar cada variable
-    for variable in variables:
-        if variable["value"] is not None:
-            # Filtrar valores de referencia basados en sexo y edad, si aplican
-            reference_values = ReferenceValues.objects.filter(
-                variable__name=variable["name"],
-                lab__name=lab,
-                #sex__in=[sex, null]  # Sexo puede ser el valor específico o "N/A"
-            )
-            print(f"Variable name: {variable['name']}")
-            print(f"Lab name: {lab}")
-            # print(f"Sex: {sex}")
-
-            print(str(reference_values))
-            
-            # Si sex no es None, agregar el filtro por sex
-            # if celiac.sex is not None:
-            #     reference_values = reference_values.filter(sex=celiac.sex)
-            
-            if age is not None:
-                # Si la edad está disponible, filtrar también por rango de edad
-                reference_values = reference_values.filter(
-                    models.Q(min_age__lte=age) | models.Q(min_age__isnull=True),
-                    models.Q(max_age__gte=age) | models.Q(max_age__isnull=True)
-                )
-
-            if reference_values.exists():
-                ref = reference_values.first()
-                analysis_data["variables"].append({
-                    "variable_name": variable["name"],
-                    "value": variable["value"],
-                    "min_value": ref.min_value,
-                    "max_value": ref.max_value,
-                    "description": ref.variable.getDescription()
-                })
-            else:
-                analysis_data["variables"].append({
-                    "variable_name": variable["name"],
-                    "value": variable["value"],
-                    "min_value": None,
-                    "max_value": None,
-                    "description": "Valores de referencia no disponibles"
-                })
+    analysis_data = get_reference_values(celiac, analysis)
     
     return Response(analysis_data, status=200)
 
@@ -354,7 +238,7 @@ def extract_value(text, patterns):
             return match.group(1).upper()
     return None
 
-# Función que devuelve los análisis encontrados
+# Función que devuelve los datos para inicializar la sección de ESTUDIOS MÉDICOS
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_initial_data(request):
@@ -381,7 +265,6 @@ def get_initial_data(request):
         # Esto es lo que hay que cambiar
         initial_data["statistics"] = str(latest_analysis)
         
-            
         # Devolver los datos    
         return Response(initial_data, status=status.HTTP_200_OK)
     
@@ -389,7 +272,7 @@ def get_initial_data(request):
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     
-# Función que cancela 
+# Función que cancela el mensaje principal de que glutty no es médico
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def save_medical_message(request):
@@ -412,4 +295,113 @@ def save_medical_message(request):
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Función que devuelve los laboratorios cargados
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_laboratories(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        laboratories_data = []
+       
+        laboratories = Laboratory.objects.all()
+        
+        for lab in laboratories:
+            lab_info = {
+                "id": str(lab.id),
+                "name": lab.name,
+            }
+        
+            laboratories_data.append(lab_info)
+        
+        # Devolver los datos    
+        return Response(laboratories_data, status=status.HTTP_200_OK)
     
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+def get_reference_values(celiac, analysis):
+    age = calculate_age(celiac.date_birth) if celiac.date_birth else None  # Si la fecha de nacimiento no existe
+
+    # Laboratorio donde se realizó el análisis
+    lab = analysis.lab
+
+    # Obtener todas las variables asociadas al análisis
+    variables = [
+        {"name": "IgA Anti-Transglutaminasa", "value": analysis.atTG_IgA},
+        {"name": "IgG Anti-Gliadina Deaminada", "value": analysis.aDGP_IgG},
+        {"name": "IgA Anti-Gliadina", "value": analysis.aDGP_IgA},
+        {"name": "Anticuerpos antiendomisio (EMA)", "value": analysis.antiendomisio},
+        {"name": "Hemoglobina", "value": analysis.hemoglobina},
+        {"name": "Hematocrito", "value": analysis.hematocrito},
+        {"name": "Ferritina", "value": analysis.ferritina},
+        {"name": "Hierro Sérico", "value": analysis.hierro_serico},
+        {"name": "Vitamina B12", "value": analysis.vitamina_b12},
+        {"name": "Calcio Sérico", "value": analysis.calcio_serico},
+        {"name": "Vitamina D", "value": analysis.vitamina_d},
+        {"name": "ALT (alanina aminotransferasa)", "value": analysis.alt},
+        {"name": "AST (aspartato aminotransferasa)", "value": analysis.ast},
+        {"name": "Colesterol Total", "value": analysis.colesterol_total},
+        {"name": "Colesterol LDL", "value": analysis.colesterol_ldl},
+        {"name": "Colesterol HDL", "value": analysis.colesterol_hdl},
+        {"name": "Triglicéridos", "value": analysis.trigliceridos},
+        {"name": "Glucemia", "value": analysis.glucemia}
+    ]
+    
+    # Variables cargadas en la bd
+    variables_objects = Variable.objects.all()
+    
+    # Contenedor para almacenar los resultados
+    analysis_data = {
+        "date": analysis.test_date,
+        "lab": lab,
+        "variables": []
+    }
+
+    # Procesar cada variable
+    for variable in variables:
+        if variable["value"] is not None:
+            # Filtrar valores de referencia basados en sexo y edad, si aplica   
+            reference_values = ReferenceValues.objects.filter(
+                variable__name=variable["name"],
+                lab__name=lab).filter(Q(sex__isnull=True) | Q(sex=celiac.sex))
+            
+            print(f"Variable name: {variable['name']}")
+            print(f"Lab name: {lab}")
+
+            print(str(reference_values))
+            
+            if age is not None:
+                # Si la edad está disponible, filtrar también por rango de edad
+                reference_values = reference_values.filter(
+                    models.Q(min_age__lte=age) | models.Q(min_age__isnull=True),
+                    models.Q(max_age__gte=age) | models.Q(max_age__isnull=True)
+                )
+
+            if reference_values.exists():
+                ref = reference_values.first()
+                analysis_data["variables"].append({
+                    "variable_name": variable["name"],
+                    "value": variable["value"],
+                    "min_value": ref.min_value,
+                    "max_value": ref.max_value,
+                    "description": ref.variable.getDescription()
+                })
+            else:
+                
+                # Filtrar en memoria por el nombre
+                filtered_variable = Variable.objects.get(name=variable["name"])
+                print(str(filtered_variable))
+                analysis_data["variables"].append({
+                    "variable_name": variable["name"],
+                    "value": variable["value"],
+                    "min_value": None,
+                    "max_value": None,
+                    "description": filtered_variable.getDescription()
+                })
+                
+    return analysis_data
