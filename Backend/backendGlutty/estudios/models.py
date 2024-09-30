@@ -50,24 +50,6 @@ class BloodTest(models.Model):
     
     def getRegistrationDate(self):
         return self.registration_date
-
-# VARIABLES DE LOS ESTUDIOS
-class BloodTestVariables(models.Model):
-    SEX = (("Male", "Male"), ("Female", "Female"), ("N/A", "No Aplica"))
-
-    name = models.CharField(max_length=100)
-    min_value = models.DecimalField(max_digits=5, decimal_places=2)
-    max_value = models.DecimalField(max_digits=5, decimal_places=2)
-    depends_on_sex = models.CharField(max_length=10, choices=SEX, default="N/A")
-    description = models.CharField(max_length=500, null=True, blank=True)
-    depends_on_age = models.CharField(max_length=20, blank=True, null=True)  # Por ejemplo "18-60 años"
-
-    class Meta:
-        verbose_name = "Variable de Estudio"
-        verbose_name_plural = "Variables de Estudio"
-
-    def __str__(self):
-        return self.name
     
 # LABORATORIOS CARGADOS
 class Laboratory(models.Model):
@@ -105,12 +87,11 @@ class ReferenceValues(models.Model):
     
     def __str__(self):
         return f"{self.variable} + {str(self.min_value)} + {str(self.max_value)}"
-    
+
 class GluttyTips(models.Model):
     tip = models.CharField(max_length=400, blank=False, null=False)
     image = models.URLField(max_length=500, blank=True, null=True)
+    title = models.CharField(max_length=200, blank=True, null=True, default=null)
     
     def __str__(self):
         return self.tip
-    
-    

@@ -16,7 +16,7 @@ import cloudinary.uploader
 import cloudinary.api
 import pdfplumber
 import random
-from .serializers import GluttyTipsSerializer
+from .serializers import *
 from django.db.models import Q
 from datetime import timedelta
 from django.utils import timezone
@@ -27,7 +27,7 @@ def calculate_age(birth_date, test_date = date.today()):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def register_study(request):
+def register_analysis(request):
     # Buscar celiaco para obtener sexo y edad
     try:
         user = request.user
@@ -108,7 +108,38 @@ def register_study(request):
         estudio.save()
     
     return JsonResponse({"estudio_id": estudio.id, "message": "Estudio registrado exitosamente"})
+
+# Función que permite modificar un análisis de sangre
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_analysis(request):
+    analysis_id = request.data.get("analysis_id")
+    if not analysis_id:
+        return Response({"error": "El ID del análisis es requerido."}, status=status.HTTP_400_BAD_REQUEST)
     
+    try:
+        analysis = get_object_or_404(BloodTest, id=analysis_id)
+
+        # Verificar si el usuario tiene permisos para actualizar la sucursal
+        user = request.user
+        celiac = get_object_or_404(Celiac, user=user)
+        
+        if user.is_commerce or analysis.celiac != celiac:
+            return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Actualizar la información
+        analysis_serializer = BloodTestSerializer(analysis, data=request.data, partial=True)
+        if analysis_serializer.is_valid():
+            analysis_serializer.save()
+        else:
+            return Response({"error": analysis_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"detail": "Análisis actualizado correctamente."}, status=status.HTTP_200_OK)
+    except ValidationError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
+
 
 # Función que devuelve los análisis encontrados
 @api_view(["GET"])
@@ -167,6 +198,7 @@ def get_analysis(request):
     
     return Response(analysis_data, status=200)
 
+# Función para eliminar estudio y eliminar pdf del 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def delete_analysis(request):
@@ -184,6 +216,9 @@ def delete_analysis(request):
             return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_403_FORBIDDEN)
 
         # Actualizar la sucursal con los datos proporcionados
+        if analysis.public_id and (analysis.url.startswith("http://res.cloudinary.com/") or analysis.url.startswith("https://res.cloudinary.com/")):
+            pdf_delete_result = cloudinary.api.delete_resources(analysis.public_id, resource_type="image", type="upload")
+            print(pdf_delete_result)
         analysis.delete()
         return Response({"detail":"Se eliminó el análisis."}, status=status.HTTP_200_OK)
                         
@@ -266,6 +301,8 @@ def get_initial_data(request):
         
         latest_analysis = celiac.getLatestAnalysis()
         
+        initial_data["variables"] = "IgA Anti-Transglutaminasa, IgG Anti-Gliadina Deaminada, IgA Anti-Gliadina, Anticuerpos antiendomisio (EMA), Hemoglobina, Hematocrito, Ferritina, Hierro Sérico, Vitamina B12, Calcio Sérico, Vitamina D, ALT (alanina aminotransferasa), AST (aspartato aminotransferasa), Colesterol Total, Colesterol HDL, Colesterol LDL, Triglicéridos, Glucemia"
+        
         # Esto es lo que hay que cambiar
         initial_data["statistics"] = str(latest_analysis)
         
@@ -294,7 +331,7 @@ def save_medical_message(request):
         celiac.save()
             
         # Devolver los datos    
-        return Response({"": f"No se mostrará el mensaje nuevamente."}, status=status.HTTP_200_OK)
+        return Response({"Detail": f"No se mostrará el mensaje nuevamente."}, status=status.HTTP_200_OK)
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -327,6 +364,7 @@ def get_laboratories(request):
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+# Función que trae los valores de referencia correspondientes a un estudio
 def get_reference_values(celiac, analysis):
     age = calculate_age(celiac.date_birth, analysis.test_date) if celiac.date_birth else None  # Si la fecha de nacimiento no existe
 
@@ -354,9 +392,6 @@ def get_reference_values(celiac, analysis):
         {"name": "Triglicéridos", "value": analysis.trigliceridos},
         {"name": "Glucemia", "value": analysis.glucemia}
     ]
-    
-    # Variables cargadas en la bd
-    variables_objects = Variable.objects.all()
     
     # Contenedor para almacenar los resultados
     analysis_data = {
@@ -409,6 +444,7 @@ def get_reference_values(celiac, analysis):
                 
     return analysis_data
 
+# Función que genera las estadísticas
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_statistics(request):
@@ -456,6 +492,8 @@ def get_statistics(request):
         start_date = today - timedelta(days=180)
     elif period == '1 año':
         start_date = today - timedelta(days=365)
+    elif period == '3 años':
+        start_date = today - timedelta(days=1095)
 
     analyses = BloodTest.objects.filter(celiac=celiac, test_date__gte=start_date) if start_date else BloodTest.objects.filter(celiac=celiac)
 
@@ -505,9 +543,7 @@ def get_statistics(request):
 
     return Response(variable_data, status=200)
 
-
-
-    
+# Función que trae glutty tips
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_glutty_tips(request):
