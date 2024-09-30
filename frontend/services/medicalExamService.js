@@ -153,3 +153,37 @@ export async function deleteMedicalExam(id, token) {
     throw new Error(error.message);
   }
 }
+
+export async function saveMedicalMessage(token) {
+  const requestUrl = url + "save-medical-message/";
+
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function getGluttyTips(token) {
+  const requestUrl = url + "get-glutty-tips/";
+
+  const requestOptions = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}

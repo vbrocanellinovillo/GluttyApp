@@ -10,31 +10,8 @@ import GluttyModal from "../../../components/UI/GluttyModal";
 import NextStudyContainer from "../../../components/MedicalExams/NextStudyContainer";
 import BlurNextStudy from "../../../components/MedicalExams/BlurNextStudy";
 import MedicalStatisticsSkeleton from "../../../components/UI/Loading/MedicalStatisticsSkeleton";
-
-const GLUTTY_TIPS = [
-  {
-    id: 1,
-    image:
-      "https://img-global.cpcdn.com/recipes/d7b24d251d2b2b1c/1200x630cq70/photo.jpg",
-    title: "Comer pan",
-    description: "Comer mucho pan es bueno para la hemoglobina",
-  },
-  {
-    id: 2,
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZd3mKHi1uVagMYEczcyOVwwnxHYEit7th0A&s",
-    title: "Tomar cerveza",
-    description: "Una botella de cerveza equivale a 3 horas de gimnasio",
-  },
-  {
-    id: 3,
-    image:
-      "https://resizer.glanacion.com/resizer/v2/ravioles-de-atun-con-berenjena-y-pasas-de-SDMHHOBB2NFG5KMWQQPA527CF4.jpg?auth=4fd6b2526fdbd8677a150b56caaac07a00217dd7cdfc164072895e19fa30328c&width=768&height=512&quality=70&smart=true",
-    title: "Nose",
-    description:
-      "Dale hermano, enserio no tenes nada mejor que hacer que pedirle consejos a un trigo",
-  },
-];
+import { saveMedicalMessage } from "../../../services/medicalExamService";
+import { useSelector } from "react-redux";
 
 const STATISTICS = {
   labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
@@ -55,10 +32,9 @@ const STATISTICS = {
 
 export default function MedicalStatistics({ navigation }) {
   const [showGluttyTips, setShowGluttyTips] = useState(false);
-  const [gluttyTips, setGluttyTips] = useState([]);
 
   const [showNextStudy, setShowNextStudy] = useState(false);
-
+  const token = useSelector((state) => state.auth.accessToken);
   const [isloading, setisloading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -66,12 +42,15 @@ export default function MedicalStatistics({ navigation }) {
 
   useEffect(() => {
     setMessage(
-      "Glutty es un médicardo perra, no te hagas la viva con nosotros!"
+      "Glutty no es un doctor o personal médico. Siempre seguí los consejos de tu médico de cabecera."
     );
+    //aca el condicional
     setShowModal(true);
   }, []);
 
   function closeModalHandler() {
+    //Aca deberia actualizar un valor del usuario dejando el boolean de T&C como true. Ponele qsy
+    saveMedicalMessage(token);
     setShowModal(false);
   }
 
@@ -81,7 +60,6 @@ export default function MedicalStatistics({ navigation }) {
 
   function openGluttyTips() {
     setShowGluttyTips(true);
-    setGluttyTips(GLUTTY_TIPS);
   }
 
   function hideGluttyTips() {
@@ -118,7 +96,6 @@ export default function MedicalStatistics({ navigation }) {
       <BlurTips
         visible={showGluttyTips}
         onDismiss={hideGluttyTips}
-        tips={gluttyTips}
       />
       <BlurNextStudy onDismiss={hideNextStudy} visible={showNextStudy} />
       <GluttyModal
@@ -128,6 +105,15 @@ export default function MedicalStatistics({ navigation }) {
         message={message}
         onClose={closeModalHandler}
         visible={showModal}
+        imageText={"¡Recorda!"}
+        imageTextStyle={{
+          fontSize: 40,
+          fontWeight: "600",
+          textAlign: "center",
+          marginVertical: 10,
+        }}
+        closeButtonText="¡Entendido!"
+        closeButtonColor="#000"
       />
     </>
   );

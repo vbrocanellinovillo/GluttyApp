@@ -10,7 +10,7 @@ export default function Tip({ tip }) {
       <View style={styles.textContainer}>
         <TextCommonsMedium style={styles.title}>{tip.title}</TextCommonsMedium>
         <TextCommonsRegular style={styles.description}>
-          {tip.description}
+          {tip.tip}
         </TextCommonsRegular>
       </View>
     </View>

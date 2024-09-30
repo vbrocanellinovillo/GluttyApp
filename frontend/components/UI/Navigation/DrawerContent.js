@@ -10,7 +10,7 @@ import { useState } from "react";
 import LoadingGlutty from "../Loading/LoadingGlutty";
 
 export default function DrawerContent({ children }) {
-  const username = useSelector((state) => state.auth.userData.username);
+  const userData = useSelector((state) => state.auth.userData);
   const token = useSelector((state) => state.auth.accessToken);
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -40,7 +40,7 @@ export default function DrawerContent({ children }) {
   async function logout() {
     setIsLoading(true);
     try {
-      await logoutSesion(username, token);
+      await logoutSesion(userData?.username, token);
       dispatch(authActions.logout());
       setIsError(false);
     } catch (error) {
@@ -60,7 +60,7 @@ export default function DrawerContent({ children }) {
             }
             dimensions={80}
           />
-          <Text style={styles.username}>{username}</Text>
+          <Text style={styles.username}>{userData?.username}</Text>
         </View>
         {children}
         <View style={styles.buttons}>
