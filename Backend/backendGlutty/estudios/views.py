@@ -17,7 +17,6 @@ import cloudinary.api
 import pdfplumber
 import random
 from .serializers import GluttyTipsSerializer
-
 from django.db.models import Q
 
 def calculate_age(birth_date):
@@ -273,3 +272,159 @@ def get_initial_data(request):
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+# Función que cancela el mensaje principal de que glutty no es médico
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def save_medical_message(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    celiac = Celiac.objects.filter(user=user).first()
+    
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    # Verificar que el análisis pertenezca al celíaco del usuario autenticado
+    if celiac.user != request.user:
+        return Response({"error": "No tienes permiso para acceder a esta funcionalidad."}, status=status.HTTP_403_FORBIDDEN)
+    try:
+        celiac.show_message = False
+        celiac.save()
+            
+        # Devolver los datos    
+        return Response({"": f"No se mostrará el mensaje nuevamente."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Función que devuelve los laboratorios cargados
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_laboratories(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    try:
+        laboratories_data = []
+       
+        laboratories = Laboratory.objects.all()
+        
+        for lab in laboratories:
+            lab_info = {
+                "id": str(lab.id),
+                "name": lab.name,
+            }
+        
+            laboratories_data.append(lab_info)
+        
+        # Devolver los datos    
+        return Response(laboratories_data, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+def get_reference_values(celiac, analysis):
+    age = calculate_age(celiac.date_birth) if celiac.date_birth else None  # Si la fecha de nacimiento no existe
+
+    # Laboratorio donde se realizó el análisis
+    lab = analysis.lab
+
+    # Obtener todas las variables asociadas al análisis
+    variables = [
+        {"name": "IgA Anti-Transglutaminasa", "value": analysis.atTG_IgA},
+        {"name": "IgG Anti-Gliadina Deaminada", "value": analysis.aDGP_IgG},
+        {"name": "IgA Anti-Gliadina", "value": analysis.aDGP_IgA},
+        {"name": "Anticuerpos antiendomisio (EMA)", "value": analysis.antiendomisio},
+        {"name": "Hemoglobina", "value": analysis.hemoglobina},
+        {"name": "Hematocrito", "value": analysis.hematocrito},
+        {"name": "Ferritina", "value": analysis.ferritina},
+        {"name": "Hierro Sérico", "value": analysis.hierro_serico},
+        {"name": "Vitamina B12", "value": analysis.vitamina_b12},
+        {"name": "Calcio Sérico", "value": analysis.calcio_serico},
+        {"name": "Vitamina D", "value": analysis.vitamina_d},
+        {"name": "ALT (alanina aminotransferasa)", "value": analysis.alt},
+        {"name": "AST (aspartato aminotransferasa)", "value": analysis.ast},
+        {"name": "Colesterol Total", "value": analysis.colesterol_total},
+        {"name": "Colesterol LDL", "value": analysis.colesterol_ldl},
+        {"name": "Colesterol HDL", "value": analysis.colesterol_hdl},
+        {"name": "Triglicéridos", "value": analysis.trigliceridos},
+        {"name": "Glucemia", "value": analysis.glucemia}
+    ]
+    
+    # Variables cargadas en la bd
+    variables_objects = Variable.objects.all()
+    
+    # Contenedor para almacenar los resultados
+    analysis_data = {
+        "date": analysis.test_date,
+        "lab": lab,
+        "variables": []
+    }
+
+    # Procesar cada variable
+    for variable in variables:
+        if variable["value"] is not None:
+            # Filtrar valores de referencia basados en sexo y edad, si aplica   
+            reference_values = ReferenceValues.objects.filter(
+                variable__name=variable["name"],
+                lab__name=lab).filter(Q(sex__isnull=True) | Q(sex=celiac.sex))
+            
+            print(f"Variable name: {variable['name']}")
+            print(f"Lab name: {lab}")
+
+            print(str(reference_values))
+            
+            if age is not None:
+                # Si la edad está disponible, filtrar también por rango de edad
+                reference_values = reference_values.filter(
+                    models.Q(min_age__lte=age) | models.Q(min_age__isnull=True),
+                    models.Q(max_age__gte=age) | models.Q(max_age__isnull=True)
+                )
+
+            if reference_values.exists():
+                ref = reference_values.first()
+                analysis_data["variables"].append({
+                    "variable_name": variable["name"],
+                    "value": variable["value"],
+                    "min_value": ref.min_value,
+                    "max_value": ref.max_value,
+                    "description": ref.variable.getDescription()
+                })
+            else:
+                
+                # Filtrar en memoria por el nombre
+                filtered_variable = Variable.objects.get(name=variable["name"])
+                print(str(filtered_variable))
+                analysis_data["variables"].append({
+                    "variable_name": variable["name"],
+                    "value": variable["value"],
+                    "min_value": None,
+                    "max_value": None,
+                    "description": filtered_variable.getDescription()
+                })
+                
+    return analysis_data
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_glutty_tips(request):
+    # Obtener todos los GluttyTips
+    all_tips = list(GluttyTips.objects.all())
+    
+    # Seleccionar 4 tips aleatorios
+    if len(all_tips) < 4:
+        selected_tips = random.sample(all_tips, len(all_tips))  # Si hay menos de 4, selecciona todos
+    else:
+        selected_tips = random.sample(all_tips, 4)
+
+    # Serializar los tips seleccionados
+    serializer = GluttyTipsSerializer(selected_tips, many=True)
+    
+    # Crear la respuesta
+    response_data = {
+        "glutty_tips": serializer.data
+    }
+    
+    return Response(response_data, status=200)
