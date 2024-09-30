@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 export default function BloodTest({ navigation, route }) {
   const values = route.params?.values;
   const pdf = route.params?.pdf;
+  const labs = route.params?.labs;
 
   const token = useSelector((state) => state.auth.accessToken);
 
@@ -48,7 +49,7 @@ export default function BloodTest({ navigation, route }) {
     glucemia,
     laboratory,
     date,
-    pdf
+    pdf,
   }) {
     setIsLoading(true);
     try {
@@ -101,6 +102,7 @@ export default function BloodTest({ navigation, route }) {
         onPrev={goBack}
         onSubmit={handleSubmit}
         pdf={pdf}
+        labs={labs}
       />
     </>
   );

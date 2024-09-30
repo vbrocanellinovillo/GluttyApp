@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UploadExamForm from "../../../../components/MedicalExams/UploadExamForm";
 import LoadingGlutty from "../../../../components/UI/Loading/LoadingGlutty";
 import GluttyModal from "../../../../components/UI/GluttyModal";
-import { sendMedicalPDF } from "../../../../services/medicalExamService";
+import {
+  getLabs,
+  sendMedicalPDF,
+} from "../../../../services/medicalExamService";
 import { useSelector } from "react-redux";
+import BloodTestSkeleton from "../../../../components/UI/Loading/BloodTestSkeleton";
 
 export default function UploadExam({ navigation }) {
   const token = useSelector((state) => state.auth.accessToken);
@@ -11,12 +15,32 @@ export default function UploadExam({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
+  const [labs, setLabs] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
+
+  useEffect(() => {
+    fetchLabs();
+  }, []);
+
+  async function fetchLabs() {
+    setIsFetching(true);
+    try {
+      const data = await getLabs(token);
+      setFetchError(false);
+    } catch (error) {
+      setFetchError(true);
+    } finally {
+      setIsFetching(false);
+    }
+  }
+
   function cancel() {
     navigation.goBack();
   }
 
   function skip() {
-    navigation.navigate("BloodTest");
+    navigation.navigate("BloodTest", { labs });
   }
 
   function closeModalHandler() {
@@ -29,15 +53,16 @@ export default function UploadExam({ navigation }) {
     try {
       const data = await sendMedicalPDF(pdf, token);
       const values = data["valores encontrados"];
-      console.log(values);
 
-      navigation.navigate("BloodTest", { values, pdf });
+      navigation.navigate("BloodTest", { values, pdf, labs });
     } catch (error) {
       setIsError(true);
     } finally {
       setIsLoading(false);
     }
   }
+
+  if (isFetching) return <BloodTestSkeleton />;
 
   return (
     <>
