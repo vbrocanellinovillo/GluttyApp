@@ -103,7 +103,25 @@ export default function ViewMedicalExam({ navigation, route }) {
       {medicalExam && (
         <>
           {/* ENCABEZADO */}
+          
           <View style={styles.container}>
+
+          <View style={styles.options}>
+            {/* Botón de tres puntos */}
+            <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
+              <MaterialCommunityIcons name="dots-vertical" size={24} color={Colors.darkGray} />
+            </TouchableOpacity>
+
+            {/* Menú contextual */}
+            {showMenu && (
+              <ContextualMenu
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            )}
+          </View>
+
+            <View style={styles.infoEncabezado}>
             <View style={styles.dateBox}>
               <MedicalExamDateViewer date={medicalExam.date} />
             </View>
@@ -123,20 +141,14 @@ export default function ViewMedicalExam({ navigation, route }) {
                   {medicalExam.lab}
                 </TextCommonsRegular>
               </View>
-
-              {/* Botón de menú contextual (tres puntos) */}
-              <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
-                <MaterialCommunityIcons name="dots-vertical" size={24} color={Colors.darkGray} />
-              </TouchableOpacity>
+              </View>
+              
             </View>
           </View>
 
-          {/* Renderiza el menú contextual */}
-          {showMenu && <ContextualMenu onEdit={handleEdit} onDelete={handleDelete} />}
-
           {/* PDF */}
-          <View style={{ padding: 20, flexDirection:"row", justifyContent: "space-between", marginHorizontal: 10 }}>
-            <Button style={styles.opciones} backgroundColor={Colors.locro}>Ver PDF</Button>
+          <View>
+            <Button style={styles.pdf}>Ver PDF</Button>
           </View>
 
           {/* VARIABLES */}
@@ -177,9 +189,6 @@ export default function ViewMedicalExam({ navigation, route }) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row", // Para alinear la caja de fecha y la info horizontalmente
-    padding: 20,
-    marginTop: -10,
     marginLeft: 20,
     marginRight: 20,
     borderRadius: 12,
@@ -189,6 +198,24 @@ const styles = StyleSheet.create({
     shadowColor: "grey",
     shadowOpacity: 0.3,
     shadowRadius: 4,
+  },
+  infoEncabezado: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: 20,
+    marginTop: -7,
+    
+  },
+  options: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    width: "100%",
+    marginTop: 7,
+    zIndex: 1500,  // Asegura que el menú esté por delante
   },
   dateBox: {
     backgroundColor: Colors.humita,
@@ -224,5 +251,15 @@ const styles = StyleSheet.create({
     color: Colors.locro,
     marginLeft: 20,
   },
-  opciones: {},
+  pdf: {
+    marginTop: 10,
+    flexDirection:"row", 
+    justifyContent: "space-between", 
+    marginHorizontal: 10, 
+    width: 350,
+    backgroundColor: Colors.locro,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginBottom: 30,
+  }
 });

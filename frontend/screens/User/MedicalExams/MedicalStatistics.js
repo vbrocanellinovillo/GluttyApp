@@ -58,7 +58,7 @@ export default function MedicalStatistics({ navigation }) {
   useEffect(() => {
     if (data && data.message) {
       setMessage(
-        "Glutty no es un doctor o personal médico. Siempre seguí los consejos de tu médico de cabecera."
+        "Glutty no es reemplazo de un doctor o personal médico. Siempre seguí los consejos de tu médico de cabecera."
       );
       setShowModal(true);
     }
@@ -68,7 +68,7 @@ export default function MedicalStatistics({ navigation }) {
     setisloading(true);
     try {
       const data = await getInitialData(token);
-
+      setData(data);
       const variablesArray = data?.variables.map((variable) => ({
         value: variable,
         label: variable,
@@ -133,12 +133,13 @@ export default function MedicalStatistics({ navigation }) {
       </GluttyErrorScreen>
     );
 
+  console.log("data:", data);
   return (
     <>
       <ScrollView
         contentContainerStyle={styles.container}
         contentInsetAdjustmentBehavior="always"
-        contentInset={{ bottom: 80 }}
+        contentInset={{ bottom: 160 }}
       >
         <View style={styles.firstSection}>
           <MyStudies onPress={navigateMyStudies} number={data?.analysis} />

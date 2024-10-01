@@ -21,7 +21,7 @@ export default function GluttyTipsContainer({
         imageStyle={styles.loadingImage}
         textStyle={styles.loadingText}
       >
-        Cargando.....
+        Cargando...
       </LoadingWithText>
     );
 

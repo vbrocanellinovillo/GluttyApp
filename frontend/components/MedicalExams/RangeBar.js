@@ -169,15 +169,15 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
 
   if (maxBarraGris !== null && minBarraGris !== null) {
     if ((minBarraGris < currentValue) && (currentValue < maxBarraGris)) {
-      normalizedMin = minBarraGris - 8; // Reducir el mínimo por debajo del valor actual
-      normalizedMax = maxBarraGris + 20; // Aumentar el máximo por encima del valor actual
+      normalizedMin = minBarraGris - 15; // Reducir el mínimo por debajo del valor actual
+      normalizedMax = maxBarraGris + 15; // Aumentar el máximo por encima del valor actual
     }
     else if (currentValue > maxBarraGris) {
-      normalizedMax = currentValue + 8; // Añadir un margen por encima del valor actual
+      normalizedMax = maxBarraGris + (maxBarraGris - currentValue) + 30; // Añadir un margen por encima del valor actual
       normalizedMin = minBarraGris - 5; // Añadir un margen por debajo
     } else if (currentValue < minBarraGris) {
-      normalizedMin = currentValue - 10; // Reducir el mínimo por debajo del valor actual
-      normalizedMax = maxBarraGris + 50; // Aumentar el máximo
+      normalizedMin = minBarraGris - (minBarraGris - currentValue)  - 10; // Reducir el mínimo por debajo del valor actual
+      normalizedMax = maxBarraGris + 20; // Aumentar el máximo
     }
   }
 
@@ -304,11 +304,13 @@ const styles = StyleSheet.create({
   },
   info: {
     marginLeft: 5,
-    marginTop: 3,
+    marginTop: 2,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '500',
     color: Colors.mJordan,
+    flexWrap: 'wrap',  // Permitir que el texto se ajuste en varias líneas
+    maxWidth: 220,
   },
 });

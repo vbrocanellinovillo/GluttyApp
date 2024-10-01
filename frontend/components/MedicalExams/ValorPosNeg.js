@@ -31,10 +31,10 @@ export default function ValorPosNeg({ label, valor, descrip }) {
     setShowMedVarInfo(false);
   }
 
-  if (valor="Positivo") {
+  if (valor === "Positivo") {
     pos = 1;
     neg = 0; 
-  } else if (valor="Negativo") {
+  } else if (valor ==="Negativo") {
     pos = 0;
     neg = 1; 
   }
@@ -46,7 +46,6 @@ export default function ValorPosNeg({ label, valor, descrip }) {
          <View style={styles.encabezado}>
             <TextCommonsMedium style={styles.title}>{label}</TextCommonsMedium>
             <TouchableOpacity ref={infoButtonRef} onPress={openMedVarInfo}>
-
                 <Feather style={styles.info} name="info" size={18} color="black" />
             </TouchableOpacity>
          </View>
@@ -80,10 +79,10 @@ const styles = StyleSheet.create({
   container: {
     //borderWidth: 1,
     borderRadius: 15,
-    padding: 10,
+    //padding: 10,
     width: 320,
     backgroundColor: '#fff',
-    marginTop: 5,
+    marginTop: 0,
     paddingBottom: 20,
   },
   encabezado: {
@@ -92,9 +91,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '500',
     color: Colors.mJordan,
+    flexWrap: 'wrap',  // Permitir que el texto se ajuste en varias líneas
+    maxWidth: 220,     // Establecer un ancho máximo para que el texto se divida en líneas
   },
   info: {
     marginLeft: 5,

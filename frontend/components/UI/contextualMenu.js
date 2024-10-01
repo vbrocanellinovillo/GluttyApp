@@ -34,17 +34,17 @@ export default function ContextualMenu({ onEdit, onDelete }) {
 const styles = StyleSheet.create({
   menuContainer: {
     backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 10,
-    shadowColor: "rgba(0,0,0,0.2)",
+    borderRadius: 7,
+    padding: 7,
+    shadowColor: "rgba(0,0,0,0.2)",  // Sombras en iOS
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 4,
-    elevation: 5,
-    position: "absolute", // Para posicionarlo donde necesites
-    top: 50, // Cambia según dónde quieres que aparezca
-    right: 10,
-    zIndex: 10,
+    elevation: 25,  // Mayor elevación en Android
+    position: "absolute",
+    top: 28,  // Ajusta según la distancia que quieras respecto al icono de tres puntos
+    right: 0, // Alineado con el icono
+    zIndex: 10000,  // Aumenta el zIndex para garantizar que esté al frente
   },
   menuItem: {
     flexDirection: "row",

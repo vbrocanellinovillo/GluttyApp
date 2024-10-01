@@ -3,6 +3,7 @@ import ScannerHeader from "../../components/Scanner/ScannerHeader";
 import Scan from "../../screens/User/Scan/Scan";
 import UserDrawer from "./UserDrawer";
 import AddBloodTestStack from "./AddBloodTestStack";
+import MedicalStatistics from "../../screens/User/MedicalExams/MedicalStatistics";
 
 const Stack = createNativeStackNavigator();
 

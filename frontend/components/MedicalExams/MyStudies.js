@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 22,
+    fontSize: 19,
     fontWeight: "600",
     textAlign: "center",
     color: Colors.mJordan,

@@ -53,13 +53,14 @@ export default function TipsCarousel({ tips, height }) {
 
 const styles = StyleSheet.create({
   container: {
+    marginBottom: 30,
     alignItems: "center",
   },
 
   dotsContainer: {
-    gap: 18,
-    marginTop: 10,
-    height: 50,
+    gap: 15,
+    marginTop: -30,
+    height: 2,
   },
 
   activeDot: {

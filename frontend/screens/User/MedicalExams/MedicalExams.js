@@ -29,7 +29,7 @@ export default function MedicalExams() {
       try {
         setisloading(true);
         const response = await getUser(token);
-        //console.log("response", response);
+        console.log("response", response);
         setUserMedicalData(response);
         setIsError(false);
       } catch (error) {

@@ -51,6 +51,7 @@ export default function DialogContainer({
 
 const styles = StyleSheet.create({
   container: {
+    marginBottom: 35,
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,

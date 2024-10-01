@@ -79,6 +79,7 @@ export default function BloodTest({ navigation, route }) {
       setIsError(false);
       setMessage("Estudio medico registrado correctamente!");
       setShowModal(true);
+      navigation.navigate("MedicalStatistics");
     } catch (error) {
       setIsError(true);
       setMessage("Ocurrio un error. Por favor intente de nuevo más tarde");

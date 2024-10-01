@@ -16,11 +16,11 @@ export function MedicalExamsContainer({ isLoading, isError }) {
 
   useEffect(() => {
     async function fetchMedicalExams() {
-       
       try {
         setLoading(true); // Empezar la carga
         const response = await getMedicalExamsList(token);
         setExams(response);  // Guardar los exámenes en el estado
+        console.log(exams); //a:",exams);
       } catch (error) {
         console.error(error);
       } finally {

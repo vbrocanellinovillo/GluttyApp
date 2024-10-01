@@ -132,12 +132,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowOffset: { width: 0, height: 0 },
     elevation: 5,
+    width: 70,
   },
 
   input: {
     flex: 1,
     fontSize: 16,
     color: Colors.mJordan,
+    width: 100,
   },
 
   icons: {

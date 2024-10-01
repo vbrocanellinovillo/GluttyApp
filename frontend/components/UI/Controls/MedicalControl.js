@@ -71,6 +71,8 @@ export default function MedicalControl({
 const styles = StyleSheet.create({
   container: {
     marginVertical: 4,
+    width: 310,
+    paddingRight: 10,
   },
 
   control: {
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
     flex: 1.1,
-    paddingRight: 12,
+    //paddingRight: 12,
   },
 
   inputContainer: {
