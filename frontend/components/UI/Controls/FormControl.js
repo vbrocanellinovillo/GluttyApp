@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },*/
 
-
 import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, ScrollView, Pressable } from "react-native";
 import { TextInput } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
-
+import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
+import * as Haptics from "expo-haptics";
 
 export default function FormControl({
   label,
@@ -124,11 +124,36 @@ export default function FormControl({
   containerStyle,
   labelColor,
   editable = true, // Nueva propiedad editable con valor por defecto true
+  autocompleteOptions = [], // que lleguen de la forma {id, name}
 }) {
   const [hideText, setHideText] = useState(secure ? true : false);
+  const [filteredOptions, setFilteredOptions] = useState([]);
+
+  const hasAutocomplete = autocompleteOptions.length > 0;
 
   function toggleHiddeText() {
     setHideText(!hideText);
+  }
+
+  function handleChangeText(text) {
+    if (!handleChange) return;
+
+    handleChange(name)(text);
+
+    if (text.length > 0 && hasAutocomplete) {
+      const filtered = autocompleteOptions.filter((option) =>
+        option.name.toLowerCase().includes(text.toLowerCase())
+      );
+      setFilteredOptions(filtered);
+    } else {
+      setFilteredOptions([]);
+    }
+  }
+
+  function handleSelectOption(option) {
+    Haptics.selectionAsync();
+    handleChange(name)(option.name);
+    setFilteredOptions([]);
   }
 
   return (
@@ -157,7 +182,7 @@ export default function FormControl({
           },
         ]}
         secureTextEntry={hideText}
-        onChangeText={handleChange ? handleChange(name) : () => undefined}
+        onChangeText={handleChangeText}
         onBlur={handleBlur ? handleBlur(name) : () => undefined}
         value={value}
         textColor={Colors.mJordan}
@@ -178,6 +203,27 @@ export default function FormControl({
         }
       />
       {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
+      {filteredOptions.length > 0 && (
+        <View>
+          <ScrollView contentContainerStyle={styles.autocompleteContainer}>
+            {filteredOptions.map((option) => (
+              <Pressable
+                key={option.id}
+                style={({ pressed }) =>
+                  pressed
+                    ? [styles.autocompleteOptionContainer, styles.pressedOption]
+                    : [styles.autocompleteOptionContainer]
+                }
+                onPress={handleSelectOption.bind(this, option)}
+              >
+                <TextCommonsMedium style={styles.autocompleteItem}>
+                  {option.name}
+                </TextCommonsMedium>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
+      )}
     </View>
   );
 }
@@ -205,5 +251,31 @@ const styles = StyleSheet.create({
     minHeight: 100,
     paddingBottom: 30,
   },
-});
 
+  autocompleteContainer: {
+    backgroundColor: "#eee",
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 2,
+    gap: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+
+  autocompleteOptionContainer: {
+    justifyContent: "center",
+    padding: 6,
+  },
+
+  pressedOption: {
+    opacity: 0.5,
+  },
+
+  autocompleteItem: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: Colors.mJordan,
+  },
+});

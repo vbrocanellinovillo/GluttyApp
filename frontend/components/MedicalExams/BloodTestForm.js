@@ -16,7 +16,13 @@ const ema = [
   { label: "Negativo", value: "Negativo" },
 ];
 
-export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf, labs }) {
+export default function BloodTestForm({
+  onSubmit,
+  onPrev,
+  medicalExam,
+  pdf,
+  labs,
+}) {
   function submitHandler(values) {
     // Ajuste de la fecha
     const formattedDate = formatShortToYYYYMMDD(values.date);
@@ -26,7 +32,6 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf, labs
 
     onSubmit(valuesWithPdf);
   }
-
 
   return (
     <DismissKeyboardContainer>
@@ -91,6 +96,7 @@ export default function BloodTestForm({ onSubmit, onPrev, medicalExam, pdf, labs
                   errors={errors.laboratory}
                   touched={touched.laboratory}
                   name="laboratory"
+                  autocompleteOptions={labs}
                 />
               </FormSectionContainer>
 

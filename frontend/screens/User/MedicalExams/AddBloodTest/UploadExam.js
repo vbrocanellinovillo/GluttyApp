@@ -8,6 +8,7 @@ import {
 } from "../../../../services/medicalExamService";
 import { useSelector } from "react-redux";
 import BloodTestSkeleton from "../../../../components/UI/Loading/BloodTestSkeleton";
+import GluttyErrorScreen from "../../../../components/UI/GluttyErrorScreen";
 
 export default function UploadExam({ navigation }) {
   const token = useSelector((state) => state.auth.accessToken);
@@ -27,6 +28,7 @@ export default function UploadExam({ navigation }) {
     setIsFetching(true);
     try {
       const data = await getLabs(token);
+      setLabs(data);
       setFetchError(false);
     } catch (error) {
       setFetchError(true);
@@ -63,6 +65,15 @@ export default function UploadExam({ navigation }) {
   }
 
   if (isFetching) return <BloodTestSkeleton />;
+
+  if (!isFetching && fetchError) {
+    // Agregarle boton para volver a eso
+    return (
+      <GluttyErrorScreen height={200} width={200}>
+        Ocurrio un error. Por favor intente cargar su estudio más tarde
+      </GluttyErrorScreen>
+    );
+  }
 
   return (
     <>
