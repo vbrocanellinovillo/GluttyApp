@@ -15,7 +15,7 @@ import {
   saveMedicalMessage,
 } from "../../../services/medicalExamService";
 import { useSelector } from "react-redux";
-
+import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
 
 const STATISTICS = {
   labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
@@ -69,7 +69,7 @@ export default function MedicalStatistics({ navigation }) {
     try {
       const data = await getInitialData(token);
 
-      const variablesArray = data.variables.split(", ").map((variable) => ({
+      const variablesArray = data?.variables.map((variable) => ({
         value: variable,
         label: variable,
       }));
@@ -80,7 +80,10 @@ export default function MedicalStatistics({ navigation }) {
       };
 
       setData(updatedData);
+      setIsError(false);
     } catch (error) {
+      console.log(error);
+
       setIsError(true);
     } finally {
       setisloading(false);
@@ -122,6 +125,13 @@ export default function MedicalStatistics({ navigation }) {
   const futureDate = new Date(currentDate.setMonth(currentDate.getMonth() + 8));
 
   if (isloading) return <MedicalStatisticsSkeleton />;
+
+  if (isError)
+    return (
+      <GluttyErrorScreen width={210} height={210}>
+        Ocurrio un error. Por favor intente de nuevo más tarde
+      </GluttyErrorScreen>
+    );
 
   return (
     <>
