@@ -6,13 +6,34 @@ import BlurContainer from "../BlurContainer";
 import { Colors } from "../../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import Button from "./Button";
 
-export default function Picker({ data, value }) {
+export default function Picker({
+  data,
+  value,
+  confirmButton,
+  buttonText,
+  buttonStyle,
+  onValueChange,
+  onPressButton,
+}) {
   const [visible, setVisible] = useState(false);
+  const [option, setOption] = useState(value);
 
   function toggleVisible() {
     Haptics.selectionAsync();
     setVisible((prevVisible) => !prevVisible);
+  }
+
+  function handleChange(option) {
+    const result = option.item.value;
+    setOption(result);
+    onValueChange && onValueChange(result);
+  }
+
+  function handlePress() {
+    onPressButton && onPressButton(option);
+    setVisible(false);
   }
 
   return (
@@ -34,14 +55,21 @@ export default function Picker({ data, value }) {
         backdropContainerStyle={styles.blurredContainer}
         backdropStyle={styles.blurredBackdrop}
       >
-        <WheelPicker
-          data={data}
-          value={value}
-          style={styles.wheelPicker}
-          onValueChanging={() =>
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-          }
-        />
+        <View style={styles.wheelPicker}>
+          <WheelPicker
+            data={data}
+            value={value}
+            onValueChanging={() =>
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+            }
+            onValueChanged={handleChange}
+          />
+          {confirmButton && (
+            <Button style={[styles.button, buttonStyle]} onPress={handlePress}>
+              {buttonText ? buttonText : "Confirmar"}
+            </Button>
+          )}
+        </View>
       </BlurContainer>
     </>
   );
@@ -88,5 +116,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
+    paddingBottom: 14,
+    paddingHorizontal: 18,
+  },
+
+  button: {
+    marginTop: 14,
   },
 });
