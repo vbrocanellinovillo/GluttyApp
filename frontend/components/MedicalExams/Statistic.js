@@ -15,6 +15,23 @@ const FREQUENCIES = [
   { id: 4, value: "3 meses" },
 ];
 
+const STATISTICS = {
+  labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
+  datasets: [
+    {
+      data: [20, 45, 28, 80, 99, 43],
+      color: () => Colors.humita, // optional
+      strokeWidth: 2, // optional
+    },
+    {
+      data: [5, 15, 4, 30, 59, 22],
+      color: () => Colors.mJordan,
+      strokeWidth: 2, // optional
+    },
+  ],
+  legend: ["Glucosa", "Minimos"], // optional
+};
+
 const width = Dimensions.get("window").width;
 
 export default function Statistic({ initialData, variables }) {
@@ -32,8 +49,6 @@ export default function Statistic({ initialData, variables }) {
   async function getStatisticsData() {
     try {
       const response = await getStatistics(token, variable, frequency);
-      console.log(response);
-      
     } catch (error) {}
   }
 

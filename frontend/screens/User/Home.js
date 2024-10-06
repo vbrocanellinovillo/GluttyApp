@@ -7,6 +7,7 @@ import {
   withSpring,
 } from "react-native-reanimated";
 import SmileGlutty from "../../components/UI/SVGGlutty/SmileGlutty";
+import RefreshScreen from "../../components/UI/RefreshScreen";
 
 export default function Home() {
   const y = useSharedValue(0);
