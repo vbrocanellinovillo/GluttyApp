@@ -156,12 +156,15 @@ import { Colors } from '../../constants/colors';
 import InfoMedicalVariableContainer from './MedicalVariableInfoContainer';
 import TextCommonsMedium from '../UI/FontsTexts/TextCommonsMedium';
 
-export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin, normalMax, currentValue, descrip, lab }) {
+export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin, normalMax, currentValue, descrip, unit }) {
   const [showMedVarInfo, setShowMedVarInfo] = useState(false);
   const [infoButtonPosition, setInfoButtonPosition] = useState({ x: 0, y: 0 });
   const infoButtonRef = useRef(null);
 
   const barWidth = 320; // Ancho constante de la barra visual
+
+  let x = undefined; // posicion estandar del máximo dentro de la barra celeste 
+  let color = "white";
 
   // Definir los valores normalizados para la barra gris
   let normalizedMin = minBarraGris ?? 0;
@@ -216,6 +219,17 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
     }
   }, [showMedVarInfo]);
 
+  // ESTANDARIZAR LOS VALORES DE LA POSICION DE LOS VALORES NORMALES EN LA BARRA CELESTE 
+  
+  if ((normalMax - normalMin) < 12 && (normalMax - normalMin) != 10) {
+    x = -5;
+    color = 'black';
+  } else if ((normalizedMax < 100)) {
+    x = 20;
+  } else if (normalizedMax > 100) {
+      x = 30;
+  }
+
   return (
     <>
       <View style={styles.container}>
@@ -237,18 +251,6 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
 
       <View style={{ alignItems: 'center' }}>
         <Svg height="60" width={barWidth}>
-          {/* Texto del valor mínimo y máximo si normalMin y normalMax están definidos */}
-          {normalMin !== null && normalMax !== null && (
-            <>
-              <SvgText x={isNaN(rangeBarStart) ? 0 : rangeBarStart} y="15" fill="black" fontSize="12">
-                {normalMin}
-              </SvgText>
-              <SvgText x={isNaN(rangeBarStart + rangeBarWidth - 15) ? 0 : rangeBarStart + rangeBarWidth - 15} y="15" fill="black" fontSize="12">
-                {normalMax}
-              </SvgText>
-            </>
-          )}
-
           {/* Barra de fondo (gris) con bordes redondeados, siempre visible */}
           <Rect
             x="0"
@@ -273,6 +275,18 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
             />
           )}
 
+          {/* Texto del valor mínimo y máximo dentro de la barra celeste */}
+          {normalMin !== null && normalMax !== null && (
+            <>
+              <SvgText x={isNaN(rangeBarStart) ? 0 : rangeBarStart + 10} y="43" fill="white" fontSize="10" fontWeight="bold">
+                {normalMin}
+              </SvgText>
+              <SvgText x={isNaN(rangeBarStart + rangeBarWidth) ? 0 : rangeBarStart + rangeBarWidth - x} y="43" fill={color} fontSize="10" fontWeight="bold">
+                {normalMax}
+              </SvgText>
+            </>
+          )}
+
           {/* Indicador del valor actual, siempre sobre la barra gris */}
           <Line x1={isNaN(position) ? 0 : position} y1="20" x2={isNaN(position) ? 0 : position} y2="55" stroke="orange" strokeWidth="4" />
 
@@ -281,10 +295,10 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
             x={isNaN(position - 5) ? 0 : position - 10} 
             y="15" 
             fill="black" 
-            fontSize="16"  // Aumenta el tamaño de la fuente
+            fontSize="15"  // Aumenta el tamaño de la fuente
             fontWeight="bold"  // Aplica negrita
           >
-            {currentValue}
+            {`${currentValue} ${unit}`}  {/* Concatenamos el valor actual con la unidad */}
           </SvgText>
 
         </Svg>
@@ -314,3 +328,4 @@ const styles = StyleSheet.create({
     maxWidth: 220,
   },
 });
+
