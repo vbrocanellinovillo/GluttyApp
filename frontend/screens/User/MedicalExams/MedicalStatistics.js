@@ -17,23 +17,6 @@ import {
 import { useSelector } from "react-redux";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
 
-const STATISTICS = {
-  labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
-  datasets: [
-    {
-      data: [20, 45, 28, 80, 99, 43],
-      color: () => Colors.humita, // optional
-      strokeWidth: 2, // optional
-    },
-    {
-      data: [5, 15, 4, 30, 59, 22],
-      color: () => Colors.mJordan,
-      strokeWidth: 2, // optional
-    },
-  ],
-  legend: ["Glucosa", "Minimos"], // optional
-};
-
 export default function MedicalStatistics({ navigation }) {
   // Blur views
   const [showGluttyTips, setShowGluttyTips] = useState(false);
@@ -133,7 +116,6 @@ export default function MedicalStatistics({ navigation }) {
       </GluttyErrorScreen>
     );
 
-  console.log("data:", data);
   return (
     <>
       <ScrollView
@@ -145,7 +127,7 @@ export default function MedicalStatistics({ navigation }) {
           <MyStudies onPress={navigateMyStudies} number={data?.analysis} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
-        <StatisticsContainer data={STATISTICS} variables={data?.options} />
+        <StatisticsContainer variables={data?.options} />
         <NextStudyContainer onPress={openNextStudy} date={futureDate} />
       </ScrollView>
       <BlurTips visible={showGluttyTips} onDismiss={hideGluttyTips} />

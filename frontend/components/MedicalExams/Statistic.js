@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
-import { LineChart } from "react-native-chart-kit";
 import Picker from "../UI/Controls/Picker";
 import { Colors } from "../../constants/colors";
 import Frequencies from "./Frequencies";
 import Frequency from "./Frequency";
 import { useSelector } from "react-redux";
 import { getStatistics } from "../../services/medicalExamService";
+import Graphic from "./Graphic";
 
 const FREQUENCIES = [
   { id: 1, value: "3 años" },
@@ -15,27 +15,10 @@ const FREQUENCIES = [
   { id: 4, value: "3 meses" },
 ];
 
-const STATISTICS = {
-  labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
-  datasets: [
-    {
-      data: [20, 45, 28, 80, 99, 43],
-      color: () => Colors.humita, // optional
-      strokeWidth: 2, // optional
-    },
-    {
-      data: [5, 15, 4, 30, 59, 22],
-      color: () => Colors.mJordan,
-      strokeWidth: 2, // optional
-    },
-  ],
-  legend: ["Glucosa", "Minimos"], // optional
-};
-
 const width = Dimensions.get("window").width;
 
-export default function Statistic({ initialData, variables }) {
-  const [data, setData] = useState(initialData);
+export default function Statistic({ variables }) {
+  const [data, setData] = useState();
 
   const [frequency, setFrecuency] = useState(FREQUENCIES[0].value);
   const [variable, setVariable] = useState(variables && variables[0].value);
@@ -49,6 +32,29 @@ export default function Statistic({ initialData, variables }) {
   async function getStatisticsData() {
     try {
       const response = await getStatistics(token, variable, frequency);
+
+      const graphic = {
+        labels: response.labels,
+        datasets: [
+          {
+            data: response.values,
+            color: () => Colors.humita,
+            strokeWidth: 2,
+          },
+          {
+            data: response.maxs,
+            color: () => Colors.mJordan,
+            strokeWidth: 2,
+          },
+          {
+            data: response.mins,
+            color: () => Colors.mJordan,
+            strokeWidth: 2,
+          },
+        ],
+      };
+
+      setData(graphic);
     } catch (error) {}
   }
 
@@ -69,30 +75,7 @@ export default function Statistic({ initialData, variables }) {
         buttonStyle={styles.buttonStyle}
         onPressButton={selectVariable}
       />
-      <LineChart
-        data={data}
-        width={width - 100}
-        height={160}
-        bezier
-        chartConfig={{
-          decimalPlaces: 2,
-          color: () => Colors.mJordan,
-          labelColor: () => Colors.mJordan,
-          style: {},
-          propsForDots: {
-            r: "6",
-          },
-          backgroundGradientFrom: "white",
-          backgroundGradientTo: "white",
-          fillShadowGradientFrom: Colors.mJordan,
-          fillShadowGradientTo: Colors.pielcita,
-          backgroundGradientFromOpacity: 1,
-          fillShadowGradientToOpacity: 0.8,
-          propsForBackgroundLines: {
-            display: "none",
-          },
-        }}
-      />
+      {data && <Graphic data={data} width={width} />}
       <Frequencies>
         {FREQUENCIES.map((freq) => (
           <Frequency
