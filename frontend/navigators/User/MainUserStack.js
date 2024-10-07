@@ -4,6 +4,7 @@ import Scan from "../../screens/User/Scan/Scan";
 import UserDrawer from "./UserDrawer";
 import AddBloodTestStack from "./AddBloodTestStack";
 import MedicalStatistics from "../../screens/User/MedicalExams/MedicalStatistics";
+import EditBloodTestStack from "./EditBloodTestStack";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,12 @@ export default function MainUserStack() {
       <Stack.Screen
         name="AddBloodTestStack"
         component={AddBloodTestStack}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="EditBloodTestStack"
+        component={EditBloodTestStack}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
