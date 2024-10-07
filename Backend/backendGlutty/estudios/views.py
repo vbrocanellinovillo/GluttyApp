@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from requests import Response
+from sqlalchemy import DateTime
 from .models import *
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -66,6 +67,12 @@ def register_analysis(request):
     trigliceridos = safe_decimal(request.data.get("trigliceridos"))
     glucemia = safe_decimal(request.data.get("glucemia"))
 
+    # Cambiar los valores a None si se pasa undefined
+    atTG_IgA = None if atTG_IgA == 'undefined' else atTG_IgA
+    aDGP_IgG = None if aDGP_IgG == 'undefined' else aDGP_IgG
+    aDGP_IgA = None if aDGP_IgA == 'undefined' else aDGP_IgA
+    antiendomisio = None if antiendomisio == 'undefined' else antiendomisio
+    
     # Crear objeto EstudioSangre
     estudio = BloodTest.objects.create(
         celiac=celiac,
@@ -155,14 +162,14 @@ def get_all_analysis(request):
         celiac = Celiac.objects.filter(user=user).first()
         
         analysis = celiac.getAnalysis()
-
+      
         for an in analysis:
             analysis_data = {
                 "id": an.id,
                 "date": an.getDate(),
                 "lab": an.getLab(),
             }
-        
+            
         # Agregar el comercio completo a la lista de todos los comercios
             all_analysis_data.append(analysis_data)
             

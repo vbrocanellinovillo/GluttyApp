@@ -2,10 +2,13 @@ from django.db import models
 import datetime
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from sqlalchemy import null
 from .managers import *
 import datetime
 import string
 import random
+from django.utils.timezone import now
+from datetime import date
 
 # Create your models here.
 # Clase para guardar datos generales
@@ -44,7 +47,8 @@ class Celiac(models.Model):
     sex = models.CharField(max_length=50, choices=SEXOS, default="MALE")
     date_birth = models.DateField(blank=False)
     show_message = models.BooleanField(default=True)
-    
+    # next_analysis = models.DateField(blank=True, null=True)
+
     def getFirstName(self):
         return self.first_name
     
@@ -58,7 +62,7 @@ class Celiac(models.Model):
         return self.estudios.all()
     
     def getLatestAnalysis(self):
-        latest_analysis = self.getAnalysis().order_by('-registration_date').first()
+        latest_analysis = self.getAnalysis().first()
         if latest_analysis:
             return latest_analysis
         else:
