@@ -241,7 +241,19 @@ export async function getStatistics(token, variable, frequency) {
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);
-    return response;
+    const values = [];
+    const labels = [];
+    const mins = [];
+    const maxs = [];
+
+    for (let value of response) {
+      values.push(value.value);
+      mins.push(value.min_value);
+      maxs.push(value.max_value);
+      labels.push(value.date);
+    }
+
+    return { values, labels, maxs, mins };
   } catch (error) {
     throw new Error(error.message);
   }
