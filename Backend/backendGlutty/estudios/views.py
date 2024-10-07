@@ -454,7 +454,8 @@ def get_reference_values(celiac, analysis):
                     "value": variable["value"],
                     "min_value": ref.min_value,
                     "max_value": ref.max_value,
-                    "description": ref.variable.getDescription()
+                    "description": ref.variable.getDescription(),
+                    "unit_of_measurement": ref.variable.getUnitOfMeasurement()
                 })
             else:
                 
@@ -466,7 +467,8 @@ def get_reference_values(celiac, analysis):
                     "value": variable["value"],
                     "min_value": None,
                     "max_value": None,
-                    "description": filtered_variable.getDescription()
+                    "description": filtered_variable.getDescription(),
+                    "unit_of_measurement": filtered_variable.getUnitOfMeasurement()
                 })
                 
     return analysis_data

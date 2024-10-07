@@ -101,6 +101,7 @@ class Laboratory(models.Model):
 class Variable(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=300)
+    unit_of_measurement = models.CharField(max_length=50, null=True, default='hola')
 
     def __str__(self):
         return self.name
@@ -110,6 +111,9 @@ class Variable(models.Model):
     
     def getDescription(self):
         return self.description
+    
+    def getUnitOfMeasurement(self):
+        return self.unit_of_measurement
     
 class ReferenceValues(models.Model):
     SEX = (("Male", "Male"), ("Female", "Female"))
