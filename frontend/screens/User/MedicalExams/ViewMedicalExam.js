@@ -174,7 +174,7 @@ export default function ViewMedicalExam({ navigation, route }) {
                       normalMax={item.max_value} 
                       currentValue={item.value} 
                       descrip={item.description} 
-                      lab={medicalExam.lab} 
+                      unit={item.unit_of_measurement} 
                     />
                   </FormSectionContainer>
                 )}

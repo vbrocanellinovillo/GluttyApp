@@ -1,4 +1,4 @@
-import { StyleSheet, View, ActivityIndicator } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useState, useEffect } from "react";  // Importar useState y useEffect
 import ErrorFetchingMedicalExams from "./ErrorFetchingMedicalExams";
 import AddMedicalExamButton from "./AddMedicalExamButton";

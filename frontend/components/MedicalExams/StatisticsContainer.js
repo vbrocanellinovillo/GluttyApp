@@ -22,8 +22,8 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "flex-start",
     flexWrap: "wrap",
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 14,
     gap: 20,
   },
 

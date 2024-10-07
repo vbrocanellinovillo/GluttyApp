@@ -29,5 +29,7 @@ export default function Index() {
     </NavigationContainer>
   );
 
-  return navigation;
+  return (
+    navigation
+  );
 }

@@ -6,7 +6,7 @@ import { Colors } from '../../constants/colors';
 import TextCommonsMedium from '../UI/FontsTexts/TextCommonsMedium';
 
 
-export default function ValorPosNeg({ label, valor, descrip }) {
+export default function ValorPosNeg({ label, valor, descrip, unit }) {
   const [showMedVarInfo, setShowMedVarInfo] = useState(false);
   const [infoButtonPosition, setInfoButtonPosition] = useState({ x: 0, y: 0 });
   const infoButtonRef = useRef(null);

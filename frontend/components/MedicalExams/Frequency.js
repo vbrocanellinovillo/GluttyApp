@@ -3,10 +3,10 @@ import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
 
-export default function Frequency({ children, onSelect, id, isSelected }) {
+export default function Frequency({ children, onSelect, isSelected }) {
   function handlePress() {
     Haptics.selectionAsync();
-    onSelect(id);
+    onSelect(children);
   }
 
   return (
@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 15,
+    fontWeight: "500",
     color: Colors.mJordan,
   },
 });

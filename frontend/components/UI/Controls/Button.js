@@ -39,7 +39,7 @@ export default function Button({
 
   function pressHandler() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onPress();
+    onPress && onPress();
   }
 
 

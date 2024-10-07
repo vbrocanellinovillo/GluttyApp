@@ -222,3 +222,27 @@ export async function getLabs(token) {
     throw new Error(error.message);
   }
 }
+
+export async function getStatistics(token, variable, frequency) {
+  const requestUrl = url + "get-statistics/";
+
+  const formdata = new FormData();
+
+  formdata.append("variable_name", variable);
+  formdata.append("period", frequency);
+
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formdata,
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
