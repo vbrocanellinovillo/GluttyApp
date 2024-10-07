@@ -1,11 +1,12 @@
 import { LineChart } from "react-native-chart-kit";
 import GraphicSkeleton from "../UI/Loading/GraphicSkeleton";
 import { Colors } from "../../constants/colors";
+import { Text } from "react-native";
 
 export default function Graphic({ isLoading = true, data, width }) {
   //if (isLoading) return <GraphicSkeleton />;
 
-  return (
+  const graph = (
     <LineChart
       data={data}
       width={width - 100}
@@ -31,4 +32,6 @@ export default function Graphic({ isLoading = true, data, width }) {
       }}
     />
   );
+
+  return <Text>no andan los graficos (despues lo veo)</Text>;
 }
