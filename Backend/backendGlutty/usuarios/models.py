@@ -47,7 +47,7 @@ class Celiac(models.Model):
     sex = models.CharField(max_length=50, choices=SEXOS, default="MALE")
     date_birth = models.DateField(blank=False)
     show_message = models.BooleanField(default=True)
-    # next_analysis = models.DateField(blank=True, null=True)
+    next_analysis_date = models.DateField(blank=True, null=True, default=None)
 
     def getFirstName(self):
         return self.first_name
@@ -70,6 +70,9 @@ class Celiac(models.Model):
     
     def getShowMessage(self):
         return self.show_message
+    
+    def getNextAnalysisDate(self):
+        return self.next_analysis_date
     
 class Session(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="session")

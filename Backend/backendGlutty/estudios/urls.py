@@ -12,6 +12,7 @@ urlpatterns = [
     path("get-initial-data/", get_initial_data, name="get_initial_data"),
     path("get-laboratories/", get_laboratories, name="get_laboratories"),
     path("save-medical-message/", save_medical_message, name="save_medical_message"),
+    path("save-analysis-date/", save_analysis_date, name="save_analysis_date"),
     path("extract-values-pdf/", extract_medical_data, name="extract_values"),
     path("delete-analysis/", delete_analysis, name="delete_analysis"),
     path("get-statistics/", get_statistics, name="get_statistics"),

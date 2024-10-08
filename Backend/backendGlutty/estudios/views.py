@@ -21,6 +21,7 @@ from .serializers import *
 from django.db.models import Q
 from datetime import timedelta
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 
 def calculate_age(birth_date, test_date = date.today()):
     # Calcula la edad en la fecha del estudio
@@ -340,12 +341,45 @@ def get_initial_data(request):
         initial_data["statistics"] = latest_analysis.get_random_non_null_variable()
         print(latest_analysis.get_random_non_null_variable())
         
+        next_analysis_date = celiac.getNextAnalysisDate()
+        reminder = get_years_months_days(next_analysis_date)
+        
+        initial_data["analysis_reminder"] = {
+            "years": reminder[0],
+            "months": reminder[1],
+            "days": reminder[2]
+        }
+        
         # Devolver los datos    
         return Response(initial_data, status=status.HTTP_200_OK)
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+
+# Función que calcula la cantidad de años, meses y días desde el día actual hasta la fecha de su próximo estudio
+def get_years_months_days(future_date):
+    # Obtener la fecha actual
+    today = date.today()
+
+    # Si la fecha es null, devolver None None None
+    if not future_date:
+        return [None, None, None]
+
+    # Asegurarse de que la fecha futura sea mayor que la actual
+    if future_date <= today:
+        return "Error: La fecha debe ser posterior a la fecha actual."
+
+    # Calcular la diferencia usando relativedelta
+    delta = relativedelta(future_date, today)
+
+    # Obtener los años, meses y días
+    years = delta.years
+    months = delta.months
+    days = delta.days
+
+    return [years, months, days]
+
 # Función que cancela el mensaje principal de que glutty no es médico
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -601,3 +635,32 @@ def get_glutty_tips(request):
     }
     
     return Response(response_data, status=200)
+
+# Función que guarda la fecha del próximo análisis
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def save_analysis_date(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    
+    if not user:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    celiac = Celiac.objects.filter(user=user).first()
+    
+    # Verificar que el celíaco que está guardando la fecha sea el mismo del usuario
+    if celiac.user != request.user:
+        return Response({"error": "No tienes permiso para acceder a esta funcionalidad."}, status=status.HTTP_403_FORBIDDEN)
+    try:
+        analysis_date = request.data.get("date", None)
+        if analysis_date == None:
+            return Response({"error": "Una fecha es requerida."}, status=status.HTTP_400_BAD_REQUEST)
+            
+        celiac.next_analysis_date = analysis_date
+        celiac.save()
+            
+        # Devolver los datos    
+        return Response({"Detail": f"Se guardó la fecha '{analysis_date}' correctamente."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
