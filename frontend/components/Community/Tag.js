@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: "400",
     color: Colors.mJordan,
   },
 });

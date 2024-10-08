@@ -6,6 +6,7 @@ import PostInfoContainer from "./PostInfoContainer";
 import { Divider } from "react-native-paper";
 import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
+import UserImage from "../UI/UserImage/UserImage";
 
 export default function Post({
   post,
@@ -41,6 +42,7 @@ export default function Post({
         onPress={handlePress}
       >
         <View style={styles.nameContainer}>
+          <UserImage dimensions={40} source={post.userImage} />
           <TextCommonsMedium style={styles.name}>
             {post?.name}
           </TextCommonsMedium>
@@ -122,7 +124,7 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "400",
     color: Colors.mJordan,
     marginTop: 6,

@@ -3,7 +3,6 @@ import ScannerHeader from "../../components/Scanner/ScannerHeader";
 import Scan from "../../screens/User/Scan/Scan";
 import UserDrawer from "./UserDrawer";
 import AddBloodTestStack from "./AddBloodTestStack";
-import MedicalStatistics from "../../screens/User/MedicalExams/MedicalStatistics";
 import EditBloodTestStack from "./EditBloodTestStack";
 import AddPost from "../../screens/Community/AddPost";
 import AddPostHeader from "../../components/UI/Header/AddPostHeader";
@@ -50,7 +49,7 @@ export default function MainUserStack() {
               route={route}
             />
           ),
-          title: "Nuevo Post",
+          title: "Nuevo",
         }}
       />
     </Stack.Navigator>

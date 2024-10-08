@@ -1,9 +1,9 @@
 import { backendUrl } from "../constants/backend";
-
-const url = backendUrl + "estudios/";
 import { Post } from "../models/Post";
 import { getRandomDate } from "../utils/dateFunctions";
 import { sleep } from "../utils/utilFunctions";
+
+const url = backendUrl + "estudios/";
 
 async function getData() {
   //await sleep(3000);
@@ -19,6 +19,7 @@ async function getData() {
       likes: 961,
       comments: 892,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/1/300",
     },
     {
       id: 2,
@@ -30,17 +31,19 @@ async function getData() {
       likes: 414,
       comments: 429,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/2/300",
     },
     {
       id: 3,
       name: "Bentley Bardell",
       username: "bentley_bardell",
       content:
-        "Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.\n\nPraesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.\n\nMorbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",
+        "Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.\n\nPraesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.",
       tags: ["Hyundai", "Crossover", "Manual"],
       likes: 95,
       comments: 603,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/3/300",
     },
     {
       id: 4,
@@ -52,6 +55,7 @@ async function getData() {
       likes: 942,
       comments: 617,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/4/300",
     },
     {
       id: 5,
@@ -63,6 +67,7 @@ async function getData() {
       likes: 25,
       comments: 324,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/5/300",
     },
     {
       id: 6,
@@ -74,6 +79,7 @@ async function getData() {
       likes: 573,
       comments: 589,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/6/300",
     },
     {
       id: 7,
@@ -85,6 +91,7 @@ async function getData() {
       likes: 522,
       comments: 275,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/7/300",
     },
     {
       id: 8,
@@ -96,6 +103,7 @@ async function getData() {
       likes: 884,
       comments: 664,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/8/300",
     },
     {
       id: 9,
@@ -107,6 +115,7 @@ async function getData() {
       likes: 861,
       comments: 196,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/9/300",
     },
     {
       id: 10,
@@ -118,6 +127,7 @@ async function getData() {
       likes: 755,
       comments: 328,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/10/300",
     },
     {
       id: 11,
@@ -129,6 +139,7 @@ async function getData() {
       likes: 917,
       comments: 606,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/11/300",
     },
     {
       id: 12,
@@ -140,17 +151,31 @@ async function getData() {
       likes: 518,
       comments: 481,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/12/300",
     },
     {
       id: 13,
-      name: "Trenna Ranner",
-      username: "trenna_ranner",
+      name: "Matteo Cosyns",
+      username: "matteo_cosyns",
       content:
-        "Curabitur gravida nisi at nibh. In hac habitasse platea dictumst. Aliquam augue quam, sollicitudin vitae, consectetuer eget, rutrum at, lorem.\n\nInteger tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",
-      tags: ["Mazda", "Sedan", "Hatchback"],
-      likes: 631,
-      comments: 361,
+        "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.",
+      tags: ["Audi", "Sedan", "Electric"],
+      likes: 597,
+      comments: 43,
       date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/13/300",
+    },
+    {
+      id: 14,
+      name: "Pegeen Beebee",
+      username: "pegeen_beebee",
+      content:
+        "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Proin risus. Praesent lectus.",
+      tags: ["Volkswagen", "Hatchback", "Manual"],
+      likes: 801,
+      comments: 417,
+      date: getRandomDate(new Date(2020, 0, 1), new Date(2024, 9, 7)),
+      image: "https://picsum.photos/seed/14/300",
     },
   ];
 
@@ -168,6 +193,33 @@ export async function getInitialPosts(token) {
         dataPoint.id,
         dataPoint.name,
         dataPoint.username,
+        dataPoint.image,
+        dataPoint.content,
+        dataPoint.tags,
+        dataPoint.date,
+        dataPoint.likes,
+        dataPoint.comments
+      );
+
+      posts.push(newPost);
+    }
+
+    return posts;
+  } catch (error) {}
+}
+
+export async function getMyPosts(token) {
+  try {
+    const data = await getData();
+
+    const posts = [];
+
+    for (let dataPoint of data) {
+      const newPost = new Post(
+        dataPoint.id,
+        dataPoint.name,
+        dataPoint.username,
+        dataPoint.image,
         dataPoint.content,
         dataPoint.tags,
         dataPoint.date,
