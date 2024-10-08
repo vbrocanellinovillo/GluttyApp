@@ -19,7 +19,7 @@ export default function UserImage({
 
   function pressImageHandler() {
     Haptics.selectionAsync();
-    onPress();
+    onPress && onPress();
   }
 
   const blurhash =

@@ -27,3 +27,6 @@ export const gluttyMarker =
 
 export const doctorGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1726352703/doctorglutty_uyix0d.webp";
+
+export const gluttyGreeting =
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1728336051/gluttyGreeting_rszeff.webp";

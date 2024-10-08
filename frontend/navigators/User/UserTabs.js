@@ -11,6 +11,7 @@ import Profile from "../../screens/Profile/Profile";
 import PrivacityAndSecurity from "../../screens/Profile/PrivacityAndSecurity";
 import MedicalExamsStack from "./MedicalExamsStack";
 import MedicalExamsHeader from "../../components/UI/Header/MedicalExamsHeader";
+import CommunityStack from "../Community/CommunityStack";
 
 export default function UserTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -91,9 +92,9 @@ export default function UserTabs() {
     >
       <CurvedBottomBarExpo.Screen
         name="Home"
-        component={Home}
+        component={CommunityStack}
         position="LEFT"
-        options={{ title: "Glutty App" }}
+        options={{ headerShown: false }}
       />
       <CurvedBottomBarExpo.Screen
         name="Recetas"
