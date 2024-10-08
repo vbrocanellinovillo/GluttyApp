@@ -1,6 +1,5 @@
 import { Image, StyleSheet, View } from "react-native";
 import HeaderTitle from "./HeaderTitle";
-import { Ionicons } from "@expo/vector-icons";
 import StepIndicator from "react-native-step-indicator";
 import { Colors } from "../../../constants/colors";
 import { doctorGlutty } from "../../../constants/glutty";

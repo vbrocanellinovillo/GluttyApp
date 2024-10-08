@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import AddButton from "../../components/UI/Controls/AddButton";
 import AddPostButton from "../../components/Community/AddPostButton";
 

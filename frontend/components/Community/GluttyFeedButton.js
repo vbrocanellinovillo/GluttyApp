@@ -8,7 +8,7 @@ export default function GluttyFeedButton() {
   const navigation = useNavigation();
 
   function navigateFeed() {
-    navigation.navigate("Feed");
+    navigation.navigate("CommunityTopTabs");
   }
 
   return (

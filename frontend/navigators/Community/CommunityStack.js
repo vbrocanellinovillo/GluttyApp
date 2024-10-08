@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainScreen from "../../screens/Community/MainScreen";
 import CommunityHeader from "../../components/UI/Header/CommunityHeader";
 import Feed from "../../screens/Community/Feed";
+import CommunityTopTabs from "./CommunityTopTabs";
 
 const Stack = createNativeStackNavigator();
 
@@ -16,7 +17,11 @@ export default function CommunityStack() {
       }}
     >
       <Stack.Screen name="MainScreen" component={MainScreen} />
-      <Stack.Screen name="Feed" component={Feed} options={{ title: "Feed" }} />
+      <Stack.Screen
+        name="CommunityTopTabs"
+        component={CommunityTopTabs}
+        options={{ title: "Feed" }}
+      />
     </Stack.Navigator>
   );
 }
