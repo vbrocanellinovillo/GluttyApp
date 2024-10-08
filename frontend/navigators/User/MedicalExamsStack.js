@@ -11,8 +11,12 @@ export default function MedicalExamsStack() {
   return (
     <Stack.Navigator
       screenOptions={{
-        header: ({ navigation }) => (
-          <MedicalExamsHeader navigation={navigation} />
+        header: ({ navigation, options, route }) => (
+          <MedicalExamsHeader
+            navigation={navigation}
+            options={options}
+            route={route}
+          />
         ),
         animation: "fade",
       }}
@@ -25,7 +29,7 @@ export default function MedicalExamsStack() {
       <Stack.Screen
         name="MedicalExams"
         component={MedicalExams}
-        options={{ animation: "fade_from_bottom" }}
+        options={{ animation: "fade_from_bottom", title: "Mis Estudios" }}
       />
       <Stack.Screen name="ViewMedicalExam" component={ViewMedicalExam} />
     </Stack.Navigator>

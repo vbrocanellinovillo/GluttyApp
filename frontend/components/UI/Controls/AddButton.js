@@ -14,6 +14,7 @@ export default function AddButton({
   iconSize,
   iconColor,
   children,
+  withIcon = true,
 }) {
   function handlePress() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -28,18 +29,21 @@ export default function AddButton({
         {
           backgroundColor: backgroundColor ? backgroundColor : Colors.oceanBlue,
         },
+        !withIcon && { justifyContent: "center" },
       ]}
       onPress={handlePress}
     >
       <TextCommonsMedium style={[styles.text, textStyle]}>
         {children}
       </TextCommonsMedium>
-      <Ionicons
-        name={icon ? icon : "add-circle-sharp"}
-        size={iconSize ? iconSize : 28}
-        color={iconColor ? iconColor : Colors.darkBlue}
-        style={[styles.icon, iconStyle]}
-      />
+      {withIcon && (
+        <Ionicons
+          name={icon ? icon : "add-circle-sharp"}
+          size={iconSize ? iconSize : 28}
+          color={iconColor ? iconColor : Colors.darkBlue}
+          style={[styles.icon, iconStyle]}
+        />
+      )}
     </TouchableOpacity>
   );
 }

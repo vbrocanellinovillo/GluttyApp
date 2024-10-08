@@ -127,3 +127,11 @@ export function getTimeDifference(date) {
 
   return { years, months, days };
 }
+
+export function getRandomDate(start, end) {
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  )
+    .toISOString()
+    .split("T")[0]; // Devuelve la fecha en formato YYYY-MM-DD
+}

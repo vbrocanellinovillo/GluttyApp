@@ -3,14 +3,13 @@ import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import { FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import MainHeader from "../../components/UI/Header/MainHeader";
-import Home from "../../screens/User/Home";
 import Recipes from "../../screens/User/Recipes";
 import Products from "../../screens/User/Products/Products";
 import Map from "../../screens/User/Map/Map";
 import Profile from "../../screens/Profile/Profile";
 import PrivacityAndSecurity from "../../screens/Profile/PrivacityAndSecurity";
 import MedicalExamsStack from "./MedicalExamsStack";
-import MedicalExamsHeader from "../../components/UI/Header/MedicalExamsHeader";
+import CommunityStack from "../Community/CommunityStack";
 
 export default function UserTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -91,9 +90,9 @@ export default function UserTabs() {
     >
       <CurvedBottomBarExpo.Screen
         name="Home"
-        component={Home}
+        component={CommunityStack}
         position="LEFT"
-        options={{ title: "Glutty App" }}
+        options={{ headerShown: false }}
       />
       <CurvedBottomBarExpo.Screen
         name="Recetas"
