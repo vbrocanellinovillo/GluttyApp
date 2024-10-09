@@ -5,24 +5,22 @@ const STATISTICS = {
   labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
   datasets: [
     {
-      data: [20, 45, 28, 80, 99, 43],
-      color: () => Colors.humita, // optional
-      strokeWidth: 2, // optional
-    },
-    {
-      data: [5, 15, 4, 30, 59, 22],
-      color: () => Colors.mJordan,
+      data: [20, 45, 38, 80, 99, 43],
+      color: () => "#ccc", // optional
       strokeWidth: 2, // optional
     },
   ],
 };
 
-export default function GraphicSkeleton({ width }) {
+export default function GraphicSkeleton({
+  width = 100,
+  height = 100,
+}) {
   return (
     <LineChart
       data={STATISTICS}
-      width={width - 100}
-      height={160}
+      width={width}
+      height={height}
       bezier
       chartConfig={{
         decimalPlaces: 2,
@@ -34,8 +32,8 @@ export default function GraphicSkeleton({ width }) {
         },
         backgroundGradientFrom: "white",
         backgroundGradientTo: "white",
-        fillShadowGradientFrom: Colors.mJordan,
-        fillShadowGradientTo: Colors.pielcita,
+        fillShadowGradientFrom: "#eee",
+        fillShadowGradientTo: "#ddd",
         backgroundGradientFromOpacity: 1,
         fillShadowGradientToOpacity: 0.8,
         propsForBackgroundLines: {
