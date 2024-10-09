@@ -128,14 +128,10 @@ export default function MedicalStatistics({ navigation }) {
           <MyStudies onPress={navigateMyStudies} number={data?.analysis} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
-<<<<<<< HEAD
 
-        <StatisticsContainer data={STATISTICS} variables={data?.options} />
+        {/* <StatisticsContainer data={STATISTICS} variables={data?.options} /> */}
 
 
-=======
-        <StatisticsContainer variables={data?.options} />
->>>>>>> 4c4e4bb93c02bc772b47e617de26eb13661a6395
         <NextStudyContainer onPress={openNextStudy} date={futureDate} />
 
 
