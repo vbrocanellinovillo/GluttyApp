@@ -6,6 +6,7 @@ import { Colors } from "../../constants/colors";
 import { useState } from "react";
 import * as Haptics from "expo-haptics";
 import Button from "../UI/Controls/Button";
+import DateTimePicker from "react-native-modal-datetime-picker";
 
 const options = [
   {
@@ -28,8 +29,20 @@ const options = [
 
 export default function ScheduleNextStudy({ onDismiss, time }) {
   const [value, setValue] = useState(time || 2);
+  const [day, setValueDay] = useState(time || 2);
+  const [month, setValueMonth] = useState(time || 2);
 
   function handleValueChange(item) {
+    Haptics.selectionAsync();
+    setValue(item.item.value);
+  }
+
+  function handleValueChangeDay(day) {
+    Haptics.selectionAsync();
+    setValue(day);
+  }
+
+  function handleValueChangeMonth(month) {
     Haptics.selectionAsync();
     setValue(item.item.value);
   }
@@ -39,15 +52,37 @@ export default function ScheduleNextStudy({ onDismiss, time }) {
       <TextCommonsMedium style={styles.title}>
         ¿Cuándo te realizarás tu proximo estudio médico?
       </TextCommonsMedium>
-      <WheelPicker
-        data={options}
-        value={value}
-        onValueChanged={handleValueChange}
-        onValueChanging={() =>
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-        }
-        style={styles.wheelPicker}
-      />
+      <View style={{flexDirection:"row", justifyContent:"center"}}>
+        <WheelPicker
+          data={options}
+          value={value}
+          onValueChanged={handleValueChange}
+          onValueChanging={() =>
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+          }
+          style={styles.wheelPicker}
+        /> 
+        <WheelPicker
+          data={options}
+          value={value}
+          onValueChanged={handleValueChange}
+          onValueChanging={() =>
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+          }
+          style={styles.wheelPicker}
+        /> 
+        <WheelPicker
+          data={options}
+          value={value}
+          onValueChanged={handleValueChange}
+          onValueChanging={() =>
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+          }
+          style={styles.wheelPicker}
+        /> 
+      </View>
+      
+      {/* <DateTimePicker isVisible={true} display="spinner" onConfirm={() => undefined} onCancel={() => undefined}/> */}
       <Button backgroundColor={Colors.locro} onPress={() => undefined}>
         {time ? "Cancelar recordatorio" : "Agendar"}
       </Button>

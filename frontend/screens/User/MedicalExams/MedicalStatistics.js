@@ -16,6 +16,7 @@ import {
 } from "../../../services/medicalExamService";
 import { useSelector } from "react-redux";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
+import ScheduleNextStudy from "../../../components/MedicalExams/ScheduleNextStudy";
 
 const STATISTICS = {
   labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
@@ -145,11 +146,18 @@ export default function MedicalStatistics({ navigation }) {
           <MyStudies onPress={navigateMyStudies} number={data?.analysis} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
+
         <StatisticsContainer data={STATISTICS} variables={data?.options} />
+
+
         <NextStudyContainer onPress={openNextStudy} date={futureDate} />
+
+
       </ScrollView>
       <BlurTips visible={showGluttyTips} onDismiss={hideGluttyTips} />
+
       <BlurNextStudy onDismiss={hideNextStudy} visible={showNextStudy} />
+
       <GluttyModal
         imageStyle={{ width: 80, height: 80 }}
         other
