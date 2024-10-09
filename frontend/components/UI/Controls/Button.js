@@ -22,6 +22,7 @@ export default function Button({
   rightIcon,
   iconSize,
   iconColor,
+  iconStyle,
   opacityPress,
   isLoading,
 }) {
@@ -42,7 +43,6 @@ export default function Button({
     onPress && onPress();
   }
 
-
   return (
     <Pressable
       onPress={pressHandler}
@@ -62,7 +62,12 @@ export default function Button({
           ) : (
             <>
               {leftIcon ? (
-                <Ionicons name={leftIcon} size={iconSize} color={iconColor} />
+                <Ionicons
+                  name={leftIcon}
+                  size={iconSize}
+                  color={iconColor}
+                  style={iconStyle}
+                />
               ) : (
                 <View />
               )}
@@ -72,7 +77,12 @@ export default function Button({
                 {children}
               </TextCommonsRegular>
               {rightIcon ? (
-                <Ionicons name={rightIcon} size={iconSize} color={iconColor} />
+                <Ionicons
+                  name={rightIcon}
+                  size={iconSize}
+                  color={iconColor}
+                  style={iconStyle}
+                />
               ) : (
                 <View />
               )}

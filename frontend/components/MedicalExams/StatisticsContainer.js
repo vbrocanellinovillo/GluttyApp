@@ -4,7 +4,7 @@ import SectionContainer from "../UI/SectionContainer";
 import { Colors } from "../../constants/colors";
 import Statistic from "./Statistic";
 
-export default function StatisticsContainer({ data, variables }) {
+export default function StatisticsContainer({ variables }) {
   return (
     <SectionContainer
       style={styles.container}
@@ -13,7 +13,7 @@ export default function StatisticsContainer({ data, variables }) {
       <TextCommonsMedium style={styles.title}>
         Variable Médica
       </TextCommonsMedium>
-      <Statistic initialData={data} variables={variables} />
+      <Statistic variables={variables} />
     </SectionContainer>
   );
 }

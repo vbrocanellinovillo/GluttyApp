@@ -41,7 +41,7 @@ class BloodTest(models.Model):
     aDGP_IgG = models.CharField(max_length=8, null=True, blank=True, verbose_name='IgG anti Gliadina Deaminada')
     
     # Opcionales
-    antiendomisio = models.CharField(max_length=10, null=True, blank=True, choices=[("Positivo", "Positivo"), ("Negativo", "Negativo")], verbose_name='Anticuerpos antiendomisio (EMA)')
+    antiendomisio = models.CharField(max_length=8, null=True, blank=True, choices=[("Positivo", "Positivo"), ("Negativo", "Negativo")], verbose_name='Anticuerpos antiendomisio (EMA)')
     hemoglobina = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
     hematocrito = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
     ferritina = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
@@ -60,6 +60,7 @@ class BloodTest(models.Model):
     class Meta:
         verbose_name = "Estudio de Sangre"
         verbose_name_plural = "Estudios de Sangre"
+        ordering = ['-test_date']
 
     def __str__(self):
         return f"Estudio de {self.celiac.first_name} {self.celiac.last_name} - {self.test_date}"
@@ -101,6 +102,7 @@ class Laboratory(models.Model):
 class Variable(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=300)
+    unit_of_measurement = models.CharField(max_length=50, null=True, default='hola')
 
     def __str__(self):
         return self.name
@@ -110,6 +112,9 @@ class Variable(models.Model):
     
     def getDescription(self):
         return self.description
+    
+    def getUnitOfMeasurement(self):
+        return self.unit_of_measurement
     
 class ReferenceValues(models.Model):
     SEX = (("Male", "Male"), ("Female", "Female"))

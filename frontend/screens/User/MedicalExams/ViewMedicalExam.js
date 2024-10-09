@@ -24,6 +24,7 @@ export default function ViewMedicalExam({ navigation, route }) {
   const [showMenu, setShowMenu] = useState(false); // Estado para mostrar el menú contextual
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
+  const [showEliminarModal, setShowEliminarModal] = useState(false);
 
   const id = route.params.id;
   console.log(id);
@@ -55,6 +56,35 @@ export default function ViewMedicalExam({ navigation, route }) {
   async function handleDelete () {
     // Eliminar el estudio
     console.log("Eliminar Estudio");
+    setShowEliminarModal(true)
+  };
+
+  const handleEdit = () => {
+    // Aquí iría tu lógica para editar el estudio
+    console.log("Editar Estudio");
+    console.log(medicalExam)
+    navigation.navigate(
+        "EditBloodTestStack",
+        { screen: "EditBloodTest",
+          params: {medicalExam} }
+        
+
+    )
+  };
+
+  function closeModalHandler() {
+    setShowModal(false);
+    navigation.navigate("MedicalStatistics")
+  }
+
+  function closeModalDeleteHandler() {
+
+    setShowEliminarModal(false);
+    navigation.navigate("MedicalStatistics")
+
+    }
+  
+  async function handleConfirmDelete(){
     try {
       setIsLoading(true);
       console.log("Eliminando estudio");
@@ -72,20 +102,6 @@ export default function ViewMedicalExam({ navigation, route }) {
     } finally {
       setIsLoading(false);
     }
-    
-  };
-
-  const handleEdit = () => {
-    // Aquí iría tu lógica para editar el estudio
-    console.log("Editar Estudio");
-  };
-
-  function closeModalHandler() {
-    setShowModal(false);
-    if (!isError) {
-      dispatch(commerceActions.updateBranch({branch}))
-      navigation.navigate("CommerceDrawer");
-    }
   }
 
   return (
@@ -96,6 +112,22 @@ export default function ViewMedicalExam({ navigation, route }) {
         onClose={closeModalHandler}
         visible={showModal}
       />
+      <GluttyModal
+        visible={showEliminarModal}
+        onClose={closeModalDeleteHandler}
+        message="¿Seguro que desea eliminar el estudio?"
+        other
+        buttons={[
+          {
+            text: "Confirmar",
+            bg: "green",
+            color: Colors.whiteGreen,
+            onPress: handleConfirmDelete,
+          },
+        ]}
+        closeButtonText="Cancelar"
+      />
+
       {/* Muestra el loading mientras se cargan los datos */}
       <LoadingGlutty visible={isloading} color={Colors.vainilla} />
 

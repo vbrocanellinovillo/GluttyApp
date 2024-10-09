@@ -1,37 +1,23 @@
-import Header from "./Header";
-import HeaderTitle from "./HeaderTitle";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import {} from "@expo/vector-icons";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Colors } from "../../../constants/colors";
 import { useDispatch } from "react-redux";
 import { uiActions } from "../../../context/ui";
-import * as Haptics from "expo-haptics";
+import GoBackHeader from "./GoBackHeader";
 
-export default function MedicalExamsHeader({ navigation }) {
+export default function MedicalExamsHeader({ navigation, options, route }) {
   const dispatch = useDispatch();
 
   function showInfo() {
     dispatch(uiActions.toggleMedicalDetails());
   }
 
-  function goBack() {
-    Haptics.selectionAsync();
-    navigation.goBack();
-  }
-
   return (
-    <Header>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.backIcon} onPress={goBack}>
-          <Ionicons name="chevron-back" size={26} color={Colors.mJordan} />
-        </TouchableOpacity>
-        <HeaderTitle>Mis Estudios</HeaderTitle>
-        <TouchableOpacity onPress={showInfo}>
-          <Ionicons name="information-circle" size={32} color={Colors.locro} />
-        </TouchableOpacity>
-      </View>
-    </Header>
+    <GoBackHeader navigation={navigation} options={options} route={route}>
+      <TouchableOpacity onPress={showInfo}>
+        <Ionicons name="information-circle" size={32} color={Colors.locro} />
+      </TouchableOpacity>
+    </GoBackHeader>
   );
 }
 
@@ -40,6 +26,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 4,
     alignItems: "center",
+    justifyContent: "flex-start",
   },
 
   backIcon: {

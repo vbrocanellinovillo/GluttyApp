@@ -11,4 +11,5 @@ export const Colors = {
   whiteGreen: "#afdbaf",
   whiteRed: "#c58d8d",
   lightOcean: "#bbdfe4",
+  whiteJordan: "#ccb5b5",
 };
