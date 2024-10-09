@@ -15,28 +15,39 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
 
   let x = undefined; // Posición estándar del máximo dentro de la barra celeste
   let color = "white";
+  let y = undefined;
+  let posBarraNaranja = undefined;
   
+  //console.log("max inicial:", maxBarraGris);
+  //console.log("variable ↑:", label);
   // Definir los valores normalizados para la barra gris
-  let normalizedMin = minBarraGris ?? -10;
+  let normalizedMin = minBarraGris ?? 0;
   let normalizedMax = maxBarraGris ?? 150;
 
-  if (maxBarraGris !== "null" && minBarraGris !== "null") {
+  if (maxBarraGris !== null || minBarraGris !== null) {
     if ((minBarraGris < currentValue) && (currentValue < maxBarraGris)) {
-      normalizedMin = minBarraGris - 15; // Reducir el mínimo por debajo del valor actual
+      normalizedMin = minBarraGris - 10; // Reducir el mínimo por debajo del valor actual
       normalizedMax = maxBarraGris + 15; // Aumentar el máximo por encima del valor actual
+      //console.log("max parcial 1:", normalizedMax)
     } else if (currentValue > maxBarraGris) {
-      normalizedMax = maxBarraGris + (maxBarraGris - currentValue) + 30; // Añadir un margen por encima del valor actual
-      normalizedMin = minBarraGris - 5; // Añadir un margen por debajo
+      normalizedMax = maxBarraGris + (currentValue - maxBarraGris) + 15; // Añadir un margen por encima del valor actual
+      normalizedMin = minBarraGris - 8; // Añadir un margen por debajo
+      //console.log("max parcial 2:", normalizedMax)
     } else if (currentValue < minBarraGris) {
-      normalizedMin = minBarraGris - (minBarraGris - currentValue) - 20; // Reducir el mínimo por debajo del valor actual
+      normalizedMin = minBarraGris - (minBarraGris - currentValue) - 30; // Reducir el mínimo por debajo del valor actual
       normalizedMax = maxBarraGris + 20; // Aumentar el máximo
+      //console.log("max parcial 3:", normalizedMax)
+
     }
   }
 
   // Validar que no haya divisiones por 0 o valores inválidos
   const range = normalizedMax - normalizedMin;
   if (range <= 0) {
-    console.error("Rango inválido: normalizedMax debe ser mayor que normalizedMin");
+    console.log("Rango inválido: normalizedMax debe ser mayor que normalizedMin");
+    console.log(label);
+    console.log("max final", normalizedMax);
+    console.log("min", normalizedMin);
   }
 
   // Si algún valor clave es null, centramos el indicador de currentValue
@@ -48,11 +59,11 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
     : Math.min(Math.max(((currentValue - normalizedMin) / range) * barWidth, 0), barWidth);
 
   // Calcular las posiciones de los límites del rango normal (barra celeste), solo si ambos valores existen
-  const rangeBarStart = normalMin !== null && normalMax !== null
+  const rangeBarStart = normalMin !== null || normalMax !== null
     ? Math.max(((normalMin - normalizedMin) / range) * barWidth, 0)
     : 0;
 
-  const rangeBarWidth = normalMin !== null && normalMax !== null
+  const rangeBarWidth = normalMin !== null || normalMax !== null
     ? Math.max(((normalMax - normalMin) / range) * barWidth, 0)
     : 0;
 
@@ -74,14 +85,27 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
   }, [showMedVarInfo]);
 
   // Estandarizar los valores de la posición de los valores normales en la barra celeste
-  if ((normalMax - normalMin) < 12 && (normalMax - normalMin) != 10) {
+  if ((normalMax - normalMin) <= 12 ) {
     x = -5;
+    y = -23;
     color = 'black';
   } else if (normalizedMax < 100) {
     x = 20;
+    y = 10;
+    color = 'white';
   } else if (normalizedMax > 100) {
     x = 30;
+    y = 10;
+    color = 'white';
+
   }
+
+  if (((Math.abs(currentValue - normalMax) < 3) || (Math.abs(currentValue - normalMin) < 3) && (Math.abs(normalMax - normalMin) > 10))) {
+    posBarraNaranja = 32;
+  } else {
+    posBarraNaranja = 55;
+  }
+  
 
   return (
     <>
@@ -131,7 +155,7 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
           {/* Texto del valor mínimo y máximo dentro de la barra celeste */}
           {normalMin !== null && normalMax !== null && (
             <>
-              <SvgText x={isNaN(rangeBarStart) ? 0 : rangeBarStart + 10} y="43" fill="white" fontSize="10" fontWeight="bold">
+              <SvgText x={isNaN(rangeBarStart) ? 0 : rangeBarStart + y} y="43" fill={color} fontSize="10" fontWeight="bold">
                 {normalMin}
               </SvgText>
               <SvgText x={isNaN(rangeBarStart + rangeBarWidth) ? 0 : rangeBarStart + rangeBarWidth - x} y="43" fill={color} fontSize="10" fontWeight="bold">
@@ -141,20 +165,30 @@ export default function RangeBar({ label, minBarraGris, maxBarraGris, normalMin,
           )}
 
           {/* Indicador del valor actual, siempre sobre la barra gris */}
-          <Line x1={isNaN(position) ? 0 : position} y1="20" x2={isNaN(position) ? 0 : position} y2="55" stroke="orange" strokeWidth="4" />
+          <Line x1={isNaN(position) ? 0 : position} y1="20" x2={isNaN(position) ? 0 : position} y2={posBarraNaranja} stroke="orange" strokeWidth="4" />
 
           {/* Valor actual encima del indicador */}
           <SvgText 
-            x={isNaN(position - 5) ? 0 : position - 10} 
+            x={isNaN(position - 5) ? 0 : position - 14} 
             y="15" 
             fill="black" 
-            fontSize="15"  // Aumenta el tamaño de la fuente
+            fontSize="13"  // Aumenta el tamaño de la fuente
             fontWeight="bold"  // Aplica negrita
           >
             {`${currentValue} ${unit}`}  {/* Concatenamos el valor actual con la unidad */}
           </SvgText>
         </Svg>
       </View>
+
+    {/* Mostrar el mensaje si minBarraGris o maxBarraGris son null */}
+    {(minBarraGris === null || maxBarraGris === null) && (
+        <View style={styles.warningContainer}>
+          <TextCommonsMedium style={styles.warningText}>
+            *No se encontró el rango de referencia para la variable
+          </TextCommonsMedium>
+        </View>
+    )}
+
     </>
   );
 }
@@ -178,5 +212,15 @@ const styles = StyleSheet.create({
     color: Colors.mJordan,
     flexWrap: 'wrap',  // Permitir que el texto se ajuste en varias líneas
     maxWidth: 220,
+  },
+  warningContainer: {
+    //marginTop: 5,  // Un poco de margen superior para separar del gráfico
+    alignItems: 'center',
+  },
+  warningText: {
+    color: 'black',  // Texto en rojo para destacar
+    fontSize: 12,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });
