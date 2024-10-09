@@ -1,6 +1,10 @@
-import { StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import SectionContainer from "../SectionContainer";
 import { Skeleton } from "@rneui/themed";
+import GraphicSkeleton from "./GraphicSkeleton";
+
+const width = Dimensions.get("window").width * 0.85;
+const height = Dimensions.get("window").height * 0.2;
 
 export default function MedicalStatisticsSkeleton() {
   return (
@@ -22,7 +26,7 @@ export default function MedicalStatisticsSkeleton() {
       <SectionContainer style={styles.statistics}>
         <Skeleton width={100} height={20} />
         <Skeleton height={26} />
-        <Skeleton height={160} />
+        <GraphicSkeleton width={width} height={height} />
         <View style={styles.statsFreqs}>
           <Skeleton width={50} height={20} />
           <Skeleton width={50} height={20} />

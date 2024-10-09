@@ -23,22 +23,12 @@ export default function Post({
   return (
     <>
       <Pressable
-        style={({ pressed }) =>
-          pressed
-            ? [
-                styles.container,
-                styles.pressed,
-                containerStyle,
-                curved && styles.curved,
-                curved && curvedStyle,
-              ]
-            : [
-                styles.container,
-                containerStyle,
-                curved && styles.curved,
-                curved && curvedStyle,
-              ]
-        }
+        style={[
+          styles.container,
+          containerStyle,
+          curved && styles.curved,
+          curved && curvedStyle,
+        ]}
         onPress={handlePress}
       >
         <View style={styles.nameContainer}>
@@ -76,10 +66,6 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingHorizontal: 16,
     paddingVertical: 14,
-  },
-
-  pressed: {
-    opacity: 0.8,
   },
 
   curved: {

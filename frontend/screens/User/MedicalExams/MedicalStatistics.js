@@ -12,10 +12,12 @@ import BlurNextStudy from "../../../components/MedicalExams/BlurNextStudy";
 import MedicalStatisticsSkeleton from "../../../components/UI/Loading/MedicalStatisticsSkeleton";
 import {
   getInitialData,
+  getStatistics,
   saveMedicalMessage,
 } from "../../../services/medicalExamService";
 import { useSelector } from "react-redux";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
+import ScheduleNextStudy from "../../../components/MedicalExams/ScheduleNextStudy";
 
 export default function MedicalStatistics({ navigation }) {
   // Blur views
@@ -62,11 +64,20 @@ export default function MedicalStatistics({ navigation }) {
         options: variablesArray,
       };
 
-      setData(updatedData);
+      const initialStatistic = await getStatistics(
+        token,
+        updatedData.options[0].value,
+        "3 años"
+      );
+
+      const finalData = {
+        ...updatedData,
+        initialStatistic: initialStatistic,
+      };
+
+      setData(finalData);
       setIsError(false);
     } catch (error) {
-      console.log(error);
-
       setIsError(true);
     } finally {
       setisloading(false);
@@ -127,11 +138,18 @@ export default function MedicalStatistics({ navigation }) {
           <MyStudies onPress={navigateMyStudies} number={data?.analysis} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
-        <StatisticsContainer variables={data?.options} />
+
+        <StatisticsContainer
+          initialData={data?.initialStatistic}
+          variables={data?.options}
+        />
+
         <NextStudyContainer onPress={openNextStudy} date={futureDate} />
       </ScrollView>
       <BlurTips visible={showGluttyTips} onDismiss={hideGluttyTips} />
+
       <BlurNextStudy onDismiss={hideNextStudy} visible={showNextStudy} />
+
       <GluttyModal
         imageStyle={{ width: 80, height: 80 }}
         other

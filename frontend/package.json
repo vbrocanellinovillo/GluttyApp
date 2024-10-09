@@ -55,6 +55,7 @@
     "react-native-maps": "^1.14.0",
     "react-native-modal": "^13.0.1",
     "react-native-modal-datetime-picker": "^17.1.0",
+    "react-native-pager-view": "^6.3.0",
     "react-native-paper": "^5.12.5",
     "react-native-pdf": "^6.7.5",
     "react-native-reanimated": "~3.10.1",
@@ -70,8 +71,7 @@
     "react-native-ui-datepicker": "^2.0.3",
     "react-native-webview": "13.8.6",
     "react-redux": "^9.1.2",
-    "react-scripts": "^5.0.1",
-    "react-native-pager-view": "6.3.0"
+    "react-scripts": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
