@@ -1,3 +1,4 @@
+import cloudinary.api
 from django.db import models
 from sqlalchemy import null
 from usuarios.models import Celiac  # Importamos la relación con el celiaco
@@ -88,6 +89,13 @@ class BloodTest(models.Model):
             return friendly_name
         
         return None  # En caso de que todos los campos sean nulos
+    
+    # Método para eliminar estudio
+    def deletePdf(self):
+        cloudinary.api.delete_resources(self.public_id, resource_type="image", type="upload")
+        self.url = None
+        self.public_id = None
+        self.save()
     
 # LABORATORIOS CARGADOS
 class Laboratory(models.Model):

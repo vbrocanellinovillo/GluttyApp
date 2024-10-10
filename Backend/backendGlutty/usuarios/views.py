@@ -19,21 +19,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.core.exceptions import ValidationError
 from comercios.views import get_commerce_info
 from django.core.mail import send_mail
-# from drf_yasg.utils import swagger_auto_schema
-
-# def apiOverView(request):
-#     """
-#     Muestra la vista principal de la api, con todos sus endpoints.
-#     """
-#     api_urls = {
-#         'Lista de usuarios':'/lista-usuarios/',
-#         'Registrar usuario':'/registrar/',
-#         'Editar usuario':'/editar/',
-#         'Eliminar usuario':'/eliminar/',
-#         'Iniciar sesion:': '/login/',
-#         'Cerrar sesion': '/logout/',
-#         'Usuario en sesion':'/usuario/',
-#     }
+import re
 
 # Create your views here.
 class UsuarioAPIView(generics.ListCreateAPIView):
@@ -310,6 +296,14 @@ def update(request, user_id):
         image = request.FILES.get('image')
         if image:
             print("entra a if image")
+            
+            # Eliminar la imagen actual de cloudinary
+            public_id = extract_public_id(user.profile_picture)
+            print(public_id)
+            if public_id:
+                cloudinary.api.delete_resources(public_id, resource_type="image", type="upload")
+            
+            # Subir la nueva imagen a cloudinary
             picture_link, link = upload_to_cloudinary(image)
             user.profile_picture = picture_link
             user.save()
@@ -337,6 +331,14 @@ def update(request, user_id):
         return Response(response_data, status=status.HTTP_200_OK)
 
     return Response({"error": user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+# Extraer el public_id para las fotos cargadas en cloudinary
+def extract_public_id(url):
+    # Este patrón extrae el public_id desde una URL de Cloudinary
+    match = re.search(r'/upload/v\d+/(.+)\.\w+', url)
+    if match:
+        return match.group(1)
+    return None
 
 # @swagger_auto_schema(method='delete', request_body=UsuarioSerializer, responses={200: "Se eliminó el usuario."})
 @api_view(["DELETE"])

@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render
 from rest_framework import generics, status, viewsets
 from .models import *
@@ -15,7 +16,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import api_view, permission_classes
 from django.core.paginator import Paginator
 from rest_framework.pagination import PageNumberPagination
-
+from django.db import connection
 
 class MarcaViewSet(viewsets.ModelViewSet):
     queryset = MarcaProducto.objects.all()
@@ -36,12 +37,6 @@ class ProductoViewSet(viewsets.ModelViewSet):
 
     # queryset = Producto.objects.all()
     # serializer_class = ProductoSerializer
-
-
-# # Create your views here.
-# class MarcaAPIView(generics.ListCreateAPIView):
-#     queryset = MarcaProducto.objects.all()
-#     serializer_class = MarcaSerializer
 
 
 @api_view(["POST"])
@@ -90,7 +85,7 @@ def find(request):
 
         if marcas:
             for marca in marcas:
-                marcas_filter |= Q(marca__nombre__icontains=marca)
+                marcas_filter |= Q(marca__nombre__iexact=marca)
 
         if tipos:
             for tipo in tipos:
@@ -135,7 +130,7 @@ def find(request):
 
         if marcas:
             for marca in marcas:
-                marcas_query |= Q(nombre__icontains=marca)
+                marcas_query |= Q(nombre__iexact=marca)
             marcas = MarcaProducto.objects.filter(marcas_query).distinct()
         else:
             marcas = (
@@ -146,7 +141,7 @@ def find(request):
 
         if tipos:
             for tipo in tipos:
-                tipos_query |= Q(nombre__icontains=tipo)
+                tipos_query |= Q(nombre__iexact=tipo)
             tipos_productos = TipoProducto.objects.filter(tipos_query).distinct()
         else:
             tipos_productos = (
@@ -167,6 +162,7 @@ def find(request):
         serialization_time = time.time() - start_time_serialization
         print(f"Tiempo en serialización: {serialization_time:.4f} segundos")
 
+        connection.close()
         return Response(resultados, status=200)
 
     except Exception as e:
@@ -319,14 +315,45 @@ def find_by_barcode(request):
                 },
             }
 
+            connection.close()
             return Response(response_data, status=200)
 
         except ProductoBarcode.DoesNotExist:
+            connection.close()
             return Response(
                 {"message": "No tenemos información sobre este producto."}, status=404
             )
 
         except Exception as e:
+            connection.close()
             return Response({"error": str(e)}, status=500)
     else:
         return Response({"error": "No se proporcionó un código EAN."}, status=400)
+
+
+# Carga una marca y un tipo de producto random inicial
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_initial_data(request):
+    try:
+        # Obtener todas las marcas y tipos de productos
+        marcas = MarcaProducto.objects.all()
+        tipos = TipoProducto.objects.all()
+        
+        # Verificar que haya datos disponibles en ambas tablas
+        if not marcas.exists() or not tipos.exists():
+            return Response({"error": "No se encontraron marcas o tipos de productos."}, status=404)
+        
+        # Elegir un valor aleatorio de cada tabla
+        marca_random = random.choice(marcas)
+        tipo_random = random.choice(tipos)
+        
+        # Devolver los nombres de marca y tipo seleccionados
+        connection.close()
+        return Response({
+            "marca": marca_random.nombre,
+            "tipo": tipo_random.nombre
+        }, status=200)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=500)

@@ -22,10 +22,18 @@ from django.db.models import Q
 from datetime import timedelta
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
+from django.db import connection
+
 
 def calculate_age(birth_date, test_date = date.today()):
     # Calcula la edad en la fecha del estudio
     return test_date.year - birth_date.year - ((test_date.month, test_date.day) < (birth_date.month, birth_date.day))
+
+def safe_decimal(value):
+        try:
+            return Decimal(value)
+        except (InvalidOperation, TypeError):
+            return None
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -37,13 +45,8 @@ def register_analysis(request):
         sexo = celiac.sex  # "Male" o "Female"
         age = calculate_age(celiac.date_birth)
     except Celiac.DoesNotExist:
+        connection.close()
         return JsonResponse({"error": "Celiaco no encontrado"}, status=404)
-
-    def safe_decimal(value):
-        try:
-            return Decimal(value)
-        except (InvalidOperation, TypeError):
-            return None
 
     print(request.data)
     # Recoger los valores ingresados para los estudios
@@ -69,7 +72,7 @@ def register_analysis(request):
     glucemia = safe_decimal(request.data.get("glucemia"))
 
     # Cambiar los valores a None si se pasa undefined
-    atTG_IgA = None if atTG_IgA == 'undefined' else atTG_IgA
+    atTG_IgA = None if atTG_IgA == 'undefined' or atTG_IgA == 'null' else atTG_IgA
     aDGP_IgG = None if aDGP_IgG == 'undefined' else aDGP_IgG
     aDGP_IgA = None if aDGP_IgA == 'undefined' else aDGP_IgA
     antiendomisio = None if antiendomisio == 'undefined' else antiendomisio
@@ -115,6 +118,7 @@ def register_analysis(request):
         estudio.public_id = public_id
         estudio.save()
     
+    connection.close()
     return JsonResponse({"estudio_id": estudio.id, "message": "Estudio registrado exitosamente"})
 
 # Función que permite modificar un análisis de sangre
@@ -122,6 +126,7 @@ def register_analysis(request):
 @permission_classes([IsAuthenticated])
 def update_analysis(request):
     analysis_id = request.data.get("analysis_id")
+    
     if not analysis_id:
         return Response({"error": "El ID del análisis es requerido."}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -140,12 +145,23 @@ def update_analysis(request):
         if analysis_serializer.is_valid():
             analysis_serializer.save()
         else:
+            connection.close()
             return Response({"error": analysis_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Guardar si es que cargó un pdf del estudio
+        files = request.FILES.getlist('pdf')
+        if files:
+            pass
+        elif files == None:
+            analysis.deletePdf()
+        
+        connection.close()
         return Response({"detail": "Análisis actualizado correctamente."}, status=status.HTTP_200_OK)
     except ValidationError as e:
+        connection.close()
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  
 
 
@@ -156,6 +172,7 @@ def get_all_analysis(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     if not user:
+        connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     try:
         all_analysis_data = []
@@ -174,10 +191,12 @@ def get_all_analysis(request):
         # Agregar el comercio completo a la lista de todos los comercios
             all_analysis_data.append(analysis_data)
             
-        # Devolver los datos    
+        # Devolver los datos
+        connection.close() 
         return Response({"analysis": all_analysis_data}, status=status.HTTP_200_OK)
     
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     
@@ -214,12 +233,14 @@ def get_analysis(request):
     analysis_id = request.data.get('id', None)
     
     if analysis_id is None:
+        connection.close()
         return Response({"error": "ID del análisis es requerido."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Obtener el análisis usando el ID
     try:
         analysis = get_object_or_404(BloodTest, id=analysis_id)
     except BloodTest.DoesNotExist:
+        connection.close()
         return Response({"error": "Análisis no encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
     # Verificar que el análisis pertenezca al celíaco del usuario autenticado
@@ -230,6 +251,7 @@ def get_analysis(request):
     celiac = analysis.celiac
     analysis_data = get_reference_values(celiac, analysis)
     
+    connection.close()
     return Response(analysis_data, status=200)
 
 # Función para eliminar estudio y eliminar pdf del 
@@ -238,6 +260,7 @@ def get_analysis(request):
 def delete_analysis(request):
     analysis_id = request.data.get("analysis_id")
     if not analysis_id:
+        connection.close()
         return Response({"error": "El ID del análisis es requerido."}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
@@ -247,6 +270,7 @@ def delete_analysis(request):
         # Verificar si el usuario tiene permisos para actualizar la sucursal
         user = request.user
         if user.is_commerce or analysis.celiac.user != user:
+            connection.close()
             return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_403_FORBIDDEN)
 
         # Actualizar la sucursal con los datos proporcionados
@@ -254,11 +278,14 @@ def delete_analysis(request):
             pdf_delete_result = cloudinary.api.delete_resources(analysis.public_id, resource_type="image", type="upload")
             print(pdf_delete_result)
         analysis.delete()
+        connection.close()
         return Response({"detail":"Se eliminó el análisis."}, status=status.HTTP_200_OK)
                         
     except ValidationError as e:
+        connection.close()
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["POST"])
@@ -299,7 +326,8 @@ def extract_medical_data(request):
         # Para cada variable, extraer su valor usando los patrones definidos
         for variable, variable_patterns in patterns.items():
             results[variable] = extract_value(text, variable_patterns)
-    
+            
+    connection.close()
     return Response({"valores encontrados": results}, status=status.HTTP_200_OK)
     
 
@@ -351,6 +379,7 @@ def get_initial_data(request):
         }
         
         # Devolver los datos    
+        connection.close()
         return Response(initial_data, status=status.HTTP_200_OK)
     
     except Exception as e:
@@ -389,16 +418,19 @@ def save_medical_message(request):
     celiac = Celiac.objects.filter(user=user).first()
     
     if not user:
+        connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
     # Verificar que el análisis pertenezca al celíaco del usuario autenticado
     if celiac.user != request.user:
+        connection.close()
         return Response({"error": "No tienes permiso para acceder a esta funcionalidad."}, status=status.HTTP_403_FORBIDDEN)
     try:
         celiac.show_message = False
         celiac.save()
             
-        # Devolver los datos    
+        # Devolver los datos
+        connection.close()
         return Response({"Detail": f"No se mostrará el mensaje nuevamente."}, status=status.HTTP_200_OK)
     
     except Exception as e:
@@ -426,7 +458,8 @@ def get_laboratories(request):
         
             laboratories_data.append(lab_info)
         
-        # Devolver los datos    
+        # Devolver los datos
+        connection.close()
         return Response(laboratories_data, status=status.HTTP_200_OK)
     
     except Exception as e:
@@ -611,6 +644,7 @@ def get_statistics(request):
                 "lab": analysis.lab
             })
 
+    connection.close()
     return Response(variable_data, status=200)
 
 # Función que trae glutty tips
@@ -634,6 +668,7 @@ def get_glutty_tips(request):
         "glutty_tips": serializer.data
     }
     
+    connection.close()
     return Response(response_data, status=200)
 
 # Función que guarda la fecha del próximo análisis
@@ -644,12 +679,14 @@ def save_analysis_date(request):
     user = User.objects.filter(username=username).first()
     
     if not user:
+        connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
     celiac = Celiac.objects.filter(user=user).first()
     
     # Verificar que el celíaco que está guardando la fecha sea el mismo del usuario
     if celiac.user != request.user:
+        connection.close()
         return Response({"error": "No tienes permiso para acceder a esta funcionalidad."}, status=status.HTTP_403_FORBIDDEN)
     try:
         analysis_date = request.data.get("date", None)
@@ -659,7 +696,8 @@ def save_analysis_date(request):
         celiac.next_analysis_date = analysis_date
         celiac.save()
             
-        # Devolver los datos    
+        # Devolver los datos
+        connection.close()
         return Response({"Detail": f"Se guardó la fecha '{analysis_date}' correctamente."}, status=status.HTTP_200_OK)
     
     except Exception as e:
