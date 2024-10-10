@@ -1,16 +1,15 @@
 import { LineChart } from "react-native-chart-kit";
 import GraphicSkeleton from "../UI/Loading/GraphicSkeleton";
 import { Colors } from "../../constants/colors";
-import { Text } from "react-native";
 
-export default function Graphic({ isLoading = true, data, width }) {
-  //if (isLoading) return <GraphicSkeleton />;
+export default function Graphic({ isLoading, data, width, height }) {
+  if (isLoading) return <GraphicSkeleton width={width} height={height} />;
 
-  const graph = (
+  return (
     <LineChart
       data={data}
-      width={width - 100}
-      height={160}
+      width={width}
+      height={height}
       bezier
       chartConfig={{
         decimalPlaces: 2,
@@ -32,6 +31,4 @@ export default function Graphic({ isLoading = true, data, width }) {
       }}
     />
   );
-
-  return <Text>no andan los graficos (despues lo veo)</Text>;
 }
