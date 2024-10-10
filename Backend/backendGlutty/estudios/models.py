@@ -34,7 +34,7 @@ class BloodTest(models.Model):
     lab = models.CharField(max_length=150, blank=False, null=True, default=null) # Lugar en que se hizo el estudio
     registration_date = models.DateField(auto_now_add=True)  # Fecha en que se registra en el sistema
     url = models.URLField(max_length=500, blank=True, null=True)
-    public_id = models.CharField(max_length=300, blank=True, default="")
+    public_id = models.CharField(max_length=300, null=True, default=None)
     
     # Valores de los estudios
     atTG_IgA = models.CharField(max_length=8, null=True, blank=True, verbose_name='IgA anti Transglutaminasa')
@@ -90,12 +90,28 @@ class BloodTest(models.Model):
         
         return None  # En caso de que todos los campos sean nulos
     
+    def uploadPdf(self, file):
+        file_type = file.content_type
+        if file_type not in ["image/jpeg", "image/png", "application/pdf"]:
+            return False
+        
+        upload_result = cloudinary.uploader.upload(file, resource_type='auto')
+        url = upload_result['url']
+        public_id = upload_result['public_id']
+        
+        self.url = url
+        self.public_id = public_id
+        self.save()
+        return True
+    
     # Método para eliminar estudio
     def deletePdf(self):
-        cloudinary.api.delete_resources(self.public_id, resource_type="image", type="upload")
-        self.url = None
-        self.public_id = None
-        self.save()
+        if self.public_id:
+            cloudinary.api.delete_resources(self.public_id, resource_type="image", type="upload")
+            self.url = None
+            self.public_id = None
+            self.save()
+            return True
     
 # LABORATORIOS CARGADOS
 class Laboratory(models.Model):

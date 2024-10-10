@@ -78,7 +78,7 @@ def register_analysis(request):
     antiendomisio = None if antiendomisio == 'undefined' else antiendomisio
     
     # Crear objeto EstudioSangre
-    estudio = BloodTest.objects.create(
+    analysis = BloodTest.objects.create(
         celiac=celiac,
         test_date=test_date,
         lab=lab,
@@ -102,24 +102,13 @@ def register_analysis(request):
         glucemia=glucemia
     )
 
-    # Guardar si es que cargó un pdf del estudio
-    files = request.FILES.getlist('pdf')
-
-    for file in files:
-        file_type = file.content_type
-        if file_type not in ["image/jpeg", "image/png", "application/pdf"]:
-            return JsonResponse({"error": "Formato de archivo no soportado. Solo se permiten imágenes y PDFs."}, status=400)
-        
-        upload_result = cloudinary.uploader.upload(file, resource_type='auto')
-        url = upload_result['url']
-        public_id = upload_result['public_id']
-        
-        estudio.url = url
-        estudio.public_id = public_id
-        estudio.save()
+    # Guardar si es que cargó un pdf del analysis
+    file = request.FILES.get('pdf')
+    if file:
+        analysis.uploadPdf(file)
     
     connection.close()
-    return JsonResponse({"estudio_id": estudio.id, "message": "Estudio registrado exitosamente"})
+    return JsonResponse({"analysis_id": analysis.id, "message": "Estudio registrado exitosamente"})
 
 # Función que permite modificar un análisis de sangre
 @api_view(["PUT"])
@@ -149,11 +138,13 @@ def update_analysis(request):
             return Response({"error": analysis_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         # Guardar si es que cargó un pdf del estudio
-        files = request.FILES.getlist('pdf')
-        if files:
-            pass
-        elif files == None:
-            analysis.deletePdf()
+        file = request.FILES.get('pdf')
+        if file:
+            if analysis.uploadPdf(file):
+                print('pdf uploaded')
+        elif file == None:
+            if analysis.deletePdf():
+                print('pdf erased')
         
         connection.close()
         return Response({"detail": "Análisis actualizado correctamente."}, status=status.HTTP_200_OK)
