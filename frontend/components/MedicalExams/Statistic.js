@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import Picker from "../UI/Controls/Picker";
 import { Colors } from "../../constants/colors";
 import Frequencies from "./Frequencies";
@@ -7,6 +7,10 @@ import Frequency from "./Frequency";
 import { useSelector } from "react-redux";
 import { getStatistics } from "../../services/medicalExamService";
 import Graphic from "./Graphic";
+import {
+  heightGraphicPercentage,
+  widthGraphicPercentage,
+} from "../../constants/medicalExams";
 
 const FREQUENCIES = [
   { id: 1, value: "3 años" },
@@ -15,8 +19,8 @@ const FREQUENCIES = [
   { id: 4, value: "3 meses" },
 ];
 
-const width = Dimensions.get("window").width * 0.85;
-const height = Dimensions.get("window").height * 0.2;
+const width = Dimensions.get("window").width * widthGraphicPercentage;
+const height = Dimensions.get("window").height * heightGraphicPercentage;
 
 function getGraphicData(values) {
   if (!values) return;
@@ -71,6 +75,7 @@ export default function Statistic({ variables, initialData }) {
       const response = await getStatistics(token, variable, frequency);
       const graphic = getGraphicData(response);
       setData(graphic);
+      setIsError(false);
     } catch (error) {
       setIsError(true);
     } finally {
@@ -87,7 +92,7 @@ export default function Statistic({ variables, initialData }) {
   }
 
   return (
-    <>
+    <View style={styles.container}>
       <Picker
         data={variables}
         value={variable}
@@ -101,6 +106,7 @@ export default function Statistic({ variables, initialData }) {
           width={width}
           height={height}
           isLoading={isLoading}
+          isError={isError}
         />
       )}
       <Frequencies>
@@ -115,11 +121,16 @@ export default function Statistic({ variables, initialData }) {
           </Frequency>
         ))}
       </Frequencies>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    gap: 14,
+    width: "100%",
+  },
+
   buttonStyle: {
     backgroundColor: Colors.humita,
   },
