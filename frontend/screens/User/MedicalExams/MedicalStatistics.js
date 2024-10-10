@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import MyStudies from "../../../components/MedicalExams/MyStudies";
 import GluttyTips from "../../../components/MedicalExams/GluttyTips";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import BlurTips from "../../../components/MedicalExams/BlurTips";
 import StatisticsContainer from "../../../components/MedicalExams/StatisticsContainer";
 import { Colors } from "../../../constants/colors";
@@ -18,8 +18,9 @@ import {
 import { useSelector } from "react-redux";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
 import ScheduleNextStudy from "../../../components/MedicalExams/ScheduleNextStudy";
+import { useFocusEffect } from "@react-navigation/native";
 
-export default function MedicalStatistics({ navigation }) {
+export default function MedicalStatistics({ navigation, route }) {
   // Blur views
   const [showGluttyTips, setShowGluttyTips] = useState(false);
   const [showNextStudy, setShowNextStudy] = useState(false);
@@ -52,33 +53,37 @@ export default function MedicalStatistics({ navigation }) {
   async function getData() {
     setisloading(true);
     try {
-      const data = await getInitialData(token);
-      setData(data);
-      const variablesArray = data?.variables.map((variable) => ({
-        value: variable,
-        label: variable,
-      }));
+      const response = await getInitialData(token);
+      let finalData = response;
 
-      const updatedData = {
-        ...data,
-        options: variablesArray,
-      };
+      if (response && response?.variables) {
+        const variablesArray = response?.variables.map((variable) => ({
+          value: variable,
+          label: variable,
+        }));
 
-      const initialStatistic = await getStatistics(
-        token,
-        updatedData.options[0].value,
-        "3 años"
-      );
+        finalData = {
+          ...finalData,
+          options: variablesArray,
+        };
 
-      const finalData = {
-        ...updatedData,
-        initialStatistic: initialStatistic,
-      };
+        const initialStatistic = await getStatistics(
+          token,
+          finalData.options[0].value,
+          "3 años"
+        );
+
+        finalData = {
+          ...finalData,
+          initialStatistic: initialStatistic,
+        };
+      }
 
       setData(finalData);
       setIsError(false);
     } catch (error) {
       setIsError(true);
+      console.log(error);
     } finally {
       setisloading(false);
     }

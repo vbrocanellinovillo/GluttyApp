@@ -17,6 +17,29 @@ export default function UserImage({
   //  "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg";
   const image = useSelector((state) => state.auth.image);
 
+  const imageLink = source
+    ? { uri: source }
+    : image
+    ? image
+    : isForm
+    ? userAddGlutty
+    : userGlutty;
+
+  const showImage = (
+    <Image
+      placeholder={blurhash}
+      source={imageLink}
+      style={[
+        styles.userImage,
+        {
+          width: dimensions,
+          height: dimensions,
+          borderRadius: imageLink !== userAddGlutty && borderRadius,
+        },
+      ]}
+    />
+  );
+
   function pressImageHandler() {
     Haptics.selectionAsync();
     onPress && onPress();
@@ -30,37 +53,15 @@ export default function UserImage({
       onPress={pressImageHandler}
       style={({ pressed }) => (pressed ? [styles.pressed, style] : style)}
     >
-      {image ? (
-        <Image
-          placeholder={{ blurhash }}
-          source={source ? { uri: source } : image}
-          style={[
-            styles.userImage,
-            { width: dimensions, height: dimensions, borderRadius },
-          ]}
-        />
-      ) : isForm ? (
+      {isForm ? (
         <View style={styles.addPhotoContainer}>
-          <Image
-            source={{
-              uri: userAddGlutty,
-            }}
-            style={[
-              styles.userImage,
-              { width: dimensions, height: dimensions },
-            ]}
-          />
+          {showImage}
           <TextCommonsRegular style={styles.addPhotoText}>
             Agregar foto de perfil (opcional)
           </TextCommonsRegular>
         </View>
       ) : (
-        <Image
-          source={{
-            uri: userGlutty,
-          }}
-          style={[styles.userImage, { width: dimensions, height: dimensions }]}
-        />
+        showImage
       )}
     </Pressable>
   );
@@ -77,6 +78,7 @@ const styles = StyleSheet.create({
 
   addPhotoContainer: {
     alignItems: "center",
+    gap: 10,
   },
 
   addPhotoText: {

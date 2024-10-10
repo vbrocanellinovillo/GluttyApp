@@ -2,9 +2,13 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import SectionContainer from "../SectionContainer";
 import { Skeleton } from "@rneui/themed";
 import GraphicSkeleton from "./GraphicSkeleton";
+import {
+  heightGraphicPercentage,
+  widthGraphicPercentage,
+} from "../../../constants/medicalExams";
 
-const width = Dimensions.get("window").width * 0.85;
-const height = Dimensions.get("window").height * 0.2;
+const width = Dimensions.get("window").width * widthGraphicPercentage;
+const height = Dimensions.get("window").height * heightGraphicPercentage;
 
 export default function MedicalStatisticsSkeleton() {
   return (
