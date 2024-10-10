@@ -352,12 +352,15 @@ def get_initial_data(request):
         
         initial_data["analysis"] = analysis_count
         
-        latest_analysis = celiac.getLatestAnalysis()
-        
         initial_data["variables"] = get_non_null_variables(user)
         
         # Esto es lo que hay que cambiar
-        initial_data["statistics"] = latest_analysis.get_random_non_null_variable()
+        latest_analysis = celiac.getLatestAnalysis()
+        non_null_variables = None
+        if latest_analysis:
+            non_null_variables = latest_analysis.get_random_non_null_variable()
+        
+        initial_data["statistics"] = non_null_variables
         print(latest_analysis.get_random_non_null_variable())
         
         next_analysis_date = celiac.getNextAnalysisDate()
