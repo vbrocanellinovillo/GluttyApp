@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework import generics, status, viewsets
 from .models import *
 from .serializers import *
-from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector, TrigramSimilarity
 from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -72,11 +72,14 @@ def find(request):
         base_filter = Q()
 
         if query:
+            # Uso de SearchQuery con el operador ':*' para encontrar términos que comiencen con la consulta.
+            search_query = SearchQuery(query + ":*", config=spanish_config)
             base_filter &= (
                 Q(nombre__icontains=query)
                 | Q(denominacion__icontains=query)
                 | Q(rnpa__icontains=query)
-                | Q(search_vector__icontains=query)
+                | Q(search_vector=search_query)  # Para coincidencias parciales en el vector de búsqueda
+                | Q(search_vector__icontains=query)  # Para coincidencias más amplias (como `campag`)
             )
 
         # Filtros de marcas y tipos con OR
@@ -97,13 +100,16 @@ def find(request):
         # Filtrar productos por coincidencias exactas o similares en el search_vector
         productos = (
             Producto.objects.annotate(
-                rank=SearchVector(
-                    "nombre",
-                    "denominacion",
-                    "rnpa",
-                    "marca__nombre",
-                    "tipo__nombre",
-                    config=spanish_config,
+                rank=SearchRank(
+                    SearchVector(
+                        "nombre",
+                        "denominacion",
+                        "rnpa",
+                        "marca__nombre",
+                        "tipo__nombre",
+                        config=spanish_config,
+                    ),
+                    search_query
                 )
             )
             .filter(combined_filter, is_active=True)
@@ -170,6 +176,7 @@ def find(request):
         return Response(
             {"error": "Ocurrió un error interno en el servidor."}, status=500
         )
+
 
 
 @api_view(["POST"])

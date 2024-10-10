@@ -1,7 +1,8 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
+import * as Haptics from "expo-haptics";
 
 export default function PostInfo({
   icon,
@@ -11,9 +12,22 @@ export default function PostInfo({
   numberStyle,
   iconStyle,
   containerStyle,
+  onPress,
 }) {
+  function handlePress() {
+    Haptics.selectionAsync();
+    onPress && onPress();
+  }
+
   return (
-    <View style={[styles.container, containerStyle]}>
+    <Pressable
+      style={({ pressed }) =>
+        pressed
+          ? [styles.container, styles.pressed, containerStyle]
+          : [styles.container, containerStyle]
+      }
+      onPress={handlePress}
+    >
       <Ionicons
         name={icon}
         color={iconColor || Colors.mJordan}
@@ -23,7 +37,7 @@ export default function PostInfo({
       <TextCommonsMedium style={[styles.number, numberStyle]}>
         {number}
       </TextCommonsMedium>
-    </View>
+    </Pressable>
   );
 }
 
@@ -36,6 +50,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     paddingHorizontal: 12,
     paddingVertical: 4,
+  },
+
+  pressed: {
+    opacity: 0.6,
   },
 
   number: {
