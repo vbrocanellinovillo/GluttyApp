@@ -1,5 +1,6 @@
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.search import SearchVectorField, SearchVector
+from django.db.models import F
 from django.db import models
 
 # Create your models here.
@@ -27,6 +28,17 @@ class Producto(models.Model):
         if self.marca:
             return self.marca.nombre
         return ''
+    
+    def save(self, *args, **kwargs):
+        # Actualiza el search_vector antes de guardar
+        self.search_vector = (
+            SearchVector("nombre", config="spanish") +
+            SearchVector("denominacion", config="spanish") +
+            SearchVector("rnpa", config="spanish") +
+            SearchVector(F('marca__nombre'), config="spanish") +  # Campo relacionado
+            SearchVector(F('tipo__nombre'), config="spanish")    # Campo relacionado
+        )
+        super().save(*args, **kwargs)
         
 class ProductoBarcode(models.Model):
     product_name_en = models.CharField(max_length=1000, verbose_name='Product Name (English)', null=True, blank=True)
