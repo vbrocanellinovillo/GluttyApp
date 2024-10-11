@@ -1,9 +1,5 @@
 import { Skeleton } from "@rneui/themed";
 import { StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "../../../constants/colors";
-import Entypo from '@expo/vector-icons/Entypo';
-import Feather from '@expo/vector-icons/Feather';
 
 export default function MedicalExamsSkeleton() {
   const items = Array.from({ length: 6 }, (_, index) => `Item ${index + 1}`);
@@ -13,14 +9,18 @@ export default function MedicalExamsSkeleton() {
       {items.map((item) => (
         <View style={styles.item} key={item}>
           <View style={styles.elements}>
-            <View style={styles.skeletonContainer}>
-              <Skeleton width={100} height={20} />
-              <Skeleton width={150} height={20} />
+            <View style={styles.date}>
+              <Skeleton width={50} height={20} />
+              <Skeleton width={50} height={20} />
+              <Skeleton width={50} height={20} />
+            </View>
+            <View style={styles.text}>
+              <Skeleton width={100} height={25} />
+              <Skeleton width={120} height={25} />
             </View>
           </View>
           <View>
-            <Entypo name="eye" size={24} color={Colors.mJordan} />
-            <Feather name="paperclip" size={24} color={Colors.mJordan} />
+            <Skeleton width={90} height={30} />
           </View>
         </View>
       ))}
@@ -52,16 +52,15 @@ const styles = StyleSheet.create({
 
   elements: {
     flexDirection: "row",
-    alignItems: "center",
     gap: 20,
   },
 
-  skeletonContainer: {
-    gap: 10,
+  date: {
+    gap: 4,
   },
 
-  iconsContainer: {
-    flexDirection: "row",
-    gap: 10
-  }
+  text: {
+    justifyContent: "center",
+    gap: 10,
+  },
 });
