@@ -119,7 +119,7 @@ export async function updateMedicalExam(
   const requestUrl = url + "update-analysis/";
 
   const formdata = new FormData();
-  formdata.append("analysis_id", id)
+  formdata.append("analysis_id", id);
   formdata.append("test_date", date);
   formdata.append("lab", lab);
   formdata.append("atTG_IgA", atTG_IgA);
@@ -149,8 +149,8 @@ export async function updateMedicalExam(
       Authorization: `Bearer ${token}`,
     },
   };
-  console.log("el formdataaaaaaa: ")
-  console.log(formdata)
+  console.log("el formdataaaaaaa: ");
+  console.log(formdata);
   try {
     const response = await httpRequest(requestUrl, requestOptions);
     return response;
@@ -158,13 +158,6 @@ export async function updateMedicalExam(
     throw new Error(error.message);
   }
 }
-
-
-
-
-
-
-
 
 export async function getMedicalExamsList(token) {
   const requestUrl = url + "get-all-analysis/";
@@ -322,17 +315,19 @@ export async function getStatistics(token, variable, frequency) {
 
     for (let value of response) {
       values.push(value.value);
+
       mins.push(value.min_value);
       maxs.push(value.max_value);
-      labels.push(value.date);
+
+      const date = value.date.substring(0, 7);
+
+      labels.push(date);
     }
 
     return { values, labels, maxs, mins };
   } catch (error) {
     throw new Error(error.message);
   }
-
- 
 }
 
 export async function postDateNextExam(token, date, username) {

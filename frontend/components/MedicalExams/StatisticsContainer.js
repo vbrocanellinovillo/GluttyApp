@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "flex-start",
     flexWrap: "wrap",
-    paddingVertical: 18,
+    paddingVertical: 12,
     paddingHorizontal: 14,
     gap: 20,
   },

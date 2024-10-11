@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Picker from "../UI/Controls/Picker";
 import { Colors } from "../../constants/colors";
 import Frequencies from "./Frequencies";
@@ -7,10 +7,6 @@ import Frequency from "./Frequency";
 import { useSelector } from "react-redux";
 import { getStatistics } from "../../services/medicalExamService";
 import Graphic from "./Graphic";
-import {
-  heightGraphicPercentage,
-  widthGraphicPercentage,
-} from "../../constants/medicalExams";
 
 const FREQUENCIES = [
   { id: 1, value: "3 años" },
@@ -22,21 +18,23 @@ const FREQUENCIES = [
 function getGraphicData(values) {
   if (!values) return;
 
+  console.log(values.values);
+
   const graphic = {
     labels: values.labels,
     datasets: [
       {
-        data: values.values,
+        data: values?.values.map((value) => (isNaN(value) ? 0 : value)),
         color: () => Colors.humita,
         strokeWidth: 2,
       },
       {
-        data: values.maxs,
+        data: values.maxs.map((value) => (isNaN(value) ? 0 : value)),
         color: () => Colors.mJordan,
         strokeWidth: 2,
       },
       {
-        data: values.mins,
+        data: values.mins.map((value) => (isNaN(value) ? 0 : value)),
         color: () => Colors.mJordan,
         strokeWidth: 2,
       },
@@ -90,13 +88,15 @@ export default function Statistic({ variables, initialData, width, height }) {
 
   return (
     <View style={styles.container}>
-      <Picker
-        data={variables}
-        value={variable}
-        confirmButton
-        buttonStyle={styles.buttonStyle}
-        onPressButton={selectVariable}
-      />
+      <View style={styles.pickerContainer}>
+        <Picker
+          data={variables}
+          value={variable}
+          confirmButton
+          buttonStyle={styles.buttonStyle}
+          onPressButton={selectVariable}
+        />
+      </View>
       {data && (
         <Graphic
           data={data}
@@ -124,11 +124,14 @@ export default function Statistic({ variables, initialData, width, height }) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 14,
     width: "100%",
   },
 
   buttonStyle: {
     backgroundColor: Colors.humita,
+  },
+
+  pickerContainer: {
+    marginBottom: 20,
   },
 });

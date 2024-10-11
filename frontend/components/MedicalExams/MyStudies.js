@@ -2,14 +2,21 @@ import { StyleSheet } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
 import SectionContainer from "../UI/SectionContainer";
+import { useSelector } from "react-redux";
 
-export default function MyStudies({ onPress, number }) {
+export default function MyStudies({ onPress }) {
+  const analysisNumber = useSelector(
+    (state) => state.medicalExams.analysisNumber
+  );
+
   return (
     <SectionContainer style={styles.container} onPress={onPress}>
       <TextCommonsMedium style={styles.text}>
         Mis estudios cargados
       </TextCommonsMedium>
-      <TextCommonsMedium style={styles.number}>{number}</TextCommonsMedium>
+      <TextCommonsMedium style={styles.number}>
+        {analysisNumber}
+      </TextCommonsMedium>
     </SectionContainer>
   );
 }
@@ -24,14 +31,14 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
     color: Colors.mJordan,
   },
 
   number: {
-    fontSize: 34,
+    fontSize: 32,
     fontWeight: "300",
     color: Colors.mJordan,
   },

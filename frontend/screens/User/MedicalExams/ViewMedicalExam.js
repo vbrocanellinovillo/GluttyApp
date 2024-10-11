@@ -1,7 +1,12 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Colors } from "../../../constants/colors";
 import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
@@ -11,11 +16,15 @@ import Button from "../../../components/UI/Controls/Button";
 import FormSectionContainer from "../../../components/UI/Forms/FormSectionContainer";
 import RangeBar from "../../../components/MedicalExams/RangeBar";
 import ValorPosNeg from "../../../components/MedicalExams/ValorPosNeg";
-import { deleteMedicalExam, getMedicalExamById } from "../../../services/medicalExamService";
+import {
+  deleteMedicalExam,
+  getMedicalExamById,
+} from "../../../services/medicalExamService";
 import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 import ContextualMenu from "../../../components/UI/contextualMenu";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import MedicalStatistics from "./MedicalStatistics";
+import { medicalExamsActions } from "../../../context/medicalExams";
 
 export default function ViewMedicalExam({ navigation, route }) {
   const [medicalExam, setMedicalExam] = useState(undefined);
@@ -30,8 +39,9 @@ export default function ViewMedicalExam({ navigation, route }) {
   console.log(id);
 
   const token = useSelector((state) => state.auth.accessToken);
+  const dispatch = useDispatch();
   console.log(token);
-  
+
   useFocusEffect(
     useCallback(() => {
       const cargarEstudioMedico = async () => {
@@ -53,46 +63,44 @@ export default function ViewMedicalExam({ navigation, route }) {
     }, [id, token])
   );
   //const pdf = medicalExam.pdf
-  async function handleDelete () {
+  async function handleDelete() {
     // Eliminar el estudio
     console.log("Eliminar Estudio");
-    setShowEliminarModal(true)
-  };
+    setShowEliminarModal(true);
+  }
 
   const handleEdit = () => {
     // Aquí iría tu lógica para editar el estudio
     console.log("Editar Estudio");
-    console.log(medicalExam)
-    navigation.navigate(
-        "EditBloodTestStack",
-        { screen: "EditBloodTest",
-          params: {medicalExam, id, pdf} }
-    )
+    console.log(medicalExam);
+    navigation.navigate("EditBloodTestStack", {
+      screen: "EditBloodTest",
+      params: { medicalExam, id, pdf },
+    });
   };
 
   function closeModalHandler() {
     setShowModal(false);
-    navigation.navigate("MedicalStatistics")
+    navigation.navigate("MedicalStatistics");
   }
 
   function closeModalDeleteHandler() {
-
     setShowEliminarModal(false);
-    navigation.navigate("MedicalStatistics")
+    navigation.navigate("MedicalStatistics");
+  }
 
-    }
-  
-  async function handleConfirmDelete(){
+  async function handleConfirmDelete() {
     try {
       setIsLoading(true);
       console.log("Eliminando estudio");
-      console.log("whastt: ", id)
+      console.log("whastt: ", id);
       const response = await deleteMedicalExam(id, token);
-      console.log("La respuestaaa:")
-      console.log(response)
+      console.log("La respuestaaa:");
+      console.log(response);
+      dispatch(medicalExamsActions.decreaseNumber());
       setMessage(response.detail);
       setShowModal(true);
-      navigation.navigate("MedicalStatistics")
+      navigation.navigate("MedicalStatistics");
     } catch (error) {
       setIsError(true);
       setMessage(error.message);
@@ -133,46 +141,45 @@ export default function ViewMedicalExam({ navigation, route }) {
       {medicalExam && (
         <>
           {/* ENCABEZADO */}
-          
+
           <View style={styles.container}>
+            <View style={styles.options}>
+              {/* Botón de tres puntos */}
+              <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={24}
+                  color={Colors.darkGray}
+                />
+              </TouchableOpacity>
 
-          <View style={styles.options}>
-            {/* Botón de tres puntos */}
-            <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
-              <MaterialCommunityIcons name="dots-vertical" size={24} color={Colors.darkGray} />
-            </TouchableOpacity>
-
-            {/* Menú contextual */}
-            {showMenu && (
-              <ContextualMenu
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            )}
-          </View>
-
-            <View style={styles.infoEncabezado}>
-            <View style={styles.dateBox}>
-              <MedicalExamDateViewer date={medicalExam.date} />
+              {/* Menú contextual */}
+              {showMenu && (
+                <ContextualMenu onEdit={handleEdit} onDelete={handleDelete} />
+              )}
             </View>
 
-            <View style={styles.infoBox}>
-              <TextCommonsMedium style={styles.examTitle}>
-                Análisis de Sangre
-              </TextCommonsMedium>
+            <View style={styles.infoEncabezado}>
+              <View style={styles.dateBox}>
+                <MedicalExamDateViewer date={medicalExam.date} />
+              </View>
 
-              <View style={styles.locationBox}>
-                <MaterialCommunityIcons
-                  name="map-marker"
-                  size={24}
-                  color={Colors.mJordan}
-                />
-                <TextCommonsRegular style={styles.locationText}>
-                  {medicalExam.lab}
-                </TextCommonsRegular>
+              <View style={styles.infoBox}>
+                <TextCommonsMedium style={styles.examTitle}>
+                  Análisis de Sangre
+                </TextCommonsMedium>
+
+                <View style={styles.locationBox}>
+                  <MaterialCommunityIcons
+                    name="map-marker"
+                    size={24}
+                    color={Colors.mJordan}
+                  />
+                  <TextCommonsRegular style={styles.locationText}>
+                    {medicalExam.lab}
+                  </TextCommonsRegular>
+                </View>
               </View>
-              </View>
-              
             </View>
           </View>
 
@@ -182,29 +189,31 @@ export default function ViewMedicalExam({ navigation, route }) {
           </View>
 
           {/* VARIABLES */}
-          <TextCommonsMedium style={styles.titleVarMed}>Variables Médicas</TextCommonsMedium>
+          <TextCommonsMedium style={styles.titleVarMed}>
+            Variables Médicas
+          </TextCommonsMedium>
           <ScrollView style={styles.scrollview}>
             {medicalExam.variables.map((item) => (
               <View key={item.variable_name}>
-                {(item.value === "Positivo" || item.value === "Negativo") ? (
+                {item.value === "Positivo" || item.value === "Negativo" ? (
                   <FormSectionContainer>
-                    <ValorPosNeg 
-                      label={item.variable_name} 
-                      valor={item.value} 
-                      descrip={item.description} 
+                    <ValorPosNeg
+                      label={item.variable_name}
+                      valor={item.value}
+                      descrip={item.description}
                     />
                   </FormSectionContainer>
                 ) : (
                   <FormSectionContainer>
-                    <RangeBar 
-                      label={item.variable_name} 
-                      minBarraGris={item.min_value} 
-                      maxBarraGris={item.max_value}  
-                      normalMin={item.min_value} 
-                      normalMax={item.max_value} 
-                      currentValue={item.value} 
-                      descrip={item.description} 
-                      unit={item.unit_of_measurement} 
+                    <RangeBar
+                      label={item.variable_name}
+                      minBarraGris={item.min_value}
+                      maxBarraGris={item.max_value}
+                      normalMin={item.min_value}
+                      normalMax={item.max_value}
+                      currentValue={item.value}
+                      descrip={item.description}
+                      unit={item.unit_of_measurement}
                     />
                   </FormSectionContainer>
                 )}
@@ -237,7 +246,6 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 20,
     marginTop: -7,
-    
   },
   options: {
     flexDirection: "row",
@@ -245,7 +253,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     marginTop: 7,
-    zIndex: 1500,  // Asegura que el menú esté por delante
+    zIndex: 1500, // Asegura que el menú esté por delante
   },
   dateBox: {
     backgroundColor: Colors.humita,
@@ -283,13 +291,13 @@ const styles = StyleSheet.create({
   },
   pdf: {
     marginTop: 10,
-    flexDirection:"row", 
-    justifyContent: "space-between", 
-    marginHorizontal: 10, 
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: 10,
     width: 350,
     backgroundColor: Colors.locro,
     borderRadius: 10,
     marginHorizontal: 20,
     marginBottom: 30,
-  }
+  },
 });

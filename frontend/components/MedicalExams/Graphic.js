@@ -3,6 +3,8 @@ import GraphicSkeleton from "../UI/Loading/GraphicSkeleton";
 import { Colors } from "../../constants/colors";
 import { StyleSheet, View } from "react-native";
 import ErrorGraphic from "./ErrorGraphic";
+import { xAxisRotation } from "../../constants/medicalExams";
+import { GlobalStyles } from "../../constants/styles";
 
 export default function Graphic({ isLoading, isError, data, width, height }) {
   let content;
@@ -19,6 +21,7 @@ export default function Graphic({ isLoading, isError, data, width, height }) {
         width={width}
         height={height}
         bezier
+        verticalLabelRotation={xAxisRotation}
         chartConfig={{
           decimalPlaces: 2,
           color: () => Colors.mJordan,
@@ -37,6 +40,7 @@ export default function Graphic({ isLoading, isError, data, width, height }) {
             display: "none",
           },
         }}
+        style={GlobalStyles.graphicStlye}
       />
     );
   }

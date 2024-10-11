@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import MyStudies from "../../../components/MedicalExams/MyStudies";
 import GluttyTips from "../../../components/MedicalExams/GluttyTips";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import BlurTips from "../../../components/MedicalExams/BlurTips";
 import StatisticsContainer from "../../../components/MedicalExams/StatisticsContainer";
 import { Colors } from "../../../constants/colors";
@@ -15,10 +15,11 @@ import {
   getStatistics,
   saveMedicalMessage,
 } from "../../../services/medicalExamService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
 import ScheduleNextStudy from "../../../components/MedicalExams/ScheduleNextStudy";
 import { useFocusEffect } from "@react-navigation/native";
+import { medicalExamsActions } from "../../../context/medicalExams";
 
 export default function MedicalStatistics({ navigation, route }) {
   // Blur views
@@ -26,6 +27,7 @@ export default function MedicalStatistics({ navigation, route }) {
   const [showNextStudy, setShowNextStudy] = useState(false);
 
   const token = useSelector((state) => state.auth.accessToken);
+  const dispatch = useDispatch();
 
   // Get initial data
   const [data, setData] = useState();
@@ -37,15 +39,12 @@ export default function MedicalStatistics({ navigation, route }) {
   const [message, setMessage] = useState("");
   const [isAccepting, setIsAccepting] = useState(false);
 
-
   //Check
   const [isChecked, setIsChecked] = useState(false);
 
   function handleCheckChange() {
     setIsChecked((prev) => !prev);
   }
-
-
 
   useEffect(() => {
     getData();
@@ -90,6 +89,9 @@ export default function MedicalStatistics({ navigation, route }) {
       }
 
       setData(finalData);
+      dispatch(
+        medicalExamsActions.setAnalysisNumber({ number: finalData?.analysis })
+      );
       setIsError(false);
     } catch (error) {
       setIsError(true);
@@ -101,7 +103,7 @@ export default function MedicalStatistics({ navigation, route }) {
 
   async function closeModalHandler() {
     setIsAccepting(true);
-    if (isChecked){
+    if (isChecked) {
       try {
         await saveMedicalMessage(token);
       } catch (error) {
@@ -109,11 +111,10 @@ export default function MedicalStatistics({ navigation, route }) {
         setIsAccepting(false);
         setShowModal(false);
       }
-    }else{
+    } else {
       setIsAccepting(false);
       setShowModal(false);
     }
-
   }
 
   function navigateMyStudies() {
@@ -147,7 +148,7 @@ export default function MedicalStatistics({ navigation, route }) {
         Ocurrio un error. Por favor intente de nuevo más tarde
       </GluttyErrorScreen>
     );
-    console.log(data);
+  console.log(data);
   return (
     <>
       <ScrollView
@@ -156,7 +157,7 @@ export default function MedicalStatistics({ navigation, route }) {
         contentInset={{ bottom: 160 }}
       >
         <View style={styles.firstSection}>
-          <MyStudies onPress={navigateMyStudies} number={data?.analysis} />
+          <MyStudies onPress={navigateMyStudies} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
 
@@ -165,12 +166,18 @@ export default function MedicalStatistics({ navigation, route }) {
           variables={data?.options}
         />
 
-        <NextStudyContainer onPress={openNextStudy} date={data?.analysis_reminder} />
+        <NextStudyContainer
+          onPress={openNextStudy}
+          date={data?.analysis_reminder}
+        />
       </ScrollView>
       <BlurTips visible={showGluttyTips} onDismiss={hideGluttyTips} />
 
-      <BlurNextStudy onDismiss={hideNextStudy} visible={showNextStudy} getData={getData}/>
-    
+      <BlurNextStudy
+        onDismiss={hideNextStudy}
+        visible={showNextStudy}
+        getData={getData}
+      />
 
       <GluttyModal
         imageStyle={{ width: 80, height: 80 }}
@@ -197,7 +204,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 25,
     paddingTop: 10,
-    gap: 30,
+    gap: 20,
   },
 
   firstSection: {

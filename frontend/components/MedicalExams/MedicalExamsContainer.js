@@ -1,41 +1,39 @@
 import { StyleSheet, View } from "react-native";
-import { useState, useEffect } from "react";  // Importar useState y useEffect
+import { useState, useEffect } from "react"; // Importar useState y useEffect
 import ErrorFetchingMedicalExams from "./ErrorFetchingMedicalExams";
 import AddMedicalExamButton from "./AddMedicalExamButton";
 import MedicalExamsList from "./MedicalExamsList";
 import { getMedicalExamsList } from "../../services/medicalExamService";
 import { useSelector } from "react-redux";
-import LoadingGlutty from "../UI/Loading/LoadingGlutty";
-import { Colors } from "../../constants/colors";
-
+import MedicalExamsSkeleton from "../UI/Loading/MedicalExamsSkeleton";
 
 export function MedicalExamsContainer({ isLoading, isError }) {
-  const [exams, setExams] = useState(undefined);  
-  const [loading, setLoading] = useState(false);  // Estado de loading local
-  const token = useSelector((state) => state.auth.accessToken); 
+  const [exams, setExams] = useState(undefined);
+  const [loading, setLoading] = useState(false); // Estado de loading local
+  const token = useSelector((state) => state.auth.accessToken);
 
   useEffect(() => {
     async function fetchMedicalExams() {
       try {
         setLoading(true); // Empezar la carga
         const response = await getMedicalExamsList(token);
-        setExams(response);  // Guardar los exámenes en el estado
+        setExams(response); // Guardar los exámenes en el estado
         console.log(exams); //a:",exams);
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false);  // Terminar la carga
+        setLoading(false); // Terminar la carga
       }
     }
     if (isLoading) {
       fetchMedicalExams();
     }
-  }, [isLoading, token]);  // Ejecutar cuando isLoading o token cambie
+  }, [isLoading, token]); // Ejecutar cuando isLoading o token cambie
 
   let content;
 
   if (loading) {
-    content = <LoadingGlutty visible={loading} color={Colors.vainilla} />
+    content = <MedicalExamsSkeleton />;
   }
 
   if (isError) {
@@ -59,6 +57,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 35,
     paddingBottom: 200,
-    marginTop: 20
+    marginTop: 20,
   },
 });
