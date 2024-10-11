@@ -4,19 +4,13 @@ import { Colors } from "../../constants/colors";
 import SectionContainer from "../UI/SectionContainer";
 import { useSelector } from "react-redux";
 
-export default function MyStudies({ onPress }) {
-  const analysisNumber = useSelector(
-    (state) => state.medicalExams.analysisNumber
-  );
-
+export default function MyStudies({ onPress, number }) {
   return (
     <SectionContainer style={styles.container} onPress={onPress}>
       <TextCommonsMedium style={styles.text}>
         Mis estudios cargados
       </TextCommonsMedium>
-      <TextCommonsMedium style={styles.number}>
-        {analysisNumber}
-      </TextCommonsMedium>
+      <TextCommonsMedium style={styles.number}>{number}</TextCommonsMedium>
     </SectionContainer>
   );
 }

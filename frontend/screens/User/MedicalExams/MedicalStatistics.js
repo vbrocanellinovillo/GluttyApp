@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import MyStudies from "../../../components/MedicalExams/MyStudies";
 import GluttyTips from "../../../components/MedicalExams/GluttyTips";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import BlurTips from "../../../components/MedicalExams/BlurTips";
 import StatisticsContainer from "../../../components/MedicalExams/StatisticsContainer";
 import { Colors } from "../../../constants/colors";
@@ -15,11 +15,10 @@ import {
   getStatistics,
   saveMedicalMessage,
 } from "../../../services/medicalExamService";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
 import ScheduleNextStudy from "../../../components/MedicalExams/ScheduleNextStudy";
 import { useFocusEffect } from "@react-navigation/native";
-import { medicalExamsActions } from "../../../context/medicalExams";
 
 export default function MedicalStatistics({ navigation, route }) {
   // Blur views
@@ -27,7 +26,6 @@ export default function MedicalStatistics({ navigation, route }) {
   const [showNextStudy, setShowNextStudy] = useState(false);
 
   const token = useSelector((state) => state.auth.accessToken);
-  const dispatch = useDispatch();
 
   // Get initial data
   const [data, setData] = useState();
@@ -42,9 +40,19 @@ export default function MedicalStatistics({ navigation, route }) {
   //Check
   const [isChecked, setIsChecked] = useState(false);
 
+  const shouldRefresh = route.params?.shouldRefresh;
+
   function handleCheckChange() {
     setIsChecked((prev) => !prev);
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      if (shouldRefresh) {
+        getData();
+      }
+    }, [route])
+  );
 
   useEffect(() => {
     getData();
@@ -89,9 +97,6 @@ export default function MedicalStatistics({ navigation, route }) {
       }
 
       setData(finalData);
-      dispatch(
-        medicalExamsActions.setAnalysisNumber({ number: finalData?.analysis })
-      );
       setIsError(false);
     } catch (error) {
       setIsError(true);
@@ -157,7 +162,7 @@ export default function MedicalStatistics({ navigation, route }) {
         contentInset={{ bottom: 160 }}
       >
         <View style={styles.firstSection}>
-          <MyStudies onPress={navigateMyStudies} />
+          <MyStudies onPress={navigateMyStudies} number={data?.analysis} />
           <GluttyTips onPress={openGluttyTips} />
         </View>
 

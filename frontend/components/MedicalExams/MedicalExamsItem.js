@@ -1,33 +1,20 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
-import { getMonthName } from "../../utils/dateFunctions";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Button from "../UI/Controls/Button";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
-import { useNavigation } from "@react-navigation/native";
-import convertToMedicalDate from "./MedicalExamDateViewer";
 import MedicalExamDateViewer from "./MedicalExamDateViewer";
 
 export default function MedicalExamItem({ medicalExam, onPress }) {
-  const navigation = useNavigation()
-  //const [year, monthNumber, day] = medicalExam.date.split("-");
-
-  //const month = getMonthName(monthNumber);
-
   return (
-    <Pressable
-      style={({ pressed }) =>
-        pressed ? [styles.item, styles.pressed] : styles.item
-      }
-      
-    >
+    <View style={styles.item}>
       <View style={styles.detailsContainer}>
         <MedicalExamDateViewer date={medicalExam.date} />
 
         <View style={styles.icons}>
           <TextCommonsMedium style={styles.exam} numberOfLines={2}>
-            {"Analisis de Sangre"}
+            Analisis de Sangre
           </TextCommonsMedium>
           <View style={styles.iconContainer}>
             <FontAwesome5
@@ -41,10 +28,14 @@ export default function MedicalExamItem({ medicalExam, onPress }) {
           </View>
         </View>
       </View>
-      <Button backgroundColor={Colors.locro} textStyle={styles.buttonText} onPress={onPress}>
+      <Button
+        backgroundColor={Colors.locro}
+        textStyle={styles.buttonText}
+        onPress={onPress}
+      >
         Ver detalles
       </Button>
-    </Pressable>
+    </View>
   );
 }
 
@@ -61,10 +52,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 20,
     gap: 20,
-  },
-
-  pressed: {
-    opacity: 0.6,
   },
 
   detailsContainer: {

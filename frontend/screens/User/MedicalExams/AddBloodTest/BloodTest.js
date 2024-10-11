@@ -3,8 +3,7 @@ import BloodTestForm from "../../../../components/MedicalExams/BloodTestForm";
 import GluttyModal from "../../../../components/UI/GluttyModal";
 import LoadingGlutty from "../../../../components/UI/Loading/LoadingGlutty";
 import { registerMedicalExam } from "../../../../services/medicalExamService";
-import { useDispatch, useSelector } from "react-redux";
-import { medicalExamsActions } from "../../../../context/medicalExams";
+import { useSelector } from "react-redux";
 
 export default function BloodTest({ navigation, route }) {
   const values = route.params?.values;
@@ -12,7 +11,6 @@ export default function BloodTest({ navigation, route }) {
   const labs = route.params?.labs;
 
   const token = useSelector((state) => state.auth.accessToken);
-  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -27,7 +25,7 @@ export default function BloodTest({ navigation, route }) {
     setShowModal(false);
 
     if (!isError) {
-      navigation.navigate("MedicalExams");
+      navigation.navigate("MedicalStatistics", { shouldRefresh: true });
     }
   }
 
@@ -78,7 +76,6 @@ export default function BloodTest({ navigation, route }) {
         glucemia,
         pdf
       );
-      dispatch(medicalExamsActions.increaseNumber());
       setIsError(false);
       setMessage("Estudio medico registrado correctamente!");
       setShowModal(true);

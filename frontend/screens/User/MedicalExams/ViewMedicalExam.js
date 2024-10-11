@@ -1,10 +1,5 @@
 import React, { useState, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -20,11 +15,11 @@ import {
   deleteMedicalExam,
   getMedicalExamById,
 } from "../../../services/medicalExamService";
-import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 import ContextualMenu from "../../../components/UI/contextualMenu";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import MedicalStatistics from "./MedicalStatistics";
-import { medicalExamsActions } from "../../../context/medicalExams";
+import ViewMedicalExamSkeleton from "../../../components/UI/Loading/ViewMedicalExamSkeleton";
+import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 
 export default function ViewMedicalExam({ navigation, route }) {
   const [medicalExam, setMedicalExam] = useState(undefined);
@@ -34,12 +29,12 @@ export default function ViewMedicalExam({ navigation, route }) {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const [showEliminarModal, setShowEliminarModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const id = route.params.id;
   console.log(id);
 
   const token = useSelector((state) => state.auth.accessToken);
-  const dispatch = useDispatch();
   console.log(token);
 
   useFocusEffect(
@@ -91,22 +86,21 @@ export default function ViewMedicalExam({ navigation, route }) {
 
   async function handleConfirmDelete() {
     try {
-      setIsLoading(true);
+      setIsDeleting(true);
       console.log("Eliminando estudio");
       console.log("whastt: ", id);
       const response = await deleteMedicalExam(id, token);
       console.log("La respuestaaa:");
       console.log(response);
-      dispatch(medicalExamsActions.decreaseNumber());
       setMessage(response.detail);
       setShowModal(true);
-      navigation.navigate("MedicalStatistics");
+      navigation.navigate("MedicalStatistics", { shouldRefresh: true });
     } catch (error) {
       setIsError(true);
       setMessage(error.message);
       setShowModal(true);
     } finally {
-      setIsLoading(false);
+      setIsDeleting(false);
     }
   }
 
@@ -133,12 +127,12 @@ export default function ViewMedicalExam({ navigation, route }) {
         ]}
         closeButtonText="Cancelar"
       />
+      <LoadingGlutty visible={isDeleting} />
 
-      {/* Muestra el loading mientras se cargan los datos */}
-      <LoadingGlutty visible={isloading} color={Colors.vainilla} />
+      {isloading && <ViewMedicalExamSkeleton />}
 
       {/* Verifica si ya hay datos cargados antes de renderizar el contenido */}
-      {medicalExam && (
+      {medicalExam && !isloading && (
         <>
           {/* ENCABEZADO */}
 

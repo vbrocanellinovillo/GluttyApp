@@ -31,7 +31,11 @@ export default function MedicalExamsStack() {
         component={MedicalExams}
         options={{ animation: "fade_from_bottom", title: "Mis Estudios" }}
       />
-      <Stack.Screen name="ViewMedicalExam" component={ViewMedicalExam} />
+      <Stack.Screen
+        name="ViewMedicalExam"
+        component={ViewMedicalExam}
+        options={{ title: "Mi estudio" }}
+      />
     </Stack.Navigator>
   );
 }
