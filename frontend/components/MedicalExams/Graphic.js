@@ -3,7 +3,6 @@ import GraphicSkeleton from "../UI/Loading/GraphicSkeleton";
 import { Colors } from "../../constants/colors";
 import { StyleSheet, View } from "react-native";
 import ErrorGraphic from "./ErrorGraphic";
-import NoStatistics from "./NoStatistics";
 
 export default function Graphic({ isLoading, isError, data, width, height }) {
   let content;
@@ -12,10 +11,6 @@ export default function Graphic({ isLoading, isError, data, width, height }) {
 
   if (isError && !isLoading)
     content = <ErrorGraphic width={width} height={height} />;
-
-  if (!isLoading && !isError && !data) {
-    return <NoStatistics width={width} height={height} />;
-  }
 
   if (!isLoading && !isError && data) {
     content = (

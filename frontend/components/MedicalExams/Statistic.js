@@ -19,9 +19,6 @@ const FREQUENCIES = [
   { id: 4, value: "3 meses" },
 ];
 
-const width = Dimensions.get("window").width * widthGraphicPercentage;
-const height = Dimensions.get("window").height * heightGraphicPercentage;
-
 function getGraphicData(values) {
   if (!values) return;
 
@@ -49,7 +46,7 @@ function getGraphicData(values) {
   return graphic;
 }
 
-export default function Statistic({ variables, initialData }) {
+export default function Statistic({ variables, initialData, width, height }) {
   const [data, setData] = useState(initialData && getGraphicData(initialData));
   const [fistLoading, setFirstLoading] = useState(false);
 
