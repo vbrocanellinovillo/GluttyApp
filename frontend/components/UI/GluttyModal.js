@@ -5,6 +5,7 @@ import { Colors } from "../../constants/colors";
 import Button from "./Controls/Button";
 import { sadGlutty, smileGlutty, thumbGlutty } from "../../constants/glutty";
 import TextCommonsMedium from "./FontsTexts/TextCommonsMedium";
+import { Checkbox } from 'react-native-paper';
 
 export default function GluttyModal({
   imageStyle,
@@ -25,6 +26,9 @@ export default function GluttyModal({
   closeButtonText = "Cerrar",
   buttonsContainerStyle,
   isLoading,
+  showCheckbox=true,
+  isChecked,
+  onCheckChange,
 }) {
   const imageUri = customGlutty
     ? customGlutty
@@ -39,6 +43,8 @@ export default function GluttyModal({
     : isError
     ? { name: "close-circle", color: Colors.redError }
     : { name: "checkmark-circle", color: "green" };
+
+
   return (
     <Portal>
       <Dialog style={styles.dialog} onDismiss={onClose} visible={visible}>
@@ -63,6 +69,20 @@ export default function GluttyModal({
             <Ionicons name={icon.name} color={icon.color} size={30} />
             <Text style={styles.message}>{message}</Text>
           </View>
+          {/*CHECKBOX*/}
+          {showCheckbox && (
+            <View style={styles.checkboxContainer}>
+              <Checkbox
+                status={isChecked ? 'checked' : 'unchecked'}
+                onPress={onCheckChange}
+                color="green"
+                uncheckedColor="blue"
+                style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }] }}
+              />
+              <Text>No volver a mostrar</Text>
+            </View>
+          )}
+
           <View style={[styles.buttonsContainer, buttonsContainerStyle]}>
             {closeButton && (
               <View style={styles.buttonContainer}>
@@ -132,7 +152,13 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginVertical: 16,
   },
-
+  checkboxContainer: {
+    flexDirection: "row", // Cambia a columna para probar
+    alignItems: "center", 
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  
   message: {
     color: Colors.mJordan,
     fontSize: 21,

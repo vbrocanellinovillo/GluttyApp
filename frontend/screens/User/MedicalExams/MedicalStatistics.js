@@ -37,6 +37,16 @@ export default function MedicalStatistics({ navigation, route }) {
   const [message, setMessage] = useState("");
   const [isAccepting, setIsAccepting] = useState(false);
 
+
+  //Check
+  const [isChecked, setIsChecked] = useState(false);
+
+  function handleCheckChange() {
+    setIsChecked((prev) => !prev);
+  }
+
+
+
   useEffect(() => {
     getData();
   }, []);
@@ -91,13 +101,19 @@ export default function MedicalStatistics({ navigation, route }) {
 
   async function closeModalHandler() {
     setIsAccepting(true);
-    try {
-      await saveMedicalMessage(token);
-    } catch (error) {
-    } finally {
+    if (isChecked){
+      try {
+        await saveMedicalMessage(token);
+      } catch (error) {
+      } finally {
+        setIsAccepting(false);
+        setShowModal(false);
+      }
+    }else{
       setIsAccepting(false);
       setShowModal(false);
     }
+
   }
 
   function navigateMyStudies() {
@@ -168,6 +184,9 @@ export default function MedicalStatistics({ navigation, route }) {
         closeButtonText="¡Entendido!"
         closeButtonColor={Colors.mJordan}
         isLoading={isAccepting}
+        showCheckBox ={true}
+        isChecked={isChecked}
+        onCheckChange={handleCheckChange}
       />
     </>
   );
