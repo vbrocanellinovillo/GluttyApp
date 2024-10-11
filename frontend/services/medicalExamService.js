@@ -91,6 +91,80 @@ export async function registerMedicalExam(
     throw new Error(error.message);
   }
 }
+// Editar el medical exam
+export async function updateMedicalExam(
+  id,
+  token,
+  date,
+  lab,
+  atTG_IgA,
+  aDGP_IgA,
+  antiendomisio,
+  hemoglobina,
+  hematocrito,
+  ferritina,
+  hierro_serico,
+  vitamina_b12,
+  calcio_serico,
+  vitamina_d,
+  alt,
+  ast,
+  colesterol_total,
+  colesterol_ldl,
+  colesterol_hdl,
+  trigliceridos,
+  glucemia,
+  pdf
+) {
+  const requestUrl = url + "update-analysis/";
+
+  const formdata = new FormData();
+  formdata.append("analysis_id", id)
+  formdata.append("test_date", date);
+  formdata.append("lab", lab);
+  formdata.append("atTG_IgA", atTG_IgA);
+  formdata.append("aDGP_IgA", aDGP_IgA);
+  formdata.append("antiendomisio", antiendomisio);
+  formdata.append("hemoglobina", hemoglobina);
+  formdata.append("hematocrito", hematocrito);
+  formdata.append("ferritina", ferritina);
+  formdata.append("hierro_serico", hierro_serico);
+  formdata.append("vitamina_b12", vitamina_b12);
+  formdata.append("calcio_serico", calcio_serico);
+  formdata.append("vitamina_d", vitamina_d);
+  formdata.append("alt", alt);
+  formdata.append("ast", ast);
+  formdata.append("colesterol_total", colesterol_total);
+  formdata.append("colesterol_ldl", colesterol_ldl);
+  formdata.append("colesterol_hdl", colesterol_hdl);
+  formdata.append("trigliceridos", trigliceridos);
+  formdata.append("glucemia", glucemia);
+  formdata.append("pdf", pdf);
+
+  const requestOptions = {
+    method: "PUT",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  console.log("el formdataaaaaaa: ")
+  console.log(formdata)
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
+
+
+
+
+
 
 export async function getMedicalExamsList(token) {
   const requestUrl = url + "get-all-analysis/";

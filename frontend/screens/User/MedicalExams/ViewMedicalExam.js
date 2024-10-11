@@ -52,7 +52,7 @@ export default function ViewMedicalExam({ navigation, route }) {
       }
     }, [id, token])
   );
-
+  //const pdf = medicalExam.pdf
   async function handleDelete () {
     // Eliminar el estudio
     console.log("Eliminar Estudio");
@@ -66,9 +66,7 @@ export default function ViewMedicalExam({ navigation, route }) {
     navigation.navigate(
         "EditBloodTestStack",
         { screen: "EditBloodTest",
-          params: {medicalExam} }
-        
-
+          params: {medicalExam, id, pdf} }
     )
   };
 
