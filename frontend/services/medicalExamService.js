@@ -331,4 +331,31 @@ export async function getStatistics(token, variable, frequency) {
   } catch (error) {
     throw new Error(error.message);
   }
+
+ 
+}
+
+export async function postDateNextExam(token, date, username) {
+  const requestUrl = url + "save-analysis-date/";
+
+  const formdata = new FormData();
+
+  formdata.append("username", username);
+  formdata.append("date", date);
+
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formdata,
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }

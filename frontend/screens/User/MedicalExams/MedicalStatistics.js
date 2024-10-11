@@ -131,7 +131,7 @@ export default function MedicalStatistics({ navigation, route }) {
         Ocurrio un error. Por favor intente de nuevo más tarde
       </GluttyErrorScreen>
     );
-
+    console.log(data);
   return (
     <>
       <ScrollView
@@ -149,11 +149,12 @@ export default function MedicalStatistics({ navigation, route }) {
           variables={data?.options}
         />
 
-        <NextStudyContainer onPress={openNextStudy} date={futureDate} />
+        <NextStudyContainer onPress={openNextStudy} date={data?.analysis_reminder} />
       </ScrollView>
       <BlurTips visible={showGluttyTips} onDismiss={hideGluttyTips} />
 
-      <BlurNextStudy onDismiss={hideNextStudy} visible={showNextStudy} />
+      <BlurNextStudy onDismiss={hideNextStudy} visible={showNextStudy} getData={getData}/>
+    
 
       <GluttyModal
         imageStyle={{ width: 80, height: 80 }}

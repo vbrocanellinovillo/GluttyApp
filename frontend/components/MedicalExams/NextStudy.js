@@ -5,14 +5,14 @@ import NextStudyDate from "./NextStudyDate";
 import { getTimeDifference } from "../../utils/dateFunctions";
 
 export default function NextStudy({ date }) {
-  const { years, months, days } = getTimeDifference(date);
+  //const { years, months, days } = getTimeDifference(date);
 
   return (
     <View style={styles.container}>
       <TextCommonsMedium style={styles.title}>
         Tiempo hasta tu proximo estudio médico
       </TextCommonsMedium>
-      <NextStudyDate year={years} month={months} days={days} />
+      <NextStudyDate year={date?.years} month={date?.months} days={date?.days} />
     </View>
   );
 }

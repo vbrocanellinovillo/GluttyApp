@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View , Text} from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import WheelPicker from "@quidone/react-native-wheel-picker";
 import DialogContainer from "../UI/DialogContainer";
@@ -7,6 +7,9 @@ import { useState } from "react";
 import * as Haptics from "expo-haptics";
 import Button from "../UI/Controls/Button";
 import DateTimePicker from "react-native-modal-datetime-picker";
+import { postDateNextExam } from "../../services/medicalExamService";
+import { useSelector } from "react-redux";
+import { err } from "react-native-svg";
 
 const days = [
   { value: 1, label: "1" }, { value: 2, label: "2" }, { value: 3, label: "3" }, 
@@ -79,13 +82,20 @@ const years = Array.from({ length: 80 }, (_, index) => ({
   label: (currentYear + index).toString(),
 }));
 
-export default function ScheduleNextStudy({ onDismiss, time }) {
+export default function ScheduleNextStudy({ onDismiss, time, getData }) {
   const [value, setValue] = useState(time || 2);
   // const [day, setValueDay] = useState(time || 2);
   // const [month, setValueMonth] = useState(time || 2);
   const [day, setValueDay] = useState(time || 1);
   const [month, setValueMonth] = useState(time || 1);
   const [year, setValueYear] = useState(time || currentYear);
+
+  const [isError, setIsError] = useState(false);
+  const[isBefore, setIsBefore] = useState(false);
+  const[isLoading, setIsLoading] = useState(false);
+
+  const token = useSelector(state=>state.auth.accessToken);
+  const username = useSelector(state=>state.auth.userData.username);
 
   // function handleValueChange(item) {
   //   Haptics.selectionAsync();
@@ -107,8 +117,9 @@ export default function ScheduleNextStudy({ onDismiss, time }) {
     setValueYear(item.item.value);
   }
 
-  const handlePress = () => {
+  const handlePress = async () => {
     const selectedDate = `${day}.${month}.${year}`;
+    const dateBackend = `${year}-${month}-${day}`;
     
     if (!isValidDate(selectedDate)) {
       console.log("Fecha inválida");
@@ -117,15 +128,35 @@ export default function ScheduleNextStudy({ onDismiss, time }) {
 
     
     const currentDate = new Date();
-    
+
+    //se guarda mal xd cuando lo pasa a fecha
     const selectedDateObj = new Date(year, month - 1, day); 
 
+
     if (selectedDateObj <= currentDate) {
+      console.log(selectedDateObj);
+      console.log(selectedDate);
       console.log("La fecha seleccionada debe ser mayor a la actual.");
+      setIsError(true);
       return;
     }
 
     console.log("Fecha válida y mayor a la actual:", selectedDate);
+    setIsError(false);
+    setIsLoading(true);
+    try{
+      await postDateNextExam(token, dateBackend, username)
+      console.log("wtft");
+      getData();
+      onDismiss();
+      
+    }catch (error) {
+      console.log("error choto");
+      console.log(error)
+    }
+    finally{
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -163,9 +194,9 @@ export default function ScheduleNextStudy({ onDismiss, time }) {
         /> 
         
       </View>
-      
+      {isError && <Text>Fecha invalida xd</Text>}
       {/* <DateTimePicker isVisible={true} display="spinner" onConfirm={() => undefined} onCancel={() => undefined}/> */}
-      <Button backgroundColor={Colors.locro} onPress={handlePress}>
+      <Button backgroundColor={Colors.locro} onPress={handlePress} isLoading={isLoading}>
         {time ? "Cancelar recordatorio" : "Agendar"}
       </Button>
     </DialogContainer>
