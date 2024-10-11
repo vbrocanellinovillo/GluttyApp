@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import MyStudies from "../../../components/MedicalExams/MyStudies";
 import GluttyTips from "../../../components/MedicalExams/GluttyTips";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import BlurTips from "../../../components/MedicalExams/BlurTips";
 import StatisticsContainer from "../../../components/MedicalExams/StatisticsContainer";
 import { Colors } from "../../../constants/colors";
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 25,
     paddingTop: 10,
-    gap: 30,
+    gap: 20,
   },
 
   firstSection: {

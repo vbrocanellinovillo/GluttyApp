@@ -1,8 +1,10 @@
 import { LineChart } from "react-native-chart-kit";
 import { Colors } from "../../../constants/colors";
+import { xAxisRotation } from "../../../constants/medicalExams";
+import { GlobalStyles } from "../../../constants/styles";
 
 const STATISTICS = {
-  labels: ["2019", "2020", "2021", "2022", "2023", "2024"],
+  labels: ["2019-08", "2020-11", "2021-06", "2022-10", "2023-01", "2024-04"],
   datasets: [
     {
       data: [20, 45, 38, 80, 99, 43],
@@ -12,16 +14,14 @@ const STATISTICS = {
   ],
 };
 
-export default function GraphicSkeleton({
-  width = 100,
-  height = 100,
-}) {
+export default function GraphicSkeleton({ width = 100, height = 100 }) {
   return (
     <LineChart
       data={STATISTICS}
       width={width}
       height={height}
       bezier
+      verticalLabelRotation={xAxisRotation}
       chartConfig={{
         decimalPlaces: 2,
         color: () => Colors.mJordan,
@@ -40,6 +40,7 @@ export default function GraphicSkeleton({
           display: "none",
         },
       }}
+      style={GlobalStyles.graphicStlye}
     />
   );
 }

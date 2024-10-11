@@ -9,6 +9,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 20,
-    marginTop: 6,
   },
 });

@@ -15,21 +15,21 @@ export default function MedicalStatisticsSkeleton() {
     <View style={styles.container}>
       <View style={styles.firstSection}>
         <SectionContainer style={styles.studies}>
-          <Skeleton width={120} height={20} />
-          <Skeleton width={70} height={20} />
-          <Skeleton width={40} height={40} />
+          <Skeleton width={120} height={18} />
+          <Skeleton width={70} height={18} />
+          <Skeleton width={40} height={38} />
         </SectionContainer>
         <SectionContainer style={styles.tips}>
-          <Skeleton width={90} height={20} />
+          <Skeleton width={90} height={18} />
           <View style={styles.tipsSection}>
-            <Skeleton width={100} height={20} />
-            <Skeleton width={40} height={30} />
+            <Skeleton width={100} height={18} />
+            <Skeleton width={40} height={28} />
           </View>
         </SectionContainer>
       </View>
       <SectionContainer style={styles.statistics}>
-        <Skeleton width={100} height={20} />
-        <Skeleton height={26} />
+        <Skeleton width={100} height={18} />
+        <Skeleton height={24} />
         <GraphicSkeleton width={width} height={height} />
         <View style={styles.statsFreqs}>
           <Skeleton width={50} height={20} />

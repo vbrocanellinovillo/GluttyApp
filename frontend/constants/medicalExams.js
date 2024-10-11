@@ -1,2 +1,4 @@
-export const widthGraphicPercentage = 0.85;
-export const heightGraphicPercentage = 0.2;
+export const widthGraphicPercentage = 0.8;
+export const heightGraphicPercentage = 0.25;
+
+export const xAxisRotation = 50;
