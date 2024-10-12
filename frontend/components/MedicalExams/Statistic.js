@@ -18,8 +18,6 @@ const FREQUENCIES = [
 function getGraphicData(values) {
   if (!values) return;
 
-  console.log(values.values);
-
   const graphic = {
     labels: values.labels,
     datasets: [
@@ -46,7 +44,7 @@ function getGraphicData(values) {
 
 export default function Statistic({ variables, initialData, width, height }) {
   const [data, setData] = useState(initialData && getGraphicData(initialData));
-  const [fistLoading, setFirstLoading] = useState(false);
+  const [fistLoading, setFirstLoading] = useState(true);
 
   const [frequency, setFrecuency] = useState(FREQUENCIES[0].value);
   const [variable, setVariable] = useState(variables && variables[0].value);
@@ -57,10 +55,10 @@ export default function Statistic({ variables, initialData, width, height }) {
   const token = useSelector((state) => state.auth.accessToken);
 
   useEffect(() => {
-    if (!fistLoading) {
-      getStatisticsData();
+    if (fistLoading) {
+      setFirstLoading(false);
     } else {
-      setFirstLoading(true);
+      getStatisticsData();
     }
   }, [variable, frequency]);
 

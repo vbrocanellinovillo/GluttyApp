@@ -45,6 +45,9 @@ export default function GluttyModal({
     ? { name: "close-circle", color: Colors.redError }
     : { name: "checkmark-circle", color: "green" };
 
+    console.log(showCheckbox);
+    
+
   return (
     <Portal>
       <Dialog style={styles.dialog} onDismiss={onClose} visible={visible}>

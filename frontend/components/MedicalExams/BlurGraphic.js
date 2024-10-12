@@ -12,10 +12,7 @@ export default function BlurGraphic({
   return (
     <>
       <GraphicSkeleton width={width} height={height} />
-      <BlurView
-        intensity={intensity}
-        style={[styles.blurred, { height }, style]}
-      >
+      <BlurView intensity={intensity} style={[styles.blurred, style]}>
         {children}
       </BlurView>
     </>
@@ -28,6 +25,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    height: "100%",
     borderRadius: 10,
     overflow: "hidden",
   },

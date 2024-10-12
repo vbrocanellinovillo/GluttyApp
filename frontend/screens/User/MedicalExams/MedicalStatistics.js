@@ -196,7 +196,7 @@ export default function MedicalStatistics({ navigation, route }) {
         closeButtonText="¡Entendido!"
         closeButtonColor={Colors.mJordan}
         isLoading={isAccepting}
-        showCheckBox
+        showCheckbox
         isChecked={isChecked}
         onCheckChange={handleCheckChange}
       />

@@ -32,7 +32,9 @@ const styles = StyleSheet.create({
   },
 
   innerContainer: {
+    justifyContent: "center",
     alignItems: "center",
+    height: "100%",
     gap: 10,
     paddingHorizontal: 24,
     paddingBottom: 10,

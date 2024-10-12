@@ -6,6 +6,8 @@ import MedicalExamsList from "./MedicalExamsList";
 import { getMedicalExamsList } from "../../services/medicalExamService";
 import { useSelector } from "react-redux";
 import MedicalExamsSkeleton from "../UI/Loading/MedicalExamsSkeleton";
+import { Text } from "react-native";
+import GluttyErrorScreen from "../UI/GluttyErrorScreen";
 
 export function MedicalExamsContainer({ isLoading, isError }) {
   const [exams, setExams] = useState(undefined);
