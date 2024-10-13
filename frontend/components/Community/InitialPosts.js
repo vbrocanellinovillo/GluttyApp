@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import { getInitialPosts } from "../../services/communityService";
-import Post from "./Post";
+import PostsSkeleton from "../UI/Loading/PostsSkeleton";
+import PostItem from "./PostItem";
+import ErrorPosts from "./ErrorPosts";
+
+const height = Dimensions.get("window").height * 0.2;
 
 export default function InitialPosts() {
   const token = useSelector((state) => state.auth.accessToken);
 
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [isError, setIsError] = useState(true);
 
   useEffect(() => {
     fetchPosts();
@@ -20,6 +24,7 @@ export default function InitialPosts() {
     try {
       const data = await getInitialPosts(token);
       setPosts(data);
+      //setIsError(false);
     } catch (error) {
       setIsError(true);
     } finally {
@@ -27,13 +32,23 @@ export default function InitialPosts() {
     }
   }
 
+  if (isLoading) {
+    return <PostsSkeleton curved style={styles.list} />;
+  }
+
+  if (!isLoading && isError) {
+    return (
+      <ErrorPosts curved postsStyle={styles.list} style={styles.errorPosts} />
+    );
+  }
+
   return (
-    <View style={styles.container}>
+    <View>
       {posts?.length > 0 && (
         <FlatList
           data={posts}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <Post post={item} curved />}
+          renderItem={({ item }) => <PostItem post={item} curved />}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
         />
@@ -43,11 +58,14 @@ export default function InitialPosts() {
 }
 
 const styles = StyleSheet.create({
-  container: {},
-
   list: {
     padding: 2,
     gap: 16,
     paddingBottom: 750,
+  },
+
+  errorPosts: {
+    height: "30%",
+    paddingBottom: height,
   },
 });

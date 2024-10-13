@@ -8,7 +8,7 @@ import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
 import UserImage from "../UI/UserImage/UserImage";
 
-export default function Post({
+export default function PostItem({
   post,
   containerStyle,
   curved,

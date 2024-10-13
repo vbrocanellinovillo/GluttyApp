@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 38,
+    fontSize: 36,
     fontWeight: "700",
     color: Colors.mJordan,
   },

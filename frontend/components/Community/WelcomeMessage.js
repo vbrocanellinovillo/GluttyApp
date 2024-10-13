@@ -38,12 +38,12 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.locro,
     paddingHorizontal: 28,
-    paddingVertical: 18,
+    paddingVertical: 16,
     borderRadius: 20,
   },
 
   message: {
-    fontSize: 34,
+    fontSize: 32,
     fontWeight: "700",
     color: Colors.mJordan,
   },
@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
     objectFit: "contain",
   },
 });

@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 import AddPostButton from "../../components/Community/AddPostButton";
 import { Divider } from "react-native-paper";
 import { getMyPosts } from "../../services/communityService";
-import Post from "../../components/Community/Post";
+import PostItem from "../../components/Community/PostItem";
+import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
+import ErrorPosts from "../../components/Community/ErrorPosts";
+import NoPosts from "../../components/Community/NoPosts";
+
+const height = Dimensions.get("window").height * 0.5;
 
 export default function MyPosts() {
   const token = useSelector((state) => state.auth.accessToken);
@@ -22,11 +27,37 @@ export default function MyPosts() {
     try {
       const data = await getMyPosts(token);
       setPosts(data);
+      setIsError(false);
     } catch (error) {
       setIsError(true);
     } finally {
       setIsLoading(false);
     }
+  }
+
+  let content = <></>;
+
+  if (isLoading) {
+    content = <PostsSkeleton />;
+  }
+
+  if (isError && !isLoading) {
+    content = <ErrorPosts style={styles.errorPosts} />;
+  }
+
+  if (!isLoading && !isError && posts && posts.length > 0) {
+    content = (
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <PostItem post={item} />}
+        contentInset={{ bottom: 230 }}
+      />
+    );
+  }
+
+  if (!isLoading && !isError && (!posts || posts.length == 0)) {
+    content = <NoPosts />;
   }
 
   return (
@@ -35,12 +66,7 @@ export default function MyPosts() {
         <AddPostButton style={styles.button} />
       </View>
       <Divider />
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <Post post={item} />}
-        contentInset={{ bottom: 230 }}
-      />
+      {content}
     </View>
   );
 }
@@ -55,5 +81,9 @@ const styles = StyleSheet.create({
 
   button: {
     paddingHorizontal: 70,
+  },
+
+  errorPosts: {
+    paddingBottom: height,
   },
 });

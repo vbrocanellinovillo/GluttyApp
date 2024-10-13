@@ -6,7 +6,7 @@ import { sleep } from "../utils/utilFunctions";
 const url = backendUrl + "estudios/";
 
 async function getData() {
-  //await sleep(3000);
+  await sleep(3000);
 
   const posts = [
     {

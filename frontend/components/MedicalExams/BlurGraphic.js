@@ -1,6 +1,5 @@
-import { BlurView } from "expo-blur";
 import GraphicSkeleton from "../UI/Loading/GraphicSkeleton";
-import { StyleSheet } from "react-native";
+import BlurError from "../UI/BlurError";
 
 export default function BlurGraphic({
   width,
@@ -9,24 +8,16 @@ export default function BlurGraphic({
   style,
   intensity = 30,
 }) {
+  const blurBackdrop = <GraphicSkeleton width={width} height={height} />;
+
   return (
-    <>
-      <GraphicSkeleton width={width} height={height} />
-      <BlurView intensity={intensity} style={[styles.blurred, style]}>
-        {children}
-      </BlurView>
-    </>
+    <BlurError
+      backdrop={blurBackdrop}
+      style={style}
+      intensity={intensity}
+    >
+      {children}
+    </BlurError>
   );
 }
 
-const styles = StyleSheet.create({
-  blurred: {
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    height: "100%",
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-});
