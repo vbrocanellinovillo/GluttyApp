@@ -17,7 +17,10 @@ import { uiActions } from "../../context/ui";
 import * as Haptics from "expo-haptics";
 import GluttyErrorScreen from "../UI/GluttyErrorScreen";
 
-export default function ProductsList() {
+export default function ProductsList({
+  initialFilters,
+  isLoadingInitialFilters,
+}) {
   // Filters
   const [searchTerm, setSearchTerm] = useState("");
   const [brands, setBrands] = useState([]);
@@ -88,6 +91,11 @@ export default function ProductsList() {
       refetch();
     }
   }, [page]);
+
+  useEffect(() => {
+    setRecommendedBrands([initialFilters?.marca]);
+    setRecommendedTypes([initialFilters?.tipo]);
+  }, [initialFilters]);
 
   function handleChange(text) {
     setSearchTerm(text);
@@ -232,7 +240,9 @@ export default function ProductsList() {
             placeholder="Buscar productos sin TACC"
             value={searchTerm}
           />
-          {(recommendedBrands.length > 1 || recommendedTypes.length > 1) && (
+          {(recommendedBrands.length > 1 ||
+            recommendedTypes.length > 1 ||
+            (recommendedBrands.length > 0 && recommendedTypes.length > 0)) && (
             <RecommendedFilters
               brands={recommendedBrands}
               types={recommendedTypes}
@@ -241,6 +251,7 @@ export default function ProductsList() {
               isSelectedType={isSelectedType}
               handleSelectBrand={handleSelectBrand}
               handleSelectType={handleSelectType}
+              isLoadingInitialFilters={isLoadingInitialFilters}
             />
           )}
           {content}

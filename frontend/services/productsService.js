@@ -89,3 +89,21 @@ export async function scanProduct(eanCode, token) {
     throw new Error(error.message);
   }
 }
+
+export async function getInitialData(token) {
+  const requestOptions = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const requestUrl = url + "get-initial-data/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}

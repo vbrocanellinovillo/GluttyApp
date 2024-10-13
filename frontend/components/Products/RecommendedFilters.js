@@ -1,8 +1,9 @@
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Chip } from "@rneui/themed";
 import { Colors } from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import FiltersSkeleton from "../UI/Loading/FiltersSkeleton";
 
 export function getRecommendedChips(
   brands,
@@ -12,8 +13,8 @@ export function getRecommendedChips(
   handleSelectBrand,
   handleSelectType
 ) {
-  const existsBrands = brands.length > 1;
-  const existsTypes = types.length > 1;
+  const existsBrands = brands.length > 0;
+  const existsTypes = types.length > 0;
 
   let recommendedChips = [];
   let selectedChips = [];
@@ -53,7 +54,10 @@ export default function RecommendedFilters({
   handleSelectBrand,
   handleSelectType,
   toggleFilters,
+  isLoadingInitialFilters,
 }) {
+  if (isLoadingInitialFilters) return <FiltersSkeleton />;
+
   const { recommendedChips, selectedChips, handleSelects } =
     getRecommendedChips(
       brands,
@@ -68,52 +72,6 @@ export default function RecommendedFilters({
     Haptics.selectionAsync();
     toggleFilters();
   }
-
-  /* let nose = (
-    <View style={styles.filtersContainer}>
-      <Chip
-        title={recommendedChips[0]}
-        type="outlined"
-        containerStyle={
-          selectedChips[0] ? [styles.chip, styles.selected] : styles.chip
-        }
-        titleStyle={styles.chipText}
-        onPress={() => {
-          handleSelects[0](recommendedChips[0]);
-        }}
-        icon={
-          selectedChips[0] && {
-            name: "close",
-            type: "ionicon",
-          }
-        }
-        iconRight
-        iconContainerStyle={styles.chipIcon}
-      />
-      <Chip
-        title={recommendedChips[1]}
-        type="outlined"
-        containerStyle={
-          selectedChips[1] ? [styles.chip, styles.selected] : styles.chip
-        }
-        titleStyle={styles.chipText}
-        onPress={() => {
-          handleSelects[1](recommendedChips[1]);
-        }}
-        icon={
-          selectedChips[1] && {
-            name: "close",
-            type: "ionicon",
-          }
-        }
-        iconRight
-        iconContainerStyle={styles.chipIcon}
-      />
-      <TouchableOpacity onPress={toggleFiltersDialog}>
-        <Ionicons name="filter" size={24} />
-      </TouchableOpacity>
-    </View>
-  ); */
 
   return (
     <View style={styles.filtersContainer}>
@@ -185,7 +143,7 @@ const styles = StyleSheet.create({
 
   chipText: {
     fontSize: 12,
-    color: "black",
+    color: Colors.mJordan,
   },
 
   selected: {
