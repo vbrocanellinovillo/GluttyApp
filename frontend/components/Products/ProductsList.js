@@ -102,6 +102,11 @@ export default function ProductsList({
     setPage(1);
   }
 
+  function clearSearchTerm() {
+    setSearchTerm("");
+    setPage(1);
+  }
+
   function toggleFilters() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setShowFilters(!showFilters);
@@ -235,10 +240,12 @@ export default function ProductsList({
       <DismissKeyboardContainer>
         <View style={styles.container}>
           <Searchbar
-            backgroundColor={Colors.pielcita}
-            onTextChange={handleChange}
+            onChange={handleChange}
+            onClear={clearSearchTerm}
             placeholder="Buscar productos sin TACC"
+            placeholderTextColor={Colors.mJordan}
             value={searchTerm}
+            style={styles.searchbar}
           />
           {(recommendedBrands.length > 1 ||
             recommendedTypes.length > 1 ||
@@ -280,5 +287,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flex: 1,
     paddingBottom: 120,
+  },
+
+  searchbar: {
+    borderRadius: 0,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomWidth: 1.2,
+    borderBottomColor: Colors.mJordan,
+    fontSize: 20,
+    backgroundColor: Colors.pielcita,
+    marginBottom: -10,
   },
 });

@@ -17,9 +17,8 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
     separatedKitchen,
     onlyTakeAway,
   }) {
-    
     // Si el telefono solo es codigo de pais lo borro (maximo 3 caracteres por codigo, ademas del +)
-    if (optionalPhone && optionalPhone.trim().length < 5) {
+    if (optionalPhone && optionalPhone?.trim().length < 5) {
       optionalPhone = "";
     }
 
@@ -32,11 +31,11 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
       <ScrollView contentContainerStyle={styles.container}>
         <Formik
           initialValues={{
-            name: branch?.name,
-            phone: branch?.phone,
-            optionalPhone: branch?.optional_phone,
-            separatedKitchen: branch?.separated_kitchen,
-            onlyTakeAway: branch?.just_takeaway,
+            name: branch?.name || "",
+            phone: branch?.phone || "",
+            optionalPhone: branch?.optional_phone || "",
+            separatedKitchen: branch?.separated_kitchen || "",
+            onlyTakeAway: branch?.just_takeaway || "",
           }}
           validate={({
             name,
@@ -47,12 +46,12 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
           }) => {
             const errors = {};
 
-            if (name.trim() === "") {
+            if (name?.trim() === "") {
               errors.name = "Nombre requerido";
             }
 
             // Ver de cuantos números tiene que ser el telefono
-            if (phone.trim().length < 7 || phone.trim().length > 15) {
+            if (phone?.trim().length < 7 || phone.trim().length > 15) {
               errors.phone = "Se requiere al menos un número de teléfono";
             }
 

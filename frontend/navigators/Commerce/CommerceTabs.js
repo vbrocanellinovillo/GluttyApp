@@ -7,6 +7,7 @@ import Menu from "../../screens/Commerce/Menu/Menu";
 import BranchesStack from "./BranchesStack";
 import Profile from "../../screens/Profile/Profile";
 import PrivacityAndSecurity from "../../screens/Profile/PrivacityAndSecurity";
+import CommunityStack from "../Community/CommunityStack";
 
 export default function CommerceTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -63,13 +64,13 @@ export default function CommerceTabs() {
       bgColor={Colors.humita}
       initialRouteName="Home"
       renderCircle={({ selectedTab, navigate }) => {
-        const isScanner = selectedTab === "Escaner";
+        const isCommunity = selectedTab === "CommunityStack";
         return (
           <View style={styles.btnCircleUp}>
-            <TouchableOpacity onPress={() => navigate("Scanner")}>
+            <TouchableOpacity onPress={() => navigate("CommunityStack")}>
               <MaterialIcons
                 name="groups"
-                color={isScanner ? Colors.mJordan : Colors.locro}
+                color={isCommunity ? Colors.mJordan : Colors.locro}
                 size={25}
               />
             </TouchableOpacity>
@@ -85,7 +86,7 @@ export default function CommerceTabs() {
         position="LEFT"
         options={{ title: "Mis Sucursales" }}
       />
-      <CurvedBottomBarExpo.Screen name="Escaner" position="CIRCLE" />
+      <CurvedBottomBarExpo.Screen name="Community" position="CIRCLE" />
       <CurvedBottomBarExpo.Screen
         name="Menu"
         position="RIGHT"
@@ -100,6 +101,11 @@ export default function CommerceTabs() {
         name="PrivacityAndSecurity"
         component={PrivacityAndSecurity}
         options={{ title: "Privacidad y Seguridad" }}
+      />
+      <CurvedBottomBarExpo.Screen
+        name="CommunityStack"
+        component={CommunityStack}
+        options={{ headerShown: false }}
       />
     </CurvedBottomBarExpo.Navigator>
   );

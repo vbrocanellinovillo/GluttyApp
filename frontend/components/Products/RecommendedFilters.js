@@ -126,7 +126,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingRight: 14,
-    paddingTop: 12,
     paddingBottom: 22,
     gap: 24,
   },

@@ -6,6 +6,7 @@ import * as Haptics from "expo-haptics";
 import MapChipsContainer from "./MapChipsContainer";
 import SearchResultsList from "./SearchResultsList";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
+import Searchbar from "../UI/Controls/Searchbar";
 
 export default function MapSearch({
   onSearch,
@@ -81,20 +82,14 @@ export default function MapSearch({
   return (
     <DismissKeyboardContainer>
       <View style={styles.container}>
-        <Input
-          inputContainerStyle={styles.search}
-          rightIcon={{
-            type: "ionicons",
-            name: `${icon}`,
-            color: Colors.mJordan,
-            size: 30,
-            onPress: clearSearch,
-          }}
+        <Searchbar
           value={searchTerm}
-          onChangeText={handleChangeText}
           placeholder="Busca tus lugares favoritos!"
+          onChange={handleChangeText}
           onFocus={focusSearch}
           onBlur={blurSearch}
+          onClear={clearSearch}
+          style={styles.search}
         />
         <MapChipsContainer
           separatedKitchen={separatedKitchen}
@@ -127,15 +122,10 @@ const styles = StyleSheet.create({
   },
 
   search: {
-    backgroundColor: "white",
-    paddingHorizontal: 20,
-    paddingVertical: 5,
-    borderRadius: 10,
+    marginHorizontal: -10,
     shadowColor: "#444",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.7,
     shadowRadius: 10,
-    fontSize: 26,
-    marginHorizontal: -10,
   },
 });
