@@ -13,7 +13,7 @@ export default function InitialPosts() {
 
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -24,7 +24,7 @@ export default function InitialPosts() {
     try {
       const data = await getInitialPosts(token);
       setPosts(data);
-      //setIsError(false);
+      setIsError(false);
     } catch (error) {
       setIsError(true);
     } finally {
