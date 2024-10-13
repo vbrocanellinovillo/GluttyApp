@@ -70,6 +70,7 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
         onPress={handleMapPress}
         userInterfaceStyle="light"
         ref={mapRef}
+        showsUserLocation
       >
         {branches &&
           branches.map((branch) => (
