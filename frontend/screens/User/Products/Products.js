@@ -19,6 +19,7 @@ export default function Products() {
       const filters = await getInitialData(token);
       setInitialFilters(filters);
     } catch (error) {
+      
     } finally {
       setIsLoading(false);
     }

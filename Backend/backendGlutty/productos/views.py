@@ -336,22 +336,34 @@ def find_by_barcode(request):
 def get_initial_data(request):
     try:
         # Obtener todas las marcas y tipos de productos
-        marcas = MarcaProducto.objects.all()
-        tipos = TipoProducto.objects.all()
+        marcas = list(MarcaProducto.objects.all())
+        tipos = list(TipoProducto.objects.all())
         
         # Verificar que haya datos disponibles en ambas tablas
-        if not marcas.exists() or not tipos.exists():
+        if not marcas or not tipos:
             return Response({"error": "No se encontraron marcas o tipos de productos."}, status=404)
         
         # Elegir un valor aleatorio de cada tabla
         marca_random = random.choice(marcas)
         tipo_random = random.choice(tipos)
         
+        marcas.remove(marca_random)
+        tipos.remove(tipo_random)
+        
+        marcas_array = random.sample(marcas, min(5, len(marcas)))
+        tipos_array = random.sample(tipos, min(5, len(tipos)))
+        
+        # Preparar los arrays con nombres e IDs de marca y tipo
+        marcas_datos = [{"id": marca.id, "nombre": marca.nombre} for marca in marcas_array]
+        tipos_datos = [{"id": tipo.id, "nombre": tipo.nombre} for tipo in tipos_array]
+        
         # Devolver los nombres de marca y tipo seleccionados
         connection.close()
         return Response({
             "marca": marca_random.nombre,
-            "tipo": tipo_random.nombre
+            "tipo": tipo_random.nombre,
+            "marcas": marcas_datos,
+            "tipos": tipos_datos
         }, status=200)
     
     except Exception as e:

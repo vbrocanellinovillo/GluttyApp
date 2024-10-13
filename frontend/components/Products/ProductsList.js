@@ -169,8 +169,8 @@ export default function ProductsList({
 
   let content = <></>;
 
-  let initialBrands = [];
-  let initialTypes = [];
+  let initialBrands = initialFilters?.marcas || [];
+  let initialTypes = initialFilters?.tipos || [];
 
   if (!isLoading && searchTerm.trim() === "") content = <NoProductsGlutty />;
 
