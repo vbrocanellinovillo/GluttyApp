@@ -32,10 +32,7 @@ export default function ViewMedicalExam({ navigation, route }) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const id = route.params.id;
-  console.log(id);
-
   const token = useSelector((state) => state.auth.accessToken);
-  console.log(token);
 
   useFocusEffect(
     useCallback(() => {
@@ -43,7 +40,6 @@ export default function ViewMedicalExam({ navigation, route }) {
         try {
           setIsLoading(true);
           const medicExam = await getMedicalExamById(id, token);
-          console.log("Medico", medicExam);
           setMedicalExam(medicExam);
         } catch (error) {
           setIsError(true);
@@ -57,50 +53,44 @@ export default function ViewMedicalExam({ navigation, route }) {
       }
     }, [id, token])
   );
-  //const pdf = medicalExam.pdf
+
+  // Función para manejar la eliminación
   async function handleDelete() {
-    // Eliminar el estudio
-    console.log("Eliminar Estudio");
-    setShowEliminarModal(true);
+    setShowEliminarModal(true); // Mostrar modal de confirmación antes de eliminar
   }
 
   const handleEdit = () => {
-    // Aquí iría tu lógica para editar el estudio
-    console.log("Editar Estudio");
-    console.log(medicalExam);
+    // Lógica para editar el estudio
     navigation.navigate("EditBloodTestStack", {
       screen: "EditBloodTest",
-      params: { medicalExam, id, pdf },
+      params: { medicalExam, id },
     });
   };
 
   function closeModalHandler() {
     setShowModal(false);
-    navigation.navigate("MedicalStatistics");
+    // Navegación una vez que el modal se cierre
+    navigation.navigate("MedicalStatistics", { shouldRefresh: true });
   }
 
   function closeModalDeleteHandler() {
     setShowEliminarModal(false);
-    navigation.navigate("MedicalStatistics");
   }
 
+  // Confirmación de la eliminación
   async function handleConfirmDelete() {
     try {
       setIsDeleting(true);
-      console.log("Eliminando estudio");
-      console.log("whastt: ", id);
       const response = await deleteMedicalExam(id, token);
-      console.log("La respuestaaa:");
-      console.log(response);
-      setMessage(response.detail);
-      setShowModal(true);
-      navigation.navigate("MedicalStatistics", { shouldRefresh: true });
+      setMessage("Se eliminó el análisis.");  // Mensaje de confirmación de eliminación
+      setShowEliminarModal(false);  // Cerrar modal de confirmación de eliminación
+      setShowModal(true);  // Mostrar modal de que se eliminó el análisis
     } catch (error) {
       setIsError(true);
-      setMessage(error.message);
+      setMessage(error.message);  // Si hay error, mostrar el mensaje de error
       setShowModal(true);
     } finally {
-      setIsDeleting(false);
+      setIsDeleting(false);  // Detener la animación de carga
     }
   }
 
@@ -131,14 +121,11 @@ export default function ViewMedicalExam({ navigation, route }) {
 
       {isloading && <ViewMedicalExamSkeleton />}
 
-      {/* Verifica si ya hay datos cargados antes de renderizar el contenido */}
       {medicalExam && !isloading && (
         <>
           {/* ENCABEZADO */}
-
           <View style={styles.container}>
             <View style={styles.options}>
-              {/* Botón de tres puntos */}
               <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
@@ -147,7 +134,6 @@ export default function ViewMedicalExam({ navigation, route }) {
                 />
               </TouchableOpacity>
 
-              {/* Menú contextual */}
               {showMenu && (
                 <ContextualMenu onEdit={handleEdit} onDelete={handleDelete} />
               )}
@@ -257,7 +243,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   infoBox: {
-    marginLeft: 20, // Espacio entre la fecha y la info
+    marginLeft: 20,
     flex: 3,
   },
   examTitle: {
@@ -271,7 +257,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     fontSize: 15,
-    color: Colors.darkGray, // Elige un color de texto adecuado
+    color: Colors.darkGray,
   },
   scrollview: {
     paddingBottom: 200,
