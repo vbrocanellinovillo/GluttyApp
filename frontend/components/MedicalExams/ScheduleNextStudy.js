@@ -223,8 +223,7 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
       {isBefore && <BeforeMessage/>}
       {/* <DateTimePicker isVisible={true} display="spinner" onConfirm={() => undefined} onCancel={() => undefined}/> */}
       <Button backgroundColor={Colors.locro} onPress={handlePress} isLoading={isLoading}>
-      {time ? "Cancelar recordatorio" : "Agendar"}
-      
+          Agendar
       </Button>
     </DialogContainer>
   );
