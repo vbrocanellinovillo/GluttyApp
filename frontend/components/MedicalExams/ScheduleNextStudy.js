@@ -84,12 +84,14 @@ const years = Array.from({ length: 80 }, (_, index) => ({
 }));
 
 export default function ScheduleNextStudy({ onDismiss, time, getData }) {
-  const [value, setValue] = useState(time || 2);
+  const [value, setValue] = useState( 2);
   // const [day, setValueDay] = useState(time || 2);
   // const [month, setValueMonth] = useState(time || 2);
-  const [day, setValueDay] = useState(time || 1);
-  const [month, setValueMonth] = useState(time || 1);
-  const [year, setValueYear] = useState(time || currentYear);
+
+  const [day, setValueDay] = useState(1);
+  const [month, setValueMonth] = useState(1);
+  const [year, setValueYear] = useState(currentYear);
+  console.log(time);
 
   const [isError, setIsError] = useState(false);
   const[isBefore, setIsBefore] = useState(false);
@@ -221,7 +223,8 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
       {isBefore && <BeforeMessage/>}
       {/* <DateTimePicker isVisible={true} display="spinner" onConfirm={() => undefined} onCancel={() => undefined}/> */}
       <Button backgroundColor={Colors.locro} onPress={handlePress} isLoading={isLoading}>
-        {time ? "Cancelar recordatorio" : "Agendar"}
+      {time ? "Cancelar recordatorio" : "Agendar"}
+      
       </Button>
     </DialogContainer>
   );
