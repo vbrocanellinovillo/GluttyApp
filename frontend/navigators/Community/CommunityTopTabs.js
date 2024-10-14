@@ -4,6 +4,7 @@ import MyPosts from "../../screens/Community/MyPosts";
 import Favourites from "../../screens/Community/Favourites";
 import { Colors } from "../../constants/colors";
 import { StyleSheet } from "react-native";
+import FeedStack from "./FeedStack";
 
 const TopTabs = createMaterialTopTabNavigator();
 
@@ -16,8 +17,8 @@ export default function CommunityTopTabs() {
       }}
     >
       <TopTabs.Screen
-        name="Feed"
-        component={Feed}
+        name="FeedStack"
+        component={FeedStack}
         options={{ title: "Explorar" }}
       />
       <TopTabs.Screen

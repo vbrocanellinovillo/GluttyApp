@@ -233,3 +233,29 @@ export async function getMyPosts(token) {
     return posts;
   } catch (error) {}
 }
+
+export async function getFeed(token) {
+  try {
+    const data = await getData();
+
+    const posts = [];
+
+    for (let dataPoint of data) {
+      const newPost = new Post(
+        dataPoint.id,
+        dataPoint.name,
+        dataPoint.username,
+        dataPoint.image,
+        dataPoint.content,
+        dataPoint.tags,
+        dataPoint.date,
+        dataPoint.likes,
+        dataPoint.comments
+      );
+
+      posts.push(newPost);
+    }
+
+    return posts;
+  } catch (error) {}
+}

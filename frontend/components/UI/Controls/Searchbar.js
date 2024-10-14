@@ -1,9 +1,11 @@
 import { Input } from "@rneui/themed";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Colors } from "../../../constants/colors";
+import Animated from "react-native-reanimated";
+import { useEffect, useRef } from "react";
 
 export default function Searchbar({
-  value,
+  value = "",
   placeholder = "Search",
   style,
   onClear = () => undefined,
@@ -14,10 +16,24 @@ export default function Searchbar({
   searchIcon = "search",
   typeIcon = "ionicons",
   iconStyle,
-  placeholderTextColor = "#888"
+  placeholderTextColor = "#888",
+  containerStyle,
+  sharedTransitionTag,
+  sharedTransitionStyle,
+  unfocus,
+  focused,
+  disableKeyboard,
 }) {
   const hasSearchTerm = value.trim().length !== 0;
   const icon = hasSearchTerm ? closeIcon : searchIcon;
+
+  const inputRef = useRef();
+
+  useEffect(() => {
+    if (focused) {
+      inputRef?.current.focus();
+    }
+  }, [focused]);
 
   function handleChange(text) {
     onChange && onChange(text);
@@ -29,26 +45,35 @@ export default function Searchbar({
 
   function handleFocus() {
     onFocus && onFocus();
+    unfocus && inputRef?.current.blur();
   }
 
   return (
-    <Input
-      inputContainerStyle={[styles.search, style]}
-      rightIcon={{
-        type: typeIcon,
-        name: `${icon}`,
-        color: Colors.mJordan,
-        size: 30,
-        onPress: onClear,
-        style: iconStyle,
-      }}
-      value={value}
-      onChangeText={handleChange}
-      placeholder={placeholder}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      placeholderTextColor={placeholderTextColor}
-    />
+    <Animated.View
+      style={containerStyle}
+      sharedTransitionTag={sharedTransitionTag}
+      sharedTransitionStyle={sharedTransitionStyle}
+    >
+      <Input
+        inputContainerStyle={[styles.search, style]}
+        rightIcon={{
+          type: typeIcon,
+          name: `${icon}`,
+          color: Colors.mJordan,
+          size: 30,
+          onPress: onClear,
+          style: iconStyle,
+        }}
+        value={value}
+        onChangeText={handleChange}
+        placeholder={placeholder}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        placeholderTextColor={placeholderTextColor}
+        ref={inputRef}
+        showSoftInputOnFocus={!disableKeyboard}
+      />
+    </Animated.View>
   );
 }
 
@@ -59,5 +84,6 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 10,
     fontSize: 26,
+    borderBottomWidth: 0,
   },
 });

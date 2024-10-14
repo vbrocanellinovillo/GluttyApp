@@ -1,9 +1,9 @@
-import { Text, View } from "react-native";
+import GluttyErrorScreen from "../../components/UI/GluttyErrorScreen";
 
 export default function Favourites() {
   return (
-    <View>
-      <Text>favourites</Text>
-    </View>
+    <GluttyErrorScreen height={220} width={220}>
+      En construcción
+    </GluttyErrorScreen>
   );
 }
