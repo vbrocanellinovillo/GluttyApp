@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
     fontSize: 38,
     fontWeight: "700",
     color: Colors.mJordan,
-    transform: [{ scaleY: 1.1 }],
   },
 
   title: {

@@ -5,9 +5,10 @@ import InfoMedicalContainer from "../../../components/MedicalExams/InfoMedicalCo
 import { uiActions } from "../../../context/ui";
 import ScreenCenter from "../../../components/UI/ScreenCenter";
 import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
-import { Text } from "react-native";
+import { Image, Text, View } from "react-native";
 import { MedicalExamsContainer } from "../../../components/MedicalExams/MedicalExamsContainer";
-
+import { doctorGlutty, gluttyMarker } from "../../../constants/glutty";
+import InfoMedical from "../../../components/MedicalExams/InfoMedical";
 
 export default function MedicalExams() {
   const token = useSelector((state) => state.auth.accessToken);
@@ -49,19 +50,12 @@ export default function MedicalExams() {
 
   return (
     <>
-      <MedicalExamsContainer 
-        isLoading={isloading}
-        isError={isError}
-      />
+      <MedicalExamsContainer isLoading={isloading} isError={isError} />
       <InfoMedicalContainer
         visible={showMedicalInfo}
         onDismiss={showInfoMedicalExams}
       >
-        <ScreenCenter>
-          <TextCommonsMedium>
-            Información sobre estudios medicos
-          </TextCommonsMedium>
-        </ScreenCenter>
+        <InfoMedical />
       </InfoMedicalContainer>
     </>
   );
