@@ -153,9 +153,13 @@ export async function updateMedicalExam(
   console.log(formdata);
   try {
     const response = await httpRequest(requestUrl, requestOptions);
+    console.log("RESPUESTAAA: ", response)
     return response;
+
   } catch (error) {
+    console.log(error.message)
     throw new Error(error.message);
+
   }
 }
 

@@ -92,7 +92,7 @@ export default function EditBloodTest({ navigation, route }) {
       await updateMedicalExam(
         id,
         token,
-        date,
+        study.date,
         laboratory,
         igA,
         igG,
