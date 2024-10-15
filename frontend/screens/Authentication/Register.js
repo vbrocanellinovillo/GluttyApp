@@ -26,30 +26,19 @@ export default function Register() {
     try {
       setisloading(true);
       const registerResponse = await register(values, isCommerce);
-      console.log(registerResponse);
-      username = values.username;
-      email = values.email;
-      navigation.navigate("EmailVerification", { username, email });
 
-      //const loginResponse = await login(values.username, values.password);
-      //console.log(loginResponse);
+      const username = values.username;
+      const email = values.email;
+      const password = values.password;
 
-      // dispatch(
-      //   authActions.login({
-      //     user: loginResponse.user,
-      //     accessToken: loginResponse.access_token,
-      //     refreshToken: loginResponse.refresh_token,
-      //     image: loginResponse.profile_picture,
-      //     isCommerce: loginResponse.is_commerce,
-      //   })
-      //);
+      navigation.navigate("EmailVerification", { username, email, password });
     } catch (error) {
       serError(error.message);
       setIsError(true);
       console.log(error);
     } finally {
-       setisloading(false);
-     }
+      setisloading(false);
+    }
   }
 
   return (
@@ -57,7 +46,7 @@ export default function Register() {
       source={{
         uri: "https://res.cloudinary.com/dksmkvi49/image/upload/v1724723859/background_djisqg.webp",
       }}
-      style={{flex: 1}}
+      style={{ flex: 1 }}
     >
       <LoadingGlutty visible={isloading} color={Colors.vainilla} />
       <GluttyModal

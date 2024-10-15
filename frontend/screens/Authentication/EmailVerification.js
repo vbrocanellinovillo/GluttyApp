@@ -1,36 +1,61 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-} from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { View, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import { useRoute } from "@react-navigation/native";
 import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../../components/UI/FontsTexts/TextCommonsRegular";
 import { Colors } from "../../constants/colors";
-import { sendVerificationMail, verifyCode } from "../../services/userService";
+import {
+  login,
+  sendVerificationMail,
+  verifyCode,
+} from "../../services/userService";
 import GluttyModal from "../../components/UI/GluttyModal";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../context/auth";
+import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
+import * as Haptics from "expo-haptics";
+import { ActivityIndicator } from "react-native-paper";
+import DismissKeyboardContainer from "../../components/UI/Forms/DismissKeyboadContainer";
 
-export function EmailVerification() {
+export function EmailVerification({ navigation }) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [timeLeft, setTimeLeft] = useState(300);
   const [emailSent, setEmailSent] = useState(false); // Estado para controlar si el correo ya fue enviado
   const route = useRoute();
-  const { username, email } = route.params;
+  const { username, email, password } = route.params;
   const inputsRef = useRef([]); // Referencia para cada input
-  const navigation = useNavigation();
+
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+
+  const [loginResponse, setLoginResponse] = useState();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!emailSent) {
-      sendVerificationMail(username); // Enviar el correo de verificación
       setEmailSent(true); // Evitar que se vuelva a enviar
+      sendMail();
     }
   }, [emailSent, email]);
+
+  const sendMail = async () => {
+    try {
+      sendVerificationMail(username); // Enviar el correo de verificación
+    } catch (error) {
+      setIsError(true);
+      setMessage(
+        "Ocurrio un error. Por favor intente ingresar el codigo más tarde"
+      );
+      setShowModal(true);
+      navigation.navigate("Login");
+    }
+  };
 
   // Temporizador
   useEffect(() => {
@@ -40,6 +65,19 @@ export function EmailVerification() {
 
     return () => clearInterval(timer); // Limpia el temporizador cuando el componente se desmonte
   }, []);
+
+  const closeConfirmationModalHandler = () => {
+    setShowConfirmationModal(false);
+    dispatch(
+      authActions.login({
+        user: loginResponse.user,
+        accessToken: loginResponse.access_token,
+        refreshToken: loginResponse.refresh_token,
+        image: loginResponse.profile_picture,
+        isCommerce: loginResponse.is_commerce,
+      })
+    );
+  };
 
   const closeModalHandler = () => {
     setShowModal(false);
@@ -68,78 +106,117 @@ export function EmailVerification() {
     }
   };
 
-  const resendCode = () => {
-    setMessage("Se ha enviado el codigo a: " + email);
-    setShowModal(true);
-    sendVerificationMail(username); // Sólo reenviar si el temporizador ha terminado
-    setTimeLeft(300); // Reiniciar el temporizador a 5 minutos
+  const resendCode = async () => {
+    Haptics.selectionAsync();
+    setIsResending(true);
+    try {
+      await sendVerificationMail(username); // Sólo reenviar si el temporizador ha terminado
+      setTimeLeft(300); // Reiniciar el temporizador a 5 minutos
+      setIsError(false);
+      setMessage("Se ha enviado el codigo a: " + email);
+      setShowModal(true);
+    } catch (error) {
+      setIsError(true);
+      setMessage("Ocurrio un error. Por favor intente nuevamente");
+      setShowModal(true);
+    } finally {
+      setIsResending(false);
+    }
   };
 
-  const verifyCodeIngresado = () => {
-    console.log("Código ingresado:", code.join(""));
-
-    const verificar = verifyCode(username, code.join(""));
-    console.log(verificar);
-    setMessage("Ha ingresado correctamente el código de verificación");
-    setShowModal(true);
-    navigation.navigate("Login");
+  const verifyCodeIngresado = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setIsLoading(true);
+    try {
+      await verifyCode(username, code.join(""));
+      const response = await login(username, password);
+      setLoginResponse(response);
+      setMessage("Ha ingresado correctamente el código de verificación");
+      setShowConfirmationModal(true);
+      setIsError(false);
+    } catch (error) {
+      setIsError(true);
+      setMessage("Ocurrio un error con el codigo ingresado");
+      setShowModal(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <>
-      <View style={styles.container}>
-        <TextCommonsMedium style={styles.title}>
-          Verificación de Email
-        </TextCommonsMedium>
-        <TextCommonsRegular style={styles.subtitle}>
-          Se ha enviado un email al correo electrónico ingresado:{" "}
-          <TextCommonsRegular style={styles.email}>{email}</TextCommonsRegular>
-        </TextCommonsRegular>
-
-        {/* Input de Código */}
-        <View style={styles.codeInputContainer}>
-          {code.map((digit, index) => (
-            <TextInput
-              key={index}
-              ref={(el) => (inputsRef.current[index] = el)} // Referencia a cada input
-              style={styles.codeInput}
-              keyboardType="number-pad"
-              maxLength={1}
-              value={digit}
-              onChangeText={(value) => handleCodeInput(index, value)}
-            />
-          ))}
-        </View>
-
-        {/* Mostrar tiempo restante */}
-        <TextCommonsRegular style={styles.timerText}>
-          Expira en: {formatTime(timeLeft)}
-        </TextCommonsRegular>
-
-        {/* Reenviar Código */}
-        <TouchableOpacity onPress={resendCode}>
-          <Text style={styles.resendText}>
-            ¿No recibiste el código o expiró?{" "}
-            <Text style={styles.resendLink}>Reenviar</Text>
-          </Text>
-        </TouchableOpacity>
-
-        {/* Botón de Verificar */}
-        <TouchableOpacity
-          style={styles.verifyButton}
-          onPress={verifyCodeIngresado}
-        >
-          <TextCommonsRegular style={styles.verifyButtonText}>
-            Verificar cuenta
+      <DismissKeyboardContainer>
+        <View style={styles.container}>
+          <TextCommonsMedium style={styles.title}>
+            Verificación de Email
+          </TextCommonsMedium>
+          <TextCommonsRegular style={styles.subtitle}>
+            Se ha enviado un email al correo electrónico ingresado:{" "}
+            <TextCommonsRegular style={styles.email}>
+              {email}
+            </TextCommonsRegular>
           </TextCommonsRegular>
-        </TouchableOpacity>
-      </View>
+
+          {/* Input de Código */}
+          <View style={styles.codeInputContainer}>
+            {code.map((digit, index) => (
+              <TextInput
+                key={index}
+                ref={(el) => (inputsRef.current[index] = el)} // Referencia a cada input
+                style={styles.codeInput}
+                keyboardType="number-pad"
+                maxLength={1}
+                value={digit}
+                onChangeText={(value) => handleCodeInput(index, value)}
+              />
+            ))}
+          </View>
+
+          {/* Mostrar tiempo restante */}
+          <TextCommonsRegular style={styles.timerText}>
+            Expira en: {formatTime(timeLeft)}
+          </TextCommonsRegular>
+
+          {/* Reenviar Código */}
+          <View style={styles.resendContainer}>
+            <TextCommonsMedium style={styles.resendText}>
+              ¿No recibiste el código o expiró
+            </TextCommonsMedium>
+            <TouchableOpacity onPress={resendCode}>
+              <TextCommonsRegular style={styles.resendLink}>
+                {isResending ? (
+                  <ActivityIndicator size="small" color={Colors.oceanBlue} />
+                ) : (
+                  "Reenviar"
+                )}
+              </TextCommonsRegular>
+            </TouchableOpacity>
+          </View>
+
+          {/* Botón de Verificar */}
+          <TouchableOpacity
+            style={styles.verifyButton}
+            onPress={verifyCodeIngresado}
+          >
+            <TextCommonsRegular style={styles.verifyButtonText}>
+              Verificar cuenta
+            </TextCommonsRegular>
+          </TouchableOpacity>
+        </View>
+      </DismissKeyboardContainer>
       <GluttyModal
-        message={message}
-        visible={showModal}
+        message="Codigo correcto ingresado. Puede cerrar para continuar en la aplicación!"
+        visible={showConfirmationModal}
         isError={false}
+        onClose={closeConfirmationModalHandler}
+      />
+      <GluttyModal
+        visible={showModal}
+        isError={isError}
+        message={message}
         onClose={closeModalHandler}
       />
+      <LoadingGlutty visible={isLoading} />
     </>
   );
 }
@@ -150,12 +227,10 @@ const styles = StyleSheet.create({
     paddingTop: 75,
     padding: 20,
     backgroundColor: Colors.vainilla,
-    //justifyContent: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    //textAlign: 'center',
     marginBottom: 20,
   },
   subtitle: {
@@ -186,6 +261,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.mJordan, // Cambia a tu color primario
   },
+
+  resendContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+  },
+
   resendText: {
     textAlign: "center",
     fontSize: 16,
@@ -202,7 +284,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   verifyButtonText: {
-    color: "#fff",
+    color: Colors.whiteJordan,
     fontSize: 18,
     fontWeight: "bold",
   },

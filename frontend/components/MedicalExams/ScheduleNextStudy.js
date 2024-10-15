@@ -10,6 +10,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import { postDateNextExam } from "../../services/medicalExamService";
 import { useSelector } from "react-redux";
 import { err } from "react-native-svg";
+import { Ionicons } from '@expo/vector-icons';
 
 const days = [
   { value: 1, label: "1" }, { value: 2, label: "2" }, { value: 3, label: "3" }, 
@@ -83,12 +84,14 @@ const years = Array.from({ length: 80 }, (_, index) => ({
 }));
 
 export default function ScheduleNextStudy({ onDismiss, time, getData }) {
-  const [value, setValue] = useState(time || 2);
+  const [value, setValue] = useState( 2);
   // const [day, setValueDay] = useState(time || 2);
   // const [month, setValueMonth] = useState(time || 2);
-  const [day, setValueDay] = useState(time || 1);
-  const [month, setValueMonth] = useState(time || 1);
-  const [year, setValueYear] = useState(time || currentYear);
+
+  const [day, setValueDay] = useState(1);
+  const [month, setValueMonth] = useState(1);
+  const [year, setValueYear] = useState(currentYear);
+  console.log(time);
 
   const [isError, setIsError] = useState(false);
   const[isBefore, setIsBefore] = useState(false);
@@ -96,6 +99,23 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
 
   const token = useSelector(state=>state.auth.accessToken);
   const username = useSelector(state=>state.auth.userData.username);
+
+  const ErrorMessage = () => {
+    return (
+      <View style={styles.errorContainer}>
+        <Ionicons name="warning" size={16} color="red" style={styles.icon} />
+        <Text style={styles.errorText}>Fecha inválida</Text>
+      </View>
+    );
+  };
+  const BeforeMessage = () => {
+    return (
+      <View style={styles.errorContainer}>
+        <Ionicons name="warning" size={16} color="red" style={styles.icon} />
+        <Text style={styles.errorText}>La fecha debe ser mayor a la actual</Text>
+      </View>
+    );
+  };
 
   // function handleValueChange(item) {
   //   Haptics.selectionAsync();
@@ -123,33 +143,38 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
     
     if (!isValidDate(selectedDate)) {
       console.log("Fecha inválida");
+      setIsError(true);
+      setIsBefore(false);
       return;
     }
 
     
     const currentDate = new Date();
 
-    //se guarda mal xd cuando lo pasa a fecha
-    const selectedDateObj = new Date(year, month - 1, day); 
+    const selectedDateObj = new Date(Date.UTC(year, month-1, day)); 
+    currentDate.setHours(0, 0, 0, 0); // Establecemos la hora en 00:00:00
+  
 
 
-    if (selectedDateObj <= currentDate) {
+    if (selectedDateObj < currentDate) {
       console.log(selectedDateObj);
       console.log(selectedDate);
       console.log("La fecha seleccionada debe ser mayor a la actual.");
-      setIsError(true);
+      setIsBefore(true);
+      setIsError(false);
       return;
     }
 
     console.log("Fecha válida y mayor a la actual:", selectedDate);
     setIsError(false);
+    setIsBefore(false);
     setIsLoading(true);
     try{
       await postDateNextExam(token, dateBackend, username)
       console.log("wtft");
       getData();
       onDismiss();
-      
+
     }catch (error) {
       console.log("error choto");
       console.log(error)
@@ -194,10 +219,11 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
         /> 
         
       </View>
-      {isError && <Text>Fecha invalida xd</Text>}
+      {isError && <ErrorMessage />}
+      {isBefore && <BeforeMessage/>}
       {/* <DateTimePicker isVisible={true} display="spinner" onConfirm={() => undefined} onCancel={() => undefined}/> */}
       <Button backgroundColor={Colors.locro} onPress={handlePress} isLoading={isLoading}>
-        {time ? "Cancelar recordatorio" : "Agendar"}
+          Agendar
       </Button>
     </DialogContainer>
   );
@@ -228,5 +254,23 @@ const styles = StyleSheet.create({
 
   wheelPicker: {
     marginTop: -15,
+  },
+
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: '#ffe6e6',
+    borderRadius: 4,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginLeft: 4,
+  },
+  icon: {
+    marginRight: 4,
   },
 });
