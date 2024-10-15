@@ -122,14 +122,15 @@ def register(request):
                     raise ValidationError(f"Error al crear el comercio: {str(e)}")
             else:
                 try:
-                    celiac = Celiac.objects.create(
-                        user=usuario,
-                        first_name=request.data.get("first_name"),
-                        last_name=request.data.get("last_name"),
-                        sex=request.data.get("sex"),
-                        date_birth=request.data.get("date_birth")
-                    )
-                    celiac.save()
+                    celiac_serializer = CeliacSerializer(data=request.data)
+                    if celiac_serializer.is_valid():
+                        # Guardar el usuario
+                        celiac_serializer.save(user=usuario)
+                    else:
+                        print(celiac_serializer.errors)
+                        # Si hay errores, lanzar excepción para que la transacción se revierta
+                        raise ValidationError(celiac_serializer.errors)
+                        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     raise ValidationError(f"Error al crear el perfil de celíaco: {str(e)}")
 
@@ -140,6 +141,9 @@ def register(request):
         return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     except ValidationError as e:
+        # Si ocurre un error de validación, revertimos todo el proceso
+        if usuario:  # Solo cerramos la conexión si el usuario fue creado
+            usuario.delete()  # Eliminamos el usuario si hubo un error en el celíaco
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

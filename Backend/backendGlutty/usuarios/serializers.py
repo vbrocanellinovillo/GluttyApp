@@ -45,3 +45,10 @@ class CeliacSerializer(serializers.ModelSerializer):
     class Meta:
         model = Celiac
         fields = ['first_name', 'last_name', 'sex', 'date_birth']
+    
+    def validate_date_birth(self, value):
+        # Verificar que la fecha de nacimiento sea anterior a la fecha actual
+        if value > date.today():
+            raise serializers.ValidationError("La fecha del análisis debe ser previa a la fecha actual.")
+        return value
+        
