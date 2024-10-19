@@ -7,8 +7,12 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     body = models.CharField(max_length=500, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)  # Fecha en que se registra en el sistema
-    likes = models.IntegerField(blank=False, default=0)
-    
+    likes_number = models.IntegerField(blank=False, default=0)
+    comments_number = models.IntegerField(blank=False, default=0)
+
+    class Meta:
+        ordering = ["-created_at"]
+
     def UploadPictures(self, images):
         if images:
                 try:
@@ -41,3 +45,10 @@ class Label(models.Model):
 class LabelxPost(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="labels")
     label = models.ForeignKey(Label, on_delete=models.CASCADE)
+    
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+
+    class Meta:
+        unique_together = ('user', 'post')  # Asegura que un usuario solo pueda dar like a un post una vez
