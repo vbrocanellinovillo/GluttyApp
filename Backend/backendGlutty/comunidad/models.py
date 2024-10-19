@@ -23,6 +23,14 @@ class Post(models.Model):
                     return True
                 except Exception as e:
                     raise ValidationError(f"Error al subir la imagen: {str(e)}")
+                
+    def get_name(user):
+        if hasattr(user, 'celiac'):
+            return f"{user.celiac.first_name} {user.celiac.last_name}"
+        elif hasattr(user, 'commerce'):
+            return user.commerce.name
+        else:
+            return user.username
 
 class PicturePost(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="pictures")

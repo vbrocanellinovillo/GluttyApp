@@ -8,6 +8,7 @@ from usuarios.models import User
 from .serializers import *
 from django.db import transaction
 from django.db import connection
+from django.shortcuts import get_object_or_404
 
 # Función que crea el POST
 @api_view(["POST"])
@@ -64,28 +65,23 @@ def get_post_by_id(request):
         post = get_object_or_404(Post, id=id)
         
         #Obtener el nombre completo si es celiaco, o el nombre del comercio si es comercio
-        def get_name(user):
-            if hasattr(user, 'celiac'):
-                return f"{user.celiac.first_name} {user.celiac.last_name}"
-            elif hasattr(user, 'commerce'):
-                return user.commerce.name
-            else:
-                return user.username
             
         user_liked = Like.objects.filter(user=user, post=post).exists()
         
         post_data = {
             "user": post.user.username,
-            "name": get_name(post.user),
+            "name": Post.get_name(post.user),
+            "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
             "body": post.body,
             "created_at": post.created_at,
             "likes": post.likes_number,
             "user_liked": user_liked,  # Indica si el usuario actual ha dado like al post
             "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+            "comments_number": post.comments_number,
             "comments": [
                 {
                     "user": comment.user.username,
-                    "name": get_name(comment.user),
+                    "name": Post.get_name(comment.user),
                     "profile_picture": comment.user.profile_picture if comment.user.profile_picture else None,
                     "content": comment.content,
                     "created_at": comment.created_at
@@ -94,8 +90,10 @@ def get_post_by_id(request):
             ],
             "labels": [label.label.name for label in post.labels.all()],
         }
+        connection.close()
         return Response(post_data, status=status.HTTP_200_OK)
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error al obtener el post: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(["POST"])
@@ -124,9 +122,11 @@ def add_like(request):
         post.likes_number += 1
         post.save()
 
+        connection.close()
         return Response({"Detail": f"Like agregado. Total de likes: {post.likes_number}"}, status=status.HTTP_200_OK)
     
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error al agregar like: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -149,8 +149,221 @@ def add_comment(request):
         if not content:
             return Response({"error": "El comentario no puede estar vacío."}, status=status.HTTP_400_BAD_REQUEST)
 
-        comment = Comment.objects.create(user=request.user, post=post, content=content)
+        Comment.objects.create(user=request.user, post=post, content=content)
+        
+        post.comments_number += 1
+        post.save()
+        
+        connection.close()
         return Response({"Detail": f"Comentario agregado correctamente."}, status=status.HTTP_200_OK)
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error al agregar comentario: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def add_favorite(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
 
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    id = request.data.get("id")
+
+    try:
+        post = get_object_or_404(Post, id=id)
+
+        # Verificar si el post ya está en favoritos
+        if Favorite.objects.filter(user=user, post=post).exists():
+            return Response({"error": "Este post ya está en tus favoritos."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Agregar el post a favoritos
+        Favorite.objects.create(user=user, post=post)
+        
+        connection.close()
+        return Response({"Detail": "Post agregado a favoritos."}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al agregar a favoritos: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_favorites(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        # Obtener los posts favoritos del usuario
+        favorites = Favorite.objects.filter(user=user).select_related('post')
+        
+        # Crear una lista de datos de los posts favoritos
+        favorite_posts = []
+        for favorite in favorites:
+            post = favorite.post
+            
+            user_liked = Like.objects.filter(user=user, post=post).exists()
+        
+            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+            
+            favorite_posts.append({
+                "id": post.id,
+                "user": post.user.username,
+                "name": Post.get_name(post.user),
+                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                "body": post.body,
+                "created_at": post.created_at,
+                "likes": post.likes_number,
+                "user_liked": user_liked,
+                "user_faved": user_faved,
+                "comments_number": post.comments_number,
+                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                "labels": [label.label.name for label in post.labels.all()],
+            })
+
+        connection.close()
+        return Response(favorite_posts, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al obtener favoritos: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_my_posts(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        # Obtener los posts del usuario autenticado
+        my_posts = Post.objects.filter(user=user).select_related('user')
+
+        # Crear una lista de datos de los posts
+        posts_data = []
+        for post in my_posts:
+            user_liked = Like.objects.filter(user=user, post=post).exists()
+            
+            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+
+            posts_data.append({
+                "id": post.id,
+                "user": post.user.username,
+                "name": Post.get_name(post.user),
+                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                "body": post.body,
+                "created_at": post.created_at,
+                "likes": post.likes_number,
+                "comments_number": post.comments_number,
+                "user_liked": user_liked,
+                "user_faved": user_faved,
+                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                "labels": [label.label.name for label in post.labels.all()],
+            })
+
+        connection.close()
+        return Response(posts_data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al obtener mis posts: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+#Trae solo 30 posteos se puede modificar nsino
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_recent_posts(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        # Obtener los posts más recientes de todos los usuarios, limitando la cantidad de resultados
+        recent_posts = Post.objects.all().select_related('user').order_by('-created_at')[:30]  # Cambia el 10 por el número de posts que deseas obtener
+
+        # Crear una lista de datos de los posts
+        posts_data = []
+        for post in recent_posts:
+            user_liked = Like.objects.filter(user=user, post=post).exists()
+            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+
+            posts_data.append({
+                "id": post.id,
+                "user": post.user.username,
+                "name": Post.get_name(post.user),
+                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                "body": post.body,
+                "created_at": post.created_at,
+                "likes": post.likes_number,
+                "comments_number": post.comments_number,
+                "user_liked": user_liked,
+                "user_faved": user_faved,
+                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                "labels": [label.label.name for label in post.labels.all()],
+            })
+
+        connection.close()
+        return Response(posts_data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al obtener los posteos recientes: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_popular_posts(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        # Obtener los posts ordenados por la cantidad de likes y favoritos
+        popular_posts = Post.objects.annotate(
+            total_likes=models.Count('likes')
+        ).annotate(
+            popularity=models.F('total_likes')
+        ).order_by('-popularity')[:30]  # Cambia el 30 por el número de posts que deseas obtener
+
+        # Crear una lista de datos de los posts populares
+        posts_data = []
+        for post in popular_posts:
+            user_liked = Like.objects.filter(user=user, post=post).exists()
+            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+
+            posts_data.append({
+                "id": post.id,
+                "user": post.user.username,
+                "name": Post.get_name(post.user),
+                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                "body": post.body,
+                "created_at": post.created_at,
+                "likes": post.likes_number,
+                "comments_number": post.comments_number,
+                "user_liked": user_liked,
+                "user_faved": user_faved,
+                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                "labels": [label.label.name for label in post.labels.all()],
+            })
+
+        connection.close()
+        return Response(posts_data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al obtener los posteos populares: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
