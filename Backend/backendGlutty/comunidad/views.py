@@ -303,7 +303,7 @@ def get_recent_posts(request):
 
     try:
         # Obtener los posts más recientes de todos los usuarios, limitando la cantidad de resultados
-        recent_posts = Post.objects.all().select_related('user').order_by('-created_at')[:30]  # Cambia el 10 por el número de posts que deseas obtener
+        recent_posts = Post.objects.all().select_related('user')[:30]  # Cambia el 10 por el número de posts que deseas obtener
 
         # Crear una lista de datos de los posts
         posts_data = []
@@ -345,9 +345,7 @@ def get_popular_posts(request):
 
     try:
         # Obtener los posts ordenados por la cantidad de likes
-        popular_posts = Post.objects.annotate(
-            total_likes=models.Count('likes')
-        ).order_by('-total_likes')[:30]  # Cambia el 30 por el número de posts que deseas obtener
+        popular_posts = Post.objects.all().order_by('-likes_number')[:30]  # Cambia el 30 por el número de posts que deseas obtener
 
         # Crear una lista de datos de los posts populares
         posts_data = []
