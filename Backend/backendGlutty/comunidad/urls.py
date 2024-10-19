@@ -11,4 +11,6 @@ urlpatterns = [
     path("get-my-posts/", get_my_posts, name="get_my_posts"),  
     path("get-recent-posts/", get_recent_posts, name="get_recent_posts"),
     path("get-popular-posts/", get_popular_posts, name="get_popular_posts"), 
+    path("search-labels/", search_labels, name="search_labels"),
+    path("search-posts-by-labels/", search_posts_by_labels, name="search_posts_by_labels"),
     ]
