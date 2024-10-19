@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import BannersCarousel from "./BannersCarousel";
 import { useState } from "react";
 
-const bannersHeight = Dimensions.get("window").height * 0.2;
+const bannersHeight = Dimensions.get("window").height * 0.25;
 
 export default function Banners() {
   const name = useSelector((state) => state.auth.userData?.first_name);

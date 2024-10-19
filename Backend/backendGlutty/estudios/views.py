@@ -705,3 +705,30 @@ def save_analysis_date(request):
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Función que cancela la fecha del próximo análisis
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def cancel_analysis_date(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    celiac = Celiac.objects.filter(user=user).first()
+    
+    # Verificar que el celíaco que está guardando la fecha sea el mismo del usuario
+    if celiac.user != request.user:
+        connection.close()
+        return Response({"error": "No tienes permiso para acceder a esta funcionalidad."}, status=status.HTTP_403_FORBIDDEN)
+    try:
+        celiac.CancelAnalysisDate()
+            
+        # Devolver los datos
+        connection.close()
+        return Response({"Detail": f"Se canceló la fecha del análisis."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

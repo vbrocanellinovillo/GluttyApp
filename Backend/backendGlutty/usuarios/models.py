@@ -74,6 +74,11 @@ class Celiac(models.Model):
     def getNextAnalysisDate(self):
         return self.next_analysis_date
     
+    def CancelAnalysisDate(self):
+        self.next_analysis_date = None
+        self.save()
+        return True
+    
 class Session(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="session")
     session_initialized = models.BooleanField(default=False)

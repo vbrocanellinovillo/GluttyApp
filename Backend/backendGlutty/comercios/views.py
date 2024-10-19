@@ -156,7 +156,7 @@ def add_branch(request):
                 "just_takeaway": new_branch.just_takeaway,
             }
             
-            # Manejar la imagen de perfil si se proporciona
+            # Manejar imágenes de la sucursal 
             images = request.FILES.getlist('image')
             print("imagen:" + str(images))
             

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "productos",
     "comercios",
     "estudios",
+    "comunidad",
 ]
 
 MIDDLEWARE = [
