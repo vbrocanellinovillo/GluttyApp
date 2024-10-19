@@ -27,6 +27,7 @@ export default function MyPosts() {
     try {
       const data = await getMyPosts(token);
       setPosts(data);
+      console.log(data);
       setIsError(false);
     } catch (error) {
       setIsError(true);

@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View, Text } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import Tag from "./Tag";
@@ -20,6 +20,26 @@ export default function PostItem({
     onPress && onPress();
   }
 
+  const formatDateTime = (isoString) => {
+    const date = new Date(isoString);
+  
+    const formattedDate = date.toLocaleDateString('es-AR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }); // Ejemplo: "19/10/2024"
+  
+    const formattedTime = date.toLocaleTimeString('es-AR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false, // Formato de 24 horas
+    }); // Ejemplo: "22:20"
+  
+    return `${formattedDate} ${formattedTime}`;
+  };
+
+  console.log("labels: " + post.labels)
+
   return (
     <>
       <Pressable
@@ -32,27 +52,29 @@ export default function PostItem({
         onPress={handlePress}
       >
         <View style={styles.nameContainer}>
-          <UserImage dimensions={40} source={post.userImage} />
+          <UserImage dimensions={40} source={post.profile_picture} />
           <TextCommonsMedium style={styles.name}>
             {post?.name}
           </TextCommonsMedium>
           <TextCommonsRegular style={styles.username}>
-            @{post?.username}
+            @{post?.user}
           </TextCommonsRegular>
         </View>
         <TextCommonsRegular style={styles.content}>
-          {post?.content}
+          {post?.body}
         </TextCommonsRegular>
         <View style={styles.tagsContainer}>
-          {post?.tags.map((tag, index) => (
-            <Tag key={index}>{tag}</Tag>
-          ))}
-        </View>
+        {post?.labels && post.labels.length > 0 ? (
+          post.labels.map((tag, index) => <Tag key={index}>{tag}</Tag>)
+        ) : (
+          <Text style={styles.noTagsText}>No hay etiquetas disponibles.</Text>
+        )}
+      </View>
         <View style={styles.infoContainer}>
           <TextCommonsRegular style={styles.date}>
-            {post?.date}
+            {post?.created_at ? formatDateTime(post.created_at) : 'Fecha no disponible'}
           </TextCommonsRegular>
-          <PostInfoContainer comments={post?.comments} likes={post?.likes} />
+          <PostInfoContainer comments={post?.comments_number} likes={post?.likes} />
         </View>
       </Pressable>
       {!curved && <Divider />}
@@ -117,8 +139,11 @@ const styles = StyleSheet.create({
   },
 
   date: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "400",
-    color: Colors.mJordan,
+    color: "grey",
   },
+  noTagsText: {
+
+  }
 });
