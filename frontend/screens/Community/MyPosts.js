@@ -11,7 +11,7 @@ import NoPosts from "../../components/Community/NoPosts";
 
 const height = Dimensions.get("window").height * 0.5;
 
-export default function MyPosts() {
+export default function MyPosts({navigation}) {
   const token = useSelector((state) => state.auth.accessToken);
 
   const [posts, setPosts] = useState([]);
@@ -51,7 +51,7 @@ export default function MyPosts() {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PostItem post={item} />}
+        renderItem={({ item }) => <PostItem post={item} onPress={() => navigation.navigate("ViewPostById", {id})}/>}
         contentInset={{ bottom: 230 }}
       />
     );

@@ -7,6 +7,7 @@ import { Divider } from "react-native-paper";
 import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
 import UserImage from "../UI/UserImage/UserImage";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function PostItem({
   post,
@@ -59,6 +60,7 @@ export default function PostItem({
           <TextCommonsRegular style={styles.username}>
             @{post?.user}
           </TextCommonsRegular>
+          <Ionicons style={styles.verMas}name="chevron-forward-outline"></Ionicons>
         </View>
         <TextCommonsRegular style={styles.content}>
           {post?.body}
@@ -74,7 +76,9 @@ export default function PostItem({
           <TextCommonsRegular style={styles.date}>
             {post?.created_at ? formatDateTime(post.created_at) : 'Fecha no disponible'}
           </TextCommonsRegular>
+
           <PostInfoContainer comments={post?.comments_number} likes={post?.likes} />
+        
         </View>
       </Pressable>
       {!curved && <Divider />}
@@ -145,5 +149,9 @@ const styles = StyleSheet.create({
   },
   noTagsText: {
 
+  },
+  verMas: {
+    marginLeft: 100,
+    fontSize: 20,
   }
 });
