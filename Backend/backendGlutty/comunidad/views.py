@@ -1,3 +1,4 @@
+import json
 from requests import Response
 from .models import *
 from rest_framework.decorators import api_view, permission_classes
@@ -19,7 +20,6 @@ def create_post(request):
     user = User.objects.filter(username=username).first()
     
     if not user:
-        connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     try:
         post_content = request.data.get("content")
@@ -33,11 +33,22 @@ def create_post(request):
 
             # Manejar imágenes del posteo
             images = request.FILES.getlist("images")
-            post.UploadPictures(images)
+            if images:
+                post.UploadPictures(images)
             
             # Manejar etiquetas del posteo
-            labels = request.data.get("labels", [])  # Array de etiquetas
+            labels = request.data.getlist("labels")  # Array de etiquetas
+            # labels = json.loads(request.data.get("labels", "[]"))
+
+            labels = request.data.get("labels", "[]")  # Obtiene la cadena JSON
+            try:
+                labels = json.loads(labels)  # Convierte la cadena JSON en un array de Python
+            except json.JSONDecodeError:
+                labels = []  # En caso de error, asignar un array vacío
+                
+            print("Labels: ", labels)
             if labels:
+                print(labels)
                 for label_name in labels:
                     # Ignorar mayúsculas/minúsculas en la comparación
                     label, _ = Label.objects.get_or_create(name__iexact=label_name, defaults={'name': label_name})
