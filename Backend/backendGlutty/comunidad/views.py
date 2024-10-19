@@ -1,32 +1,15 @@
-from django.shortcuts import render
-from django.forms import ValidationError
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
 from requests import Response
-from sqlalchemy import DateTime
 from .models import *
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from decimal import Decimal, InvalidOperation
-from datetime import date
 from rest_framework import status
 from rest_framework.response import Response
 from usuarios.models import User
-import re
-import cloudinary.uploader
-import cloudinary.api
-import pdfplumber
-import random
 from .serializers import *
-from django.db.models import Q
-from datetime import timedelta
-from django.utils import timezone
 from django.db import transaction
-from dateutil.relativedelta import relativedelta
 from django.db import connection
 
-
+# Función que crea el POST
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 @transaction.atomic
@@ -38,7 +21,7 @@ def create_post(request):
         connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     try:
-        post_content = request.data.get("post")
+        post_content = request.data.get("content")
         if post_content:
         # Crear nuevo posteo
             post = Post.objects.create(
