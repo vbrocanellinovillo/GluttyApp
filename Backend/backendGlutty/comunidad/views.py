@@ -344,12 +344,10 @@ def get_popular_posts(request):
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        # Obtener los posts ordenados por la cantidad de likes y favoritos
+        # Obtener los posts ordenados por la cantidad de likes
         popular_posts = Post.objects.annotate(
             total_likes=models.Count('likes')
-        ).annotate(
-            popularity=models.F('total_likes')
-        ).order_by('-popularity')[:30]  # Cambia el 30 por el número de posts que deseas obtener
+        ).order_by('-total_likes')[:30]  # Cambia el 30 por el número de posts que deseas obtener
 
         # Crear una lista de datos de los posts populares
         posts_data = []
@@ -378,3 +376,75 @@ def get_popular_posts(request):
     except Exception as e:
         connection.close()
         return Response({"error": f"Error al obtener los posteos populares: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def search_posts_by_labels(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    # Obtener las labels desde el Form Data
+    labels_input = request.data.get("labels", "")
+    
+    # Convertir el string de labels en una lista de enteros
+    try:
+        if labels_input:
+            # Asegúrate de que se puedan convertir a enteros
+            labels_ids = list(map(int, labels_input.split(',')))
+        else:
+            labels_ids = []
+
+        # Filtrar los posteos que contengan las etiquetas seleccionadas por ID
+        posts = Post.objects.filter(labels__label__id__in=labels_ids).distinct()
+
+        # Crear una lista de datos de los posts
+        posts_data = []
+        for post in posts:
+            user_liked = Like.objects.filter(user=user, post=post).exists()
+            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+
+            posts_data.append({
+                "id": post.id,
+                "user": post.user.username,
+                "name": Post.get_name(post.user),
+                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                "body": post.body,
+                "created_at": post.created_at,
+                "likes": post.likes_number,
+                "comments_number": post.comments_number,
+                "user_liked": user_liked,
+                "user_faved": user_faved,
+                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                "labels": [label.label.name for label in post.labels.all()],
+            })
+
+        connection.close()
+        return Response(posts_data, status=status.HTTP_200_OK)
+
+    except ValueError:
+        connection.close()
+        return Response({"error": "Las etiquetas deben ser IDs válidas."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al buscar posteos: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def search_labels(request):
+    search_term = request.data.get("q", None) # Obtener la consulta de búsqueda
+    if not search_term:
+        return Response({"labels": []}, status=status.HTTP_200_OK)
+
+    # Filtrar etiquetas que contengan el término de búsqueda (case insensitive)
+    matching_labels = Label.objects.filter(name__icontains=search_term)
+
+    # Devolver los nombres de las etiquetas coincidentes
+    labels_data = [{"id": label.id,
+                    "name": label.name,
+                    } for label in matching_labels]
+    return Response({"labels": labels_data}, status=status.HTTP_200_OK)

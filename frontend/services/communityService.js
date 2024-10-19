@@ -2,8 +2,9 @@ import { backendUrl } from "../constants/backend";
 import { Post } from "../models/Post";
 import { getRandomDate } from "../utils/dateFunctions";
 import { sleep } from "../utils/utilFunctions";
+import { httpRequest } from "../utils/http";
 
-const url = backendUrl + "estudios/";
+const url = backendUrl + "comunidad/";
 
 async function getData() {
   await sleep(3000);
@@ -208,32 +209,26 @@ export async function getInitialPosts(token) {
   } catch (error) {}
 }
 
+// MIS POSTS
 export async function getMyPosts(token) {
+  const requestUrl = url + "get-my-posts/";
+
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
   try {
-    const data = await getData();
-
-    const posts = [];
-
-    for (let dataPoint of data) {
-      const newPost = new Post(
-        dataPoint.id,
-        dataPoint.name,
-        dataPoint.username,
-        dataPoint.image,
-        dataPoint.content,
-        dataPoint.tags,
-        dataPoint.date,
-        dataPoint.likes,
-        dataPoint.comments
-      );
-
-      posts.push(newPost);
-    }
-
-    return posts;
-  } catch (error) {}
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
+// GET FEED
 export async function getFeed(token) {
   try {
     const data = await getData();
@@ -259,3 +254,53 @@ export async function getFeed(token) {
     return posts;
   } catch (error) {}
 }
+
+// PUBLICACIÓN DEL POST 
+export async function createPost(post, labels, pictures, token) {
+  console.log(labels);
+  const requestUrl = url + "create-post/";
+
+  const formdata = new FormData();
+
+  formdata.append("content", post);
+  
+  formdata.append("labels", JSON.stringify(labels));
+
+  pictures.forEach((photo) => {
+    formdata.append("images", {
+      uri: photo.uri,
+      name: photo.fileName || "photo",
+      type: photo.mimeType,
+    });
+  });
+
+  formdata.append("token", token);
+
+  console.log("fd", formdata);
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
+// ES LA CONSULTA DEL POST 
+export async function getPostById(id) {}
+
+// LIKE DEL POST
+export async function addLike (idPost) {}
+
+// COMENTAR EL POST
+export async function addComment (idPost, comment) {}
+

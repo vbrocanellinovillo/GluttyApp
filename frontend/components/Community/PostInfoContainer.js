@@ -6,6 +6,7 @@ export default function PostInfoContainer({ likes, comments }) {
     <View style={styles.container}>
       <PostInfo icon="chatbubble-ellipses" number={comments} />
       <PostInfo icon="heart" number={likes} />
+      <PostInfo icon="star-outline"/>
     </View>
   );
 }
