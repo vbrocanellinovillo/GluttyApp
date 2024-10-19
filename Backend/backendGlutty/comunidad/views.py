@@ -22,11 +22,14 @@ from .serializers import *
 from django.db.models import Q
 from datetime import timedelta
 from django.utils import timezone
+from django.db import transaction
 from dateutil.relativedelta import relativedelta
 from django.db import connection
 
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
+@transaction.atomic
 def create_post(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
@@ -57,8 +60,6 @@ def create_post(request):
                     # Crear la relación LabelxPost
                     LabelxPost.objects.create(post=post, label=label)
         
-        # Cerrar conexión con la base de datos
-        connection.close()
         return Response({"Detail": f"Post creado correctamente."}, status=status.HTTP_200_OK)
     
     except Exception as e:

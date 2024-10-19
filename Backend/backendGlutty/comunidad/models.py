@@ -1,6 +1,6 @@
 from django.db import models
 from django.forms import ValidationError
-from Backend.backendGlutty.usuarios.image import upload_to_cloudinary
+from usuarios.image import upload_to_cloudinary
 from usuarios.models import User
 
 class Post(models.Model):
@@ -9,7 +9,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)  # Fecha en que se registra en el sistema
     likes = models.IntegerField(blank=False, default=0)
     
-    def UploadPictures(images, self):
+    def UploadPictures(self, images):
         if images:
                 try:
                     for image in images:
