@@ -333,12 +333,10 @@ def get_popular_posts(request):
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        # Obtener los posts ordenados por la cantidad de likes y favoritos
+        # Obtener los posts ordenados por la cantidad de likes
         popular_posts = Post.objects.annotate(
             total_likes=models.Count('likes')
-        ).annotate(
-            popularity=models.F('total_likes')
-        ).order_by('-popularity')[:30]  # Cambia el 30 por el número de posts que deseas obtener
+        ).order_by('-total_likes')[:30]  # Cambia el 30 por el número de posts que deseas obtener
 
         # Crear una lista de datos de los posts populares
         posts_data = []
@@ -367,3 +365,5 @@ def get_popular_posts(request):
     except Exception as e:
         connection.close()
         return Response({"error": f"Error al obtener los posteos populares: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
