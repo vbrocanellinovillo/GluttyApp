@@ -316,7 +316,46 @@ export async function createPost(post, labels, pictures, token) {
 }
 
 // ES LA CONSULTA DEL POST
-export async function getPostById(id) {}
+export async function getPostById(id, token) {
+  const requestUrl = url + "get-post/";
+  const formdata = new FormData();
+
+  formdata.append("id", id);
+
+  const requestOptions = {
+    body: formdata,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    
+    const response = await httpRequest(requestUrl, requestOptions);
+    const postDate = new Date(response.created_at);
+    const date = formatDateToYYYYMMDD(postDate);
+
+    const newPost = new Post(
+      response.id,
+      response.name,
+      response.user,
+      response.profile_picture,
+      response.body,
+      response.labels,
+      date,
+      response.likes,
+      response.comments_number,
+      response.images,
+      response.user_faved,
+      response.user_liked
+    );
+    return newPost;
+
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 
 // LIKE DEL POST
 export async function addLike(idPost) {}

@@ -55,7 +55,7 @@ export default function MyPosts({ navigation }) {
         renderItem={({ item }) => (
           <PostItem
             post={item}
-            onPress={() => navigation.navigate("ViewPostById", { id })}
+            onPress={() => navigation.navigate("ViewPostById", { id: item.id})}
           />
         )}
         contentInset={{ bottom: 230 }}

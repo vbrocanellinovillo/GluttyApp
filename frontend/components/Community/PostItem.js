@@ -15,6 +15,7 @@ export default function PostItem({
   curved,
   curvedStyle,
   onPress,
+  iconPost = "chevron-forward-outline",
 }) {
   function handlePress() {
     Haptics.selectionAsync();
@@ -39,13 +40,14 @@ export default function PostItem({
               {post?.name}
             </TextCommonsMedium>
             <TextCommonsRegular style={styles.username}>
-              @{post?.username}
+              @{post?.username || post?.user}
             </TextCommonsRegular>
           </View>
-          <Ionicons style={styles.verMas} name="chevron-forward-outline" />
+          <Ionicons style={styles.verMas} name={iconPost} />
         </View>
         <TextCommonsRegular style={styles.content}>
-          {post?.content}
+          {post?.content || post?.body}
+
         </TextCommonsRegular>
         <View style={styles.tagsContainer}>
           {post?.tags && post.tags.length > 0 ? (
