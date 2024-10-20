@@ -41,6 +41,6 @@ export default function ViewPostById({route}) {
     return (
         <>
         <PostItem post={post} iconPost="trash-outline"></PostItem>
-        <AddComment/></>
+        <AddComment id_post={id}/></>
     );
 };
