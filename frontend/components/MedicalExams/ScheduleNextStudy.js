@@ -7,10 +7,13 @@ import { useState } from "react";
 import * as Haptics from "expo-haptics";
 import Button from "../UI/Controls/Button";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { postDateNextExam } from "../../services/medicalExamService";
+import { cancelDateNextExam, postDateNextExam } from "../../services/medicalExamService";
 import { useSelector } from "react-redux";
 import { err } from "react-native-svg";
 import { Ionicons } from '@expo/vector-icons';
+import GluttyModal from "../UI/GluttyModal";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { useEffect } from "react";
 
 const days = [
   { value: 1, label: "1" }, { value: 2, label: "2" }, { value: 3, label: "3" }, 
@@ -83,6 +86,8 @@ const years = Array.from({ length: 80 }, (_, index) => ({
   label: (currentYear + index).toString(),
 }));
 
+
+
 export default function ScheduleNextStudy({ onDismiss, time, getData }) {
   const [value, setValue] = useState( 2);
   // const [day, setValueDay] = useState(time || 2);
@@ -91,14 +96,29 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
   const [day, setValueDay] = useState(1);
   const [month, setValueMonth] = useState(1);
   const [year, setValueYear] = useState(currentYear);
-  console.log(time);
+
 
   const [isError, setIsError] = useState(false);
   const[isBefore, setIsBefore] = useState(false);
   const[isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+
+
 
   const token = useSelector(state=>state.auth.accessToken);
   const username = useSelector(state=>state.auth.userData.username);
+  
+
+  const [isScheduled, SetScheduled] = useState(true);
+
+  useEffect(() => {
+    if (time != null) {
+      console.log("Ya existe recordatorio");
+      SetScheduled(false);  // Se ejecuta una sola vez cuando se monta el componente o cambia 'time'
+    }
+  }, [time]); 
+
 
   const ErrorMessage = () => {
     return (
@@ -124,11 +144,13 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
 
   function handleValueChangeDay(item) {
     Haptics.selectionAsync();
+    console.log("dia seleccionado", item.item.value);
     setValueDay(item.item.value);
   }
 
   function handleValueChangeMonth(item) {
     Haptics.selectionAsync();
+    console.log("mes seleccionado", item.item.value);
     setValueMonth(item.item.value);
   }
 
@@ -172,8 +194,10 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
     try{
       await postDateNextExam(token, dateBackend, username)
       console.log("wtft");
+      SetScheduled(false);
       getData();
       onDismiss();
+      
 
     }catch (error) {
       console.log("error choto");
@@ -183,50 +207,110 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
       setIsLoading(false);
     }
   };
+  console.log("Que onda")
+  console.log(isScheduled)
 
-  return (
+  function closeModalHandler() {
+    setShowModal(false);
+  }
+
+
+  async function cancelSchedule(){
+    try {
+      onDismiss()
+      setIsLoading(true)
+      const response = await cancelDateNextExam(token)
+      setMessage("Recordatorio eliminalo correctamente")
+      setShowModal(true)
+    } catch (error) {
+      setIsError(true);
+      setMessage(error.message);  // Si hay error, mostrar el mensaje de error
+      setShowModal(true);
+    }
+    finally{
+      setIsLoading(false)
+      getData()
+    }
+  }
+
+
+  if (isScheduled) {
+    return (
+      <DialogContainer onDismiss={onDismiss} containerStyle={styles.container}>
+        <TextCommonsMedium style={styles.title}>
+          ¿Cuándo te realizarás tu proximo estudio médico?
+        </TextCommonsMedium>
+        <View style={{flexDirection:"row", justifyContent:"center"}}>
+          <WheelPicker
+            data={days}
+            value={day}
+            onValueChanged={handleValueChangeDay}
+            onValueChanging={() =>
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+            } 
+            style={[styles.wheelPicker, { marginRight: 15 }]}
+          /> 
+          <WheelPicker
+            data={months}
+            value={month}
+            onValueChanged={handleValueChangeMonth}
+            onValueChanging={() =>
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+            }
+            style={[styles.wheelPicker, { marginHorizontal: 15 }]}
+          /> 
+          <WheelPicker
+            data={years}
+            value={year}
+            onValueChanged={handleValueChangeYear}
+            onValueChanging={() =>
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+            }
+            style={[styles.wheelPicker, { marginLeft: 15 }]}
+          /> 
+          
+        </View>
+        {isError && <ErrorMessage />}
+        {isBefore && <BeforeMessage/>}
+        {/* <DateTimePicker isVisible={true} display="spinner" onConfirm={() => undefined} onCancel={() => undefined}/> */}
+        <Button backgroundColor={Colors.locro} onPress={handlePress} isLoading={isLoading}>
+            Agendar
+        </Button>
+      </DialogContainer>
+    );
+  }else{
+    return(
+    <>
+    <GluttyModal
+      isError={isError}
+      message={message}
+      onClose={closeModalHandler}
+      visible={showModal}
+    />
     <DialogContainer onDismiss={onDismiss} containerStyle={styles.container}>
-      <TextCommonsMedium style={styles.title}>
-        ¿Cuándo te realizarás tu proximo estudio médico?
-      </TextCommonsMedium>
-      <View style={{flexDirection:"row", justifyContent:"center"}}>
-        <WheelPicker
-          data={days}
-          value={day}
-          onValueChanged={handleValueChangeDay}
-          onValueChanging={() =>
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-          } 
-          style={[styles.wheelPicker, { marginRight: 15 }]}
-        /> 
-        <WheelPicker
-          data={months}
-          value={month}
-          onValueChanged={handleValueChangeMonth}
-          onValueChanging={() =>
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-          }
-          style={[styles.wheelPicker, { marginHorizontal: 15 }]}
-        /> 
-        <WheelPicker
-          data={years}
-          value={year}
-          onValueChanged={handleValueChangeYear}
-          onValueChanging={() =>
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-          }
-          style={[styles.wheelPicker, { marginLeft: 15 }]}
-        /> 
-        
-      </View>
-      {isError && <ErrorMessage />}
-      {isBefore && <BeforeMessage/>}
-      {/* <DateTimePicker isVisible={true} display="spinner" onConfirm={() => undefined} onCancel={() => undefined}/> */}
-      <Button backgroundColor={Colors.locro} onPress={handlePress} isLoading={isLoading}>
-          Agendar
+    <TextCommonsMedium style={styles.title}>
+      ¿Deseas cancelar el recordatorio?
+    </TextCommonsMedium>
+    <View style={styles.buttonContainer}>
+      <Button 
+        style={[styles.actionButton, styles.keepButton]} 
+        onPress={() => onDismiss()}
+      >
+        <Text style={styles.buttonText}>Mantener recordatorio</Text>
       </Button>
-    </DialogContainer>
-  );
+      <Button 
+        style={[styles.actionButton, styles.cancelButton]} 
+        onPress={() => cancelSchedule()}
+      >
+        <Text style={styles.buttonText}>Borrarlo</Text>
+      </Button>
+    </View>
+  </DialogContainer>
+  </>
+  )
+  }
+
+  
 }
 
 //aca deberia recibir tipo dd.mm.aaaa
@@ -273,4 +357,39 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 4,
   },
+
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 60,
+  },
+  
+  actionButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+    margin: 5
+  },
+  
+  keepButton: {
+    backgroundColor: "#f4a261",
+    marginRight:20
+  },
+  
+  cancelButton: {
+    backgroundColor: "#e76f51",
+  },
+  
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  }
+  
 });

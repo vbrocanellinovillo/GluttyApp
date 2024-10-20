@@ -6,11 +6,18 @@ import { useState } from "react";
 export default function PostInfoContainer({ likes, comments, faved, liked }) {
   const [isFaved, setFaved] = useState(faved);
   const [isLiked, setLiked] = useState(liked);
+  const [sumLiked, setSumLiked] = useState(likes);
 
   async function handleLike() {
     try {
       setLiked(!isLiked);
       // Aca va la conexión con el back
+      if (isLiked) {
+        setSumLiked(sumLiked-1)
+      } else {
+        setSumLiked(sumLiked+1)
+      }
+      
     } catch (error) {
       setLiked(!isLiked);
     }
@@ -31,7 +38,7 @@ export default function PostInfoContainer({ likes, comments, faved, liked }) {
       <PostInfo
         icon={isLiked ? "heart" : "heart-outline"}
         iconColor={isLiked && Colors.redLike}
-        number={likes}
+        number={sumLiked}
         onPress={handleLike}
       />
       <PostInfo
