@@ -16,12 +16,26 @@ export default function PostItem({
   curvedStyle,
   onPress,
   iconPost = "chevron-forward-outline",
+  onPressIcon
 }) {
   function handlePress() {
     Haptics.selectionAsync();
     onPress && onPress();
   }
 
+
+  function handlePress(){
+    onPressIcon&&onPressIcon()
+    Haptics.selectionAsync()
+    if (iconPost != "chevron-forward-outline") {
+      console.log("DELFINAAAA ")
+      
+    }else{
+      console.log("GONN")
+      onPress && onPress();
+    }
+    
+  }
   return (
     <>
       <Pressable
@@ -43,7 +57,10 @@ export default function PostItem({
               @{post?.username || post?.user}
             </TextCommonsRegular>
           </View>
-          <Ionicons style={styles.verMas} name={iconPost} />
+          <Pressable onPress={handlePress}>
+            <Ionicons style={styles.verMas} name={iconPost}/>
+          </Pressable>
+          
         </View>
         <TextCommonsRegular style={styles.content}>
           {post?.content || post?.body}

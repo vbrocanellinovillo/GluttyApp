@@ -216,3 +216,7 @@ export async function searchCommunity(token, searchTerm, signal) {
     throw new Error(error.message);
   }
 }
+
+export async function deletePost(token, searchTerm, signal) {
+ 
+}
