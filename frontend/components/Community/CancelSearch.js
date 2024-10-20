@@ -12,6 +12,7 @@ export default function CancelSearch({
   onChange,
   onClear,
   width,
+  value,
 }) {
   function handleChange(text) {
     onChange && onChange(text);
@@ -30,6 +31,7 @@ export default function CancelSearch({
           onClear={onClear}
           focused={true}
           style={searchbarStyle}
+          value={value}
         />
       </Animated.View>
       <Pressable

@@ -28,7 +28,6 @@ export default function MyPosts({ navigation }) {
     try {
       const data = await getMyPosts(token);
       setPosts(data);
-      console.log(data);
       setIsError(false);
     } catch (error) {
       setIsError(true);
@@ -48,21 +47,19 @@ export default function MyPosts({ navigation }) {
   }
 
   if (!isLoading && !isError && posts && posts.length > 0) {
-    let nose = (
+    content = (
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <PostItem
             post={item}
-            onPress={() => navigation.navigate("ViewPostById", { id: item.id})}
+            onPress={() => navigation.navigate("ViewPostById", { id: item.id })}
           />
         )}
         contentInset={{ bottom: 230 }}
       />
-    )
-
-    content = nose
+    );
   }
 
   if (!isLoading && !isError && (!posts || posts.length == 0)) {

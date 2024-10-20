@@ -14,6 +14,8 @@ import {
   searchbarWidthPercentage,
 } from "../../constants/community";
 import { useQuery } from "@tanstack/react-query";
+import { searchCommunity } from "../../services/communityService";
+import { useSelector } from "react-redux";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -47,15 +49,22 @@ export default function CommunitySearch({ navigation }) {
   }
 
   const [searchTerm, setSearchTerm] = useState("");
+  const token = useSelector((state) => state.auth?.accessToken);
+
   const [results, setResults] = useState([]);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["community-search", searchTerm],
+    queryFn: ({ signal }) => searchCommunity(token, searchTerm, signal),
     enabled: false,
   });
 
   function handleChageSearchTerm(text) {
     setSearchTerm(text);
+  }
+
+  function handleClearText() {
+    setSearchTerm("");
   }
 
   useEffect(() => {
@@ -73,13 +82,17 @@ export default function CommunitySearch({ navigation }) {
     }
   }, [data]);
 
+  console.log(results);
+
   return (
     <DismissKeyboardContainer>
       <View style={styles.container}>
         <CancelSearch
           onCanel={handleCancel}
+          onClear={handleClearText}
           width={animatedWidth}
           onChange={handleChageSearchTerm}
+          value={searchTerm}
         />
       </View>
     </DismissKeyboardContainer>
