@@ -7,24 +7,37 @@ import ErrorPosts from "../../components/Community/ErrorPosts";
 import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
 import PostItem from "../../components/Community/PostItem";
 import { searchbarStyle } from "../../constants/community";
+import ButtonsOptions from "../../components/UI/Controls/ButtonsOptions";
+import { Colors } from "../../constants/colors";
 
 const height = Dimensions.get("window").height * 0.5;
+
+const OPTIONS = [
+  { id: 1, value: "Populares" },
+  { id: 2, value: "Recientes" },
+];
 
 export default function Feed({ navigation }) {
   const [feed, setFeed] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
+  const [selectedOption, setSelectedOption] = useState(1);
+
   const token = useSelector((state) => state.auth.accessToken);
+
+  function handleChangeOption(option) {
+    setSelectedOption(option);
+  }
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [selectedOption]);
 
-  async function fetchPosts() {
+  async function fetchPosts(option) {
     setIsLoading(true);
     try {
-      const data = await getFeed(token);
+      const data = await getFeed(token, option);
       setFeed(data);
       setIsError(false);
     } catch (error) {
@@ -62,6 +75,15 @@ export default function Feed({ navigation }) {
         disableKeyboard
         style={searchbarStyle}
       />
+      <ButtonsOptions
+        options={OPTIONS}
+        containerStyle={styles.filters}
+        selectedColor={Colors.oceanBlue}
+        defaultColor="#ccc"
+        textStyle={styles.textFilterStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        onSelect={handleChangeOption}
+      />
       {content}
     </View>
   );
@@ -70,7 +92,25 @@ export default function Feed({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 8,
+  },
+
+  filters: {
+    paddingHorizontal: 22,
+    backgroundColor: "transparent",
+    marginBottom: 10,
+    shadowColor: "#333",
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 3,
+    shadowOpacity: 0.3,
+    gap: 10,
+  },
+
+  textFilterStyle: {
+    color: Colors.mJordan,
+  },
+
+  selectedTextStyle: {
+    color: Colors.lightOcean,
   },
 
   errorPosts: {

@@ -12,4 +12,6 @@ export const Colors = {
   whiteRed: "#c58d8d",
   lightOcean: "#bbdfe4",
   whiteJordan: "#ccb5b5",
+  redLike: "#9e1c1c",
+  favYellow: "#ffbb00",
 };

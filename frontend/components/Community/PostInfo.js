@@ -34,9 +34,11 @@ export default function PostInfo({
         size={iconSize || 22}
         style={iconStyle}
       />
-      <TextCommonsMedium style={[styles.number, numberStyle]}>
-        {number}
-      </TextCommonsMedium>
+      {number !== undefined && (
+        <TextCommonsMedium style={[styles.number, numberStyle]}>
+          {number}
+        </TextCommonsMedium>
+      )}
     </Pressable>
   );
 }

@@ -1,8 +1,9 @@
 import { backendUrl } from "../constants/backend";
 import { Post } from "../models/Post";
-import { getRandomDate } from "../utils/dateFunctions";
+import { formatDateToYYYYMMDD, getRandomDate } from "../utils/dateFunctions";
 import { sleep } from "../utils/utilFunctions";
 import { httpRequest } from "../utils/http";
+import { err } from "react-native-svg";
 
 const url = backendUrl + "comunidad/";
 
@@ -180,33 +181,53 @@ async function getData() {
     },
   ];
 
-  return posts;}
+  return posts;
+}
 
+function getPosts(postsArray) {
+  const posts = [];
+
+  for (let dataPoint of postsArray) {
+    const postDate = new Date(dataPoint.created_at);
+    const date = formatDateToYYYYMMDD(postDate);
+
+    const newPost = new Post(
+      dataPoint.id,
+      dataPoint.name,
+      dataPoint.user,
+      dataPoint.profile_picture,
+      dataPoint.body,
+      dataPoint.labels,
+      date,
+      dataPoint.likes,
+      dataPoint.comments_number,
+      dataPoint.images,
+      dataPoint.user_faved,
+      dataPoint.user_liked
+    );
+
+    posts.push(newPost);
+  }
+
+  return posts;
+}
 
 export async function getInitialPosts(token) {
+  const requestUrl = url + "get-popular-posts/";
+
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
   try {
-    const data = await getData();
-
-    const posts = [];
-
-    for (let dataPoint of data) {
-      const newPost = new Post(
-        dataPoint.id,
-        dataPoint.name,
-        dataPoint.username,
-        dataPoint.image,
-        dataPoint.content,
-        dataPoint.tags,
-        dataPoint.date,
-        dataPoint.likes,
-        dataPoint.comments
-      );
-
-      posts.push(newPost);
-    }
-
-    return posts;
-  } catch (error) {}
+    const data = await httpRequest(requestUrl, requestOptions);
+    return getPosts(data);
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 // MIS POSTS
@@ -221,41 +242,41 @@ export async function getMyPosts(token) {
   };
 
   try {
-    const response = await httpRequest(requestUrl, requestOptions);
-    return response;
+    const data = await httpRequest(requestUrl, requestOptions);
+
+    return getPosts(data);
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
 // GET FEED
-export async function getFeed(token) {
+export async function getFeed(token, option) {
+  let requestUrl = url;
+
+  if (option === 1) {
+    requestUrl += "get-popular-posts/";
+  } else {
+    requestUrl += "get-recent-posts/";
+  }
+
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
   try {
-    const data = await getData();
+    const data = await httpRequest(requestUrl, requestOptions);
 
-    const posts = [];
-
-    for (let dataPoint of data) {
-      const newPost = new Post(
-        dataPoint.id,
-        dataPoint.name,
-        dataPoint.username,
-        dataPoint.image,
-        dataPoint.content,
-        dataPoint.tags,
-        dataPoint.date,
-        dataPoint.likes,
-        dataPoint.comments
-      );
-
-      posts.push(newPost);
-    }
-
-    return posts;
-  } catch (error) {}
+    return getPosts(data);
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
-// PUBLICACIÓN DEL POST 
+// PUBLICACIÓN DEL POST
 export async function createPost(post, labels, pictures, token) {
   console.log(labels);
   const requestUrl = url + "create-post/";
@@ -263,7 +284,7 @@ export async function createPost(post, labels, pictures, token) {
   const formdata = new FormData();
 
   formdata.append("content", post);
-  
+
   formdata.append("labels", JSON.stringify(labels));
 
   pictures.forEach((photo) => {
@@ -294,13 +315,11 @@ export async function createPost(post, labels, pictures, token) {
   }
 }
 
-
-// ES LA CONSULTA DEL POST 
+// ES LA CONSULTA DEL POST
 export async function getPostById(id) {}
 
 // LIKE DEL POST
-export async function addLike (idPost) {}
+export async function addLike(idPost) {}
 
 // COMENTAR EL POST
-export async function addComment (idPost, comment) {}
-
+export async function addComment(idPost, comment) {}

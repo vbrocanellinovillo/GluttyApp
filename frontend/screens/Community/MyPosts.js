@@ -8,10 +8,11 @@ import PostItem from "../../components/Community/PostItem";
 import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
 import ErrorPosts from "../../components/Community/ErrorPosts";
 import NoPosts from "../../components/Community/NoPosts";
+import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
 
 const height = Dimensions.get("window").height * 0.5;
 
-export default function MyPosts({navigation}) {
+export default function MyPosts({ navigation }) {
   const token = useSelector((state) => state.auth.accessToken);
 
   const [posts, setPosts] = useState([]);
@@ -47,14 +48,21 @@ export default function MyPosts({navigation}) {
   }
 
   if (!isLoading && !isError && posts && posts.length > 0) {
-    content = (
+    let nose = (
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PostItem post={item} onPress={() => navigation.navigate("ViewPostById", {id})}/>}
+        renderItem={({ item }) => (
+          <PostItem
+            post={item}
+            onPress={() => navigation.navigate("ViewPostById", { id })}
+          />
+        )}
         contentInset={{ bottom: 230 }}
       />
-    );
+    )
+
+    content = nose
   }
 
   if (!isLoading && !isError && (!posts || posts.length == 0)) {
@@ -73,8 +81,6 @@ export default function MyPosts({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
-
   buttonContainer: {
     alignItems: "center",
     marginVertical: 20,
