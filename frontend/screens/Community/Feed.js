@@ -9,6 +9,7 @@ import PostItem from "../../components/Community/PostItem";
 import { searchbarStyle } from "../../constants/community";
 import ButtonsOptions from "../../components/UI/Controls/ButtonsOptions";
 import { Colors } from "../../constants/colors";
+import { useQuery } from "@tanstack/react-query";
 
 const height = Dimensions.get("window").height * 0.5;
 
@@ -18,33 +19,18 @@ const OPTIONS = [
 ];
 
 export default function Feed({ navigation }) {
-  const [feed, setFeed] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-
   const [selectedOption, setSelectedOption] = useState(1);
 
   const token = useSelector((state) => state.auth.accessToken);
 
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["feed", selectedOption],
+    queryFn: ({ signal }) => getFeed(token, selectedOption, signal),
+  });
+
+
   function handleChangeOption(option) {
     setSelectedOption(option);
-  }
-
-  useEffect(() => {
-    fetchPosts();
-  }, [selectedOption]);
-
-  async function fetchPosts(option) {
-    setIsLoading(true);
-    try {
-      const data = await getFeed(token, option);
-      setFeed(data);
-      setIsError(false);
-    } catch (error) {
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
   }
 
   function handleSearch() {
@@ -57,10 +43,10 @@ export default function Feed({ navigation }) {
 
   if (isError && !isLoading) content = <ErrorPosts style={styles.errorPosts} />;
 
-  if (!isError && !isLoading && feed && feed.length > 0)
+  if (!isError && !isLoading && data)
     content = (
       <FlatList
-        data={feed}
+        data={data}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <PostItem post={item} />}
         contentInset={{ bottom: 230 }}

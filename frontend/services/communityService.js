@@ -251,7 +251,7 @@ export async function getMyPosts(token) {
 }
 
 // GET FEED
-export async function getFeed(token, option) {
+export async function getFeed(token, option, signal) {
   let requestUrl = url;
 
   if (option === 1) {
@@ -265,6 +265,7 @@ export async function getFeed(token, option) {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    signal,
   };
 
   try {
