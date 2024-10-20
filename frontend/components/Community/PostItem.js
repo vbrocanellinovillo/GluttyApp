@@ -35,7 +35,7 @@ export default function PostItem({
       >
         <View style={styles.nameContainer}>
           <View style={styles.userData}>
-            <UserImage dimensions={40} source={post.profile_picture} />
+            <UserImage dimensions={40} source={post?.userImage} />
             <TextCommonsMedium style={styles.name}>
               {post?.name}
             </TextCommonsMedium>
