@@ -358,3 +358,25 @@ export async function postDateNextExam(token, date, username) {
     throw new Error(error.message);
   }
 }
+
+export async function cancelDateNextExam(token) {
+  const requestUrl = url + "cancel-analysis-date/";
+
+
+
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
