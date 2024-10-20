@@ -56,7 +56,6 @@ def get_post_by_id(request):
     user = User.objects.filter(username=username).first()
     
     if not user:
-        connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
     id = request.data.get("id")
@@ -69,6 +68,7 @@ def get_post_by_id(request):
         user_liked = Like.objects.filter(user=user, post=post).exists()
         
         post_data = {
+            "post_id": post.id,
             "user": post.user.username,
             "name": Post.get_name(post.user),
             "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
@@ -80,6 +80,7 @@ def get_post_by_id(request):
             "comments_number": post.comments_number,
             "comments": [
                 {
+                    "comment_id": comment.id,
                     "user": comment.user.username,
                     "name": Post.get_name(comment.user),
                     "profile_picture": comment.user.profile_picture if comment.user.profile_picture else None,
@@ -90,10 +91,8 @@ def get_post_by_id(request):
             ],
             "labels": [label.label.name for label in post.labels.all()],
         }
-        connection.close()
         return Response(post_data, status=status.HTTP_200_OK)
     except Exception as e:
-        connection.close()
         return Response({"error": f"Error al obtener el post: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(["POST"])
@@ -214,6 +213,7 @@ def get_favorites(request):
             user_faved = Favorite.objects.filter(user=user, post=post).exists()
             
             favorite_posts.append({
+                "post_id": post.id,
                 "id": post.id,
                 "user": post.user.username,
                 "name": Post.get_name(post.user),
@@ -257,7 +257,7 @@ def get_my_posts(request):
             user_faved = Favorite.objects.filter(user=user, post=post).exists()
 
             posts_data.append({
-                "id": post.id,
+                "post_id": post.id,
                 "user": post.user.username,
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
@@ -301,7 +301,7 @@ def get_recent_posts(request):
             user_faved = Favorite.objects.filter(user=user, post=post).exists()
 
             posts_data.append({
-                "id": post.id,
+                "post_id": post.id,
                 "user": post.user.username,
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
@@ -345,7 +345,7 @@ def get_popular_posts(request):
             user_faved = Favorite.objects.filter(user=user, post=post).exists()
 
             posts_data.append({
-                "id": post.id,
+                "post_id": post.id,
                 "user": post.user.username,
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
@@ -397,7 +397,7 @@ def search_posts_by_labels(request):
             user_faved = Favorite.objects.filter(user=user, post=post).exists()
 
             posts_data.append({
-                "id": post.id,
+                "post_id": post.id,
                 "user": post.user.username,
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
@@ -436,4 +436,128 @@ def search_labels(request):
     labels_data = [{"id": label.id,
                     "name": label.name,
                     } for label in matching_labels]
+    
+    connection.close()
     return Response({"labels": labels_data}, status=status.HTTP_200_OK)
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_post(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    post_id = request.data.get("post_id")
+
+    try:
+        post = get_object_or_404(Post, id=post_id, user=request.user)
+        
+        # Borrar los likes asociados
+        post.likes.all().delete()
+
+        # Borrar los favoritos asociados
+        post.favorites.all().delete()
+
+        # Borrar las etiquetas asociadas
+        post.labels.all().delete()
+
+        # Borrar los comentarios asociados
+        post.comments.all().delete()
+
+        # Borrar las imágenes asociadas
+        post.pictures.all().delete()
+
+        # Finalmente borrar el post
+        post.delete()
+    
+        connection.close()
+        return Response({"Detail": "Post y contenido asociado eliminado correctamente."}, status=status.HTTP_200_OK)
+
+    
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al eliminar el post: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_comment(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    comment_id = request.data.get("comment_id")
+    
+    if not comment_id:
+        connection.close()
+        return Response({"error": "Falta el ID del comentario."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+        comment.delete()
+        connection.close()
+        return Response({"Detail": "Comentario eliminado correctamente."}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al eliminar el comentario: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_like(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    id = request.data.get("id")
+    try:
+        post = get_object_or_404(Post, id=id)
+        like = Like.objects.filter(user=user, post=post).first()
+        if not like:
+            connection.close()
+            return Response({"error": "No has dado like a este post."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Eliminar el like
+        like.delete()
+        
+        # Reducir el número de likes en el post
+        post.likes_number -= 1
+        post.save()
+
+        connection.close()
+        return Response({"Detail": f"Like eliminado. Total de likes: {post.likes_number}"}, status=status.HTTP_200_OK)
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al eliminar el like: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_favorite(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    id = request.data.get("id")
+    try:
+        post = get_object_or_404(Post, id=id)
+        favorite = Favorite.objects.filter(user=user, post=post).first()
+        if not favorite:
+            connection.close()
+            return Response({"error": "Este post no está en tus favoritos."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Eliminar de favoritos
+        favorite.delete()
+
+        connection.close()
+        return Response({"Detail": "Post eliminado de favoritos."}, status=status.HTTP_200_OK)
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al eliminar de favoritos: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -45,7 +45,7 @@ class Comment(models.Model):
     
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="favorites")
 
 class Label(models.Model):
     name = models.CharField(max_length=50, blank=False)
