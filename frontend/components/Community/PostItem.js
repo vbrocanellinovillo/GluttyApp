@@ -7,6 +7,7 @@ import { Divider } from "react-native-paper";
 import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
 import UserImage from "../UI/UserImage/UserImage";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function PostItem({
   post,
@@ -14,12 +15,27 @@ export default function PostItem({
   curved,
   curvedStyle,
   onPress,
+  iconPost = "chevron-forward-outline",
+  onPressIcon
 }) {
   function handlePress() {
     Haptics.selectionAsync();
     onPress && onPress();
   }
 
+
+  function handlePress(){
+    onPressIcon&&onPressIcon()
+    Haptics.selectionAsync()
+    if (iconPost != "chevron-forward-outline") {
+      console.log("DELFINAAAA ")
+      
+    }else{
+      console.log("GONN")
+      onPress && onPress();
+    }
+    
+  }
   return (
     <>
       <Pressable
@@ -32,27 +48,44 @@ export default function PostItem({
         onPress={handlePress}
       >
         <View style={styles.nameContainer}>
-          <UserImage dimensions={40} source={post.userImage} />
-          <TextCommonsMedium style={styles.name}>
-            {post?.name}
-          </TextCommonsMedium>
-          <TextCommonsRegular style={styles.username}>
-            @{post?.username}
-          </TextCommonsRegular>
+          <View style={styles.userData}>
+            <UserImage dimensions={40} source={post?.userImage} />
+            <TextCommonsMedium style={styles.name}>
+              {post?.name}
+            </TextCommonsMedium>
+            <TextCommonsRegular style={styles.username}>
+              @{post?.username || post?.user}
+            </TextCommonsRegular>
+          </View>
+          <Pressable onPress={handlePress}>
+            <Ionicons style={styles.verMas} name={iconPost}/>
+          </Pressable>
+          
         </View>
         <TextCommonsRegular style={styles.content}>
-          {post?.content}
+          {post?.content || post?.body}
+
         </TextCommonsRegular>
         <View style={styles.tagsContainer}>
-          {post?.tags.map((tag, index) => (
-            <Tag key={index}>{tag}</Tag>
-          ))}
+          {post?.tags && post.tags.length > 0 ? (
+            post?.tags.map((tag, index) => <Tag key={index}>{tag}</Tag>)
+          ) : (
+            <TextCommonsMedium style={styles.noTagsText}>
+              No hay etiquetas disponibles.
+            </TextCommonsMedium>
+          )}
         </View>
         <View style={styles.infoContainer}>
           <TextCommonsRegular style={styles.date}>
-            {post?.date}
+            {post?.date ? post?.date : "Fecha no disponible"}
           </TextCommonsRegular>
-          <PostInfoContainer comments={post?.comments} likes={post?.likes} />
+
+          <PostInfoContainer
+            comments={post?.comments}
+            likes={post?.likes}
+            faved={post?.faved}
+            liked={post?.liked}
+          />
         </View>
       </Pressable>
       {!curved && <Divider />}
@@ -79,7 +112,13 @@ const styles = StyleSheet.create({
   nameContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    justifyContent: "space-between",
+  },
+
+  userData: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
 
   tagsContainer: {
@@ -117,8 +156,16 @@ const styles = StyleSheet.create({
   },
 
   date: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "400",
-    color: Colors.mJordan,
+    color: "grey",
+  },
+
+  noTagsText: {
+    color: "grey",
+  },
+
+  verMas: {
+    fontSize: 20,
   },
 });

@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Colors } from "../../../constants/colors";
 import { useState } from "react";
+import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 
 export default function ButtonsOptions({
   options,
@@ -10,12 +11,13 @@ export default function ButtonsOptions({
   containerStyle,
   optionStyle,
   textStyle,
+  selectedTextStyle,
 }) {
   const [selectedOption, setSelectedOption] = useState(1);
 
   function selectOption(id) {
     setSelectedOption(id);
-    onSelect(id);
+    onSelect && onSelect(id);
   }
 
   return (
@@ -34,7 +36,15 @@ export default function ButtonsOptions({
             key={option.id}
             onPress={selectOption.bind(this, option.id)}
           >
-            <Text style={[styles.optionText, textStyle]}>{option.value}</Text>
+            <TextCommonsRegular
+              style={[
+                styles.optionText,
+                textStyle,
+                selectedOption == option.id && selectedTextStyle,
+              ]}
+            >
+              {option.value}
+            </TextCommonsRegular>
           </Pressable>
         ))}
     </View>

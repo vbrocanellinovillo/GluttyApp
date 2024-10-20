@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Keyboard, Animated, TouchableWithoutFeedback, ScrollView, Text, Image } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Keyboard, Animated, TouchableWithoutFeedback, ScrollView, Text, Image, Modal, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import TextCommonsMedium from '../../components/UI/FontsTexts/TextCommonsMedium';
 import { Colors } from '../../constants/colors';
@@ -13,12 +13,22 @@ import {
   useCameraPermissions,
   useMediaLibraryPermissions,
 } from "expo-image-picker";
+import { createPost } from '../../services/communityService';
+import { useSelector } from 'react-redux';
+import GluttyModal from '../../components/UI/GluttyModal';
+import { useNavigation } from '@react-navigation/native';
 
-export default function AddPost() {
+
+export default function AddPost({navigation}) {
   const [post, setPost] = useState('');
   const [tags, setTags] = useState([]);
   const [currentTag, setCurrentTag] = useState('');
-  const [selectedImages, setSelectedImages] = useState([]); 
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [isUploading, setIsUploading] = useState(false); // Controla el modal de "Subiendo"
+  const [uploadSuccess, setUploadSuccess] = useState(false); // Controla el modal de éxito
+  const [errorMessage, setErrorMessage] = useState(""); 
+  const [showModal, setShowModal] = useState(false); // modale de error 
+  const [isError, setIsError] = useState(false); // error si o no
 
   const keyboardHeight = useRef(new Animated.Value(0)).current;
   const inputTranslateY = useRef(new Animated.Value(0)).current;
@@ -26,6 +36,9 @@ export default function AddPost() {
   const sheetRef = useRef();
   const [cameraPermissions, requestCameraPermissions] = useCameraPermissions();
   const [galleryPermissions, requestGalleryPermissions] = useMediaLibraryPermissions();
+
+  const token = useSelector((state) => state.auth.accessToken);
+
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
@@ -46,7 +59,7 @@ export default function AddPost() {
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       Animated.parallel([
         Animated.timing(keyboardHeight, {
-          toValue: 0, 
+          toValue: 0,
           duration: 150,
           useNativeDriver: false,
         }),
@@ -65,7 +78,7 @@ export default function AddPost() {
   }, []);
 
   const handleTagInput = (text) => {
-    if (text.includes(' ')) { 
+    if (text.includes(' ')) {
       if (currentTag.trim()) {
         setTags([...tags, currentTag.trim()]);
       }
@@ -80,44 +93,45 @@ export default function AddPost() {
   };
 
   const removeImage = (index) => {
-    setSelectedImages(selectedImages.filter((_, i) => i !== index));
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
-  // Función para abrir la hoja con las opciones de imagen
-  function openImageOptions() {
+  const openImageOptions = () => {
     sheetRef.current?.open();
-  }
+  };
 
-  // Función para comprobar permisos y seleccionar imágenes
-  async function selectImage(option) {
+  const selectImage = async (option) => {
     sheetRef.current?.close();
     const permissionStatus = await checkPermissions(option);
-
+  
     if (!permissionStatus) return;
-
-    let imageResult;
+  
     const options = {
       allowsEditing: true,
       mediaTypes: MediaTypeOptions.Images,
     };
-
-    if (option === "Take Image") {
-      imageResult = await launchCameraAsync(options);
-    } else {
-      imageResult = await launchImageLibraryAsync(options);
-    }
-
+  
+    const imageResult = option === "Take Image"
+      ? await launchCameraAsync(options)
+      : await launchImageLibraryAsync(options);
+  
     if (!imageResult.canceled) {
-      setSelectedImages([...selectedImages, imageResult.assets[0].uri]);
+      const asset = imageResult.assets[0];
+      const imageData = {
+        uri: asset.uri,
+        name: asset.fileName || asset.uri.split('/').pop(), // Usa el nombre original o el último segmento de la URI
+        type: asset.type || "image/jpeg", // Establece un tipo MIME por defecto
+      };
+  
+      setSelectedImages((prevImages) => [...prevImages, imageData]);
     }
-  }
+  };
 
-  // Verifica permisos de cámara o galería
-  async function checkPermissions(option) {
+  const checkPermissions = async (option) => {
     if (option === "Take Image") {
       if (cameraPermissions.status === PermissionStatus.GRANTED) {
         return true;
@@ -131,12 +145,40 @@ export default function AddPost() {
       const response = await requestGalleryPermissions();
       return response.granted;
     }
+  };
+
+  const handlePressPost = async (post, tags, images) => {
+    try {
+      console.log("Iniciando subida del post");
+      
+      setIsUploading(true);
+      
+      await createPost(post, tags, images, token);
+      
+      setIsUploading(false);
+      setUploadSuccess(true);
+  
+      
+    } catch (error) {
+      console.error("Error al subir el post:", error);
+      setIsUploading(false);
+      setErrorMessage(error);
+      setShowModal(true);
+      setIsError(true);
+    }
+  };
+  
+  function closeModalHandler() {
+    setShowModal(false);
+  }
+
+  function handleGoBack() {
+    navigation.navigate("CommunityTopTabs");
   }
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        {/* Input de posteo */}
         <TextInput
           style={styles.inputPost}
           placeholder="¿Qué recomendación nueva tienes?"
@@ -146,23 +188,16 @@ export default function AddPost() {
           multiline={true}
         />
 
-        {/* Mostrar las imágenes seleccionadas */}
-        <ScrollView horizontal style={styles.imagesContainer}>
-          {selectedImages.map((imageUri, index) => (
-            <View key={index} style={styles.imageWrapper}>
-              <Image
-                source={{ uri: imageUri }}
-                style={styles.imagePreview}
-              />
-              <TouchableOpacity
-                style={styles.removeIcon}
-                onPress={() => removeImage(index)}
-              >
-                <Ionicons name="trash" size={20} color="black" />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
+    <ScrollView horizontal style={styles.imagesContainer}>
+      {selectedImages.map((image, index) => (
+        <View key={index} style={styles.imageWrapper}>
+          <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+          <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
+            <Ionicons name="trash" size={20} color="black" />
+          </TouchableOpacity>
+        </View>
+      ))}
+    </ScrollView>
 
         <Animated.View style={{ transform: [{ translateY: inputTranslateY }] }}>
           <TextCommonsMedium style={styles.etiquetasLabel}>Etiquetas de búsqueda</TextCommonsMedium>
@@ -194,7 +229,7 @@ export default function AddPost() {
             <Ionicons name="camera-outline" size={24} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.sendButton}>
+          <TouchableOpacity style={styles.sendButton} onPress={() => handlePressPost(post, tags, selectedImages)}>
             <Ionicons name="send" size={24} color="white" />
           </TouchableOpacity>
         </Animated.View>
@@ -205,6 +240,35 @@ export default function AddPost() {
             onPickImage={selectImage.bind(this, "Pick Image")}
           />
         </BottomSheet>
+
+        <GluttyModal
+          isError={isError}
+          message={errorMessage}
+          onClose={closeModalHandler}
+          visible={showModal}
+        />
+      
+      <GluttyModal
+        visible={uploadSuccess}
+        //onClose={closeModalDeleteHandler}
+        message="Post subido con éxito!"
+        other
+        buttons={[
+          {
+            text: "Aceptar",
+            bg: "green",
+            color: Colors.whiteGreen,
+            onPress: handleGoBack,
+          },
+        ]}
+      />
+        <GluttyModal
+        visible={isUploading}
+        //onClose={closeModalDeleteHandler}
+        message="Subiendo post..."
+        other
+      />
+
       </View>
     </TouchableWithoutFeedback>
   );
@@ -223,8 +287,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
     fontSize: 20,
-    flexWrap: 'wrap',
-    borderWidth: 1,
     height: 100,
   },
   inputEtiqueta: {
@@ -312,5 +374,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 2,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalText: {
+    color: '#fff',
+    fontSize: 18,
+    marginTop: 20,
   },
 });

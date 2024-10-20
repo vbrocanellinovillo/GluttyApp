@@ -1,3 +1,4 @@
+import json
 from requests import Response
 from .models import *
 from rest_framework.decorators import api_view, permission_classes
@@ -19,7 +20,6 @@ def create_post(request):
     user = User.objects.filter(username=username).first()
     
     if not user:
-        connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     try:
         post_content = request.data.get("content")
@@ -33,11 +33,22 @@ def create_post(request):
 
             # Manejar imágenes del posteo
             images = request.FILES.getlist("images")
-            post.UploadPictures(images)
+            if images:
+                post.UploadPictures(images)
             
             # Manejar etiquetas del posteo
-            labels = request.data.get("labels", [])  # Array de etiquetas
+            labels = request.data.getlist("labels")  # Array de etiquetas
+            # labels = json.loads(request.data.get("labels", "[]"))
+
+            labels = request.data.get("labels", "[]")  # Obtiene la cadena JSON
+            try:
+                labels = json.loads(labels)  # Convierte la cadena JSON en un array de Python
+            except json.JSONDecodeError:
+                labels = []  # En caso de error, asignar un array vacío
+                
+            print("Labels: ", labels)
             if labels:
+                print(labels)
                 for label_name in labels:
                     # Ignorar mayúsculas/minúsculas en la comparación
                     label, _ = Label.objects.get_or_create(name__iexact=label_name, defaults={'name': label_name})
@@ -49,7 +60,7 @@ def create_post(request):
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_post_by_id(request):
     username = request.user.username
@@ -292,7 +303,7 @@ def get_recent_posts(request):
 
     try:
         # Obtener los posts más recientes de todos los usuarios, limitando la cantidad de resultados
-        recent_posts = Post.objects.all().select_related('user').order_by('-created_at')[:30]  # Cambia el 10 por el número de posts que deseas obtener
+        recent_posts = Post.objects.all().select_related('user')[:30]  # Cambia el 10 por el número de posts que deseas obtener
 
         # Crear una lista de datos de los posts
         posts_data = []
@@ -334,9 +345,7 @@ def get_popular_posts(request):
 
     try:
         # Obtener los posts ordenados por la cantidad de likes
-        popular_posts = Post.objects.annotate(
-            total_likes=models.Count('likes')
-        ).order_by('-total_likes')[:30]  # Cambia el 30 por el número de posts que deseas obtener
+        popular_posts = Post.objects.all().order_by('-likes_number')[:30]  # Cambia el 30 por el número de posts que deseas obtener
 
         # Crear una lista de datos de los posts populares
         posts_data = []

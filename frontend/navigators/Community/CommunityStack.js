@@ -4,6 +4,7 @@ import CommunityHeader from "../../components/UI/Header/CommunityHeader";
 import Feed from "../../screens/Community/Feed";
 import CommunityTopTabs from "./CommunityTopTabs";
 import CommunitySearch from "../../screens/Community/CommunitySearch";
+import ViewPostById from "../../screens/Community/ViewPostById";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,8 @@ export default function CommunityStack() {
         component={CommunityTopTabs}
         options={{ title: "Feed" }}
       />
+      <Stack.Screen name="ViewPostById" component={ViewPostById}/>
+
     </Stack.Navigator>
   );
 }

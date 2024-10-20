@@ -175,7 +175,7 @@ export default function ViewMedicalExam({ navigation, route }) {
           <ScrollView style={styles.scrollview}>
             {medicalExam.variables.map((item) => (
               <View key={item.variable_name}>
-                {item.value === "Positivo" || item.value === "Negativo" ? (
+                {item.value === "Positivo" || item.value === "Negativo" || item.value === "NEGATIVO" || item.value === "POSITIVO"? (
                   <FormSectionContainer>
                     <ValorPosNeg
                       label={item.variable_name}

@@ -14,15 +14,14 @@ class Post(models.Model):
         ordering = ["-created_at"]
 
     def UploadPictures(self, images):
-        if images:
-                try:
-                    for image in images:
-                        picture_link, public_id = upload_to_cloudinary(image)
-                        new_picture = PicturePost.objects.create(post=self, photo_url=picture_link, public_id=public_id)
-                        new_picture.save()
-                    return True
-                except Exception as e:
-                    raise ValidationError(f"Error al subir la imagen: {str(e)}")
+        try:
+            for image in images:
+                picture_link, public_id = upload_to_cloudinary(image)
+                new_picture = PicturePost.objects.create(post=self, photo_url=picture_link, public_id=public_id)
+                new_picture.save()
+            return True
+        except Exception as e:
+            raise ValidationError(f"Error al subir la imagen: {str(e)}")
                 
     def get_name(user):
         if hasattr(user, 'celiac'):
