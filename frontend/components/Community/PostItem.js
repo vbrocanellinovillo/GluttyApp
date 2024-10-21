@@ -18,6 +18,7 @@ export default function PostItem({
   onPress,
   iconPost = "chevron-forward-outline",
   onPressIcon,
+  
 }) {
   function handlePress() {
     Haptics.selectionAsync();

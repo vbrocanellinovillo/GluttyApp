@@ -8,6 +8,7 @@ import { Colors } from '../../constants/colors';
 import addComment from '../../services/communityService';
 import { useSelector } from 'react-redux';
 import Comment from './Comment';
+import UserImage from '../UI/UserImage/UserImage';
 
 export default function AddComment({id_post}) {
   const [comment, setComment] = useState('');
@@ -83,10 +84,7 @@ export default function AddComment({id_post}) {
         closeButtonText="Cancelar">
       </GluttyModal>
 
-      <Image
-        source={{ uri: 'https://picsum.photos/40' }}
-        style={styles.profileImage}
-      />
+      <UserImage dimensions={40} />
 
       <TextInput
         style={styles.input}
