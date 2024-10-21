@@ -78,7 +78,7 @@ export default function PostItem({
           </TextCommonsRegular>
 
           <PostInfoContainer
-            comments={post?.comments}
+            comments={post?.comments_number}
             likes={post?.likes}
             faved={post?.faved}
             liked={post?.liked}
