@@ -9,6 +9,11 @@ import * as Haptics from "expo-haptics";
 import UserImage from "../UI/UserImage/UserImage";
 import { Ionicons } from "@expo/vector-icons";
 import TagItem from "./TagItem";
+import { useState } from "react";
+import { deletePost } from "../../services/communityService";
+import { useSelector } from "react-redux";
+import GluttyModal from "../UI/GluttyModal";
+import { useNavigation } from "@react-navigation/native";
 
 export default function PostItem({
   post,
@@ -20,16 +25,38 @@ export default function PostItem({
   onPressIcon,
   
 }) {
-  function handlePress() {
-    Haptics.selectionAsync();
-    onPress && onPress();
-  }
+
+  const [isloading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const [showEliminarModal, setShowEliminarModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const navigation = useNavigation();
+
+
+  console.log("EL POSTEO: ")
+  console.log(post)
+  const id = post?.id
+  const token = useSelector((state) => state.auth.accessToken);
+
+
+    function closeModalHandler() {
+      setShowModal(false);
+    }
+  
+    function closeModalDeleteHandler() {
+      setShowEliminarModal(false);
+    }
+  
+
 
   function handlePress() {
     Haptics.selectionAsync();
-    onPressIcon && onPressIcon();
     if (iconPost != "chevron-forward-outline") {
-      console.log("DELFINAAAA ");
+      console.log("Eliminarrr");
+      onPressIcon && onPressIcon();
+      
     } else {
       console.log("GONN");
       console.log("QUEEEEEE");
@@ -38,6 +65,28 @@ export default function PostItem({
   }
   return (
     <>
+      <GluttyModal
+        isError={isError}
+        message={message}
+        onClose={closeModalHandler}
+        visible={showModal}
+      />
+      <GluttyModal
+        visible={showEliminarModal}
+        onClose={closeModalDeleteHandler}
+        message="¿Seguro que desea eliminar el estudio?"
+        other
+        buttons={[
+          {
+            text: "Confirmar",
+            bg: "green",
+            color: Colors.whiteGreen,
+              },
+        ]}
+        closeButtonText="Cancelar"
+      />
+
+
       <Pressable
         style={[
           styles.container,
