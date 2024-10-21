@@ -3,7 +3,7 @@ import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
 
-export default function Tag({ children, tagStyle, textStyle, onPress }) {
+export default function TagItem({ children, tagStyle, textStyle, onPress }) {
   function handlePress() {
     Haptics.selectionAsync();
     onPress && onPress();

@@ -1,6 +1,6 @@
 import { backendUrl } from "../constants/backend";
 import { Post } from "../models/Post";
-import { formatDateToYYYYMMDD } from "../utils/dateFunctions";
+import { formatDateTimeToYYYYMMDDHHMMSS } from "../utils/dateFunctions";
 import { httpRequest } from "../utils/http";
 import { Tag } from "../models/Tag";
 
@@ -11,10 +11,10 @@ function getPosts(postsArray) {
 
   for (let dataPoint of postsArray) {
     const postDate = new Date(dataPoint.created_at);
-    const date = formatDateToYYYYMMDD(postDate);
+    const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
 
     const newPost = new Post(
-      dataPoint.id,
+      dataPoint.post_id,
       dataPoint.name,
       dataPoint.user,
       dataPoint.profile_picture,
@@ -25,7 +25,8 @@ function getPosts(postsArray) {
       dataPoint.comments_number,
       dataPoint.images,
       dataPoint.user_faved,
-      dataPoint.user_liked
+      dataPoint.user_liked,
+      null
     );
 
     posts.push(newPost);
@@ -57,6 +58,7 @@ export async function getInitialPosts(token) {
 
   try {
     const data = await httpRequest(requestUrl, requestOptions);
+
     return getPosts(data);
   } catch (error) {
     throw new Error(error.message);
@@ -164,8 +166,9 @@ export async function getPostById(id, token) {
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);
+    
     const postDate = new Date(response.created_at);
-    const date = formatDateToYYYYMMDD(postDate);
+    const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
 
     const newPost = new Post(
       response.id,
@@ -179,7 +182,8 @@ export async function getPostById(id, token) {
       response.comments_number,
       response.images,
       response.user_faved,
-      response.user_liked
+      response.user_liked,
+      response.comments
     );
     return newPost;
   } catch (error) {
@@ -191,7 +195,30 @@ export async function getPostById(id, token) {
 export async function addLike(idPost) {}
 
 // COMENTAR EL POST
-export async function addComment(idPost, comment) {}
+export default async function addComment(idPost, comment, token) {
+  const requestUrl = url + "add-comment/";
+
+  const formdata = new FormData();
+
+  formdata.append("id", idPost);
+  formdata.append("comment", comment);
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 
 export async function searchCommunity(token, searchTerm, signal) {
   const requestUrl = url + "search-labels/";
@@ -217,6 +244,4 @@ export async function searchCommunity(token, searchTerm, signal) {
   }
 }
 
-export async function deletePost(token, searchTerm, signal) {
- 
-}
+export async function deletePost(token, searchTerm, signal) {}

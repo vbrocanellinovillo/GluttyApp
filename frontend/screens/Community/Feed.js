@@ -10,6 +10,7 @@ import { searchbarStyle } from "../../constants/community";
 import ButtonsOptions from "../../components/UI/Controls/ButtonsOptions";
 import { Colors } from "../../constants/colors";
 import { useQuery } from "@tanstack/react-query";
+import NoPosts from "../../components/Community/NoPosts";
 
 const height = Dimensions.get("window").height * 0.5;
 
@@ -28,7 +29,6 @@ export default function Feed({ navigation }) {
     queryFn: ({ signal }) => getFeed(token, selectedOption, signal),
   });
 
-
   function handleChangeOption(option) {
     setSelectedOption(option);
   }
@@ -43,15 +43,21 @@ export default function Feed({ navigation }) {
 
   if (isError && !isLoading) content = <ErrorPosts style={styles.errorPosts} />;
 
-  if (!isError && !isLoading && data)
+  if (!isError && !isLoading && data && data.length > 0)
     content = (
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PostItem post={item} />}
+        renderItem={({ item }) => <PostItem post={item} onPress={() => navigation.navigate("ViewPostById", { id: item.id })} />}
         contentInset={{ bottom: 230 }}
       />
     );
+
+  if (!isError && !isLoading && data && data.length == 0) {
+    content = (
+      <NoPosts>Comienza a compartir tus experiencias con la comunidad!</NoPosts>
+    );
+  }
 
   return (
     <View style={styles.container}>

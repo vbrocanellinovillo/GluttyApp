@@ -22,7 +22,7 @@ class BloodTestSerializer(serializers.ModelSerializer):
         
     def validate_test_date(self, value):
         # Verificar que la fecha del test sea mayor a la fecha actual
-        if value >= date.today():
+        if value > date.today():
             raise serializers.ValidationError("La fecha del análisis debe ser previa a la fecha actual.")
         return value
     
@@ -30,5 +30,7 @@ class BloodTestSerializer(serializers.ModelSerializer):
         # Convierte los valores 'undefined' y 'null' a None
         for key, value in data.items():
             if value in ['undefined', 'null']:
+                data[key] = None
+            if value is null:
                 data[key] = None
         return data

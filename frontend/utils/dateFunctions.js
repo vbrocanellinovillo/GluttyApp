@@ -12,6 +12,29 @@ export function formatDateToYYYYMMDD(date) {
   return `${year}-${month}-${day}`;
 }
 
+export function formatDateTimeToYYYYMMDDHHMMSS(date) {
+  // Obtiene el año completo
+  const year = date.getFullYear();
+
+  // Obtiene el mes y agrega un 0 delante si es necesario
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+
+  // Obtiene el día y agrega un 0 delante si es necesario
+  const day = String(date.getDate()).padStart(2, "0");
+
+  // Obtiene las horas y agrega un 0 delante si es necesario
+  const hours = String(date.getHours()).padStart(2, "0");
+
+  // Obtiene los minutos y agrega un 0 delante si es necesario
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  // Obtiene los segundos y agrega un 0 delante si es necesario
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  // Combina en el formato deseado
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 export const getMonthName = (monthNumber) => {
   const months = [
     "ENE",
@@ -134,4 +157,33 @@ export function getRandomDate(start, end) {
   )
     .toISOString()
     .split("T")[0]; // Devuelve la fecha en formato YYYY-MM-DD
+}
+
+export function convertDate(dateStr) {
+  // Crear un objeto Date a partir del string de fecha
+  const date = new Date(dateStr);
+
+  // Definir los meses en español
+  const months = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  // Obtener día, mes y año
+  const day = date.getUTCDate();
+  const month = months[date.getUTCMonth()];
+  const year = date.getUTCFullYear();
+
+  // Formatear la fecha en el formato deseado
+  return `${day} de ${month} de ${year}`;
 }

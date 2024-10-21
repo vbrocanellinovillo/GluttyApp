@@ -1,5 +1,4 @@
 import { StyleSheet, View } from "react-native";
-import WelcomeMessage from "../../components/Community/Banners";
 import GluttyFeedButton from "../../components/Community/GluttyFeedButton";
 import InitialPosts from "../../components/Community/InitialPosts";
 import Banners from "../../components/Community/Banners";

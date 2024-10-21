@@ -63,7 +63,11 @@ export default function MyPosts({ navigation }) {
   }
 
   if (!isLoading && !isError && (!posts || posts.length == 0)) {
-    content = <NoPosts />;
+    content = (
+      <NoPosts>
+        Comienza a publicar tus posteos para compartir con la comunidad!
+      </NoPosts>
+    );
   }
 
   return (

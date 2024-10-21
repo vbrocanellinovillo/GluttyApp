@@ -5,6 +5,7 @@ import { getInitialPosts } from "../../services/communityService";
 import PostsSkeleton from "../UI/Loading/PostsSkeleton";
 import PostItem from "./PostItem";
 import ErrorPosts from "./ErrorPosts";
+import NoPosts from "./NoPosts";
 
 const height = Dimensions.get("window").height * 0.2;
 
@@ -40,6 +41,10 @@ export default function InitialPosts() {
     return (
       <ErrorPosts curved postsStyle={styles.list} style={styles.errorPosts} />
     );
+  }
+
+  if (!isLoading && !isError && posts.length == 0) {
+    return <NoPosts>Explora los posteos de la comunidad!</NoPosts>;
   }
 
   return (

@@ -7,11 +7,12 @@ export class Post {
     content,
     tags,
     date,
-    comments,
+    comments_number,
     likes,
     images,
     faved,
-    liked
+    liked,
+    comments
   ) {
     this.id = id;
     this.name = name;
@@ -20,10 +21,11 @@ export class Post {
     this.content = content;
     this.tags = tags;
     this.date = date;
-    this.comments = comments;
+    this.comments_number = comments_number;
     this.likes = likes;
     this.images = images;
     this.faved = faved;
     this.liked = liked;
+    this.comments = comments;
   }
 }
