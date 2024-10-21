@@ -48,7 +48,7 @@ export default function Feed({ navigation }) {
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PostItem post={item} />}
+        renderItem={({ item }) => <PostItem post={item} onPress={() => navigation.navigate("ViewPostById", { id: item.id })} />}
         contentInset={{ bottom: 230 }}
       />
     );
