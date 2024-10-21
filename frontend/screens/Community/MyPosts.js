@@ -9,19 +9,31 @@ import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
 import ErrorPosts from "../../components/Community/ErrorPosts";
 import NoPosts from "../../components/Community/NoPosts";
 import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
+import { useFocusEffect } from "@react-navigation/native";
 
 const height = Dimensions.get("window").height * 0.5;
 
-export default function MyPosts({ navigation }) {
+export default function MyPosts({ navigation, route }) {
   const token = useSelector((state) => state.auth.accessToken);
 
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
+  //const refresh = route.params.refresh || null;
+  //console.log("route:", route);
+
   useEffect(() => {
     fetchMyPosts();
   }, []);
+
+  // useFocusEffect(()=> {
+  //   if (refresh) {
+  //     fetchMyPosts();
+  //   } else {
+  //     console.log("NO REFRESH");
+  //   }
+  // }, [route]);
 
   async function fetchMyPosts() {
     setIsLoading(true);
