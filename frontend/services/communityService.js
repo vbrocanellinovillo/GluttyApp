@@ -171,7 +171,7 @@ export async function getPostById(id, token) {
     const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
 
     const newPost = new Post(
-      response.id,
+      response.post_id,
       response.name,
       response.user,
       response.profile_picture,
@@ -185,6 +185,7 @@ export async function getPostById(id, token) {
       response.user_liked,
       response.comments
     );
+
     return newPost;
   } catch (error) {
     throw new Error(error.message);
@@ -244,4 +245,31 @@ export async function searchCommunity(token, searchTerm, signal) {
   }
 }
 
-export async function deletePost(token, searchTerm, signal) {}
+export async function deletePost(id, token) {
+
+  const requestUrl = url + "delete-post/";
+
+  const formdata = new FormData();
+
+  formdata.append("id", id);
+
+  formdata.append("token", token);
+
+  const requestOptions = {
+    method: "DELETE",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
