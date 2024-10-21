@@ -159,13 +159,29 @@ def add_comment(request):
         if not content:
             return Response({"error": "El comentario no puede estar vacío."}, status=status.HTTP_400_BAD_REQUEST)
 
-        Comment.objects.create(user=request.user, post=post, content=content)
+        comment = Comment.objects.create(user=request.user, post=post, content=content)
+        print(comment)
         
         post.comments_number += 1
         post.save()
         
+        if comment.user.profile_picture:
+            profile_picture = comment.user.profile_picture
+        else:
+            profile_picture = None
+            
+        # Crear la respuesta con los detalles del comentario recién creado
+        response_data = {
+            "comment_id": comment.id,
+            "user": comment.user.username,
+            "name": Post.get_name(comment.user),
+            "profile_picture": profile_picture,
+            "content": comment.content,
+            "created_at": comment.created_at,
+        }
+        
         connection.close()
-        return Response({"Detail": f"Comentario agregado correctamente."}, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)
     except Exception as e:
         connection.close()
         return Response({"error": f"Error al agregar comentario: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
