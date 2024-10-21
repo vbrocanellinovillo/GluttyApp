@@ -291,7 +291,7 @@ def get_my_posts(request):
 
 
 #Trae solo 30 posteos se puede modificar nsino
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_recent_posts(request):
     username = request.user.username
@@ -300,31 +300,37 @@ def get_recent_posts(request):
     if not user:
         connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    labels = request.data.get("labels")
 
     try:
-        # Obtener los posts más recientes de todos los usuarios, limitando la cantidad de resultados
-        recent_posts = Post.objects.all().select_related('user')[:30]  # Cambia el 10 por el número de posts que deseas obtener
+        if labels:
+            posts_data = filter_posts_by_labels(labels, user, '-created_at')
 
-        # Crear una lista de datos de los posts
-        posts_data = []
-        for post in recent_posts:
-            user_liked = Like.objects.filter(user=user, post=post).exists()
-            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+        else:
+            # Obtener los posts más recientes de todos los usuarios, limitando la cantidad de resultados
+            recent_posts = Post.objects.all().select_related('user')[:30]  # Cambia el 10 por el número de posts que deseas obtener
 
-            posts_data.append({
-                "post_id": post.id,
-                "user": post.user.username,
-                "name": Post.get_name(post.user),
-                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
-                "body": post.body,
-                "created_at": post.created_at,
-                "likes": post.likes_number,
-                "comments_number": post.comments_number,
-                "user_liked": user_liked,
-                "user_faved": user_faved,
-                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
-                "labels": [label.label.name for label in post.labels.all()],
-            })
+            # Crear una lista de datos de los posts
+            posts_data = []
+            for post in recent_posts:
+                user_liked = Like.objects.filter(user=user, post=post).exists()
+                user_faved = Favorite.objects.filter(user=user, post=post).exists()
+
+                posts_data.append({
+                    "post_id": post.id,
+                    "user": post.user.username,
+                    "name": Post.get_name(post.user),
+                    "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                    "body": post.body,
+                    "created_at": post.created_at,
+                    "likes": post.likes_number,
+                    "comments_number": post.comments_number,
+                    "user_liked": user_liked,
+                    "user_faved": user_faved,
+                    "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                    "labels": [label.label.name for label in post.labels.all()],
+                })
 
         connection.close()
         return Response(posts_data, status=status.HTTP_200_OK)
@@ -333,7 +339,7 @@ def get_recent_posts(request):
         connection.close()
         return Response({"error": f"Error al obtener los posteos recientes: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_popular_posts(request):
     username = request.user.username
@@ -342,31 +348,38 @@ def get_popular_posts(request):
     if not user:
         connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    labels = request.data.get("labels")
 
     try:
-        # Obtener los posts ordenados por la cantidad de likes
-        popular_posts = Post.objects.all().order_by('-likes_number')[:30]  # Cambia el 30 por el número de posts que deseas obtener
+        
+        if labels:
+            posts_data = filter_posts_by_labels(labels, user, '-likes_number')
 
-        # Crear una lista de datos de los posts populares
-        posts_data = []
-        for post in popular_posts:
-            user_liked = Like.objects.filter(user=user, post=post).exists()
-            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+        else:
+            # Obtener los posts ordenados por la cantidad de likes
+            popular_posts = Post.objects.all().order_by('-likes_number')[:30]  # Cambia el 30 por el número de posts que deseas obtener
 
-            posts_data.append({
-                "post_id": post.id,
-                "user": post.user.username,
-                "name": Post.get_name(post.user),
-                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
-                "body": post.body,
-                "created_at": post.created_at,
-                "likes": post.likes_number,
-                "comments_number": post.comments_number,
-                "user_liked": user_liked,
-                "user_faved": user_faved,
-                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
-                "labels": [label.label.name for label in post.labels.all()],
-            })
+            # Crear una lista de datos de los posts populares
+            posts_data = []
+            for post in popular_posts:
+                user_liked = Like.objects.filter(user=user, post=post).exists()
+                user_faved = Favorite.objects.filter(user=user, post=post).exists()
+
+                posts_data.append({
+                    "post_id": post.id,
+                    "user": post.user.username,
+                    "name": Post.get_name(post.user),
+                    "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                    "body": post.body,
+                    "created_at": post.created_at,
+                    "likes": post.likes_number,
+                    "comments_number": post.comments_number,
+                    "user_liked": user_liked,
+                    "user_faved": user_faved,
+                    "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                    "labels": [label.label.name for label in post.labels.all()],
+                })
 
         connection.close()
         return Response(posts_data, status=status.HTTP_200_OK)
@@ -375,60 +388,35 @@ def get_popular_posts(request):
         connection.close()
         return Response({"error": f"Error al obtener los posteos populares: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def search_posts_by_labels(request):
-    username = request.user.username
-    user = User.objects.filter(username=username).first()
 
-    if not user:
-        connection.close()
-        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
-    # Obtener las labels desde el Form Data
-    labels_input = request.data.get("labels", "")
+def filter_posts_by_labels(labels, user, order_by):
+    # Convierte el string separado por comas en una lista de enteros
+    label_ids = [int(label_id) for label_id in labels.split(',') if label_id.isdigit()]
     
-    # Convertir el string de labels en una lista de enteros
-    try:
-        if labels_input:
-            # Asegúrate de que se puedan convertir a enteros
-            labels_ids = list(map(int, labels_input.split(',')))
-        else:
-            labels_ids = []
+    posts = Post.objects.filter(labels__label__id__in=label_ids).distinct().order_by(order_by)[:30]  # Cambia el 30 por el número de posts a obtener
 
-        # Filtrar los posteos que contengan las etiquetas seleccionadas por ID
-        posts = Post.objects.filter(labels__label__id__in=labels_ids).distinct()
+    posts_data = []
+    for post in posts:
+        user_liked = Like.objects.filter(user=user, post=post).exists()
+        user_faved = Favorite.objects.filter(user=user, post=post).exists()
 
-        # Crear una lista de datos de los posts
-        posts_data = []
-        for post in posts:
-            user_liked = Like.objects.filter(user=user, post=post).exists()
-            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+        posts_data.append({
+            "post_id": post.id,
+            "user": post.user.username,
+            "name": Post.get_name(post.user),
+            "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+            "body": post.body,
+            "created_at": post.created_at,
+            "likes": post.likes_number,
+            "comments_number": post.comments_number,
+            "user_liked": user_liked,
+            "user_faved": user_faved,
+            "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+            "labels": [label.label.name for label in post.labels.all()],
+        })
 
-            posts_data.append({
-                "post_id": post.id,
-                "user": post.user.username,
-                "name": Post.get_name(post.user),
-                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
-                "body": post.body,
-                "created_at": post.created_at,
-                "likes": post.likes_number,
-                "comments_number": post.comments_number,
-                "user_liked": user_liked,
-                "user_faved": user_faved,
-                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
-                "labels": [label.label.name for label in post.labels.all()],
-            })
+    return posts_data
 
-        connection.close()
-        return Response(posts_data, status=status.HTTP_200_OK)
-
-    except ValueError:
-        connection.close()
-        return Response({"error": "Las etiquetas deben ser IDs válidas."}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        connection.close()
-        return Response({"error": f"Error al buscar posteos: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])

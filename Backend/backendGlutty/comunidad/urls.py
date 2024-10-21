@@ -12,7 +12,6 @@ urlpatterns = [
     path("get-recent-posts/", get_recent_posts, name="get_recent_posts"),
     path("get-popular-posts/", get_popular_posts, name="get_popular_posts"), 
     path("search-labels/", search_labels, name="search_labels"),
-    path("search-posts-by-labels/", search_posts_by_labels, name="search_posts_by_labels"),
     path("delete-post/", delete_post, name="delete_post"),
     path("delete-comment/", delete_comment, name="delete_comment"),
     path("delete-like/", delete_like, name="delete_like"),
