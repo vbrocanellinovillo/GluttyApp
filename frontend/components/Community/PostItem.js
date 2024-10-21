@@ -1,13 +1,14 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
-import Tag from "./Tag";
+import Tag from "./TagItem";
 import PostInfoContainer from "./PostInfoContainer";
 import { Divider } from "react-native-paper";
 import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
 import UserImage from "../UI/UserImage/UserImage";
 import { Ionicons } from "@expo/vector-icons";
+import TagItem from "./TagItem";
 
 export default function PostItem({
   post,
@@ -16,25 +17,23 @@ export default function PostItem({
   curvedStyle,
   onPress,
   iconPost = "chevron-forward-outline",
-  onPressIcon
+  onPressIcon,
 }) {
   function handlePress() {
     Haptics.selectionAsync();
     onPress && onPress();
   }
 
-
-  function handlePress(){
-    onPressIcon&&onPressIcon()
-    Haptics.selectionAsync()
+  function handlePress() {
+    Haptics.selectionAsync();
+    onPressIcon && onPressIcon();
     if (iconPost != "chevron-forward-outline") {
-      console.log("DELFINAAAA ")
-      
-    }else{
-      console.log("GONN")
+      console.log("DELFINAAAA ");
+    } else {
+      console.log("GONN");
+      console.log("QUEEEEEE");
       onPress && onPress();
     }
-    
   }
   return (
     <>
@@ -58,17 +57,15 @@ export default function PostItem({
             </TextCommonsRegular>
           </View>
           <Pressable onPress={handlePress}>
-            <Ionicons style={styles.verMas} name={iconPost}/>
+            <Ionicons style={styles.verMas} name={iconPost} />
           </Pressable>
-          
         </View>
         <TextCommonsRegular style={styles.content}>
           {post?.content || post?.body}
-
         </TextCommonsRegular>
         <View style={styles.tagsContainer}>
           {post?.tags && post.tags.length > 0 ? (
-            post?.tags.map((tag, index) => <Tag key={index}>{tag}</Tag>)
+            post?.tags.map((tag, index) => <TagItem key={index}>{tag}</TagItem>)
           ) : (
             <TextCommonsMedium style={styles.noTagsText}>
               No hay etiquetas disponibles.

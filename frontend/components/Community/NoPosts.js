@@ -2,13 +2,11 @@ import { Image, StyleSheet, View } from "react-native";
 import { thumbGlutty } from "../../constants/glutty";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 
-export default function NoPosts() {
+export default function NoPosts({ children }) {
   return (
     <View style={styles.container}>
       <Image source={{ uri: thumbGlutty }} style={styles.image} />
-      <TextCommonsMedium style={styles.text}>
-        Comienza a compartir tus posteos con la comunidad!
-      </TextCommonsMedium>
+      <TextCommonsMedium style={styles.text}>{children}</TextCommonsMedium>
     </View>
   );
 }

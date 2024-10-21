@@ -16,6 +16,9 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { searchCommunity } from "../../services/communityService";
 import { useSelector } from "react-redux";
+import SearchResultsList from "../../components/Community/SearchResultsList";
+import CommunitySearchSkeleton from "../../components/UI/Loading/CommunitySearchSkeleton";
+import NoSearchResults from "../../components/Community/NoSearchResults";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -82,7 +85,21 @@ export default function CommunitySearch({ navigation }) {
     }
   }, [data]);
 
-  console.log(results);
+  let content = <></>;
+
+  if (isLoading) {
+    content = <CommunitySearchSkeleton />;
+  } else if (isError) {
+    content = (
+      <NoSearchResults>
+        Ocurrio un error. Por favor intente de nuevo más tarde
+      </NoSearchResults>
+    );
+  } else if (data && results.length > 0) {
+    content = <SearchResultsList results={results} />;
+  } else if (data && results.length == 0) {
+    content = <NoSearchResults>No se encontraron resultados</NoSearchResults>;
+  }
 
   return (
     <DismissKeyboardContainer>
@@ -94,6 +111,7 @@ export default function CommunitySearch({ navigation }) {
           onChange={handleChageSearchTerm}
           value={searchTerm}
         />
+        <View style={styles.content}>{content}</View>
       </View>
     </DismissKeyboardContainer>
   );
@@ -102,5 +120,9 @@ export default function CommunitySearch({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+
+  content: {
+    paddingHorizontal: 6,
   },
 });

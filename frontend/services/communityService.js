@@ -1,6 +1,6 @@
 import { backendUrl } from "../constants/backend";
 import { Post } from "../models/Post";
-import { formatDateToYYYYMMDD } from "../utils/dateFunctions";
+import { formatDateTimeToYYYYMMDDHHMMSS } from "../utils/dateFunctions";
 import { httpRequest } from "../utils/http";
 import { Tag } from "../models/Tag";
 
@@ -11,10 +11,10 @@ function getPosts(postsArray) {
 
   for (let dataPoint of postsArray) {
     const postDate = new Date(dataPoint.created_at);
-    const date = formatDateToYYYYMMDD(postDate);
+    const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
 
     const newPost = new Post(
-      dataPoint.id,
+      dataPoint.post_id,
       dataPoint.name,
       dataPoint.user,
       dataPoint.profile_picture,
@@ -57,6 +57,7 @@ export async function getInitialPosts(token) {
 
   try {
     const data = await httpRequest(requestUrl, requestOptions);
+
     return getPosts(data);
   } catch (error) {
     throw new Error(error.message);
@@ -165,7 +166,7 @@ export async function getPostById(id, token) {
   try {
     const response = await httpRequest(requestUrl, requestOptions);
     const postDate = new Date(response.created_at);
-    const date = formatDateToYYYYMMDD(postDate);
+    const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
 
     const newPost = new Post(
       response.id,
@@ -217,6 +218,4 @@ export async function searchCommunity(token, searchTerm, signal) {
   }
 }
 
-export async function deletePost(token, searchTerm, signal) {
- 
-}
+export async function deletePost(token, searchTerm, signal) {}
