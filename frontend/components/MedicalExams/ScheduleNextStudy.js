@@ -86,6 +86,24 @@ const years = Array.from({ length: 80 }, (_, index) => ({
   label: (currentYear + index).toString(),
 }));
 
+function convertDate(dateStr) {
+  // Crear un objeto Date a partir del string de fecha
+  const date = new Date(dateStr);
+
+  // Definir los meses en español
+  const months = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
+
+  // Obtener día, mes y año
+  const day = date.getUTCDate();
+  const month = months[date.getUTCMonth()];
+  const year = date.getUTCFullYear();
+
+  // Formatear la fecha en el formato deseado
+  return `${day} de ${month} de ${year}`;
+}
 
 
 export default function ScheduleNextStudy({ onDismiss, time, getData }) {
@@ -108,9 +126,12 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
 
   const token = useSelector(state=>state.auth.accessToken);
   const username = useSelector(state=>state.auth.userData.username);
+  const dateToString = convertDate(time);
   
 
   const [isScheduled, SetScheduled] = useState(true);
+  console.log("timpo: " + time)
+  console.log(dateToString);
 
   useEffect(() => {
     if (time != null) {
@@ -288,8 +309,12 @@ export default function ScheduleNextStudy({ onDismiss, time, getData }) {
       visible={showModal}
     />
     <DialogContainer onDismiss={onDismiss} containerStyle={styles.container}>
+      <TextCommonsMedium style={styles.reminder}>
+      Próximo recordatorio: {"\n"} {dateToString}
+      </TextCommonsMedium>
     <TextCommonsMedium style={styles.title}>
-      ¿Deseas cancelar el recordatorio?
+      
+      ¿Deseas cancelarlo? 
     </TextCommonsMedium>
     <View style={styles.buttonContainer}>
       <Button 
@@ -336,6 +361,15 @@ const styles = StyleSheet.create({
     marginBottom: -40,
   },
 
+  reminder: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: Colors.mJordan,
+    textAlign: "center",
+    marginBottom: 10,
+  },
+
+
   wheelPicker: {
     marginTop: -15,
   },
@@ -359,8 +393,8 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    //flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: 60,
   },
   
@@ -378,7 +412,7 @@ const styles = StyleSheet.create({
   
   keepButton: {
     backgroundColor: "#f4a261",
-    marginRight:20
+    //marginRight:20
   },
   
   cancelButton: {
