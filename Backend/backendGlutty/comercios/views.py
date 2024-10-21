@@ -14,7 +14,7 @@ from .validations import *
 from django.db.models import Q
 from .serializers import LocationSerializer
 from comercios.models import Commerce, Branch
-from django.db import transaction
+from django.db import connection, transaction
 
 # Función para buscar el comercio según una query y filtros
 @api_view(["POST"])
@@ -72,14 +72,15 @@ def search_commerce(request):
             print("Encontradas: " + str(i))
             response_data["branches"].append(branch_data)
 
+        connection.close()
         return Response(response_data, status=200)
 
     except Exception as e:
         import traceback
         print(f"Error: {str(e)}")
         print(traceback.format_exc())
+        connection.close()
         return Response({"error": "Ocurrió un error interno en el servidor."}, status=500)
-
 
 def get_commerce_info(user):
     # Obtenemos el comercio asociado al usuario
@@ -209,8 +210,10 @@ def get_branch(request):
             photos_data.append(picture.photo_url)
         branch_data["pictures"] = photos_data
         
+        connection.close()
         return Response(branch_data, status=status.HTTP_200_OK)
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["PUT"])
@@ -242,12 +245,16 @@ def update_branch(request):
         if location_serializer.is_valid():
             location_serializer.save()
         else:
+            connection.close()
             return Response({"error": location_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+        connection.close()
         return Response({"detail": "Sucursal actualizada correctamente."}, status=status.HTTP_200_OK)
     except ValidationError as e:
+        connection.close()
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["DELETE"])
@@ -264,16 +271,20 @@ def delete_branch(request):
         # Verificar si el usuario tiene permisos para actualizar la sucursal
         user = request.user
         if not user.is_commerce or branch.commerce.user != user:
+            connection.close()
             return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_403_FORBIDDEN)
 
         # Actualizar la sucursal con los datos proporcionados
         branch.is_active = False
         branch.save()
+        connection.close()
         return Response({"detail":"Se eliminó la sucursal."}, status=status.HTTP_200_OK)
                         
     except ValidationError as e:
+        connection.close()
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(["POST"])
@@ -310,9 +321,11 @@ def upload_menu(request):
         for file_url in file_urls:
             Menu.objects.create(commerce=commerce, menu_url=file_url)
 
+        connection.close()
         return Response({"detail": "Menús subidos correctamente."}, status=status.HTTP_200_OK)
 
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(["POST"])
@@ -351,9 +364,11 @@ def get_menu(request):
         response = StreamingHttpResponse(streaming_content=response.iter_content(chunk_size=8192), content_type=content_type)
         response['Content-Disposition'] = f'inline; filename="{menu.public_id}.pdf"'
 
+        connection.close()
         return response
 
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(["GET"])
@@ -390,7 +405,8 @@ def get_all_menues(request):
         # Agregar el comercio completo a la lista de todos los comercios
             all_menu_data.append(menu_data)
             
-        # Devolver los datos    
+        # Devolver los datos
+        connection.close()  
         return Response({"menues": all_menu_data}, status=status.HTTP_200_OK)
 
     except Exception as e:
@@ -496,8 +512,10 @@ def get_branches(request):
         # Agregar el comercio completo a la lista de todos los comercios
             all_branches_data.append(branch_data)
             
-        # Devolver los datos    
+        # Devolver los datos
+        connection.close()  
         return Response({"branches": all_branches_data}, status=status.HTTP_200_OK)
     
     except Exception as e:
+        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 

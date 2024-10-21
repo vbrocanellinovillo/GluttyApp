@@ -42,79 +42,72 @@ def register_analysis(request):
     try:
         user = request.user
         celiac = get_object_or_404(Celiac, user=user)
-        # Crear análisis a través del serializador
-        serializer = BloodTestSerializer(data=request.data)
-        if serializer.is_valid():
-            # Guardar el análisis
-            analysis = serializer.save(celiac=celiac)
-            
-            # Guardar si es que cargó un pdf del analysis
-            file = request.FILES.get('pdf')
-            if file:
-                analysis.uploadPdf(file)
-
-            connection.close()
-            return JsonResponse({"analysis_id": analysis.id, "message": "Estudio registrado exitosamente"})
         
-        # Si el serializer.is_valid da error
-        else:
-            return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        #Recoger los valores ingresados para los estudios
+        test_date = request.data.get("test_date")
+        lab = request.data.get("lab")
+        atTG_IgA = request.data.get("atTG_IgA")
+        aDGP_IgG = request.data.get("aDGP_IgG")
+        aDGP_IgA = request.data.get("aDGP_IgA")
+        antiendomisio = request.data.get("antiendomisio")
+        hemoglobina = safe_decimal(request.data.get("hemoglobina"))
+        hematocrito = safe_decimal(request.data.get("hematocrito"))
+        ferritina = safe_decimal(request.data.get("ferritina"))
+        hierro_serico = safe_decimal(request.data.get("hierro_serico"))
+        vitamina_b12 = safe_decimal(request.data.get("vitamina_b12"))
+        calcio_serico = safe_decimal(request.data.get("calcio_serico"))
+        vitamina_d = safe_decimal(request.data.get("vitamina_d"))
+        alt = safe_decimal(request.data.get("alt"))
+        ast = safe_decimal(request.data.get("ast"))
+        colesterol_total = safe_decimal(request.data.get("colesterol_total"))
+        colesterol_hdl = safe_decimal(request.data.get("colesterol_hdl"))
+        colesterol_ldl = safe_decimal(request.data.get("colesterol_ldl"))
+        trigliceridos = safe_decimal(request.data.get("trigliceridos"))
+        glucemia = safe_decimal(request.data.get("glucemia"))
+
+        #Cambiar los valores a None si se pasa undefined
+        atTG_IgA = None if atTG_IgA == 'undefined' or atTG_IgA == 'null' else atTG_IgA
+        aDGP_IgG = None if aDGP_IgG == 'undefined' or aDGP_IgG == 'null'else aDGP_IgG
+        aDGP_IgA = None if aDGP_IgA == 'undefined' or aDGP_IgA == 'null'else aDGP_IgA
+        antiendomisio = None if antiendomisio == 'undefined' or antiendomisio == 'null' else antiendomisio
+
+        #Crear objeto EstudioSangre
+        analysis = BloodTest.objects.create(
+            celiac=celiac,
+            test_date=test_date,
+            lab=lab,
+            atTG_IgA=atTG_IgA,
+            aDGP_IgG=aDGP_IgG,
+            aDGP_IgA=aDGP_IgA,
+            antiendomisio=antiendomisio,
+            hemoglobina=hemoglobina,
+            hematocrito=hematocrito,
+            ferritina=ferritina,
+            hierro_serico=hierro_serico,
+            vitamina_b12=vitamina_b12,
+            calcio_serico=calcio_serico,
+            vitamina_d=vitamina_d,
+            alt=alt,
+            ast=ast,
+            colesterol_total=colesterol_total,
+            colesterol_hdl=colesterol_hdl,
+            colesterol_ldl=colesterol_ldl,
+            trigliceridos=trigliceridos,
+            glucemia=glucemia
+        )
+        
+        # Guardar si es que cargó un pdf del analysis
+        file = request.FILES.get('pdf')
+        if file:
+            analysis.uploadPdf(file)
+
+        connection.close()
+        return JsonResponse({"analysis_id": analysis.id, "message": "Estudio registrado exitosamente"})
+        
     except Celiac.DoesNotExist:
         connection.close()
         return JsonResponse({"error": "Celiaco no encontrado"}, status=404)
-    
-    # Recoger los valores ingresados para los estudios
-    # test_date = request.data.get("test_date")
-    # lab = request.data.get("lab")
-    # atTG_IgA = request.data.get("atTG_IgA")
-    # aDGP_IgG = request.data.get("aDGP_IgG")
-    # aDGP_IgA = request.data.get("aDGP_IgA")
-    # antiendomisio = request.data.get("antiendomisio")
-    # hemoglobina = safe_decimal(request.data.get("hemoglobina"))
-    # hematocrito = safe_decimal(request.data.get("hematocrito"))
-    # ferritina = safe_decimal(request.data.get("ferritina"))
-    # hierro_serico = safe_decimal(request.data.get("hierro_serico"))
-    # vitamina_b12 = safe_decimal(request.data.get("vitamina_b12"))
-    # calcio_serico = safe_decimal(request.data.get("calcio_serico"))
-    # vitamina_d = safe_decimal(request.data.get("vitamina_d"))
-    # alt = safe_decimal(request.data.get("alt"))
-    # ast = safe_decimal(request.data.get("ast"))
-    # colesterol_total = safe_decimal(request.data.get("colesterol_total"))
-    # colesterol_hdl = safe_decimal(request.data.get("colesterol_hdl"))
-    # colesterol_ldl = safe_decimal(request.data.get("colesterol_ldl"))
-    # trigliceridos = safe_decimal(request.data.get("trigliceridos"))
-    # glucemia = safe_decimal(request.data.get("glucemia"))
 
-    # Cambiar los valores a None si se pasa undefined
-    # atTG_IgA = None if atTG_IgA == 'undefined' or atTG_IgA == 'null' else atTG_IgA
-    # aDGP_IgG = None if aDGP_IgG == 'undefined' or aDGP_IgG == 'null'else aDGP_IgG
-    # aDGP_IgA = None if aDGP_IgA == 'undefined' or aDGP_IgA == 'null'else aDGP_IgA
-    # antiendomisio = None if antiendomisio == 'undefined' or antiendomisio == 'null' else antiendomisio
-
-    # Crear objeto EstudioSangre
-    # analysis = BloodTest.objects.create(
-    #     celiac=celiac,
-    #     test_date=test_date,
-    #     lab=lab,
-    #     atTG_IgA=atTG_IgA,
-    #     aDGP_IgG=aDGP_IgG,
-    #     aDGP_IgA=aDGP_IgA,
-    #     antiendomisio=antiendomisio,
-    #     hemoglobina=hemoglobina,
-    #     hematocrito=hematocrito,
-    #     ferritina=ferritina,
-    #     hierro_serico=hierro_serico,
-    #     vitamina_b12=vitamina_b12,
-    #     calcio_serico=calcio_serico,
-    #     vitamina_d=vitamina_d,
-    #     alt=alt,
-    #     ast=ast,
-    #     colesterol_total=colesterol_total,
-    #     colesterol_hdl=colesterol_hdl,
-    #     colesterol_ldl=colesterol_ldl,
-    #     trigliceridos=trigliceridos,
-    #     glucemia=glucemia
-    # )
 
 # Función que permite modificar un análisis de sangre
 @api_view(["PUT"])

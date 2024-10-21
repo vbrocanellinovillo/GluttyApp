@@ -54,26 +54,26 @@ export async function registerMedicalExam(
 
   const formdata = new FormData();
 
-  formdata.append("test_date", date);
-  formdata.append("lab", lab);
-  formdata.append("atTG_IgA", atTG_IgA);
-  formdata.append("aDGP_IgA", aDGP_IgA);
-  formdata.append("antiendomisio", antiendomisio);
-  formdata.append("hemoglobina", hemoglobina);
-  formdata.append("hematocrito", hematocrito);
-  formdata.append("ferritina", ferritina);
-  formdata.append("hierro_serico", hierro_serico);
-  formdata.append("vitamina_b12", vitamina_b12);
-  formdata.append("calcio_serico", calcio_serico);
-  formdata.append("vitamina_d", vitamina_d);
-  formdata.append("alt", alt);
-  formdata.append("ast", ast);
-  formdata.append("colesterol_total", colesterol_total);
-  formdata.append("colesterol_ldl", colesterol_ldl);
-  formdata.append("colesterol_hdl", colesterol_hdl);
-  formdata.append("trigliceridos", trigliceridos);
-  formdata.append("glucemia", glucemia);
-  formdata.append("pdf", pdf);
+  formdata.append("test_date", date || null);
+  formdata.append("lab", lab || null);
+  formdata.append("atTG_IgA", atTG_IgA || null);
+  formdata.append("aDGP_IgA", aDGP_IgA || null);
+  formdata.append("antiendomisio", antiendomisio || null);
+  formdata.append("hemoglobina", hemoglobina || null);
+  formdata.append("hematocrito", hematocrito || null);
+  formdata.append("ferritina", ferritina || null);
+  formdata.append("hierro_serico", hierro_serico || null);
+  formdata.append("vitamina_b12", vitamina_b12 || null);
+  formdata.append("calcio_serico", calcio_serico || null);
+  formdata.append("vitamina_d", vitamina_d || null);
+  formdata.append("alt", alt || null);
+  formdata.append("ast", ast || null);
+  formdata.append("colesterol_total", colesterol_total || null);
+  formdata.append("colesterol_ldl", colesterol_ldl || null);
+  formdata.append("colesterol_hdl", colesterol_hdl || null);
+  formdata.append("trigliceridos", trigliceridos || null);
+  formdata.append("glucemia", glucemia || null);
+  formdata.append("pdf", pdf || null);
 
   const requestOptions = {
     method: "POST",
@@ -153,13 +153,11 @@ export async function updateMedicalExam(
   console.log(formdata);
   try {
     const response = await httpRequest(requestUrl, requestOptions);
-    console.log("RESPUESTAAA: ", response)
+    console.log("RESPUESTAAA: ", response);
     return response;
-
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
     throw new Error(error.message);
-
   }
 }
 
@@ -362,14 +360,11 @@ export async function postDateNextExam(token, date, username) {
 export async function cancelDateNextExam(token) {
   const requestUrl = url + "cancel-analysis-date/";
 
-
-
   const requestOptions = {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
-
   };
 
   try {

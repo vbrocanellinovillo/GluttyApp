@@ -48,10 +48,15 @@ class Favorite(models.Model):
 
 class Label(models.Model):
     name = models.CharField(max_length=50, blank=False)
+    def __str__(self):
+        return f"{self.name}"
 
 class LabelxPost(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="labels")
     label = models.ForeignKey(Label, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"Etiqueta asociada al post {self.post.id}: {self.label.name}"
     
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes")

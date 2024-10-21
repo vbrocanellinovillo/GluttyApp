@@ -159,13 +159,29 @@ def add_comment(request):
         if not content:
             return Response({"error": "El comentario no puede estar vacío."}, status=status.HTTP_400_BAD_REQUEST)
 
-        Comment.objects.create(user=request.user, post=post, content=content)
+        comment = Comment.objects.create(user=request.user, post=post, content=content)
+        print(comment)
         
         post.comments_number += 1
         post.save()
         
+        if comment.user.profile_picture:
+            profile_picture = comment.user.profile_picture
+        else:
+            profile_picture = None
+            
+        # Crear la respuesta con los detalles del comentario recién creado
+        response_data = {
+            "comment_id": comment.id,
+            "user": comment.user.username,
+            "name": Post.get_name(comment.user),
+            "profile_picture": profile_picture,
+            "content": comment.content,
+            "created_at": comment.created_at,
+        }
+        
         connection.close()
-        return Response({"Detail": f"Comentario agregado correctamente."}, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)
     except Exception as e:
         connection.close()
         return Response({"error": f"Error al agregar comentario: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -345,7 +361,7 @@ def get_popular_posts(request):
 
     try:
         # Obtener los posts ordenados por la cantidad de likes
-        popular_posts = Post.objects.all().order_by('-likes_number')[:30]  # Cambia el 30 por el número de posts que deseas obtener
+        popular_posts = Post.objects.all().order_by('-likes_number', '-created_at')[:30]  # Cambia el 30 por el número de posts que deseas obtener
 
         # Crear una lista de datos de los posts populares
         posts_data = []
@@ -451,6 +467,7 @@ def search_labels(request):
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
+@transaction.atomic
 def delete_post(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
@@ -459,35 +476,31 @@ def delete_post(request):
         connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-    post_id = request.data.get("post_id")
+    post_id = request.data.get("id")
 
     try:
         post = get_object_or_404(Post, id=post_id, user=request.user)
+
+        # Obtener todas las etiquetas asociadas al post antes de eliminarlo
+        labels = post.labels.all()  # Esto obtiene las relaciones LabelxPost asociadas al post
         
-        # Borrar los likes asociados
-        post.likes.all().delete()
-
-        # Borrar los favoritos asociados
-        post.favorites.all().delete()
-
-        # Borrar las etiquetas asociadas
-        post.labels.all().delete()
-
-        # Borrar los comentarios asociados
-        post.comments.all().delete()
-
-        # Borrar las imágenes asociadas
-        post.pictures.all().delete()
-
-        # Finalmente borrar el post
+        # Almacenar las etiquetas en una lista para no perderlas cuando se borre el post
+        label_ids = [labelxpost.label.id for labelxpost in labels]
+        
+        # Eliminar el post (esto eliminará automáticamente LabelxPost por on_delete=models.CASCADE)
         post.delete()
-    
-        connection.close()
+
+        # Revisar si alguna etiqueta quedó sin posts asociados
+        for label_id in label_ids:
+            label = Label.objects.get(id=label_id)
+            # Verificar si esa etiqueta está asociada a otros posts
+            if not LabelxPost.objects.filter(label=label).exists():
+                # Si no está asociada a ningún otro post, se elimina la etiqueta
+                label.delete()
+        
         return Response({"Detail": "Post y contenido asociado eliminado correctamente."}, status=status.HTTP_200_OK)
 
-    
     except Exception as e:
-        connection.close()
         return Response({"error": f"Error al eliminar el post: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["DELETE"])
@@ -499,7 +512,7 @@ def delete_comment(request):
         connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
-    comment_id = request.data.get("comment_id")
+    comment_id = request.data.get("id")
     
     if not comment_id:
         connection.close()

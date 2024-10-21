@@ -158,3 +158,32 @@ export function getRandomDate(start, end) {
     .toISOString()
     .split("T")[0]; // Devuelve la fecha en formato YYYY-MM-DD
 }
+
+export function convertDate(dateStr) {
+  // Crear un objeto Date a partir del string de fecha
+  const date = new Date(dateStr);
+
+  // Definir los meses en español
+  const months = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  // Obtener día, mes y año
+  const day = date.getUTCDate();
+  const month = months[date.getUTCMonth()];
+  const year = date.getUTCFullYear();
+
+  // Formatear la fecha en el formato deseado
+  return `${day} de ${month} de ${year}`;
+}
