@@ -10,6 +10,7 @@ from .serializers import *
 from django.db import transaction
 from django.db import connection
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
 
 # Función que crea el POST
 @api_view(["POST"])
@@ -108,7 +109,7 @@ def get_post_by_id(request):
     
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def add_like(request):
+def toggle_like(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     
@@ -116,28 +117,36 @@ def add_like(request):
         connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
-    id = request.data.get("id")
+    post_id = request.data.get("id")
     
     try:
-        post = get_object_or_404(Post, id=id)
-
-        # Verificar si el usuario ya ha dado like al post
-        if Like.objects.filter(user=user, post=post).exists():
-            return Response({"error": "Ya has dado like a este post."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Agregar el like
-        Like.objects.create(user=user, post=post)
-
-        # Incrementar el número total de likes en el post
-        post.likes_number += 1
+        post = get_object_or_404(Post, id=post_id)
+        like = Like.objects.filter(user=user, post=post).first()
+        
+        if like:
+            # Si el post ya está "likeado", eliminar el like
+            like.delete()
+            post.likes_number -= 1
+            user_liked = False
+        else:
+            # Si no está "likeado", agregar el like
+            Like.objects.create(user=user, post=post)
+            post.likes_number += 1
+            user_liked = True
+        
         post.save()
 
+        response_data = {
+            "likes_number": post.likes_number,
+            "user_liked": user_liked
+        }
+
         connection.close()
-        return Response({"Detail": f"Like agregado. Total de likes: {post.likes_number}"}, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)
     
     except Exception as e:
         connection.close()
-        return Response({"error": f"Error al agregar like: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": f"Error al procesar el like: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["POST"])
@@ -188,7 +197,7 @@ def add_comment(request):
     
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def add_favorite(request):
+def toggle_favorite(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
 
@@ -196,24 +205,31 @@ def add_favorite(request):
         connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-    id = request.data.get("id")
+    post_id = request.data.get("id")
 
     try:
-        post = get_object_or_404(Post, id=id)
-
-        # Verificar si el post ya está en favoritos
-        if Favorite.objects.filter(user=user, post=post).exists():
-            return Response({"error": "Este post ya está en tus favoritos."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Agregar el post a favoritos
-        Favorite.objects.create(user=user, post=post)
+        post = get_object_or_404(Post, id=post_id)
+        favorite = Favorite.objects.filter(user=user, post=post).first()
         
+        if favorite:
+            # Si el post ya está en favoritos, eliminarlo
+            favorite.delete()
+            user_faved = False
+        else:
+            # Si no está en favoritos, agregarlo
+            Favorite.objects.create(user=user, post=post)
+            user_faved = True
+
+        response_data = {
+            "user_faved": user_faved
+        }
+
         connection.close()
-        return Response({"Detail": "Post agregado a favoritos."}, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)
 
     except Exception as e:
         connection.close()
-        return Response({"error": f"Error al agregar a favoritos: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": f"Error al procesar favorito: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(["GET"])
@@ -227,21 +243,26 @@ def get_favorites(request):
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
     try:
+        # Parámetros de paginación
+        page_number = request.query_params.get("page", 1)
+        page_size = request.query_params.get("page_size", 10)
+
         # Obtener los posts favoritos del usuario
         favorites = Favorite.objects.filter(user=user).select_related('post')
+
+        paginator = Paginator(favorites, page_size)
+        paginated_favorites = paginator.get_page(page_number)
         
         # Crear una lista de datos de los posts favoritos
         favorite_posts = []
-        for favorite in favorites:
+        for favorite in paginated_favorites:
             post = favorite.post
             
             user_liked = Like.objects.filter(user=user, post=post).exists()
-        
             user_faved = Favorite.objects.filter(user=user, post=post).exists()
             
             favorite_posts.append({
                 "post_id": post.id,
-                "id": post.id,
                 "user": post.user.username,
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
@@ -256,7 +277,12 @@ def get_favorites(request):
             })
 
         connection.close()
-        return Response(favorite_posts, status=status.HTTP_200_OK)
+        return Response({
+            "total_count": paginator.count,
+            "total_pages": paginator.num_pages,
+            "current_page": paginated_favorites.number,
+            "posts": favorite_posts
+        }, status=status.HTTP_200_OK)
 
     except Exception as e:
         connection.close()
@@ -273,14 +299,19 @@ def get_my_posts(request):
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
     try:
+        # Parámetros de paginación
+        page_number = request.query_params.get("page", 1)
+        page_size = request.query_params.get("page_size", 10)
+
         # Obtener los posts del usuario autenticado
         my_posts = Post.objects.filter(user=user).select_related('user')
 
-        # Crear una lista de datos de los posts
+        paginator = Paginator(my_posts, page_size)
+        paginated_posts = paginator.get_page(page_number)
+
         posts_data = []
-        for post in my_posts:
+        for post in paginated_posts:
             user_liked = Like.objects.filter(user=user, post=post).exists()
-            
             user_faved = Favorite.objects.filter(user=user, post=post).exists()
 
             posts_data.append({
@@ -299,11 +330,17 @@ def get_my_posts(request):
             })
 
         connection.close()
-        return Response(posts_data, status=status.HTTP_200_OK)
+        return Response({
+            "total_count": paginator.count,
+            "total_pages": paginator.num_pages,
+            "current_page": paginated_posts.number,
+            "posts": posts_data,
+        }, status=status.HTTP_200_OK)
 
     except Exception as e:
         connection.close()
         return Response({"error": f"Error al obtener mis posts: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 #Trae solo 30 posteos se puede modificar nsino
@@ -318,38 +355,48 @@ def get_recent_posts(request):
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
     labels = request.data.get("labels")
+    page = request.data.get("page", 1)
+    page_size = request.data.get("page_size", 10)
 
     try:
         if labels:
-            posts_data = filter_posts_by_labels(labels, user, '-created_at')
-
+            posts_queryset = filter_posts_by_labels(labels, user, '-created_at')
         else:
-            # Obtener los posts más recientes de todos los usuarios, limitando la cantidad de resultados
-            recent_posts = Post.objects.all().select_related('user')[:30]  # Cambia el 10 por el número de posts que deseas obtener
+            # Obtener los posts más recientes de todos los usuarios
+            posts_queryset = Post.objects.all().select_related('user').order_by('-created_at')
 
-            # Crear una lista de datos de los posts
-            posts_data = []
-            for post in recent_posts:
-                user_liked = Like.objects.filter(user=user, post=post).exists()
-                user_faved = Favorite.objects.filter(user=user, post=post).exists()
+        # Paginación
+        paginator = Paginator(posts_queryset, page_size)
+        paginated_posts = paginator.get_page(page)
 
-                posts_data.append({
-                    "post_id": post.id,
-                    "user": post.user.username,
-                    "name": Post.get_name(post.user),
-                    "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
-                    "body": post.body,
-                    "created_at": post.created_at,
-                    "likes": post.likes_number,
-                    "comments_number": post.comments_number,
-                    "user_liked": user_liked,
-                    "user_faved": user_faved,
-                    "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
-                    "labels": [label.label.name for label in post.labels.all()],
-                })
+        # Crear una lista de datos de los posts
+        posts_data = []
+        for post in paginated_posts:
+            user_liked = Like.objects.filter(user=user, post=post).exists()
+            user_faved = Favorite.objects.filter(user=user, post=post).exists()
 
+            posts_data.append({
+                "post_id": post.id,
+                "user": post.user.username,
+                "name": Post.get_name(post.user),
+                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                "body": post.body,
+                "created_at": post.created_at,
+                "likes": post.likes_number,
+                "comments_number": post.comments_number,
+                "user_liked": user_liked,
+                "user_faved": user_faved,
+                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                "labels": [label.label.name for label in post.labels.all()],
+            })
+            
         connection.close()
-        return Response(posts_data, status=status.HTTP_200_OK)
+        return Response({
+            "total_count": paginator.count,
+            "total_pages": paginator.num_pages,
+            "current_page": paginated_posts.number,
+            "posts": posts_data,
+        }, status=status.HTTP_200_OK)
 
     except Exception as e:
         connection.close()
@@ -364,74 +411,63 @@ def get_popular_posts(request):
     if not user:
         connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
-    
+
     labels = request.data.get("labels")
+    page = request.data.get("page", 1)
+    page_size = request.data.get("page_size", 10)
 
     try:
-        
         if labels:
-            posts_data = filter_posts_by_labels(labels, user, '-likes_number')
-
+            posts_queryset = filter_posts_by_labels(labels, user, '-likes_number')
         else:
-            # Obtener los posts ordenados por la cantidad de likes
-            popular_posts = Post.objects.all().order_by('-likes_number')[:30]  # Cambia el 30 por el número de posts que deseas obtener
+            # Obtener los posts más recientes de todos los usuarios
+            posts_queryset = Post.objects.all().select_related('user').order_by('-likes_number')
 
-            # Crear una lista de datos de los posts populares
-            posts_data = []
-            for post in popular_posts:
-                user_liked = Like.objects.filter(user=user, post=post).exists()
-                user_faved = Favorite.objects.filter(user=user, post=post).exists()
+        # Paginación
+        paginator = Paginator(posts_queryset, page_size)
+        paginated_posts = paginator.get_page(page)
 
-                posts_data.append({
-                    "post_id": post.id,
-                    "user": post.user.username,
-                    "name": Post.get_name(post.user),
-                    "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
-                    "body": post.body,
-                    "created_at": post.created_at,
-                    "likes": post.likes_number,
-                    "comments_number": post.comments_number,
-                    "user_liked": user_liked,
-                    "user_faved": user_faved,
-                    "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
-                    "labels": [label.label.name for label in post.labels.all()],
-                })
+        # Crear una lista de datos de los posts
+        posts_data = []
+        for post in paginated_posts:
+            user_liked = Like.objects.filter(user=user, post=post).exists()
+            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+
+            posts_data.append({
+                "post_id": post.id,
+                "user": post.user.username,
+                "name": Post.get_name(post.user),
+                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                "body": post.body,
+                "created_at": post.created_at,
+                "likes": post.likes_number,
+                "comments_number": post.comments_number,
+                "user_liked": user_liked,
+                "user_faved": user_faved,
+                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                "labels": [label.label.name for label in post.labels.all()],
+            })
 
         connection.close()
-        return Response(posts_data, status=status.HTTP_200_OK)
+        return Response({
+            "total_count": paginator.count,
+            "total_pages": paginator.num_pages,
+            "current_page": paginated_posts.number,
+            "posts": posts_data,
+        }, status=status.HTTP_200_OK)
 
     except Exception as e:
         connection.close()
         return Response({"error": f"Error al obtener los posteos populares: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
+    
 def filter_posts_by_labels(labels, user, order_by):
     # Convierte el string separado por comas en una lista de enteros
     label_ids = [int(label_id) for label_id in labels.split(',') if label_id.isdigit()]
     
     posts = Post.objects.filter(labels__label__id__in=label_ids).distinct().order_by(order_by)[:30]  # Cambia el 30 por el número de posts a obtener
-
-    posts_data = []
-    for post in posts:
-        user_liked = Like.objects.filter(user=user, post=post).exists()
-        user_faved = Favorite.objects.filter(user=user, post=post).exists()
-
-        posts_data.append({
-            "post_id": post.id,
-            "user": post.user.username,
-            "name": Post.get_name(post.user),
-            "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
-            "body": post.body,
-            "created_at": post.created_at,
-            "likes": post.likes_number,
-            "comments_number": post.comments_number,
-            "user_liked": user_liked,
-            "user_faved": user_faved,
-            "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
-            "labels": [label.label.name for label in post.labels.all()],
-        })
-
-    return posts_data
+    
+    connection.close()
+    return posts
 
 
 
@@ -516,58 +552,4 @@ def delete_comment(request):
         connection.close()
         return Response({"error": f"Error al eliminar el comentario: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-@api_view(["DELETE"])
-@permission_classes([IsAuthenticated])
-def delete_like(request):
-    username = request.user.username
-    user = User.objects.filter(username=username).first()
-    if not user:
-        connection.close()
-        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-    id = request.data.get("id")
-    try:
-        post = get_object_or_404(Post, id=id)
-        like = Like.objects.filter(user=user, post=post).first()
-        if not like:
-            connection.close()
-            return Response({"error": "No has dado like a este post."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Eliminar el like
-        like.delete()
-        
-        # Reducir el número de likes en el post
-        post.likes_number -= 1
-        post.save()
-
-        connection.close()
-        return Response({"Detail": f"Like eliminado. Total de likes: {post.likes_number}"}, status=status.HTTP_200_OK)
-    except Exception as e:
-        connection.close()
-        return Response({"error": f"Error al eliminar el like: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-@api_view(["DELETE"])
-@permission_classes([IsAuthenticated])
-def delete_favorite(request):
-    username = request.user.username
-    user = User.objects.filter(username=username).first()
-    if not user:
-        connection.close()
-        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
-    id = request.data.get("id")
-    try:
-        post = get_object_or_404(Post, id=id)
-        favorite = Favorite.objects.filter(user=user, post=post).first()
-        if not favorite:
-            connection.close()
-            return Response({"error": "Este post no está en tus favoritos."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Eliminar de favoritos
-        favorite.delete()
-
-        connection.close()
-        return Response({"Detail": "Post eliminado de favoritos."}, status=status.HTTP_200_OK)
-    except Exception as e:
-        connection.close()
-        return Response({"error": f"Error al eliminar de favoritos: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
