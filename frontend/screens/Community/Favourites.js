@@ -3,7 +3,7 @@ import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 import AddPostButton from "../../components/Community/AddPostButton";
 import { Divider } from "react-native-paper";
-import { getInitialPosts, getMyPosts } from "../../services/communityService";
+import { getInitialPosts, getFavorite } from "../../services/communityService";
 import PostItem from "../../components/Community/PostItem";
 import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
 import ErrorPosts from "../../components/Community/ErrorPosts";
@@ -26,11 +26,13 @@ export default function MyPosts({ navigation }) {
   async function fetchMyPosts() {
     setIsLoading(true);
     try {
-      const data = await getInitialPosts(token);
+      const data = await getFavorite(token);
       setPosts(data);
       setIsError(false);
+      console.log("ladata", data)
     } catch (error) {
       setIsError(true);
+      console.log(error.message)
     } finally {
       setIsLoading(false);
     }

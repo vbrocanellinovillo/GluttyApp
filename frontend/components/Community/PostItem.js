@@ -29,17 +29,13 @@ export default function PostItem({
   const [message, setMessage] = useState("");
   const [showEliminarModal, setShowEliminarModal] = useState(false);
 
-  function closeModalHandler() {
-    setShowModal(false);
-  }
 
-  function closeModalDeleteHandler() {
-    setShowEliminarModal(false);
-  }
 
   function handlePress() {
     Haptics.selectionAsync();
     if (iconPost != "chevron-forward-outline") {
+      console.log("Eliminar")
+      console.log("DICE DELFI QUE LE PONGA ALGO ANTES: ", onPressIcon)
       onPressIcon && onPressIcon();
     } else {
       onPress && onPress();
@@ -47,26 +43,7 @@ export default function PostItem({
   }
   return (
     <>
-      <GluttyModal
-        isError={isError}
-        message={message}
-        onClose={closeModalHandler}
-        visible={showModal}
-      />
-      <GluttyModal
-        visible={showEliminarModal}
-        onClose={closeModalDeleteHandler}
-        message="¿Seguro que desea eliminar el estudio?"
-        other
-        buttons={[
-          {
-            text: "Confirmar",
-            bg: "green",
-            color: Colors.whiteGreen,
-          },
-        ]}
-        closeButtonText="Cancelar"
-      />
+
 
       <Pressable
         style={[

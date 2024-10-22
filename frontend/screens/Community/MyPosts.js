@@ -52,27 +52,10 @@ export default function MyPosts({ navigation, route }) {
     }
   }
 
-  // Confirmación de la eliminación
-  async function handleConfirmDelete(id) {
-    console.log("acaandoooo");
-    try {
-      setIsLoading(true);
-      const response = await deletePost(id, token);
-      setMessage("El post fue eliminado con éxito");
-      setShowEliminarModal(false);
-      setShowModal(true);
-    } catch (error) {
-      setIsError(true);
-      setMessage(error.message || "Error desconocido"); // Maneja errores también
-      setShowModal(true);
-    } finally {
-      setIsLoading(false);
-      navigation.goBack();
-    }
-  }
+  
 
   let content = <></>;
-
+  console.log("ESTOY EN MYPOSTS")
   if (isLoading) {
     content = <PostsSkeleton />;
   }
@@ -81,7 +64,9 @@ export default function MyPosts({ navigation, route }) {
     content = <ErrorPosts style={styles.errorPosts} />;
   }
 
+
   if (!isLoading && !isError && posts && posts.length > 0) {
+    
     content = (
       <FlatList
         data={posts}
@@ -90,7 +75,7 @@ export default function MyPosts({ navigation, route }) {
           <PostItem
             post={item}
             onPress={() => navigation.navigate("ViewPostById", { id: item.id })}
-            onPressIcon={handleConfirmDelete}
+
           />
         )}
         contentInset={{ bottom: 230 }}

@@ -21,8 +21,8 @@ function getPosts(postsArray) {
       dataPoint.body,
       dataPoint.labels,
       date,
-      dataPoint.likes,
       dataPoint.comments_number,
+      dataPoint.likes,
       dataPoint.images,
       dataPoint.user_faved,
       dataPoint.user_liked,
@@ -100,6 +100,29 @@ export async function getFeed(token, option, signal) {
       Authorization: `Bearer ${token}`,
     },
     signal,
+  };
+
+  try {
+    const data = await httpRequest(requestUrl, requestOptions);
+    
+    return getPosts(data.posts);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
+//get fav
+
+export async function getFavorite(token) {
+  let requestUrl = url;
+  requestUrl += "get-favorites/";
+
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
 
   try {
