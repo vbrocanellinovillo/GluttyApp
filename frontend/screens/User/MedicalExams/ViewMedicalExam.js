@@ -31,6 +31,8 @@ export default function ViewMedicalExam({ navigation, route }) {
   const [showEliminarModal, setShowEliminarModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  console.log("LA RUTAAAA: ")
+  console.log(route)
   const id = route.params.id;
   const token = useSelector((state) => state.auth.accessToken);
 

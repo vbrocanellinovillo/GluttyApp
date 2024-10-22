@@ -171,7 +171,7 @@ export async function getPostById(id, token) {
     const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
 
     const newPost = new Post(
-      response.id,
+      response.post_id,
       response.name,
       response.user,
       response.profile_picture,
@@ -185,6 +185,7 @@ export async function getPostById(id, token) {
       response.user_liked,
       response.comments
     );
+
     return newPost;
   } catch (error) {
     throw new Error(error.message);
@@ -192,7 +193,58 @@ export async function getPostById(id, token) {
 }
 
 // LIKE DEL POST
-export async function addLike(idPost) {}
+export async function addLike(id, token) {
+  const requestUrl = url + "toggle-like/";
+
+  const formdata = new FormData();
+
+  formdata.append("id", id);
+
+  formdata.append("token", token);
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+//FAV DEL POST
+export async function addFavorite(id, token) {
+  const requestUrl = url + "toggle-favorite/";
+
+  const formdata = new FormData();
+
+  formdata.append("id", id);
+
+  formdata.append("token", token);
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 
 // COMENTAR EL POST
 export default async function addComment(idPost, comment, token) {
@@ -244,4 +296,31 @@ export async function searchCommunity(token, searchTerm, signal) {
   }
 }
 
-export async function deletePost(token, searchTerm, signal) {}
+export async function deletePost(id, token) {
+
+  const requestUrl = url + "delete-post/";
+
+  const formdata = new FormData();
+
+  formdata.append("id", id);
+
+  formdata.append("token", token);
+
+  const requestOptions = {
+    method: "DELETE",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+

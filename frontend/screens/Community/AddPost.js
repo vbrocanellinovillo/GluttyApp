@@ -157,6 +157,7 @@ export default function AddPost({navigation}) {
       
       setIsUploading(false);
       setUploadSuccess(true);
+
   
       
     } catch (error) {
@@ -173,7 +174,8 @@ export default function AddPost({navigation}) {
   }
 
   function handleGoBack() {
-    navigation.navigate("CommunityTopTabs");
+    navigation.navigate("MyPosts", {refresh: true});
+    
   }
 
   return (
