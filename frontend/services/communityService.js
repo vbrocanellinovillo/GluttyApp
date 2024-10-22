@@ -85,8 +85,10 @@ export async function getMyPosts(token) {
 }
 
 // GET FEED
-export async function getFeed(token, option, signal) {
+export async function getFeed(token, option, filters, signal) {
   let requestUrl = url;
+
+  const tagsId = filters && filters?.map((filter) => filter.id).join(",");
 
   if (option === 1) {
     requestUrl += "get-popular-posts/";
@@ -97,20 +99,21 @@ export async function getFeed(token, option, signal) {
   const requestOptions = {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({ labels: tagsId }),
     signal,
   };
 
   try {
     const data = await httpRequest(requestUrl, requestOptions);
-    
+
     return getPosts(data.posts);
   } catch (error) {
     throw new Error(error.message);
   }
 }
-
 
 //get fav
 
@@ -127,7 +130,7 @@ export async function getFavorite(token) {
 
   try {
     const data = await httpRequest(requestUrl, requestOptions);
-    
+
     return getPosts(data.posts);
   } catch (error) {
     throw new Error(error.message);

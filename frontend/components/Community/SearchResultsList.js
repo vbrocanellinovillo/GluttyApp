@@ -1,13 +1,15 @@
 import { FlatList, StyleSheet } from "react-native";
 import SearchResult from "./SearchResult";
 
-export default function SearchResultsList({ results }) {
+export default function SearchResultsList({ results, onSelectTag }) {
   if (!results) return;
 
   return (
     <FlatList
       data={results}
-      renderItem={({ item }) => <SearchResult>{item.name}</SearchResult>}
+      renderItem={({ item }) => (
+        <SearchResult onPress={onSelectTag} tag={item} />
+      )}
       keyExtractor={(item) => item.id.toString()}
       contentContainerStyle={styles.container}
     />

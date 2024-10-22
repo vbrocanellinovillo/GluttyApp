@@ -1,16 +1,15 @@
 import { Pressable, StyleSheet } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
-import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
+import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
-export default function SearchResult({
-  onPress,
-  containerStyle,
+export default function TagChip({
+  tag,
+  itemStyle,
   textStyle,
   iconStyle,
-  icon = "search-outline",
-  tag,
+  onPress,
 }) {
   function handlePress() {
     Haptics.selectionAsync();
@@ -21,37 +20,33 @@ export default function SearchResult({
     <Pressable
       style={({ pressed }) =>
         pressed
-          ? [styles.container, styles.pressed, containerStyle]
-          : [styles.container, containerStyle]
+          ? [styles.item, styles.pressed, itemStyle]
+          : [styles.item, itemStyle]
       }
       onPress={handlePress}
     >
+      <TextCommonsMedium style={[styles.text, textStyle]}>
+        {tag.name}
+      </TextCommonsMedium>
       <Ionicons
-        name={icon}
-        size={24}
+        name="close"
+        size={18}
         color={Colors.mJordan}
         style={iconStyle}
       />
-      <TextCommonsMedium style={[styles.text, textStyle]}>
-        #{tag.name}
-      </TextCommonsMedium>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  item: {
     flexDirection: "row",
-    gap: 8,
     alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 20,
+    gap: 4,
     paddingVertical: 8,
     paddingHorizontal: 14,
-    shadowColor: "#333",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
+    borderRadius: 20,
+    backgroundColor: Colors.locro,
   },
 
   pressed: {
@@ -59,7 +54,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: "500",
     color: Colors.mJordan,
   },

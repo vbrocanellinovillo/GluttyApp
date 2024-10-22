@@ -1,7 +1,7 @@
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import Searchbar from "../../components/UI/Controls/Searchbar";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { getFeed } from "../../services/communityService";
 import ErrorPosts from "../../components/Community/ErrorPosts";
 import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
@@ -11,6 +11,8 @@ import ButtonsOptions from "../../components/UI/Controls/ButtonsOptions";
 import { Colors } from "../../constants/colors";
 import { useQuery } from "@tanstack/react-query";
 import NoPosts from "../../components/Community/NoPosts";
+import TagChips from "../../components/Community/TagChips";
+import { communityActions } from "../../context/community";
 
 const height = Dimensions.get("window").height * 0.5;
 
@@ -22,11 +24,14 @@ const OPTIONS = [
 export default function Feed({ navigation }) {
   const [selectedOption, setSelectedOption] = useState(1);
 
+  const tags = useSelector((state) => state.community.tags);
+  const dispatch = useDispatch();
+
   const token = useSelector((state) => state.auth.accessToken);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["feed", selectedOption],
-    queryFn: ({ signal }) => getFeed(token, selectedOption, signal),
+    queryKey: ["feed", selectedOption, tags],
+    queryFn: ({ signal }) => getFeed(token, selectedOption, tags, signal),
   });
 
   function handleChangeOption(option) {
@@ -35,6 +40,10 @@ export default function Feed({ navigation }) {
 
   function handleSearch() {
     navigation.navigate("CommunitySearch");
+  }
+
+  function handleRemoveFilter(filter) {
+    dispatch(communityActions.removeTag({ tag: filter }));
   }
 
   let content = <></>;
@@ -81,6 +90,7 @@ export default function Feed({ navigation }) {
         selectedTextStyle={styles.selectedTextStyle}
         onSelect={handleChangeOption}
       />
+      {tags && <TagChips tags={tags} onDeleteTag={handleRemoveFilter} />}
       {content}
     </View>
   );
