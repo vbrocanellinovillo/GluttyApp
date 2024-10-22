@@ -1,9 +1,97 @@
-import GluttyErrorScreen from "../../components/UI/GluttyErrorScreen";
+import { useEffect, useState } from "react";
+import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
+import { useSelector } from "react-redux";
+import AddPostButton from "../../components/Community/AddPostButton";
+import { Divider } from "react-native-paper";
+import { getInitialPosts, getMyPosts } from "../../services/communityService";
+import PostItem from "../../components/Community/PostItem";
+import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
+import ErrorPosts from "../../components/Community/ErrorPosts";
+import NoPosts from "../../components/Community/NoPosts";
+import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
 
-export default function Favourites() {
+
+const height = Dimensions.get("window").height * 0.5;
+
+export default function MyPosts({ navigation }) {
+  const token = useSelector((state) => state.auth.accessToken);
+
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  
+  useEffect(() => {
+    fetchMyPosts();
+  }, []);
+
+  async function fetchMyPosts() {
+    setIsLoading(true);
+    try {
+      console.log("Buscando mis posteos")
+      const data = await getInitialPosts(token);
+      setPosts(data);
+      setIsError(false);
+    } catch (error) {
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  
+  let content = <></>;
+
+  if (isLoading) {
+    content = <PostsSkeleton />;
+  }
+
+  if (isError && !isLoading) {
+    content = <ErrorPosts style={styles.errorPosts} />;
+  }
+
+  if (!isLoading && !isError && posts && posts.length > 0) {
+    content = (
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <PostItem
+            post={item}
+            onPress={() => navigation.navigate("ViewPostById", { id: item.id })}
+          />
+        )}
+        contentInset={{ bottom: 230 }}
+      />
+    );
+  }
+
+  if (!isLoading && !isError && (!posts || posts.length == 0)) {
+    content = (
+      <NoPosts>
+        ¡Favea el posteo y visualizalo luego aqui!
+      </NoPosts>
+    );
+  }
+
   return (
-    <GluttyErrorScreen height={220} width={220}>
-      En construcción
-    </GluttyErrorScreen>
+    <View style={styles.container}>
+      <Divider />
+      {content}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  buttonContainer: {
+    alignItems: "center",
+    marginVertical: 20,
+  },
+
+  button: {
+    paddingHorizontal: 70,
+  },
+
+  errorPosts: {
+    paddingBottom: height,
+  },
+});

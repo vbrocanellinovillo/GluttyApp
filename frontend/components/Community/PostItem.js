@@ -132,6 +132,7 @@ export default function PostItem({
             likes={post?.likes}
             faved={post?.faved}
             liked={post?.liked}
+            id = {post?.id}
           />
         </View>
       </Pressable>
