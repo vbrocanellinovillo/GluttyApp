@@ -23,43 +23,25 @@ export default function PostItem({
   onPress,
   iconPost = "chevron-forward-outline",
   onPressIcon,
-  
 }) {
-
-  const [isloading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const [showEliminarModal, setShowEliminarModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const navigation = useNavigation();
 
+  function closeModalHandler() {
+    setShowModal(false);
+  }
 
-  console.log("EL POSTEO: ")
-  console.log(post)
-  const id = post?.id
-  const token = useSelector((state) => state.auth.accessToken);
-
-
-    function closeModalHandler() {
-      setShowModal(false);
-    }
-  
-    function closeModalDeleteHandler() {
-      setShowEliminarModal(false);
-    }
-  
-
+  function closeModalDeleteHandler() {
+    setShowEliminarModal(false);
+  }
 
   function handlePress() {
     Haptics.selectionAsync();
     if (iconPost != "chevron-forward-outline") {
-      console.log("Eliminarrr");
       onPressIcon && onPressIcon();
-      
     } else {
-      console.log("GONN");
-      console.log("QUEEEEEE");
       onPress && onPress();
     }
   }
@@ -81,11 +63,10 @@ export default function PostItem({
             text: "Confirmar",
             bg: "green",
             color: Colors.whiteGreen,
-              },
+          },
         ]}
         closeButtonText="Cancelar"
       />
-
 
       <Pressable
         style={[
@@ -132,7 +113,7 @@ export default function PostItem({
             likes={post?.likes}
             faved={post?.faved}
             liked={post?.liked}
-            id = {post?.id}
+            id={post?.id}
           />
         </View>
       </Pressable>

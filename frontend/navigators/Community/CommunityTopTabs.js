@@ -1,5 +1,4 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import Feed from "../../screens/Community/Feed";
 import MyPosts from "../../screens/Community/MyPosts";
 import Favourites from "../../screens/Community/Favourites";
 import { Colors } from "../../constants/colors";
@@ -14,6 +13,7 @@ export default function CommunityTopTabs() {
       screenOptions={{
         tabBarStyle: styles.tabBarStyle,
         tabBarIndicatorStyle: styles.tabBarIndicatorStyle,
+        lazy: true,
       }}
     >
       <TopTabs.Screen

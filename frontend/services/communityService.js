@@ -50,7 +50,7 @@ export async function getInitialPosts(token) {
   const requestUrl = url + "get-popular-posts/";
 
   const requestOptions = {
-    method: "GET",
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -58,8 +58,7 @@ export async function getInitialPosts(token) {
 
   try {
     const data = await httpRequest(requestUrl, requestOptions);
-
-    return getPosts(data);
+    return getPosts(data.posts);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -79,7 +78,7 @@ export async function getMyPosts(token) {
   try {
     const data = await httpRequest(requestUrl, requestOptions);
 
-    return getPosts(data);
+    return getPosts(data.posts);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -96,7 +95,7 @@ export async function getFeed(token, option, signal) {
   }
 
   const requestOptions = {
-    method: "GET",
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -105,8 +104,8 @@ export async function getFeed(token, option, signal) {
 
   try {
     const data = await httpRequest(requestUrl, requestOptions);
-
-    return getPosts(data);
+    
+    return getPosts(data.posts);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -166,7 +165,7 @@ export async function getPostById(id, token) {
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);
-    
+
     const postDate = new Date(response.created_at);
     const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
 
@@ -297,7 +296,6 @@ export async function searchCommunity(token, searchTerm, signal) {
 }
 
 export async function deletePost(id, token) {
-
   const requestUrl = url + "delete-post/";
 
   const formdata = new FormData();
@@ -322,5 +320,3 @@ export async function deletePost(id, token) {
     throw new Error(error.message);
   }
 }
-
-

@@ -5,7 +5,13 @@ import { useState } from "react";
 import { addFavorite, addLike } from "../../services/communityService";
 import { useSelector } from "react-redux";
 
-export default function PostInfoContainer({ likes, comments, faved, liked, id }) {
+export default function PostInfoContainer({
+  likes,
+  comments,
+  faved,
+  liked,
+  id,
+}) {
   const [isFaved, setFaved] = useState(faved);
   const [isLiked, setLiked] = useState(liked);
   const [sumLiked, setSumLiked] = useState(likes);
@@ -15,19 +21,13 @@ export default function PostInfoContainer({ likes, comments, faved, liked, id })
   async function handleLike() {
     try {
       setLiked(!isLiked);
-      try {
-        const response = addLike(id, token)
-        console.log(response)
-      } catch (error) {
-        console.log(error)
-      }
 
+      const response = addLike(id, token);
       if (isLiked) {
-        setSumLiked(sumLiked-1)
+        setSumLiked(sumLiked - 1);
       } else {
-        setSumLiked(sumLiked+1)
+        setSumLiked(sumLiked + 1);
       }
-      
     } catch (error) {
       setLiked(!isLiked);
     }
@@ -36,10 +36,8 @@ export default function PostInfoContainer({ likes, comments, faved, liked, id })
   async function handleFav() {
     try {
       setFaved(!isFaved);
-      const response = addFavorite(id, token)
-      console.log(response)
+      const response = addFavorite(id, token);
     } catch (error) {
-      console.log(response)
       setFaved(!isFaved);
     }
   }

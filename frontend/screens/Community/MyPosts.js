@@ -11,7 +11,6 @@ import NoPosts from "../../components/Community/NoPosts";
 import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
 import { useFocusEffect } from "@react-navigation/native";
 
-
 const height = Dimensions.get("window").height * 0.5;
 
 export default function MyPosts({ navigation, route }) {
@@ -53,27 +52,25 @@ export default function MyPosts({ navigation, route }) {
     }
   }
 
-
-    // Confirmación de la eliminación
-    async function handleConfirmDelete(id) {
-      console.log("acaandoooo")
-      try {
-        setIsLoading(true);
-        const response = await deletePost(id, token);
-        setMessage("El post fue eliminado con éxito");
-        setShowEliminarModal(false);
-        setShowModal(true);
-        
-      } catch (error) {
-        setIsError(true);
-        setMessage(error.message || "Error desconocido");  // Maneja errores también
-        setShowModal(true);
-      } finally {
-        setIsLoading(false);
-        navigation.goBack();
-      }
+  // Confirmación de la eliminación
+  async function handleConfirmDelete(id) {
+    console.log("acaandoooo");
+    try {
+      setIsLoading(true);
+      const response = await deletePost(id, token);
+      setMessage("El post fue eliminado con éxito");
+      setShowEliminarModal(false);
+      setShowModal(true);
+    } catch (error) {
+      setIsError(true);
+      setMessage(error.message || "Error desconocido"); // Maneja errores también
+      setShowModal(true);
+    } finally {
+      setIsLoading(false);
+      navigation.goBack();
     }
-  
+  }
+
   let content = <></>;
 
   if (isLoading) {
@@ -94,7 +91,6 @@ export default function MyPosts({ navigation, route }) {
             post={item}
             onPress={() => navigation.navigate("ViewPostById", { id: item.id })}
             onPressIcon={handleConfirmDelete}
-
           />
         )}
         contentInset={{ bottom: 230 }}

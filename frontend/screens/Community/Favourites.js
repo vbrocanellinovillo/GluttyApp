@@ -10,7 +10,6 @@ import ErrorPosts from "../../components/Community/ErrorPosts";
 import NoPosts from "../../components/Community/NoPosts";
 import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
 
-
 const height = Dimensions.get("window").height * 0.5;
 
 export default function MyPosts({ navigation }) {
@@ -19,7 +18,7 @@ export default function MyPosts({ navigation }) {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  
+
   useEffect(() => {
     fetchMyPosts();
   }, []);
@@ -27,7 +26,6 @@ export default function MyPosts({ navigation }) {
   async function fetchMyPosts() {
     setIsLoading(true);
     try {
-      console.log("Buscando mis posteos")
       const data = await getInitialPosts(token);
       setPosts(data);
       setIsError(false);
@@ -38,7 +36,6 @@ export default function MyPosts({ navigation }) {
     }
   }
 
-  
   let content = <></>;
 
   if (isLoading) {
@@ -66,11 +63,7 @@ export default function MyPosts({ navigation }) {
   }
 
   if (!isLoading && !isError && (!posts || posts.length == 0)) {
-    content = (
-      <NoPosts>
-        ¡Favea el posteo y visualizalo luego aqui!
-      </NoPosts>
-    );
+    content = <NoPosts>¡Favea el posteo y visualizalo luego aqui!</NoPosts>;
   }
 
   return (
