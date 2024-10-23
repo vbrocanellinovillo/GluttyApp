@@ -7,3 +7,11 @@ export const searchbarStyle = {
   shadowOpacity: 0.6,
   shadowRadius: 4,
 };
+
+export const PAGE_SIZE = 10;
+
+export const COMMUNITY_BOTTOM_INSET = 230;
+
+export const communityPaginationFooterStyle = {
+  marginTop: 16,
+};

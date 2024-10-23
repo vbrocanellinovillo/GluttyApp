@@ -15,14 +15,15 @@ import {
 } from "../../constants/community";
 import { useQuery } from "@tanstack/react-query";
 import { searchCommunity } from "../../services/communityService";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SearchResultsList from "../../components/Community/SearchResultsList";
 import CommunitySearchSkeleton from "../../components/UI/Loading/CommunitySearchSkeleton";
 import NoSearchResults from "../../components/Community/NoSearchResults";
+import { communityActions } from "../../context/community";
 
 const screenWidth = Dimensions.get("window").width;
 
-export default function CommunitySearch({ navigation }) {
+export default function CommunitySearch({ navigation, route }) {
   const width = useSharedValue(screenWidth);
 
   const animatedWidth = useAnimatedStyle(() => {
@@ -62,12 +63,20 @@ export default function CommunitySearch({ navigation }) {
     enabled: false,
   });
 
+  const dispatch = useDispatch();
+
   function handleChageSearchTerm(text) {
     setSearchTerm(text);
   }
 
   function handleClearText() {
     setSearchTerm("");
+  }
+
+  function handleSelectTag(tag) {
+    const plainTag = { id: tag.id, name: tag.name };
+    dispatch(communityActions.addTag({ tag: plainTag }));
+    handleCancel();
   }
 
   useEffect(() => {
@@ -96,7 +105,9 @@ export default function CommunitySearch({ navigation }) {
       </NoSearchResults>
     );
   } else if (data && results.length > 0) {
-    content = <SearchResultsList results={results} />;
+    content = (
+      <SearchResultsList results={results} onSelectTag={handleSelectTag} />
+    );
   } else if (data && results.length == 0) {
     content = <NoSearchResults>No se encontraron resultados</NoSearchResults>;
   }

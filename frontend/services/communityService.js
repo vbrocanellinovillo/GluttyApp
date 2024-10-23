@@ -46,14 +46,16 @@ function getTags(tagsArray) {
   return tags;
 }
 
-export async function getInitialPosts(token) {
+export async function getInitialPosts(token, page, pageSize) {
   const requestUrl = url + "get-popular-posts/";
 
   const requestOptions = {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({ page: page, page_size: pageSize }),
   };
 
   try {
@@ -65,8 +67,8 @@ export async function getInitialPosts(token) {
 }
 
 // MIS POSTS
-export async function getMyPosts(token) {
-  const requestUrl = url + "get-my-posts/";
+export async function getMyPosts(token, page, pageSize) {
+  const requestUrl = `${url}get-my-posts/?page=${page}&page_size=${pageSize}`;
 
   const requestOptions = {
     method: "GET",
@@ -85,8 +87,10 @@ export async function getMyPosts(token) {
 }
 
 // GET FEED
-export async function getFeed(token, option, signal) {
+export async function getFeed(token, option, filters, signal, page, pageSize) {
   let requestUrl = url;
+
+  const tagsId = filters && filters?.map((filter) => filter.id).join(",");
 
   if (option === 1) {
     requestUrl += "get-popular-posts/";
@@ -97,26 +101,25 @@ export async function getFeed(token, option, signal) {
   const requestOptions = {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({ labels: tagsId, page: page, page_size: pageSize }),
     signal,
   };
 
   try {
     const data = await httpRequest(requestUrl, requestOptions);
-    
+
     return getPosts(data.posts);
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
-
 //get fav
-
-export async function getFavorite(token) {
-  let requestUrl = url;
-  requestUrl += "get-favorites/";
+export async function getFavorite(token, page, pageSize) {
+  let requestUrl = `${url}get-favorites/?page=${page}&page_size=${pageSize}`;
 
   const requestOptions = {
     method: "GET",
@@ -127,7 +130,7 @@ export async function getFavorite(token) {
 
   try {
     const data = await httpRequest(requestUrl, requestOptions);
-    
+
     return getPosts(data.posts);
   } catch (error) {
     throw new Error(error.message);
