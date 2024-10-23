@@ -46,14 +46,16 @@ function getTags(tagsArray) {
   return tags;
 }
 
-export async function getInitialPosts(token) {
+export async function getInitialPosts(token, page, pageSize) {
   const requestUrl = url + "get-popular-posts/";
 
   const requestOptions = {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+    body: JSON.stringify({ page: page, page_size: pageSize }),
   };
 
   try {
@@ -65,8 +67,8 @@ export async function getInitialPosts(token) {
 }
 
 // MIS POSTS
-export async function getMyPosts(token) {
-  const requestUrl = url + "get-my-posts/";
+export async function getMyPosts(token, page, pageSize) {
+  const requestUrl = `${url}get-my-posts/?page=${page}&page_size=${pageSize}`;
 
   const requestOptions = {
     method: "GET",
@@ -96,8 +98,6 @@ export async function getFeed(token, option, filters, signal, page, pageSize) {
     requestUrl += "get-recent-posts/";
   }
 
-  //requestUrl += `?page=${page}&page_size=${pageSize}`;
-
   const requestOptions = {
     method: "POST",
     headers: {
@@ -118,10 +118,8 @@ export async function getFeed(token, option, filters, signal, page, pageSize) {
 }
 
 //get fav
-
-export async function getFavorite(token) {
-  let requestUrl = url;
-  requestUrl += "get-favorites/";
+export async function getFavorite(token, page, pageSize) {
+  let requestUrl = `${url}get-favorites/?page=${page}&page_size=${pageSize}`;
 
   const requestOptions = {
     method: "GET",

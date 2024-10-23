@@ -6,6 +6,11 @@ import PostsSkeleton from "../UI/Loading/PostsSkeleton";
 import PostItem from "./PostItem";
 import ErrorPosts from "./ErrorPosts";
 import NoPosts from "./NoPosts";
+import {
+  communityPaginationFooterStyle,
+  PAGE_SIZE,
+} from "../../constants/community";
+import PaginationFooter from "../UI/Loading/PaginationFooter";
 
 const height = Dimensions.get("window").height * 0.2;
 
@@ -16,20 +21,40 @@ export default function InitialPosts() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const pageSize = PAGE_SIZE;
+
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [page]);
 
   async function fetchPosts() {
-    setIsLoading(true);
+    const isFirstPage = page === 1;
+
+    if (isFirstPage) {
+      setIsLoading(true);
+    }
+
     try {
-      const data = await getInitialPosts(token);
-      setPosts(data);
+      const data = await getInitialPosts(token, page, pageSize);
+
+      if (data) {
+        setPosts((prevPosts) => (isFirstPage ? data : [...prevPosts, ...data]));
+        setHasNextPage(data?.length === pageSize);
+      }
+
       setIsError(false);
     } catch (error) {
       setIsError(true);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  function changePage() {
+    if (hasNextPage && !isLoading) {
+      setPage((prevPage) => prevPage + 1);
     }
   }
 
@@ -56,6 +81,13 @@ export default function InitialPosts() {
           renderItem={({ item }) => <PostItem post={item} curved />}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
+          onEndReached={changePage}
+          ListFooterComponent={
+            <PaginationFooter
+              hasNextPage={hasNextPage}
+              style={communityPaginationFooterStyle}
+            />
+          }
         />
       )}
     </View>

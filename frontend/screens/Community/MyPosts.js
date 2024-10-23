@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import AddPostButton from "../../components/Community/AddPostButton";
 import { Divider } from "react-native-paper";
@@ -8,8 +8,12 @@ import PostItem from "../../components/Community/PostItem";
 import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
 import ErrorPosts from "../../components/Community/ErrorPosts";
 import NoPosts from "../../components/Community/NoPosts";
-import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
-import { useFocusEffect } from "@react-navigation/native";
+import {
+  COMMUNITY_BOTTOM_INSET,
+  communityPaginationFooterStyle,
+  PAGE_SIZE,
+} from "../../constants/community";
+import PaginationFooter from "../../components/UI/Loading/PaginationFooter";
 
 const height = Dimensions.get("window").height * 0.5;
 
@@ -19,17 +23,17 @@ export default function MyPosts({ navigation, route }) {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState("");
-  const [showEliminarModal, setShowEliminarModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const pageSize = PAGE_SIZE;
 
   //const refresh = route.params.refresh || null;
   //console.log("route:", route);
 
   useEffect(() => {
     fetchMyPosts();
-  }, []);
+  }, [page]);
 
   // useFocusEffect(()=> {
   //   if (refresh) {
@@ -40,10 +44,19 @@ export default function MyPosts({ navigation, route }) {
   // }, [route]);
 
   async function fetchMyPosts() {
-    setIsLoading(true);
+    const isFirstPage = page === 1;
+
+    if (isFirstPage) {
+      setIsLoading(true);
+    }
+
     try {
-      const data = await getMyPosts(token);
-      setPosts(data);
+      const data = await getMyPosts(token, page, pageSize);
+
+      if (data) {
+        setPosts((prevPosts) => (isFirstPage ? data : [...prevPosts, ...data]));
+        setHasNextPage(data?.length === pageSize);
+      }
       setIsError(false);
     } catch (error) {
       setIsError(true);
@@ -52,10 +65,14 @@ export default function MyPosts({ navigation, route }) {
     }
   }
 
-  
+  function changePage() {
+    if (hasNextPage && !isLoading) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }
 
   let content = <></>;
-  console.log("ESTOY EN MYPOSTS")
+
   if (isLoading) {
     content = <PostsSkeleton />;
   }
@@ -64,9 +81,7 @@ export default function MyPosts({ navigation, route }) {
     content = <ErrorPosts style={styles.errorPosts} />;
   }
 
-
   if (!isLoading && !isError && posts && posts.length > 0) {
-    
     content = (
       <FlatList
         data={posts}
@@ -75,10 +90,16 @@ export default function MyPosts({ navigation, route }) {
           <PostItem
             post={item}
             onPress={() => navigation.navigate("ViewPostById", { id: item.id })}
-
           />
         )}
-        contentInset={{ bottom: 230 }}
+        contentInset={{ bottom: COMMUNITY_BOTTOM_INSET }}
+        onEndReached={changePage}
+        ListFooterComponent={
+          <PaginationFooter
+            hasNextPage={hasNextPage}
+            style={communityPaginationFooterStyle}
+          />
+        }
       />
     );
   }
