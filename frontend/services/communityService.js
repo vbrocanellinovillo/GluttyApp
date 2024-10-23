@@ -85,7 +85,7 @@ export async function getMyPosts(token) {
 }
 
 // GET FEED
-export async function getFeed(token, option, filters, signal) {
+export async function getFeed(token, option, filters, signal, page, pageSize) {
   let requestUrl = url;
 
   const tagsId = filters && filters?.map((filter) => filter.id).join(",");
@@ -96,13 +96,15 @@ export async function getFeed(token, option, filters, signal) {
     requestUrl += "get-recent-posts/";
   }
 
+  //requestUrl += `?page=${page}&page_size=${pageSize}`;
+
   const requestOptions = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ labels: tagsId }),
+    body: JSON.stringify({ labels: tagsId, page: page, page_size: pageSize }),
     signal,
   };
 

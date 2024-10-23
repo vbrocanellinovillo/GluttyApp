@@ -12,6 +12,7 @@ export default function SearchResultsList({ results, onSelectTag }) {
       )}
       keyExtractor={(item) => item.id.toString()}
       contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
     />
   );
 }
