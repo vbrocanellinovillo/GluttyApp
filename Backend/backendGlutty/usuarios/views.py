@@ -191,6 +191,9 @@ def login(request):
     sesion.session_data = {'last_login': timezone.now().isoformat()}
     sesion.save()
     
+    # Limpiar el historial de chat al iniciar sesión
+    request.session['chat_history'] = []
+    
     # Generar tokens JWT con el user_id
     refresh = RefreshToken.for_user(usuario)
     refresh['username'] = usuario.username  # Añadir el user_id al token
@@ -254,6 +257,10 @@ def logout(request):
         if sesion and sesion.session_initialized:
             sesion.session_initialized = False
             sesion.save()
+            
+            # Limpiar el chat history del usuario
+            request.session['chat_history'] = []
+            
             return Response({"message": "Sesión cerrada exitosamente."}, status=status.HTTP_200_OK)
         else:
             return Response({"message": "No hay ninguna sesión activa para cerrar."}, status=status.HTTP_400_BAD_REQUEST)
