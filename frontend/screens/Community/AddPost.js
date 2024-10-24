@@ -101,6 +101,7 @@ export default function AddPost({navigation}) {
   };
 
   const openImageOptions = () => {
+    Keyboard.dismiss();
     sheetRef.current?.open();
   };
 
@@ -149,6 +150,7 @@ export default function AddPost({navigation}) {
 
   const handlePressPost = async (post, tags, images) => {
     try {
+      Keyboard.dismiss()
       console.log("Iniciando subida del post");
       
       setIsUploading(true);
@@ -188,6 +190,7 @@ export default function AddPost({navigation}) {
           value={post}
           onChangeText={setPost}
           multiline={true}
+          onSubmitEditing={Keyboard.dismiss} // Cierra el teclado al presionar enter
         />
 
     <ScrollView horizontal style={styles.imagesContainer}>
@@ -212,6 +215,7 @@ export default function AddPost({navigation}) {
             onChangeText={handleTagInput}
             multiline={true}
             maxLength={130}
+            onSubmitEditing={Keyboard.dismiss}
           />
 
           <ScrollView style={styles.tagsContainer} horizontal>
@@ -254,6 +258,7 @@ export default function AddPost({navigation}) {
         visible={uploadSuccess}
         //onClose={closeModalDeleteHandler}
         message="Post subido con éxito!"
+        closeButton={false}
         other
         buttons={[
           {

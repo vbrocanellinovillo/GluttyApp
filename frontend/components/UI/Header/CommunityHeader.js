@@ -23,7 +23,7 @@ export default function CommunityHeader({ options, navigation }) {
           }
           onPress={toggleDrawer}
         >
-          <Ionicons name="menu" color={Colors.mJordan} size={50} />
+          <Ionicons name="menu" color={Colors.mJordan} size={38} style={styles.menu} />
         </Pressable>
         <TextCommonsMedium style={styles.text}>
           Glutty.
@@ -68,5 +68,10 @@ const styles = StyleSheet.create({
     fontSize: 38,
     fontWeight: "700",
     color: Colors.locro,
+  },
+  menu: {
+    paddingRight: 7,
+    paddingLeft: 5,
+
   },
 });

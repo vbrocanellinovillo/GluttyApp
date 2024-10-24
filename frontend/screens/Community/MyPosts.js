@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import AddPostButton from "../../components/Community/AddPostButton";
@@ -14,6 +14,7 @@ import {
   PAGE_SIZE,
 } from "../../constants/community";
 import PaginationFooter from "../../components/UI/Loading/PaginationFooter";
+import { useFocusEffect } from "@react-navigation/native";
 
 const height = Dimensions.get("window").height * 0.5;
 
@@ -28,20 +29,21 @@ export default function MyPosts({ navigation, route }) {
   const [hasNextPage, setHasNextPage] = useState(true);
   const pageSize = PAGE_SIZE;
 
-  //const refresh = route.params.refresh || null;
-  //console.log("route:", route);
+  const refresh = route?.params?.refresh ?? false;
+  console.log("route:", route);
 
   useEffect(() => {
     fetchMyPosts();
   }, [page]);
 
-  // useFocusEffect(()=> {
-  //   if (refresh) {
-  //     fetchMyPosts();
-  //   } else {
-  //     console.log("NO REFRESH");
-  //   }
-  // }, [route]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (refresh) {
+        fetchMyPosts();
+      }
+    }, [refresh])
+  );
+  
 
   async function fetchMyPosts() {
     const isFirstPage = page === 1;
