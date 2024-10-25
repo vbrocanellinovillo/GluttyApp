@@ -12,13 +12,10 @@ import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { deletePost } from "../../services/communityService";
 import GluttyModal from "../../components/UI/GluttyModal";
 
-
-
 export default function ViewPostById({ route, navigation }) {
   const [post, setPost] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
   //const [error, setIsError] = useState(false);
-
 
   //Const de modal
   const [isError, setIsError] = useState(false);
@@ -29,17 +26,14 @@ export default function ViewPostById({ route, navigation }) {
   const id = route.params?.id;
   const token = useSelector((state) => state.auth.accessToken);
 
-
   function closeModalHandler() {
     setShowModal(false);
-    navigation.navigate("MyPosts", {refresh: true})
+    navigation.navigate("MyPosts", { refresh: true });
   }
 
   function closeModalDeleteHandler() {
     setShowEliminarModal(false);
   }
-
-
 
   useFocusEffect(
     useCallback(() => {
@@ -49,10 +43,9 @@ export default function ViewPostById({ route, navigation }) {
           const selectedPost = await getPostById(id, token);
           setIsLoading(false);
           setPost(selectedPost);
-          console.log("el posteo lindo:     ", selectedPost)
+          console.log("el posteo lindo:     ", selectedPost);
         } catch (error) {
           setIsError(true);
-          
         } finally {
           setIsLoading(false);
         }
@@ -62,7 +55,6 @@ export default function ViewPostById({ route, navigation }) {
     }, [id, token])
   );
 
-  console.log("post:    ", post)
   // Confirmación de la eliminación
   async function handleConfirmDelete() {
     try {
@@ -75,13 +67,13 @@ export default function ViewPostById({ route, navigation }) {
       setIsError(true);
       setMessage(error.message || "Error desconocido"); // Maneja errores también
       setShowModal(true);
-      console.log(error.message)
+      console.log(error.message);
     } finally {
       setIsLoading(false);
     }
   }
   if (isLoading) {
-    return <LoadingGlutty visible={isLoading} />
+    return <LoadingGlutty visible={isLoading} />;
   }
 
   return (
@@ -93,7 +85,7 @@ export default function ViewPostById({ route, navigation }) {
         visible={showModal}
       />
       {/*ES EL DE CONFIRMAR ALGO*/}
-      <GluttyModal 
+      <GluttyModal
         visible={showEliminarModal}
         onClose={closeModalDeleteHandler}
         message="¿Seguro que desea eliminar el estudio?"
@@ -107,9 +99,13 @@ export default function ViewPostById({ route, navigation }) {
         ]}
         closeButtonText="Cancelar"
       />
-          <ScrollView contentContainerStyle={{ padding: 13, paddingBottom: 150 }}>
+      <ScrollView>
         {/* Mostrar el post */}
-        <PostItem post={post} iconPost="trash-outline" onPressIcon={handleConfirmDelete}/>
+        <PostItem
+          post={post}
+          iconPost="trash-outline"
+          onPressIcon={handleConfirmDelete}
+        />
 
         {/* Mostrar los comentarios */}
         {post?.comments?.length > 0 ? (
@@ -126,18 +122,15 @@ export default function ViewPostById({ route, navigation }) {
         <AddComment id_post={id} />
       </ScrollView>
     </>
-
   );
 }
 
-const styles = StyleSheet.create(
-  {
+const styles = StyleSheet.create({
   noComments: {
     textAlign: "center",
     marginTop: 30,
     marginBottom: 30,
     fontSize: 16,
     color: Colors.mJordan,
-
- }
+  },
 });

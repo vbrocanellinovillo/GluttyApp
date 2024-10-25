@@ -32,6 +32,7 @@ export default function PostItem({
   const name = useSelector((state) => state?.auth?.userData?.username);
 
   let borrar = true;
+  console.log("en el post item", post);
 
   if (post?.username == name) {
     borrar = true;
