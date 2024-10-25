@@ -9,6 +9,7 @@ import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
 import ErrorPosts from "../../components/Community/ErrorPosts";
 import NoPosts from "../../components/Community/NoPosts";
 import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
+import { useIsFocused } from "@react-navigation/native";
 import {
   COMMUNITY_BOTTOM_INSET,
   communityPaginationFooterStyle,
@@ -20,6 +21,8 @@ const height = Dimensions.get("window").height * 0.5;
 
 export default function MyPosts({ navigation }) {
   const token = useSelector((state) => state.auth.accessToken);
+  const isFocused = useIsFocused(); // Verifica si la pantalla está enfocada
+
 
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,8 +33,11 @@ export default function MyPosts({ navigation }) {
   const pageSize = PAGE_SIZE;
 
   useEffect(() => {
-    fetchMyPosts();
-  }, [page]);
+    if (isFocused) {
+      setPage(1); // Reinicia la página al entrar
+      fetchMyPosts(); // Llama a la función para actualizar los posts
+    }
+  }, [isFocused]);
 
   async function fetchMyPosts() {
     const isFirstPage = page === 1;

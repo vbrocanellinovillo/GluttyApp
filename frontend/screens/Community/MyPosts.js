@@ -18,7 +18,7 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const height = Dimensions.get("window").height * 0.5;
 
-export default function MyPosts({ navigation, route }) {
+export default function MyPosts({ navigation, route, del=false }) {
   const token = useSelector((state) => state.auth.accessToken);
 
   const [posts, setPosts] = useState([]);
@@ -30,7 +30,7 @@ export default function MyPosts({ navigation, route }) {
   const pageSize = PAGE_SIZE;
 
   const refresh = route?.params?.refresh ?? false;
-  console.log("route:", route);
+
 
   useEffect(() => {
     fetchMyPosts();

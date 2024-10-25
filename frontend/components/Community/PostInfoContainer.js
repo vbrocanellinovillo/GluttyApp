@@ -18,6 +18,7 @@ export default function PostInfoContainer({
 
   const token = useSelector((state) => state.auth.accessToken);
 
+  console.log("WTDFFFFF:   ", likes)
   async function handleLike() {
     try {
       setLiked(!isLiked);
