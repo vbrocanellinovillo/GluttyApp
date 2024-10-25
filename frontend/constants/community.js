@@ -15,3 +15,5 @@ export const COMMUNITY_BOTTOM_INSET = 230;
 export const communityPaginationFooterStyle = {
   marginTop: 16,
 };
+
+export const postBackgroundColor = "#ddd";

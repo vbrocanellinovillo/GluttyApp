@@ -14,6 +14,9 @@ import { deletePost } from "../../services/communityService";
 import { useSelector } from "react-redux";
 import GluttyModal from "../UI/GluttyModal";
 import { useNavigation } from "@react-navigation/native";
+import { Image } from "react-native";
+import ImagesContainer from "./ImagesContainer";
+import { postBackgroundColor } from "../../constants/community";
 
 export default function PostItem({
   post,
@@ -29,13 +32,18 @@ export default function PostItem({
   const [message, setMessage] = useState("");
   const [showEliminarModal, setShowEliminarModal] = useState(false);
 
+  const IMAGES = [
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgmQAOe0A3MrBgaJxGMss_A9iAgpCtppd7w&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgmQAOe0A3MrBgaJxGMss_A9iAgpCtppd7w&s",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgmQAOe0A3MrBgaJxGMss_A9iAgpCtppd7w&s",
 
+  ];
 
   function handlePress() {
     Haptics.selectionAsync();
     if (iconPost != "chevron-forward-outline") {
-      console.log("Eliminar")
-      console.log("DICE DELFI QUE LE PONGA ALGO ANTES: ", onPressIcon)
+      console.log("Eliminar");
+      console.log("DICE DELFI QUE LE PONGA ALGO ANTES: ", onPressIcon);
       onPressIcon && onPressIcon();
     } else {
       onPress && onPress();
@@ -43,8 +51,6 @@ export default function PostItem({
   }
   return (
     <>
-
-
       <Pressable
         style={[
           styles.container,
@@ -71,6 +77,7 @@ export default function PostItem({
         <TextCommonsRegular style={styles.content}>
           {post?.content || post?.body}
         </TextCommonsRegular>
+        <ImagesContainer images={IMAGES} />
         <View style={styles.tagsContainer}>
           {post?.tags && post.tags.length > 0 ? (
             post?.tags.map((tag, index) => <TagItem key={index}>{tag}</TagItem>)
@@ -101,7 +108,7 @@ export default function PostItem({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ddd",
+    backgroundColor: postBackgroundColor,
     gap: 10,
     paddingHorizontal: 16,
     paddingVertical: 14,
