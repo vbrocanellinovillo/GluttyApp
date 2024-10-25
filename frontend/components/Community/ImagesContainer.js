@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { postBackgroundColor } from "../../constants/community";
 
@@ -46,15 +46,16 @@ export default function ImagesContainer({ images = [] }) {
       )}
       {imagesCount > 4 && (
         <>
-          {images.slice(1, 3).map((image, index) => (
+          {images.slice(0, 3).map((image, index) => (
             <Image
               key={index}
               source={{ uri: image }}
-              style={[styles.equalImage]}
+              style={[styles.equalImage, { height: IMAGE_HEIGHT_TWO_ROW }]}
             />
           ))}
-          <View>
-            <Ionicons name="add" />
+          <View style={styles.plusContainer}>
+            <Ionicons name="eye" size={24} color="white" />
+            <Text style={styles.moreText}>+{imagesCount - 3}</Text>
           </View>
         </>
       )}
@@ -101,8 +102,9 @@ const styles = StyleSheet.create({
   },
 
   plusContainer: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    width: "50%",
+    borderWidth: IMAGES_GAP,
   },
 });
