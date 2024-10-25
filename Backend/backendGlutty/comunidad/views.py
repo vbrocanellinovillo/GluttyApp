@@ -11,6 +11,19 @@ from django.db import transaction
 from django.db import connection
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
+from spanlp.palabrota import Palabrota
+from spanlp.domain.strategies import Preprocessing, JaccardIndex, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
+
+
+# Configuración del detector de malas palabras
+strategies = [TextToLower(), RemoveUnicodeCharacters(), NumbersToVowelsInLowerCase(), NumbersToConsonantsInLowerCase(), RemoveTicks(), RemoveUrls(), RemoveAccents(), RemoveEmoticons()]
+jaccard = JaccardIndex(threshold=0.9, normalize=False, n_gram=1, clean_strategies=strategies)
+palabrota = Palabrota(distance_metric=jaccard)
+
+# Función que verifica si hay palabras inapropiadas en el contenido
+def detect_inappropriate_words(content):
+    result = Preprocessing().clean(data=content, clean_strategies=strategies)
+    return palabrota.contains_palabrota(result)
 
 # Función que crea el POST
 @api_view(["POST"])
@@ -24,6 +37,14 @@ def create_post(request):
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     try:
         post_content = request.data.get("content")
+        
+        # Verificar si el contenido contiene palabras inapropiadas
+        if post_content and detect_inappropriate_words(post_content):
+            return Response(
+                {"error": "El contenido contiene palabras inapropiadas y no se puede publicar."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
         if post_content:
         # Crear nuevo posteo
             post = Post.objects.create(
@@ -48,6 +69,14 @@ def create_post(request):
                 labels = []  # En caso de error, asignar un array vacío
                 
             print("Labels: ", labels)
+            if labels:
+             for label in labels:
+                 print(label)
+                 if label and detect_inappropriate_words(label):
+                    return Response(
+                        {"error": "Las labels contienen palabras inapropiadas y no se puede publicar."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
             if labels:
                 print(labels)
                 for label_name in labels:
@@ -167,6 +196,13 @@ def add_comment(request):
         
         if not content:
             return Response({"error": "El comentario no puede estar vacío."}, status=status.HTTP_400_BAD_REQUEST)
+        
+         # Verificar si el contenido contiene palabras inapropiadas
+        if content and detect_inappropriate_words(content):
+            return Response(
+                {"error": "El contenido contiene palabras inapropiadas y no se puede publicar."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         comment = Comment.objects.create(user=request.user, post=post, content=content)
         print(comment)
