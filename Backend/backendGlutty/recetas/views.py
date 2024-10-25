@@ -91,7 +91,7 @@ def generate_recipe(request):
 # Función que guarda el mensaje marcado como favorito
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def add_favorite(request):
+def save_message(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     
@@ -149,7 +149,7 @@ def ask_for_title(message):
 # Función que trae un favorito según el id
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def get_favorite_by_id(request):
+def get_saved_message_by_id(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     
@@ -177,7 +177,7 @@ def get_favorite_by_id(request):
 # Función que trae todos los favoritos
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_favorites(request):
+def get_saved_messages(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     

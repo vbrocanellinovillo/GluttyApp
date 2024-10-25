@@ -32,7 +32,7 @@ export default function ViewPostById({ route, navigation }) {
 
   function closeModalHandler() {
     setShowModal(false);
-    navigation.goBack();
+    navigation.navigate("MyPosts", {refresh: true})
   }
 
   function closeModalDeleteHandler() {
@@ -48,8 +48,8 @@ export default function ViewPostById({ route, navigation }) {
         try {
           const selectedPost = await getPostById(id, token);
           setIsLoading(false);
-          console.log("posteo consulta:", selectedPost);
           setPost(selectedPost);
+          console.log("el posteo lindo:     ", selectedPost)
         } catch (error) {
           setIsError(true);
           
@@ -61,6 +61,8 @@ export default function ViewPostById({ route, navigation }) {
       cargarPost();
     }, [id, token])
   );
+
+  console.log("post:    ", post)
   // Confirmación de la eliminación
   async function handleConfirmDelete() {
     try {
