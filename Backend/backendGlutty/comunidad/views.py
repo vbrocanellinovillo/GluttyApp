@@ -14,7 +14,6 @@ from django.core.paginator import Paginator
 from spanlp.palabrota import Palabrota
 from spanlp.domain.strategies import Preprocessing, JaccardIndex, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
 
-
 # Configuración del detector de malas palabras
 strategies = [TextToLower(), RemoveUnicodeCharacters(), NumbersToVowelsInLowerCase(), NumbersToConsonantsInLowerCase(), RemoveTicks(), RemoveUrls(), RemoveAccents(), RemoveEmoticons()]
 jaccard = JaccardIndex(threshold=0.9, normalize=False, n_gram=1, clean_strategies=strategies)
@@ -41,7 +40,7 @@ def create_post(request):
         # Verificar si el contenido contiene palabras inapropiadas
         if post_content and detect_inappropriate_words(post_content):
             return Response(
-                {"error": "El contenido contiene palabras inapropiadas y no se puede publicar."},
+                {"error": "Tu publicación no cumple con las normas de la comunidad por lo que no será publicada.\nGlutty te recuerda que fomentamos un espacio positivo, sano y respetuoso."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -107,6 +106,7 @@ def get_post_by_id(request):
         #Obtener el nombre completo si es celiaco, o el nombre del comercio si es comercio
             
         user_liked = Like.objects.filter(user=user, post=post).exists()
+        user_faved = Favorite.objects.filter(user=user, post=post).exists()
         
         post_data = {
             "post_id": post.id,
@@ -117,6 +117,7 @@ def get_post_by_id(request):
             "created_at": post.created_at,
             "likes": post.likes_number,
             "user_liked": user_liked,  # Indica si el usuario actual ha dado like al post
+            "user_faved": user_faved,
             "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
             "comments_number": post.comments_number,
             "comments": [
@@ -200,7 +201,7 @@ def add_comment(request):
          # Verificar si el contenido contiene palabras inapropiadas
         if content and detect_inappropriate_words(content):
             return Response(
-                {"error": "El contenido contiene palabras inapropiadas y no se puede publicar."},
+                {"error": "Tu comentario no cumple con las normas de la comunidad por lo que no será publicado.\nGlutty te recuerda que fomentamos un espacio positivo, sano y respetuoso."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -378,8 +379,7 @@ def get_my_posts(request):
         return Response({"error": f"Error al obtener mis posts: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-#Trae solo 30 posteos se puede modificar nsino
+# Traer los post recientes con paginado
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_recent_posts(request):

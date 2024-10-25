@@ -717,7 +717,7 @@ def cancel_analysis_date(request):
         connection.close()
         return Response({"error": "No tienes permiso para acceder a esta funcionalidad."}, status=status.HTTP_403_FORBIDDEN)
     try:
-        celiac.CancelAnalysisDate()
+        celiac.cancelAnalysisDate()
             
         # Devolver los datos
         connection.close()
