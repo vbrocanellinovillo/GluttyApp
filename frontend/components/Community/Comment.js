@@ -64,6 +64,7 @@ export default function Comment({ comment, is_mine }) {
 const styles = StyleSheet.create({
   commentContainer: {
     marginVertical: 8,
+    marginHorizontal: 8,
     padding: 10,
     backgroundColor: "#fff",
     borderRadius: 10,
