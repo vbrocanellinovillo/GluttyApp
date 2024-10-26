@@ -163,9 +163,9 @@ export default function AddPost({navigation}) {
   
       
     } catch (error) {
-      console.error("Error al subir el post:", error);
+      console.error("Error al subir el post:", error.message);
       setIsUploading(false);
-      setErrorMessage(error);
+      setErrorMessage(error.message);
       setShowModal(true);
       setIsError(true);
     }
