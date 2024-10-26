@@ -23,6 +23,8 @@ from datetime import timedelta
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from django.db import connection
+from django.http import StreamingHttpResponse
+import requests
 
 
 def calculate_age(birth_date, test_date = date.today()):
@@ -229,20 +231,59 @@ def get_analysis(request):
     # Obtener el análisis usando el ID
     try:
         analysis = get_object_or_404(BloodTest, id=analysis_id)
-    except BloodTest.DoesNotExist:
-        connection.close()
-        return Response({"error": "Análisis no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-    
-    # Verificar que el análisis pertenezca al celíaco del usuario autenticado
-    if analysis.celiac.user != request.user:
-        return Response({"error": "No tienes permiso para acceder a este análisis."}, status=status.HTTP_403_FORBIDDEN)
+        if analysis.celiac.user != request.user:
+            return Response({"error": "No tienes permiso para acceder a este análisis."}, status=403)
 
-    # Obtener información del celiaco (sexo, edad)
-    celiac = analysis.celiac
-    analysis_data = get_reference_values(celiac, analysis)
+        # Datos del análisis y verificación de PDF asociado
+        celiac = analysis.celiac
+        analysis_data = get_reference_values(celiac, analysis)
+        
+        if analysis.url:
+            resource = cloudinary.api.resource(analysis.public_id, resource_type="image")
+            pdf_info = {
+                "file_name": resource.get("display_name"),
+                "file_size_kb": round(resource.get("bytes", 0) / 1024, 2),  # Tamaño en KB
+                "id": analysis.id
+            }
+            analysis_data["pdf_info"] = pdf_info
+
+        connection.close()
+        return Response(analysis_data, status=200)
+
+    except BloodTest.DoesNotExist:
+        return Response({"error": "Análisis no encontrado"}, status=404)
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=500)
     
-    connection.close()
-    return Response(analysis_data, status=200)
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_analysis_pdf(request):
+    analysis_id = request.data.get("id")
+    if not analysis_id:
+        return Response({"error": "ID del análisis es requerido."}, status=400)
+
+    try:
+        user = request.user
+        analysis = get_object_or_404(BloodTest, id=analysis_id, celiac__user=user)
+
+        if not analysis.url:
+            return Response({"error": "El análisis solicitado no tiene un archivo PDF asociado."}, status=404)
+
+        response = requests.get(analysis.url, stream=True)
+        if response.status_code != 200:
+            return Response({"error": "No se pudo recuperar el archivo PDF."}, status=response.status_code)
+
+        content_type = response.headers.get('Content-Type', 'application/pdf')
+        pdf_response = StreamingHttpResponse(streaming_content=response.iter_content(chunk_size=8192), content_type=content_type)
+        pdf_response['Content-Disposition'] = f'inline; filename="{analysis.public_id}.pdf"'
+
+        return pdf_response
+
+    except BloodTest.DoesNotExist:
+        return Response({"error": "Análisis no encontrado"}, status=404)
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=500)
 
 # Función para eliminar estudio y eliminar pdf del 
 @api_view(["DELETE"])

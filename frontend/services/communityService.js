@@ -194,7 +194,6 @@ export async function getPostById(id, token) {
 
     const postDate = new Date(response.created_at);
     const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
-
     const newPost = new Post(
       response.post_id,
       response.name,
@@ -203,8 +202,8 @@ export async function getPostById(id, token) {
       response.body,
       response.labels,
       date,
-      response.likes,
       response.comments_number,
+      response.likes,
       response.images,
       response.user_faved,
       response.user_liked,

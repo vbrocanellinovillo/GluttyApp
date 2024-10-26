@@ -17,3 +17,6 @@ export const communityPaginationFooterStyle = {
 };
 
 export const postBackgroundColor = "#ddd";
+
+export const IMAGE_HEIGHT_ONLY_ROW = 284;
+export const IMAGE_HEIGHT_TWO_ROW = 140;

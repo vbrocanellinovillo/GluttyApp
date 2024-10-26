@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     margin: 10,
+    marginBottom: 500,
   },
   profileImage: {
     width: 40,

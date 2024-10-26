@@ -5,7 +5,7 @@ export default function AddPostButton({ style }) {
   const navigation = useNavigation();
 
   function navigateAddPost() {
-    navigation.navigate("AddPost");
+    navigation.navigate("MainCommunityStack", { screen: "AddPost" });
   }
 
   return (

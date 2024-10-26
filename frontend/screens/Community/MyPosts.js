@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import AddPostButton from "../../components/Community/AddPostButton";
@@ -18,7 +18,7 @@ import { useFocusEffect } from "@react-navigation/native";
 
 const height = Dimensions.get("window").height * 0.5;
 
-export default function MyPosts({ navigation, route }) {
+export default function MyPosts({ navigation, route, del = false }) {
   const token = useSelector((state) => state.auth.accessToken);
 
   const [posts, setPosts] = useState([]);
@@ -30,20 +30,18 @@ export default function MyPosts({ navigation, route }) {
   const pageSize = PAGE_SIZE;
 
   const refresh = route?.params?.refresh ?? false;
-  console.log("route:", route);
 
   useEffect(() => {
     fetchMyPosts();
   }, [page]);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       if (refresh) {
         fetchMyPosts();
       }
     }, [refresh])
   );
-  
 
   async function fetchMyPosts() {
     const isFirstPage = page === 1;
