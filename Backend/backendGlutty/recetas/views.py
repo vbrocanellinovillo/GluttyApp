@@ -15,7 +15,7 @@ import uuid
 # Función que establece comunicación con Cohere y el usuario
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def generate_recipe(request):
+def ask_chatbot(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     
@@ -81,7 +81,7 @@ def generate_recipe(request):
         
         print("\nesta es la respuesta de cohere:", response)
         # Devolver la respuesta al frontend
-        return JsonResponse({"id": cohere_message_id, "response": generated_text}, status=status.HTTP_200_OK)
+        return JsonResponse({"id_response": cohere_message_id, "response": generated_text}, status=status.HTTP_200_OK)
 
     except Exception as e:
         # Manejar errores de la API de Cohere

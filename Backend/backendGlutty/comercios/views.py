@@ -158,7 +158,7 @@ def add_branch(request):
             }
             
             # Manejar imágenes de la sucursal 
-            images = request.FILES.getlist('image')
+            images = request.FILES.getlist("image")
             print("imagen:" + str(images))
             
             if images:
@@ -210,6 +210,9 @@ def get_branch(request):
             photos_data.append(picture.photo_url)
         branch_data["pictures"] = photos_data
         
+        # Agregar las fotos con los id
+        photos_data = [{"id": picture.id, "url": picture.photo_url} for picture in branch_pictures if branch.is_active]
+        branch_data["photos"] = photos_data
         connection.close()
         return Response(branch_data, status=status.HTTP_200_OK)
     except Exception as e:
@@ -218,6 +221,7 @@ def get_branch(request):
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
+@transaction.atomic
 def update_branch(request):
     branch_id = request.data.get("branch_id")
     if not branch_id:
@@ -245,16 +249,31 @@ def update_branch(request):
         if location_serializer.is_valid():
             location_serializer.save()
         else:
-            connection.close()
             return Response({"error": location_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Manejar eliminación de imágenes específicas
+        image_ids_to_delete = request.data.get("image_ids_to_delete", [])
+        for image_id in image_ids_to_delete:
+            picture = PictureBranch.objects.filter(id=image_id, branch=branch).first()
+            branch.detelePicture(picture)
+            
+        # Agregar nuevas imágenes si las hay
+        images = request.FILES.getlist("images")
+        if images:
+                try:
+                    #for image in images:
+                    print("hola"+str(images))
+                    for image in images:
+                        picture_link, public_id = upload_to_cloudinary(image)
+                        new_picture = PictureBranch.objects.create(branch=branch, photo_url=picture_link, public_id=public_id)
+                        new_picture.save()
+                except Exception as e:
+                    raise ValidationError(f"Error al subir la imagen: {str(e)}")
 
-        connection.close()
         return Response({"detail": "Sucursal actualizada correctamente."}, status=status.HTTP_200_OK)
     except ValidationError as e:
-        connection.close()
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["DELETE"])
