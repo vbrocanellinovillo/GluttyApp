@@ -16,7 +16,7 @@ from spanlp.domain.strategies import Preprocessing, JaccardIndex, TextToLower, R
 
 # Configuración del detector de malas palabras
 strategies = [TextToLower(), RemoveUnicodeCharacters(), NumbersToVowelsInLowerCase(), NumbersToConsonantsInLowerCase(), RemoveTicks(), RemoveUrls(), RemoveAccents(), RemoveEmoticons()]
-jaccard = JaccardIndex(threshold=0.9, normalize=False, n_gram=1, clean_strategies=strategies)
+jaccard = JaccardIndex(threshold=0.9, normalize=False, clean_strategies=strategies)
 palabrota = Palabrota(distance_metric=jaccard)
 
 # Función que verifica si hay palabras inapropiadas en el contenido

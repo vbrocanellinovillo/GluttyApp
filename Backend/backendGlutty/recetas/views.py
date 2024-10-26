@@ -91,7 +91,7 @@ def ask_chatbot(request):
 # Función que guarda el mensaje marcado como favorito
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def save_message(request):
+def toggle_save_message(request):
     username = request.user.username
     user = User.objects.filter(username=username).first()
     
@@ -104,22 +104,45 @@ def save_message(request):
     try:
         # Obtener el mensaje específico y marcarlo como favorito
         chat_history = request.session.get("chat_history", [])
+        message, chat_id = None, None
+        
         for chat in chat_history:
             if chat["id"] == message_id:
                 message = chat["message"]
-
-        # Extraer la última línea
-        title = ask_for_title(message)
+                chat_id = chat["id"]
+                break
         
-        chat_message = ChatMessage.objects.create(
-                        user=user,
-                        message=message,
-                        title=title
-                    )
-        chat_message.save()
+        if message:
+            existing_favorite = ChatMessage.objects.filter(user=user, chat_history_id=chat_id).first()
+            
+            if existing_favorite:
+                existing_favorite.delete()
+                connection.close()
+                return Response({"detail": "Mensaje eliminado de favoritos."}, status=status.HTTP_200_OK)
+            
+            title = ask_for_title(message)
+        
+            chat_message = ChatMessage.objects.create(
+                            user=user,
+                            message=message,
+                            title=title,
+                            chat_history_id = chat_id
+                        )
+            
+            chat_message.save()
+            connection.close()
+            return Response({"detail": "Mensaje marcado como favorito."}, status=status.HTTP_200_OK)
+                
+        else:
+            existing_message = ChatMessage.objects.filter(user=user, id=message_id).first()
+            if existing_message:
+                # Eliminar si ya existe
+                existing_message.delete()
+                connection.close()
+                return Response({"detail": "Mensaje eliminado de favoritos."}, status=status.HTTP_200_OK)
 
-        return Response({"detail": "Mensaje marcado como favorito."}, status=status.HTTP_200_OK)
-
+        if not message and not existing_message:
+            return Response({"error": "Mensaje no encontrado en la base de datos."}, status=status.HTTP_404_NOT_FOUND)    
     except Exception as e:
         return Response({"error": f"Error al marcar favorito: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

@@ -7,6 +7,7 @@ class ChatMessage(models.Model):
     title = models.CharField(blank=False, default="Nuevo guardado")
     message = models.CharField(blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    chat_history_id = models.CharField(blank=False, default="Id Default")
     
     class Meta:
         ordering = ["-created_at"]
