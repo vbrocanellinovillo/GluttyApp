@@ -39,7 +39,7 @@ export default function EditGeneralInfo({ navigation, route }) {
       setMessage(error.message);
       setShowModal(true);
     } finally {
-      setisloading(false);
+      setisloading(false); 
     }
   }
 

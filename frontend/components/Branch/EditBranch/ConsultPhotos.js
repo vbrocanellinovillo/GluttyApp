@@ -1,8 +1,13 @@
-/*import BranchDataItem from "../../../../components/Branch/BranchDataItem";
-import { View, StyleSheet, setFieldValue} from "react-native";
-import TextCommonsRegular from "../../../../components/UI/FontsTexts/TextCommonsRegular";
-import { Colors } from "../../../../constants/colors";
+import BranchDataItem from "../BranchDataItem";
+import { View, StyleSheet, setFieldValue , Image, ScrollView} from "react-native";
 
+import TextCommonsRegular from "../../UI/FontsTexts/TextCommonsRegular";
+import Form from "../../UI/Forms/Form";
+import FormControl from "../../UI/Controls/FormControl";
+import CheckboxControl from "../../UI/Controls/CheckboxControl";
+import { useNavigation } from "@react-navigation/native";
+
+/*
 export function ConsultPhotos({branch}) {
     console.log("branch", branch);
 
@@ -56,15 +61,24 @@ const styles = StyleSheet.create({
     
    
 });*/
-import React from "react";
-import BranchDataItem from "../BranchDataItem";
-import { View, StyleSheet, Image, ScrollView } from "react-native";
 
 export function ConsultPhotos({ branch }) {
   const pictures = branch.pictures || [];
+  const navigation = useNavigation();
+  console.log("PEDRAAAA")
+  console.log(branch.pictures)
+
+  const handlePress = () => {
+    console.log("PEDRAAAA")
+    console.log(branch.pictures)
+    navigation.navigate("EditBranchStack", {
+      screen: "EditPhotos",
+      params: { branch }, 
+    });
+  };
 
   return (
-    <BranchDataItem title="Fotos" onPressPrencil={""}>
+    <BranchDataItem title="Fotos" onPressPrencil={handlePress}>
       <ScrollView horizontal contentContainerStyle={styles.imageRow}>
         {pictures.map((picture, index) => (
           <View key={index} style={styles.imageContainer}>
