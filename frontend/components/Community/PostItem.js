@@ -21,18 +21,9 @@ export default function PostItem({
   iconPost = "chevron-forward-outline",
   onPressIcon,
 }) {
-  const IMAGES = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgmQAOe0A3MrBgaJxGMss_A9iAgpCtppd7w&s",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgmQAOe0A3MrBgaJxGMss_A9iAgpCtppd7w&s",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgmQAOe0A3MrBgaJxGMss_A9iAgpCtppd7w&s",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgmQAOe0A3MrBgaJxGMss_A9iAgpCtppd7w&s",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFgmQAOe0A3MrBgaJxGMss_A9iAgpCtppd7w&s",
-  ];
-
   const name = useSelector((state) => state?.auth?.userData?.username);
 
   let borrar = true;
-  console.log("en el post item", post);
 
   if (post?.username == name) {
     borrar = true;
@@ -43,8 +34,6 @@ export default function PostItem({
   function handlePress() {
     Haptics.selectionAsync();
     if (iconPost != "chevron-forward-outline") {
-      console.log("Eliminar");
-      console.log("DICE DELFI QUE LE PONGA ALGO ANTES: ", onPressIcon);
       onPressIcon && onPressIcon();
     } else {
       onPress && onPress();
@@ -80,7 +69,16 @@ export default function PostItem({
         <TextCommonsRegular style={styles.content}>
           {post?.content || post?.body}
         </TextCommonsRegular>
-        <ImagesContainer images={IMAGES} />
+        <ImagesContainer
+          images={post?.images}
+          postInfo={{
+            likes: post?.likes,
+            comments: post?.comments_number,
+            faved: post?.faved,
+            liked: post?.liked,
+            id: post?.id,
+          }}
+        />
         <View style={styles.tagsContainer}>
           {post?.tags && post.tags.length > 0 ? (
             post?.tags.map((tag, index) => <TagItem key={index}>{tag}</TagItem>)

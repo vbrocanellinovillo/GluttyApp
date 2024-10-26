@@ -38,20 +38,6 @@ export default function MainUserStack() {
         component={EditBloodTestStack}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="AddPost"
-        component={AddPost}
-        options={{
-          header: ({ navigation, options, route }) => (
-            <AddPostHeader
-              navigation={navigation}
-              options={options}
-              route={route}
-            />
-          ),
-          title: "Nuevo",
-        }}
-      />
     </Stack.Navigator>
   );
 }

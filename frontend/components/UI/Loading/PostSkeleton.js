@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Skeleton } from "@rneui/themed";
 import { Divider } from "react-native-paper";
+import { IMAGE_HEIGHT_ONLY_ROW } from "../../../constants/community";
 
 export default function PostSkeleton({ curved }) {
   return (
@@ -16,6 +17,11 @@ export default function PostSkeleton({ curved }) {
           <Skeleton width="95%" height={18} />
           <Skeleton width="55%" height={18} />
         </View>
+        <Skeleton
+          width={"90%"}
+          height={IMAGE_HEIGHT_ONLY_ROW}
+          style={styles.imageSkeleton}
+        />
         <View style={styles.tagsContainer}>
           <Skeleton width={70} height={25} style={styles.curvedElement} />
           <Skeleton width={70} height={25} style={styles.curvedElement} />
@@ -82,5 +88,9 @@ const styles = StyleSheet.create({
   postInfoContainer: {
     flexDirection: "row",
     gap: 12,
+  },
+
+  imageSkeleton: {
+    borderRadius: 20,
   },
 });
