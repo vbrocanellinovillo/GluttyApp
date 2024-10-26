@@ -11,6 +11,12 @@ import TagItem from "./TagItem";
 import ImagesContainer from "./ImagesContainer";
 import { postBackgroundColor } from "../../constants/community";
 import { useSelector } from "react-redux";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+import { useState } from "react";
 
 export default function PostItem({
   post,
@@ -22,6 +28,17 @@ export default function PostItem({
   onPressIcon,
 }) {
   const name = useSelector((state) => state?.auth?.userData?.username);
+
+  const scaleAnimation = useSharedValue(0);
+
+  const animationStlye = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: withSpring(scaleAnimation.value) }],
+    };
+  });
+
+  const [animationIcon, setAnimationIcon] = useState("");
+  const [animationColor, setAnimationColor] = useState("");
 
   let borrar = true;
 
@@ -39,6 +56,14 @@ export default function PostItem({
       onPress && onPress();
     }
   }
+
+  function animateIcon(icon, color) {
+    setAnimationIcon(icon);
+    setAnimationColor(color);
+    scaleAnimation.value = 1.6;
+    setTimeout(() => (scaleAnimation.value = 0), 1000);
+  }
+
   return (
     <>
       <Pressable
@@ -99,10 +124,14 @@ export default function PostItem({
             faved={post?.faved}
             liked={post?.liked}
             id={post?.id}
+            onPressIcon={animateIcon}
           />
         </View>
       </Pressable>
       {!curved && <Divider />}
+      <Animated.View style={[styles.animatedIcon, animationStlye]}>
+        <Ionicons name={animationIcon} size={30} color={animationColor} />
+      </Animated.View>
     </>
   );
 }
@@ -113,6 +142,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingHorizontal: 16,
     paddingVertical: 14,
+    position: "relative",
   },
 
   curved: {
@@ -181,5 +211,11 @@ const styles = StyleSheet.create({
 
   verMas: {
     fontSize: 20,
+  },
+
+  animatedIcon: {
+    position: "absolute",
+    top: "40%",
+    left: "45%",
   },
 });

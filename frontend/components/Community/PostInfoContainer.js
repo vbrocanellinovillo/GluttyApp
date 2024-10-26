@@ -13,6 +13,7 @@ export default function PostInfoContainer({
   liked,
   id,
   style,
+  onPressIcon,
 }) {
   const [isFaved, setFaved] = useState(faved);
   const [isLiked, setLiked] = useState(liked);
@@ -23,7 +24,7 @@ export default function PostInfoContainer({
   async function handleLike() {
     try {
       setLiked(!isLiked);
-
+      onPressIcon("heart", Colors.redLike);
       await addLike(id, token);
       if (isLiked) {
         setSumLiked(sumLiked - 1);
@@ -38,6 +39,7 @@ export default function PostInfoContainer({
   async function handleFav() {
     try {
       setFaved(!isFaved);
+      onPressIcon("star", Colors.favYellow);
       const response = addFavorite(id, token);
     } catch (error) {
       setFaved(!isFaved);
@@ -55,7 +57,7 @@ export default function PostInfoContainer({
       />
       <PostInfo
         icon={isFaved ? "star" : "star-outline"}
-        iconColor={isFaved && "#ffbb00"}
+        iconColor={isFaved && Colors.favYellow}
         onPress={handleFav}
       />
     </Animated.View>
