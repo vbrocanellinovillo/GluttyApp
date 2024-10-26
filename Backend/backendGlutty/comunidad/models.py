@@ -1,3 +1,4 @@
+import cloudinary
 from django.db import models
 from django.forms import ValidationError
 from usuarios.image import upload_to_cloudinary
@@ -30,6 +31,12 @@ class Post(models.Model):
             return user.commerce.name
         else:
             return user.username
+        
+    def deletePictures(self):
+        pictures = PicturePost.objects.filter(post=self).first()
+        for picture in pictures:
+            cloudinary.api.delete_resources(picture.public_id, resource_type="image", type="upload")
+            picture.delete()
 
 class PicturePost(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="pictures")
