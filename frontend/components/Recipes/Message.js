@@ -5,8 +5,10 @@ import { Image } from "react-native";
 import { gluttyChef } from "../../constants/glutty";
 import { useSelector } from "react-redux";
 
-export default function Message({ isAnswer }) {
+export default function Message({ message, isLoading, isError }) {
   const username = useSelector((state) => state.auth?.userData?.username);
+
+  const isAnswer = message?.isAnswer;
 
   return (
     <View style={{ alignItems: isAnswer ? "stretch" : "flex-end" }}>
@@ -29,7 +31,7 @@ export default function Message({ isAnswer }) {
 
       <View style={[styles.container, { width: isAnswer ? "90%" : "70%" }]}>
         <TextCommonsRegular style={styles.text}>
-          mensaje choto
+          {message?.content}
         </TextCommonsRegular>
 
         <View
@@ -37,8 +39,7 @@ export default function Message({ isAnswer }) {
             styles.triangle,
             {
               right: !isAnswer && 5,
-              left: isAnswer && 5,
-              transform: [{ rotate: isAnswer ? "-145deg" : "330deg" }],
+              transform: [{ rotate: !isAnswer && "330deg" }],
             },
           ]}
         />
@@ -47,7 +48,7 @@ export default function Message({ isAnswer }) {
       <TextCommonsRegular
         style={[styles.timeText, { marginRight: isAnswer ? 55 : 18 }]}
       >
-        18:59
+        {message?.time || "18:59"}
       </TextCommonsRegular>
 
       {isAnswer && (
@@ -134,6 +135,6 @@ const styles = StyleSheet.create({
     textAlign: "right",
     marginTop: 4,
     color: "#666",
-    fontSize: 14
+    fontSize: 14,
   },
 });
