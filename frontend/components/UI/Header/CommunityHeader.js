@@ -5,6 +5,7 @@ import { Colors } from "../../../constants/colors";
 import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import UserImage from "../UserImage/UserImage";
 import * as Haptics from "expo-haptics";
+import TextCommonsBold from "../FontsTexts/TextCommonsBold";
 
 export default function CommunityHeader({ options, navigation }) {
   function toggleDrawer() {
@@ -23,14 +24,19 @@ export default function CommunityHeader({ options, navigation }) {
           }
           onPress={toggleDrawer}
         >
-          <Ionicons name="menu" color={Colors.mJordan} size={38} style={styles.menu} />
+          <Ionicons
+            name="menu"
+            color={Colors.mJordan}
+            size={38}
+            style={styles.menu}
+          />
         </Pressable>
-        <TextCommonsMedium style={styles.text}>
+        <TextCommonsBold style={styles.text}>
           Glutty.
           <TextCommonsMedium style={styles.title}>
             {options.title}
           </TextCommonsMedium>
-        </TextCommonsMedium>
+        </TextCommonsBold>
       </View>
       <UserImage dimensions={68} onPress={toggleDrawer} />
     </Header>
@@ -60,7 +66,7 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 38,
-    fontWeight: "700",
+    fontWeight: "900",
     color: Colors.mJordan,
   },
 
@@ -72,6 +78,5 @@ const styles = StyleSheet.create({
   menu: {
     paddingRight: 7,
     paddingLeft: 5,
-
   },
 });

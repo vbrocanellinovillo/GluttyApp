@@ -11,14 +11,13 @@ import TextCommonsRegular from "../../components/UI/FontsTexts/TextCommonsRegula
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { deletePost } from "../../services/communityService";
 import GluttyModal from "../../components/UI/GluttyModal";
-
+import ConsultarPostSkeleton from "../../components/UI/Loading/ConsultarPostSkeleton";
 
 
 export default function ViewPostById({ route, navigation }) {
   const [post, setPost] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
   //const [error, setIsError] = useState(false);
-
 
   //Const de modal
   const [isError, setIsError] = useState(false);
@@ -29,17 +28,31 @@ export default function ViewPostById({ route, navigation }) {
   const id = route.params?.id;
   const token = useSelector((state) => state.auth.accessToken);
 
-
   function closeModalHandler() {
     setShowModal(false);
-    navigation.goBack();
+    navigation.navigate("MyPosts", { refresh: true });
   }
 
-  function closeModalDeleteHandler() {
+  async function confirmModalDeleteHandler() {
+    try {
+      setIsLoading(true);
+      const response = await deletePost(id, token);
+      setMessage("El post fue eliminado con éxito");
+      setShowModal(true);
+    } catch (error) {
+      setIsError(true);
+      setMessage(error.message || "Error desconocido"); // Maneja errores también
+      setShowModal(true);
+      console.log(error.message);
+    } finally {
+      setIsLoading(false);
+    }
     setShowEliminarModal(false);
   }
 
-
+  function closeModalDeleteHandler(){
+    setShowEliminarModal(false)
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -48,11 +61,10 @@ export default function ViewPostById({ route, navigation }) {
         try {
           const selectedPost = await getPostById(id, token);
           setIsLoading(false);
-          console.log("posteo consulta:", selectedPost);
           setPost(selectedPost);
+          console.log("el posteo lindo:     ", selectedPost);
         } catch (error) {
           setIsError(true);
-          
         } finally {
           setIsLoading(false);
         }
@@ -61,25 +73,14 @@ export default function ViewPostById({ route, navigation }) {
       cargarPost();
     }, [id, token])
   );
+
   // Confirmación de la eliminación
   async function handleConfirmDelete() {
-    try {
-      setIsLoading(true);
-      const response = await deletePost(id, token);
-      setMessage("El post fue eliminado con éxito");
-      setShowEliminarModal(false);
-      setShowModal(true);
-    } catch (error) {
-      setIsError(true);
-      setMessage(error.message || "Error desconocido"); // Maneja errores también
-      setShowModal(true);
-      console.log(error.message)
-    } finally {
-      setIsLoading(false);
-    }
+    setShowEliminarModal(true);
   }
-  if (isLoading) {
-    return <LoadingGlutty visible={isLoading} />
+
+if (isLoading) {
+      return <ConsultarPostSkeleton />;
   }
 
   return (
@@ -91,7 +92,7 @@ export default function ViewPostById({ route, navigation }) {
         visible={showModal}
       />
       {/*ES EL DE CONFIRMAR ALGO*/}
-      <GluttyModal 
+      <GluttyModal
         visible={showEliminarModal}
         onClose={closeModalDeleteHandler}
         message="¿Seguro que desea eliminar el estudio?"
@@ -101,13 +102,18 @@ export default function ViewPostById({ route, navigation }) {
             text: "Confirmar",
             bg: "green",
             color: Colors.whiteGreen,
+            onPress: confirmModalDeleteHandler
           },
         ]}
         closeButtonText="Cancelar"
       />
-          <ScrollView contentContainerStyle={{ padding: 13, paddingBottom: 150 }}>
+      <ScrollView>
         {/* Mostrar el post */}
-        <PostItem post={post} iconPost="trash-outline" onPressIcon={handleConfirmDelete}/>
+        <PostItem
+          post={post}
+          iconPost="trash-outline"
+          onPressIcon={handleConfirmDelete}
+        />
 
         {/* Mostrar los comentarios */}
         {post?.comments?.length > 0 ? (
@@ -116,7 +122,7 @@ export default function ViewPostById({ route, navigation }) {
           ))
         ) : (
           <TextCommonsRegular style={styles.noComments}>
-            No hay comentarios aún.
+            
           </TextCommonsRegular>
         )}
 
@@ -124,18 +130,13 @@ export default function ViewPostById({ route, navigation }) {
         <AddComment id_post={id} />
       </ScrollView>
     </>
-
   );
 }
 
-const styles = StyleSheet.create(
-  {
+const styles = StyleSheet.create({
   noComments: {
     textAlign: "center",
-    marginTop: 30,
-    marginBottom: 30,
     fontSize: 16,
     color: Colors.mJordan,
-
- }
+  },
 });

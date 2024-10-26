@@ -1,7 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
-import Tag from "./TagItem";
 import PostInfoContainer from "./PostInfoContainer";
 import { Divider } from "react-native-paper";
 import { Colors } from "../../constants/colors";
@@ -9,11 +8,15 @@ import * as Haptics from "expo-haptics";
 import UserImage from "../UI/UserImage/UserImage";
 import { Ionicons } from "@expo/vector-icons";
 import TagItem from "./TagItem";
-import { useState } from "react";
-import { deletePost } from "../../services/communityService";
+import ImagesContainer from "./ImagesContainer";
+import { postBackgroundColor } from "../../constants/community";
 import { useSelector } from "react-redux";
-import GluttyModal from "../UI/GluttyModal";
-import { useNavigation } from "@react-navigation/native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+import { useState } from "react";
 
 export default function PostItem({
   post,
@@ -24,27 +27,45 @@ export default function PostItem({
   iconPost = "chevron-forward-outline",
   onPressIcon,
 }) {
-  const [isError, setIsError] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState("");
-  const [showEliminarModal, setShowEliminarModal] = useState(false);
+  const name = useSelector((state) => state?.auth?.userData?.username);
 
+  const scaleAnimation = useSharedValue(0);
 
+  const animationStlye = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: withSpring(scaleAnimation.value) }],
+    };
+  });
+
+  const [animationIcon, setAnimationIcon] = useState("");
+  const [animationColor, setAnimationColor] = useState("");
+
+  let borrar = true;
+
+  if (post?.username == name) {
+    borrar = true;
+  } else {
+    borrar = false;
+  }
 
   function handlePress() {
     Haptics.selectionAsync();
     if (iconPost != "chevron-forward-outline") {
-      console.log("Eliminar")
-      console.log("DICE DELFI QUE LE PONGA ALGO ANTES: ", onPressIcon)
       onPressIcon && onPressIcon();
     } else {
       onPress && onPress();
     }
   }
+
+  function animateIcon(icon, color) {
+    setAnimationIcon(icon);
+    setAnimationColor(color);
+    scaleAnimation.value = 1.6;
+    setTimeout(() => (scaleAnimation.value = 0), 1000);
+  }
+
   return (
     <>
-
-
       <Pressable
         style={[
           styles.container,
@@ -64,13 +85,25 @@ export default function PostItem({
               @{post?.username || post?.user}
             </TextCommonsRegular>
           </View>
-          <Pressable onPress={handlePress}>
-            <Ionicons style={styles.verMas} name={iconPost} />
-          </Pressable>
+          {borrar && (
+            <Pressable onPress={handlePress}>
+              <Ionicons style={styles.verMas} name={iconPost} />
+            </Pressable>
+          )}
         </View>
         <TextCommonsRegular style={styles.content}>
           {post?.content || post?.body}
         </TextCommonsRegular>
+        <ImagesContainer
+          images={post?.images}
+          postInfo={{
+            likes: post?.likes,
+            comments: post?.comments_number,
+            faved: post?.faved,
+            liked: post?.liked,
+            id: post?.id,
+          }}
+        />
         <View style={styles.tagsContainer}>
           {post?.tags && post.tags.length > 0 ? (
             post?.tags.map((tag, index) => <TagItem key={index}>{tag}</TagItem>)
@@ -91,20 +124,25 @@ export default function PostItem({
             faved={post?.faved}
             liked={post?.liked}
             id={post?.id}
+            onPressIcon={animateIcon}
           />
         </View>
       </Pressable>
       {!curved && <Divider />}
+      <Animated.View style={[styles.animatedIcon, animationStlye]}>
+        <Ionicons name={animationIcon} size={30} color={animationColor} />
+      </Animated.View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ddd",
+    backgroundColor: postBackgroundColor,
     gap: 10,
     paddingHorizontal: 16,
     paddingVertical: 14,
+    position: "relative",
   },
 
   curved: {
@@ -173,5 +211,11 @@ const styles = StyleSheet.create({
 
   verMas: {
     fontSize: 20,
+  },
+
+  animatedIcon: {
+    position: "absolute",
+    top: "40%",
+    left: "45%",
   },
 });

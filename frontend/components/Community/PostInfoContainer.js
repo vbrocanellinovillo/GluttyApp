@@ -4,6 +4,7 @@ import { Colors } from "../../constants/colors";
 import { useState } from "react";
 import { addFavorite, addLike } from "../../services/communityService";
 import { useSelector } from "react-redux";
+import Animated from "react-native-reanimated";
 
 export default function PostInfoContainer({
   likes,
@@ -11,6 +12,8 @@ export default function PostInfoContainer({
   faved,
   liked,
   id,
+  style,
+  onPressIcon,
 }) {
   const [isFaved, setFaved] = useState(faved);
   const [isLiked, setLiked] = useState(liked);
@@ -21,8 +24,8 @@ export default function PostInfoContainer({
   async function handleLike() {
     try {
       setLiked(!isLiked);
-
-      const response = addLike(id, token);
+      onPressIcon("heart", Colors.redLike);
+      await addLike(id, token);
       if (isLiked) {
         setSumLiked(sumLiked - 1);
       } else {
@@ -36,6 +39,7 @@ export default function PostInfoContainer({
   async function handleFav() {
     try {
       setFaved(!isFaved);
+      onPressIcon("star", Colors.favYellow);
       const response = addFavorite(id, token);
     } catch (error) {
       setFaved(!isFaved);
@@ -43,7 +47,7 @@ export default function PostInfoContainer({
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, style]}>
       <PostInfo icon="chatbubble-ellipses" number={comments} />
       <PostInfo
         icon={isLiked ? "heart" : "heart-outline"}
@@ -53,10 +57,10 @@ export default function PostInfoContainer({
       />
       <PostInfo
         icon={isFaved ? "star" : "star-outline"}
-        iconColor={isFaved && "#ffbb00"}
+        iconColor={isFaved && Colors.favYellow}
         onPress={handleFav}
       />
-    </View>
+    </Animated.View>
   );
 }
 
