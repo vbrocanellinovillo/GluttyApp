@@ -11,6 +11,8 @@ import TextCommonsRegular from "../../components/UI/FontsTexts/TextCommonsRegula
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { deletePost } from "../../services/communityService";
 import GluttyModal from "../../components/UI/GluttyModal";
+import ConsultarPostSkeleton from "../../components/UI/Loading/ConsultarPostSkeleton";
+
 
 export default function ViewPostById({ route, navigation }) {
   const [post, setPost] = useState(undefined);
@@ -76,8 +78,9 @@ export default function ViewPostById({ route, navigation }) {
   async function handleConfirmDelete() {
     setShowEliminarModal(true);
   }
-  if (isLoading) {
-    return <LoadingGlutty visible={isLoading} />;
+
+if (isLoading) {
+      return <ConsultarPostSkeleton />;
   }
 
   return (
@@ -119,7 +122,7 @@ export default function ViewPostById({ route, navigation }) {
           ))
         ) : (
           <TextCommonsRegular style={styles.noComments}>
-            No hay comentarios aún.
+            
           </TextCommonsRegular>
         )}
 
@@ -133,8 +136,6 @@ export default function ViewPostById({ route, navigation }) {
 const styles = StyleSheet.create({
   noComments: {
     textAlign: "center",
-    marginTop: 30,
-    marginBottom: 30,
     fontSize: 16,
     color: Colors.mJordan,
   },
