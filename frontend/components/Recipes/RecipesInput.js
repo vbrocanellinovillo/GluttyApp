@@ -11,15 +11,15 @@ export default function RecipesInput({
   containerStyle,
   textStyle,
   typeIcon = "ionicons",
-  iconName = "send",
   onPress = () => undefined,
   onChange = () => undefined,
   iconStyle,
   value = "",
+  isSending
 }) {
-  const [icon, setIcon] = useState(iconName);
-
   const hasText = value.trim().length > 0;
+
+  const icon = isSending? "stop-circle" : "send"
 
   function handleChange(text) {
     onChange && onChange(text);
