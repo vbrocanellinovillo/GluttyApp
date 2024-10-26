@@ -31,8 +31,25 @@ export default function ViewPostById({ route, navigation }) {
     navigation.navigate("MyPosts", { refresh: true });
   }
 
-  function closeModalDeleteHandler() {
+  async function confirmModalDeleteHandler() {
+    try {
+      setIsLoading(true);
+      const response = await deletePost(id, token);
+      setMessage("El post fue eliminado con éxito");
+      setShowModal(true);
+    } catch (error) {
+      setIsError(true);
+      setMessage(error.message || "Error desconocido"); // Maneja errores también
+      setShowModal(true);
+      console.log(error.message);
+    } finally {
+      setIsLoading(false);
+    }
     setShowEliminarModal(false);
+  }
+
+  function closeModalDeleteHandler(){
+    setShowEliminarModal(false)
   }
 
   useFocusEffect(
@@ -57,20 +74,7 @@ export default function ViewPostById({ route, navigation }) {
 
   // Confirmación de la eliminación
   async function handleConfirmDelete() {
-    try {
-      setIsLoading(true);
-      const response = await deletePost(id, token);
-      setMessage("El post fue eliminado con éxito");
-      setShowEliminarModal(false);
-      setShowModal(true);
-    } catch (error) {
-      setIsError(true);
-      setMessage(error.message || "Error desconocido"); // Maneja errores también
-      setShowModal(true);
-      console.log(error.message);
-    } finally {
-      setIsLoading(false);
-    }
+    setShowEliminarModal(true);
   }
   if (isLoading) {
     return <LoadingGlutty visible={isLoading} />;
@@ -95,6 +99,7 @@ export default function ViewPostById({ route, navigation }) {
             text: "Confirmar",
             bg: "green",
             color: Colors.whiteGreen,
+            onPress: confirmModalDeleteHandler
           },
         ]}
         closeButtonText="Cancelar"
