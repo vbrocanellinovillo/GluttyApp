@@ -5,30 +5,22 @@ import TextCommonsMedium from '../../components/UI/FontsTexts/TextCommonsMedium'
 import { Colors } from '../../constants/colors';
 import BottomSheet from "@devvie/bottom-sheet";
 import ImageSheetOptions from "../../components/UI/UserImage/ImageSheetOptions";
-import {
-  launchCameraAsync,
-  launchImageLibraryAsync,
-  MediaTypeOptions,
-  PermissionStatus,
-  useCameraPermissions,
-  useMediaLibraryPermissions,
-} from "expo-image-picker";
+import { launchCameraAsync, launchImageLibraryAsync, MediaTypeOptions, PermissionStatus, useCameraPermissions, useMediaLibraryPermissions } from "expo-image-picker";
 import { createPost } from '../../services/communityService';
 import { useSelector } from 'react-redux';
 import GluttyModal from '../../components/UI/GluttyModal';
-import { useNavigation } from '@react-navigation/native';
 
-
-export default function AddPost({navigation}) {
+export default function AddPost({ navigation }) {
   const [post, setPost] = useState('');
   const [tags, setTags] = useState([]);
   const [currentTag, setCurrentTag] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
-  const [isUploading, setIsUploading] = useState(false); // Controla el modal de "Subiendo"
-  const [uploadSuccess, setUploadSuccess] = useState(false); // Controla el modal de éxito
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); 
-  const [showModal, setShowModal] = useState(false); // modale de error 
-  const [isError, setIsError] = useState(false); // error si o no
+  const [showModal, setShowModal] = useState(false); 
+  const [isError, setIsError] = useState(false); 
+  const [isTagInputFocused, setIsTagInputFocused] = useState(false);
 
   const keyboardHeight = useRef(new Animated.Value(0)).current;
   const inputTranslateY = useRef(new Animated.Value(0)).current;
@@ -39,21 +31,22 @@ export default function AddPost({navigation}) {
 
   const token = useSelector((state) => state.auth.accessToken);
 
-
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (event) => {
-      Animated.parallel([
-        Animated.timing(keyboardHeight, {
-          toValue: 250,
-          duration: 150,
-          useNativeDriver: false,
-        }),
-        Animated.timing(inputTranslateY, {
-          toValue: -250,
-          duration: 150,
-          useNativeDriver: false,
-        }),
-      ]).start();
+      if (isTagInputFocused) {
+        Animated.parallel([
+          Animated.timing(keyboardHeight, {
+            toValue: 250,
+            duration: 150,
+            useNativeDriver: false,
+          }),
+          Animated.timing(inputTranslateY, {
+            toValue: -250,
+            duration: 150,
+            useNativeDriver: false,
+          }),
+        ]).start();
+      }
     });
 
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
@@ -69,13 +62,14 @@ export default function AddPost({navigation}) {
           useNativeDriver: false,
         }),
       ]).start();
+      setIsTagInputFocused(false); // Reset focus state
     });
 
     return () => {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };
-  }, []);
+  }, [isTagInputFocused]);
 
   const handleTagInput = (text) => {
     if (text.includes(' ')) {
@@ -124,8 +118,8 @@ export default function AddPost({navigation}) {
       const asset = imageResult.assets[0];
       const imageData = {
         uri: asset.uri,
-        name: asset.fileName || asset.uri.split('/').pop(), // Usa el nombre original o el último segmento de la URI
-        type: asset.type || "image/jpeg", // Establece un tipo MIME por defecto
+        name: asset.fileName || asset.uri.split('/').pop(),
+        type: asset.type || "image/jpeg",
       };
   
       setSelectedImages((prevImages) => [...prevImages, imageData]);
@@ -150,7 +144,7 @@ export default function AddPost({navigation}) {
 
   const handlePressPost = async (post, tags, images) => {
     try {
-      Keyboard.dismiss()
+      Keyboard.dismiss();
       console.log("Iniciando subida del post");
       
       setIsUploading(true);
@@ -159,9 +153,7 @@ export default function AddPost({navigation}) {
       
       setIsUploading(false);
       setUploadSuccess(true);
-
   
-      
     } catch (error) {
       console.error("Error al subir el post:", error.message);
       setIsUploading(false);
@@ -177,7 +169,6 @@ export default function AddPost({navigation}) {
 
   function handleGoBack() {
     navigation.navigate("MyPosts", {refresh: true});
-    
   }
 
   return (
@@ -190,19 +181,20 @@ export default function AddPost({navigation}) {
           value={post}
           onChangeText={setPost}
           multiline={true}
-          onSubmitEditing={Keyboard.dismiss} // Cierra el teclado al presionar enter
+          onSubmitEditing={Keyboard.dismiss}
+          onFocus={() => setIsTagInputFocused(false)} // When focusing on inputPost
         />
 
-    <ScrollView horizontal style={styles.imagesContainer}>
-      {selectedImages.map((image, index) => (
-        <View key={index} style={styles.imageWrapper}>
-          <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-          <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
-            <Ionicons name="trash" size={20} color="black" />
-          </TouchableOpacity>
-        </View>
-      ))}
-    </ScrollView>
+        <ScrollView horizontal style={styles.imagesContainer}>
+          {selectedImages.map((image, index) => (
+            <View key={index} style={styles.imageWrapper}>
+              <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+              <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
+                <Ionicons name="close-circle-outline" size={18} color="white" />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </ScrollView>
 
         <Animated.View style={{ transform: [{ translateY: inputTranslateY }] }}>
           <TextCommonsMedium style={styles.etiquetasLabel}>Etiquetas de búsqueda</TextCommonsMedium>
@@ -216,6 +208,7 @@ export default function AddPost({navigation}) {
             multiline={true}
             maxLength={130}
             onSubmitEditing={Keyboard.dismiss}
+            onFocus={() => setIsTagInputFocused(true)} // When focusing on inputEtiqueta
           />
 
           <ScrollView style={styles.tagsContainer} horizontal>
@@ -253,29 +246,31 @@ export default function AddPost({navigation}) {
           onClose={closeModalHandler}
           visible={showModal}
         />
-      
-      <GluttyModal
-        visible={uploadSuccess}
-        //onClose={closeModalDeleteHandler}
-        message="Post subido con éxito!"
-        closeButton={false}
-        other
-        buttons={[
-          {
-            text: "Aceptar",
-            bg: "green",
-            color: Colors.whiteGreen,
-            onPress: handleGoBack,
-          },
-        ]}
-      />
-        <GluttyModal
-        visible={isUploading}
-        //onClose={closeModalDeleteHandler}
-        message="Subiendo post..."
-        other
-      />
 
+        <GluttyModal
+          visible={uploadSuccess}
+          message="Post subido con éxito!"
+          closeButton={false}
+          other
+          buttons={[
+            {
+              text: "Aceptar",
+              bg: "green",
+              color: Colors.whiteGreen,
+              onPress: handleGoBack,
+            },
+          ]}
+        />
+
+        <GluttyModal
+          visible={isUploading}
+          closeButton={false}
+          bg={"#eaeaea"}
+          other
+          activityIndicator={
+            <ActivityIndicator size="large" color={Colors.locro} />
+          }
+        />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -292,15 +287,15 @@ const styles = StyleSheet.create({
   inputPost: {
     padding: 15,
     borderRadius: 10,
-    marginBottom: 20,
-    fontSize: 20,
-    height: 100,
+    fontSize: 16,
+    height: 150,
+    //borderWidth: 1,
   },
   inputEtiqueta: {
     backgroundColor: '#fff',
     padding: 15,
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 2,
     fontSize: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -316,7 +311,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     marginTop: 10,
     maxWidth: 280,
-    marginBottom: 110,
+    marginBottom: 90,
   },
   tag: {
     flexDirection: 'row',
@@ -356,9 +351,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 2,
     elevation: 2,
-    marginBottom: 130,
+    marginBottom: 120,
   },
   etiquetasLabel: {
+    marginTop: 15,
+    paddingTop: 15,
     marginBottom: 10,
     color: Colors.locro,
     fontWeight: 'bold',
@@ -367,19 +364,21 @@ const styles = StyleSheet.create({
   imageWrapper: {
     position: 'relative',
     marginRight: 10,
+    marginVertical: 18,
+    
   },
   imagePreview: {
-    width: 120,
-    height: 120,
+    width: 60,
+    height: 60,
     borderRadius: 10,
     marginHorizontal: 3,
+    marginVertical: 3,
   },
   removeIcon: {
     position: 'absolute',
     top: 5,
-    right: 16,
-    backgroundColor: 'white',
-    borderRadius: 10,
+    right: 9,
+    borderRadius: 15,
     padding: 2,
   },
   modalContainer: {
