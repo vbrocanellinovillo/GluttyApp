@@ -33,7 +33,7 @@ class Post(models.Model):
             return user.username
         
     def deletePictures(self):
-        pictures = PicturePost.objects.filter(post=self).first()
+        pictures = self.pictures.all()
         for picture in pictures:
             cloudinary.api.delete_resources(picture.public_id, resource_type="image", type="upload")
             picture.delete()
