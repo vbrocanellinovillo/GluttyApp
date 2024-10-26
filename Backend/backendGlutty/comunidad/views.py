@@ -457,7 +457,7 @@ def get_popular_posts(request):
             posts_queryset = filter_posts_by_labels(labels, user, '-likes_number')
         else:
             # Obtener los posts más recientes de todos los usuarios
-            posts_queryset = Post.objects.all().select_related('user').order_by('-likes_number')
+            posts_queryset = Post.objects.all().select_related('user').order_by('-likes_number', '-id')
 
         # Paginación
         paginator = Paginator(posts_queryset, page_size)
@@ -500,7 +500,7 @@ def filter_posts_by_labels(labels, user, order_by):
     # Convierte el string separado por comas en una lista de enteros
     label_ids = [int(label_id) for label_id in labels.split(',') if label_id.isdigit()]
     
-    posts = Post.objects.filter(labels__label__id__in=label_ids).distinct().order_by(order_by)[:30]  # Cambia el 30 por el número de posts a obtener
+    posts = Post.objects.filter(labels__label__id__in=label_ids).distinct().order_by(order_by, '-id')[:30]  # Cambia el 30 por el número de posts a obtener
     
     connection.close()
     return posts
