@@ -19,8 +19,8 @@ import {
   useMediaLibraryPermissions,
 } from "expo-image-picker";
 
-export default function PhotosForm({ onBack, onNext }) {
-  const [images, setImages] = useState([]);
+export default function PhotosForm({ initialImages = [],onBack, onNext }) {
+  const [images, setImages] = useState(initialImages);
   const sheetRef = useRef(null);
 
   const [cameraPermissions, requestCameraPermissions] = useCameraPermissions();
@@ -76,12 +76,13 @@ export default function PhotosForm({ onBack, onNext }) {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
+  console.log(images)
   return (
     <View style={styles.container}>
       <ScrollView horizontal contentContainerStyle={styles.photosContainer}>
         {images.map((image, index) => (
           <View key={index} style={styles.imageContainer}>
-            <Image source={{ uri: image.uri }} style={styles.photo} />
+            <Image source={{ uri: typeof image === "string" ? image : image.uri }} style={styles.photo} />
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={() => removeImage(index)}
