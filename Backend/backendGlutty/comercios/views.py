@@ -255,7 +255,7 @@ def update_branch(request):
         image_ids_to_delete = request.data.get("image_ids_to_delete", [])
         for image_id in image_ids_to_delete:
             picture = PictureBranch.objects.filter(id=image_id, branch=branch).first()
-            branch.detelePicture(picture)
+            branch.deletePicture(picture)
             
         # Agregar nuevas imágenes si las hay
         images = request.FILES.getlist("images")

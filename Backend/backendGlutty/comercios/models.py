@@ -46,7 +46,7 @@ class Branch(models.Model):
     def getLocation(self):
         return self.location
     
-    def detelePicture(self, id_picture):
+    def deletePicture(self, id_picture):
         if id_picture:
             picture = PictureBranch.objects.filter(id=id_picture, branch=self).first()
             cloudinary.api.delete_resources(picture.public_id, resource_type="image", type="upload")

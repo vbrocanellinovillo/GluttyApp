@@ -547,6 +547,9 @@ def delete_post(request):
         # Almacenar las etiquetas en una lista para no perderlas cuando se borre el post
         label_ids = [labelxpost.label.id for labelxpost in labels]
         
+        # Eliminar fotos asociadas
+        post.deletePictures()
+        
         # Eliminar el post (esto eliminará automáticamente LabelxPost por on_delete=models.CASCADE)
         post.delete()
 
