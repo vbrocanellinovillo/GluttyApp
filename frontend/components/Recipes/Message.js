@@ -4,6 +4,10 @@ import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Image } from "react-native";
 import { gluttyChef } from "../../constants/glutty";
 import { useSelector } from "react-redux";
+import Animated, { FadeIn } from "react-native-reanimated";
+import AnimatedText from "../UI/Loading/AnimatedText";
+
+const MESSAGE_FONT_SIZE = 18;
 
 export default function Message({ message, isLoading, isError }) {
   const username = useSelector((state) => state.auth?.userData?.username);
@@ -11,7 +15,10 @@ export default function Message({ message, isLoading, isError }) {
   const isAnswer = message?.isAnswer;
 
   return (
-    <View style={{ alignItems: isAnswer ? "stretch" : "flex-end" }}>
+    <Animated.View
+      style={{ alignItems: isAnswer ? "stretch" : "flex-end" }}
+      entering={FadeIn}
+    >
       {isAnswer ? (
         <TextCommonsRegular
           style={[styles.textTop, styles.gluttyBotText, styles.gluttyText]}
@@ -30,16 +37,28 @@ export default function Message({ message, isLoading, isError }) {
       )}
 
       <View style={[styles.container, { width: isAnswer ? "90%" : "70%" }]}>
-        <TextCommonsRegular style={styles.text}>
-          {message?.content}
-        </TextCommonsRegular>
+        {isLoading && message?.isAnswer ? (
+          <AnimatedText
+            duration={550}
+            initialColor={Colors.locro}
+            changedColor={Colors.vainilla}
+            textStyle={{ fontSize: MESSAGE_FONT_SIZE }}
+          >
+            {message?.content}
+          </AnimatedText>
+        ) : (
+          <TextCommonsRegular style={styles.text}>
+            {message?.content}
+          </TextCommonsRegular>
+        )}
 
         <View
           style={[
             styles.triangle,
             {
               right: !isAnswer && 5,
-              transform: [{ rotate: !isAnswer && "330deg" }],
+              transform: [{ rotate: !isAnswer ? "330deg" : "0deg" }],
+              display: isAnswer && "none",
             },
           ]}
         />
@@ -48,7 +67,7 @@ export default function Message({ message, isLoading, isError }) {
       <TextCommonsRegular
         style={[styles.timeText, { marginRight: isAnswer ? 55 : 18 }]}
       >
-        {message?.time || "18:59"}
+        {message?.time}
       </TextCommonsRegular>
 
       {isAnswer && (
@@ -56,7 +75,7 @@ export default function Message({ message, isLoading, isError }) {
           <Image source={{ uri: gluttyChef }} style={styles.image} />
         </View>
       )}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -68,11 +87,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     position: "relative",
     paddingBottom: 40,
+    shadowColor: "#444",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
   },
 
   text: {
     color: "white",
-    fontSize: 18,
+    fontSize: MESSAGE_FONT_SIZE,
   },
 
   triangle: {
@@ -98,8 +121,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 2,
     borderColor: Colors.oceanBlue,
-    left: -30,
-    bottom: -30,
+    left: -25,
+    bottom: -20,
   },
 
   image: {

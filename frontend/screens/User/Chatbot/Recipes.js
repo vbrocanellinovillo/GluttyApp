@@ -4,6 +4,8 @@ import { useState } from "react";
 import Messages from "../../../components/Recipes/Messages";
 import * as Haptics from "expo-haptics";
 import { Message } from "../../../models/Message";
+import { useSelector } from "react-redux";
+import { enviarConsultaChatbot } from "../../../services/chatbotService";
 
 const height = Dimensions.get("window").height;
 const width = Dimensions.get("window").width;
@@ -11,6 +13,8 @@ const width = Dimensions.get("window").width;
 export default function Recipes() {
   const [textValue, setTextValue] = useState("");
   const [messages, setMessages] = useState([]);
+
+  const token = useSelector((state) => state.auth?.accessToken);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -29,15 +33,45 @@ export default function Recipes() {
     const time = `${now.getHours()}:${now.getMinutes()}`;
 
     const newMessage = new Message(messages.length, textValue, false, time);
+    const prompt = textValue;
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setTextValue("");
-    await sendMessage();
+
+    setTimeout(() => {
+      const analyzingMessage = new Message(
+        messages.length + 1,
+        "Analizando...",
+        true,
+        time
+      );
+      setMessages((prevMessages) => [...prevMessages, analyzingMessage]);
+    }, 1000);
+
+    await sendMessage(prompt);
   }
 
-  async function sendMessage() {
+  async function sendMessage(prompt) {
     setIsLoading(true);
     try {
+      const response = await enviarConsultaChatbot(prompt, token);
+
+      const now = new Date();
+      const time = `${now.getHours()}:${now.getMinutes()}`;
+
+      setMessages((prevMessages) => {
+        const updatedMessages = prevMessages;
+
+        const chatbotResponse = new Message(
+          response.id_response,
+          response.response,
+          true,
+          time
+        );
+
+        updatedMessages[updatedMessages.length - 1] = chatbotResponse;
+        return updatedMessages;
+      });
       setIsError(false);
     } catch (error) {
       setIsError(true);
