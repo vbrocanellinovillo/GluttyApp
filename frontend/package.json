@@ -68,6 +68,7 @@
     "react-native-svg": "15.2.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-tooltip-menu": "^3.0.7",
+    "react-native-typewriter": "^0.7.0",
     "react-native-ui-datepicker": "^2.0.3",
     "react-native-webview": "13.8.6",
     "react-redux": "^9.1.2",

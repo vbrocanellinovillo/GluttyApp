@@ -1,17 +1,14 @@
 import { StyleSheet, View } from "react-native";
 import { Colors } from "../../constants/colors";
-import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { Image } from "react-native";
 import { gluttyChef } from "../../constants/glutty";
-import { useSelector } from "react-redux";
 import Animated, { FadeIn } from "react-native-reanimated";
-import AnimatedText from "../UI/Loading/AnimatedText";
-
-const MESSAGE_FONT_SIZE = 18;
+import MessageContent from "./MessageContent";
+import Sender from "./Sender";
+import TriangleResponse from "./TriangleResponse";
+import TimeText from "./TimeText";
 
 export default function Message({ message, isLoading, isError }) {
-  const username = useSelector((state) => state.auth?.userData?.username);
-
   const isAnswer = message?.isAnswer;
 
   return (
@@ -19,56 +16,19 @@ export default function Message({ message, isLoading, isError }) {
       style={{ alignItems: isAnswer ? "stretch" : "flex-end" }}
       entering={FadeIn}
     >
-      {isAnswer ? (
-        <TextCommonsRegular
-          style={[styles.textTop, styles.gluttyBotText, styles.gluttyText]}
-        >
-          Glutty
-          <TextCommonsRegular
-            style={[styles.textTop, styles.gluttyBotText, styles.botText]}
-          >
-            Bot
-          </TextCommonsRegular>
-        </TextCommonsRegular>
-      ) : (
-        <TextCommonsRegular style={[styles.textTop, styles.userText]}>
-          Tu - {username}
-        </TextCommonsRegular>
-      )}
-
+      <Sender isAnswer={isAnswer} />
       <View style={[styles.container, { width: isAnswer ? "90%" : "70%" }]}>
-        {isLoading && message?.isAnswer ? (
-          <AnimatedText
-            duration={550}
-            initialColor={Colors.locro}
-            changedColor={Colors.vainilla}
-            textStyle={{ fontSize: MESSAGE_FONT_SIZE }}
-          >
-            {message?.content}
-          </AnimatedText>
-        ) : (
-          <TextCommonsRegular style={styles.text}>
-            {message?.content}
-          </TextCommonsRegular>
-        )}
-
-        <View
-          style={[
-            styles.triangle,
-            {
-              right: !isAnswer && 5,
-              transform: [{ rotate: !isAnswer ? "330deg" : "0deg" }],
-              display: isAnswer && "none",
-            },
-          ]}
-        />
+        <MessageContent
+          isLoading={isLoading}
+          isError={isError}
+          isAnswer={isAnswer}
+        >
+          {message?.content}
+        </MessageContent>
+        <TriangleResponse isAnswer={isAnswer} />
       </View>
 
-      <TextCommonsRegular
-        style={[styles.timeText, { marginRight: isAnswer ? 55 : 18 }]}
-      >
-        {message?.time}
-      </TextCommonsRegular>
+      <TimeText isAnswer={isAnswer}>{message?.time}</TimeText>
 
       {isAnswer && (
         <View style={styles.imageContainer}>
@@ -93,25 +53,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
 
-  text: {
-    color: "white",
-    fontSize: MESSAGE_FONT_SIZE,
-  },
-
-  triangle: {
-    position: "absolute",
-    bottom: -10,
-    width: 0,
-    height: 0,
-    borderTopWidth: 25,
-    borderTopColor: "transparent",
-    borderBottomWidth: 25,
-    borderBottomColor: "transparent",
-    borderRightWidth: 25,
-    borderRightColor: Colors.roca,
-    zIndex: 0,
-  },
-
   imageContainer: {
     position: "absolute",
     width: 65,
@@ -129,35 +70,5 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     objectFit: "contain",
-  },
-
-  textTop: {
-    marginBottom: 4,
-  },
-
-  gluttyBotText: {
-    fontSize: 22,
-    fontWeight: "600",
-    marginLeft: 10,
-  },
-
-  gluttyText: {
-    color: Colors.mJordan,
-  },
-
-  botText: {
-    color: Colors.locro,
-  },
-
-  userText: {
-    fontSize: 18,
-    marginRight: 16,
-  },
-
-  timeText: {
-    textAlign: "right",
-    marginTop: 4,
-    color: "#666",
-    fontSize: 14,
   },
 });

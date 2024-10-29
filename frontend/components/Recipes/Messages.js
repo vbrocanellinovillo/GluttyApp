@@ -1,6 +1,6 @@
 import { FlatList } from "react-native-gesture-handler";
 import Message from "./Message";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 export default function Messages({ messages = [], isLoading, isError }) {
   if (!messages) return;

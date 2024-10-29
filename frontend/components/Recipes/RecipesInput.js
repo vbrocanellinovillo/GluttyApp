@@ -1,7 +1,6 @@
 import { Input } from "@rneui/themed";
 import { Dimensions, KeyboardAvoidingView, StyleSheet } from "react-native";
 import { Colors } from "../../constants/colors";
-import { useState } from "react";
 
 const height = Dimensions.get("window").height;
 
