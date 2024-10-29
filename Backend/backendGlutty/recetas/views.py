@@ -102,17 +102,19 @@ def toggle_save_message(request):
     if not message_id:
         return Response({"error": "Falta el ID del mensaje."}, status=status.HTTP_400_BAD_REQUEST)
     try:
+        message, chat_id, existing_message = None, None, None
         # Obtener el mensaje específico y marcarlo como favorito
-        chat_history = request.session.get("chat_history", [])
-        message, chat_id = None, None
-        
-        for chat in chat_history:
-            if chat["id"] == message_id:
-                message = chat["message"]
-                chat_id = chat["id"]
-                break
+        if is_uuid(message_id):
+            chat_history = request.session.get("chat_history", [])
+            
+            for chat in chat_history:
+                if chat["id"] == message_id:
+                    message = chat["message"]
+                    chat_id = chat["id"]
+                    break
         
         if message:
+            print('hello')
             existing_favorite = ChatMessage.objects.filter(user=user, chat_history_id=chat_id).first()
             
             if existing_favorite:
@@ -133,18 +135,40 @@ def toggle_save_message(request):
             connection.close()
             return Response({"detail": "Mensaje marcado como favorito."}, status=status.HTTP_200_OK)
                 
-        else:
+        elif not is_uuid(message_id):
             existing_message = ChatMessage.objects.filter(user=user, id=message_id).first()
+            print(existing_message)
             if existing_message:
                 # Eliminar si ya existe
                 existing_message.delete()
                 connection.close()
                 return Response({"detail": "Mensaje eliminado de favoritos."}, status=status.HTTP_200_OK)
 
-        if not message and not existing_message:
-            return Response({"error": "Mensaje no encontrado en la base de datos."}, status=status.HTTP_404_NOT_FOUND)    
+        elif not message and not existing_message:
+            print('hehe')
+            message_content = request.data.get("content")
+            title = ask_for_title(message_content)
+        
+            chat_message = ChatMessage.objects.create(
+                            user=user,
+                            message=message_content,
+                            title=title,
+                            chat_history_id = message_id
+                        )
+            
+            chat_message.save()
+            connection.close()
+            return Response({"detail": "Mensaje marcado como favorito."}, status=status.HTTP_200_OK)
+                
     except Exception as e:
         return Response({"error": f"Error al marcar favorito: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+def is_uuid(value):
+    try:
+        uuid.UUID(value)
+        return True
+    except ValueError:
+        return False
 
 
 # Función que le pregunta a Cohere un título para lo que el usuario quiera guardar
@@ -191,6 +215,7 @@ def get_saved_message_by_id(request):
         }
         connection.close()
         return Response(chat_data, status=status.HTTP_200_OK)
+           
 
     except Exception as e:
         connection.close()
