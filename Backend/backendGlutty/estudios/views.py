@@ -45,9 +45,23 @@ def register_analysis(request):
         user = request.user
         celiac = get_object_or_404(Celiac, user=user)
         
-        #Recoger los valores ingresados para los estudios
+        # Obtener valores ingresados
         test_date = request.data.get("test_date")
         lab = request.data.get("lab")
+
+        # Verificar si el usuario ya tiene un estudio en la misma fecha y laboratorio
+        existing_analysis = BloodTest.objects.filter(celiac=celiac, test_date=test_date, lab=lab).exists()
+
+        # Manejar el contador en la sesión
+        session_key = f"analysis_attempts_{test_date}_{lab}"
+        if existing_analysis:
+            request.session[session_key] = request.session.get(session_key, 0) + 1
+            if request.session[session_key] == 1:
+                return JsonResponse({"error": "Ya tiene un estudio registrado en este laboratorio en la misma fecha. Intente nuevamente para confirmar."}, status=400)
+            elif request.session[session_key] >= 2:
+                request.session[session_key] = 0  # Reiniciar el contador después de la segunda confirmación
+        
+        #Recoger los valores ingresados para los estudios
         atTG_IgA = request.data.get("atTG_IgA")
         aDGP_IgG = request.data.get("aDGP_IgG")
         aDGP_IgA = request.data.get("aDGP_IgA")
@@ -129,6 +143,18 @@ def update_analysis(request):
         
         if user.is_commerce or analysis.celiac != celiac:
             return Response({"error": "No está habilitado a realizar esta función"}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Obtener fecha de estudio y laboratorio para el contador
+        test_date = request.data.get("test_date", analysis.test_date)
+        lab = request.data.get("lab", analysis.lab)
+
+        # Verificar si el usuario ya intentó actualizar este estudio en la misma fecha y laboratorio
+        session_key = f"update_attempts_{analysis_id}_{test_date}_{lab}"
+        request.session[session_key] = request.session.get(session_key, 0) + 1
+        if request.session[session_key] == 1:
+            return Response({"error": "Ya intentó actualizar este estudio en el mismo día y laboratorio. Intente nuevamente para confirmar."}, status=status.HTTP_400_BAD_REQUEST)
+        elif request.session[session_key] >= 2:
+            request.session[session_key] = 0  # Reiniciar el contador después de la segunda confirmación
         
         # Actualizar la información
         analysis_serializer = BloodTestSerializer(analysis, data=request.data, partial=True)
