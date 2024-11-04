@@ -12,12 +12,13 @@ from django.db import connection
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from spanlp.palabrota import Palabrota
-from spanlp.domain.strategies import Preprocessing, JaccardIndex, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
+from spanlp.domain.strategies import Preprocessing, JaccardIndex, CosineSimilarity, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
 
 # Configuración del detector de malas palabras
 strategies = [TextToLower(), RemoveUnicodeCharacters(), NumbersToVowelsInLowerCase(), NumbersToConsonantsInLowerCase(), RemoveTicks(), RemoveUrls(), RemoveAccents(), RemoveEmoticons()]
-jaccard = JaccardIndex(threshold=0.9, normalize=False, clean_strategies=strategies)
-palabrota = Palabrota(distance_metric=jaccard)
+#jaccard = JaccardIndex(threshold=0.9, normalize=False, n_gram=2, clean_strategies=strategies)
+#cosine = CosineSimilarity(0.9, normalize=False, clean_strategies=strategies)
+palabrota = Palabrota()
 
 # Función que verifica si hay palabras inapropiadas en el contenido
 def detect_inappropriate_words(content):
