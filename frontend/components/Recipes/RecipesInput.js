@@ -1,6 +1,7 @@
 import { Input } from "@rneui/themed";
 import { Dimensions, KeyboardAvoidingView, StyleSheet } from "react-native";
 import { Colors } from "../../constants/colors";
+import * as Haptics from "expo-haptics";
 
 const height = Dimensions.get("window").height;
 
@@ -10,18 +11,24 @@ export default function RecipesInput({
   containerStyle,
   textStyle,
   typeIcon = "ionicons",
-  onPress = () => undefined,
+  onSend = () => undefined,
   onChange = () => undefined,
+  onCancel = () => undefined,
   iconStyle,
   value = "",
-  isSending
+  isTyping,
 }) {
   const hasText = value.trim().length > 0;
 
-  const icon = isSending? "stop-circle" : "send"
+  const icon = isTyping ? "stop-circle" : "send";
 
   function handleChange(text) {
     onChange && onChange(text);
+  }
+
+  function handlePressIcon() {
+    Haptics.selectionAsync();
+    isTyping ? onCancel() : onSend();
   }
 
   return (
@@ -39,11 +46,11 @@ export default function RecipesInput({
         rightIcon={{
           type: typeIcon,
           name: `${icon}`,
-          color: hasText ? Colors.mJordan : "#aaa",
+          color: hasText || isTyping ? Colors.mJordan : "#aaa",
           size: 24,
-          onPress: onPress,
+          onPress: handlePressIcon,
           style: iconStyle,
-          disabled: !hasText,
+          disabled: !hasText && !isTyping,
           disabledStyle: { backgroundColor: "transparent" },
         }}
       />

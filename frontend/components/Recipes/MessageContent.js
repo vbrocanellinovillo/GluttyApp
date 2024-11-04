@@ -10,7 +10,13 @@ export default function MessageContent({
   isLoading,
   isError,
   children,
+  typing = 1,
+  handleFinishTyping,
 }) {
+  function handleFinish() {
+    handleFinishTyping && handleFinishTyping();
+  }
+
   return (
     <>
       {isLoading && isAnswer ? (
@@ -23,7 +29,13 @@ export default function MessageContent({
           {children}
         </AnimatedText>
       ) : isAnswer ? (
-        <TypeWriter typing={1} style={styles.text}>
+        <TypeWriter
+          typing={typing}
+          style={styles.text}
+          maxDelay={10}
+          minDelay={5}
+          onTypingEnd={handleFinish}
+        >
           {children}
         </TypeWriter>
       ) : (

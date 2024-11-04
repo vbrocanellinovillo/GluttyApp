@@ -19,6 +19,8 @@ export default function Recipes() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
+  const [isTyping, setIsTyping] = useState(0);
+
   function handleChange(text) {
     setTextValue(text);
   }
@@ -72,34 +74,36 @@ export default function Recipes() {
         updatedMessages[updatedMessages.length - 1] = chatbotResponse;
         return updatedMessages;
       });
+
       setIsError(false);
     } catch (error) {
       setIsError(true);
     } finally {
+      setIsTyping(1);
       setIsLoading(false);
     }
   }
 
-  function handleCancel() {}
-
-  function handlePress() {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (!isLoading) {
-      handleSend();
-    } else {
-      handleCancel();
-    }
+  function handleCancel() {
+    setIsTyping(0);
   }
 
   return (
     <View style={styles.container}>
-      <Messages messages={messages} isLoading={isLoading} isError={isError} />
+      <Messages
+        messages={messages}
+        isLoading={isLoading}
+        isError={isError}
+        isTyping={isTyping}
+        handleFinishTyping={handleCancel}
+      />
       <RecipesInput
         value={textValue}
         onChange={handleChange}
         placeholder="¿Que piensas comer hoy?"
-        isSending={isLoading}
-        onPress={handlePress}
+        isTyping={isTyping}
+        onSend={handleSend}
+        onCancel={handleCancel}
       />
     </View>
   );
@@ -108,7 +112,7 @@ export default function Recipes() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: height * 0.12,
+    paddingBottom: height * 0.11,
     paddingHorizontal: width * 0.03,
   },
 });

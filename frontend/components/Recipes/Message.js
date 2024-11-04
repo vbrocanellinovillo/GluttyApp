@@ -8,7 +8,13 @@ import Sender from "./Sender";
 import TriangleResponse from "./TriangleResponse";
 import TimeText from "./TimeText";
 
-export default function Message({ message, isLoading, isError }) {
+export default function Message({
+  message,
+  isLoading,
+  isError,
+  isTyping,
+  handleFinishTyping,
+}) {
   const isAnswer = message?.isAnswer;
 
   return (
@@ -22,6 +28,8 @@ export default function Message({ message, isLoading, isError }) {
           isLoading={isLoading}
           isError={isError}
           isAnswer={isAnswer}
+          typing={isTyping}
+          handleFinishTyping={handleFinishTyping}
         >
           {message?.content}
         </MessageContent>
