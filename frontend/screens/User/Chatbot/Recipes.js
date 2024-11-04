@@ -1,8 +1,13 @@
-import { Dimensions, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  Keyboard,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import RecipesInput from "../../../components/Recipes/RecipesInput";
 import { useState } from "react";
 import Messages from "../../../components/Recipes/Messages";
-import * as Haptics from "expo-haptics";
 import { Message } from "../../../models/Message";
 import { useSelector } from "react-redux";
 import { enviarConsultaChatbot } from "../../../services/chatbotService";
@@ -21,11 +26,14 @@ export default function Recipes() {
 
   const [isTyping, setIsTyping] = useState(0);
 
+  const [focusedInput, setFocusedInput] = useState(false);
+
   function handleChange(text) {
     setTextValue(text);
   }
 
   async function handleSend() {
+    Keyboard.dismiss();
     if (textValue.trim().length === 0) {
       return;
     }
@@ -88,6 +96,14 @@ export default function Recipes() {
     setIsTyping(0);
   }
 
+  function handleFocus() {
+    setFocusedInput(true);
+  }
+
+  function handleBlur() {
+    setFocusedInput(false);
+  }
+
   return (
     <View style={styles.container}>
       <Messages
@@ -96,6 +112,7 @@ export default function Recipes() {
         isError={isError}
         isTyping={isTyping}
         handleFinishTyping={handleCancel}
+        isInputFocued={focusedInput}
       />
       <RecipesInput
         value={textValue}
@@ -104,6 +121,8 @@ export default function Recipes() {
         isTyping={isTyping}
         onSend={handleSend}
         onCancel={handleCancel}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
       />
     </View>
   );

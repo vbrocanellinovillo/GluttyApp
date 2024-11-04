@@ -2,6 +2,7 @@ import { Input } from "@rneui/themed";
 import { Dimensions, KeyboardAvoidingView, StyleSheet } from "react-native";
 import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
+import { View } from "react-native";
 
 const height = Dimensions.get("window").height;
 
@@ -14,6 +15,8 @@ export default function RecipesInput({
   onSend = () => undefined,
   onChange = () => undefined,
   onCancel = () => undefined,
+  onFocus = () => undefined,
+  onBlur = () => undefined,
   iconStyle,
   value = "",
   isTyping,
@@ -53,6 +56,8 @@ export default function RecipesInput({
           disabled: !hasText && !isTyping,
           disabledStyle: { backgroundColor: "transparent" },
         }}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
     </KeyboardAvoidingView>
   );
