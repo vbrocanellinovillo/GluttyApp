@@ -4,6 +4,8 @@ import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
 import { StyleSheet } from "react-native";
 import { MESSAGE_FONT_SIZE } from "../../constants/chatbot";
 import { Colors } from "../../constants/colors";
+import ErrorResponse from "./ErrorResponse";
+import { useEffect } from "react";
 
 export default function MessageContent({
   isAnswer,
@@ -17,6 +19,12 @@ export default function MessageContent({
     handleFinishTyping && handleFinishTyping();
   }
 
+  useEffect(() => {
+    if (isError) {
+      handleFinish();
+    }
+  }, [isError]);
+
   return (
     <>
       {isLoading && isAnswer ? (
@@ -28,6 +36,8 @@ export default function MessageContent({
         >
           {children}
         </AnimatedText>
+      ) : isAnswer && isError ? (
+        <ErrorResponse />
       ) : isAnswer ? (
         <TypeWriter
           typing={typing}

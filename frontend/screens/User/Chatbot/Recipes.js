@@ -1,7 +1,6 @@
 import {
   Dimensions,
   Keyboard,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
