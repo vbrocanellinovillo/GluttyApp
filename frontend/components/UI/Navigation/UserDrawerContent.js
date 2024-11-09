@@ -25,6 +25,15 @@ export default function UserDrawerContent() {
           icon="lock"
         />
       </Drawer.Section>
+      <Drawer.Section title={<Text style={styles.title}>Recetas</Text>}>
+        <Drawer.Item
+          label="Mis Recetas"
+          onPress={() => {
+            navigation.navigate("Tabs", { screen: "MyRecipes" });
+          }}
+          icon="clipboard-text-outline"
+        />
+      </Drawer.Section>
     </DrawerContent>
   );
 }

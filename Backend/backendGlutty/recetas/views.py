@@ -97,16 +97,18 @@ def toggle_save_message(request):
     
     if not user:
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
-    
+
     message_id = request.data.get("id")
+    
     if not message_id:
         return Response({"error": "Falta el ID del mensaje."}, status=status.HTTP_400_BAD_REQUEST)
+    
     try:
         message, chat_id, existing_message = None, None, None
+        
         # Obtener el mensaje específico y marcarlo como favorito
-        if is_uuid(message_id):
-            chat_history = request.session.get("chat_history", [])
-            
+        if is_uuid(message_id):                    
+            chat_history = request.session.get("chat_history", [])            
             for chat in chat_history:
                 if chat["id"] == message_id:
                     message = chat["message"]
@@ -135,10 +137,11 @@ def toggle_save_message(request):
             connection.close()
             return Response({"detail": "Mensaje marcado como favorito."}, status=status.HTTP_200_OK)
                 
-        elif not is_uuid(message_id):
+        elif not is_uuid(message_id):            
             existing_message = ChatMessage.objects.filter(user=user, id=message_id).first()
+            
             print(existing_message)
-            if existing_message:
+            if existing_message:                
                 # Eliminar si ya existe
                 existing_message.delete()
                 connection.close()

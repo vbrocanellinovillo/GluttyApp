@@ -10,6 +10,7 @@ import PrivacityAndSecurity from "../../screens/Profile/PrivacityAndSecurity";
 import MedicalExamsStack from "./MedicalExamsStack";
 import CommunityStack from "../Community/CommunityStack";
 import Recipes from "../../screens/User/Chatbot/Recipes";
+import MyRecipes from "../../screens/User/Chatbot/MyRecipes";
 
 export default function UserTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -123,6 +124,11 @@ export default function UserTabs() {
         name="PrivacityAndSecurity"
         component={PrivacityAndSecurity}
         options={{ title: "Privacidad y Seguridad" }}
+      />
+      <CurvedBottomBarExpo.Screen
+        name="MyRecipes"
+        component={MyRecipes}
+        options={{ title: "Mis Recetas" }}
       />
     </CurvedBottomBarExpo.Navigator>
   );

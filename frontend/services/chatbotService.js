@@ -28,12 +28,14 @@ export async function enviarConsultaChatbot(prompt, token) {
   }
 }
 
-// GUARDAR MENSAJE DEL CHATBOT 
-export async function guardarMensaje(id_mensaje, token) {
-    const requestUrl = url + "save-message/";
+// GUARDAR MENSAJE DEL CHATBOT
+export async function saveMessage(id, content, token) {
+  const requestUrl = url + "toggle-save-message/";
 
   const formdata = new FormData();
-  formdata.append("id", id_mensaje);
+
+  formdata.append("id", id);
+  formdata.append("content", content);
 
   const requestOptions = {
     method: "POST",
@@ -50,9 +52,9 @@ export async function guardarMensaje(id_mensaje, token) {
   }
 }
 
-// TRAE TODOS LOS MENSAJES FAVORITOS DEL CHATBOT 
+// TRAE TODOS LOS MENSAJES FAVORITOS DEL CHATBOT
 export async function consultarMensajes(token) {
-    const requestUrl = url + "get-all-messages/";
+  const requestUrl = url + "get-all-messages/";
 
   const requestOptions = {
     method: "GET",
@@ -69,9 +71,9 @@ export async function consultarMensajes(token) {
   }
 }
 
-// CONSULTA ESPECÍFICA DE UN MENSAJE 
+// CONSULTA ESPECÍFICA DE UN MENSAJE
 export async function consultarMensajeEspecifico(id_mensaje, token) {
-    const requestUrl = url + "get-message/";
+  const requestUrl = url + "get-message/";
 
   const formdata = new FormData();
   formdata.append("id", id_mensaje);

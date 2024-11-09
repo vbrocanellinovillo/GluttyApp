@@ -7,6 +7,8 @@ import MessageContent from "./MessageContent";
 import Sender from "./Sender";
 import TriangleResponse from "./TriangleResponse";
 import TimeText from "./TimeText";
+import { saveMessage } from "../../services/chatbotService";
+import { useSelector } from "react-redux";
 
 export default function Message({
   message,
@@ -15,7 +17,13 @@ export default function Message({
   isTyping,
   handleFinishTyping,
 }) {
+  const token = useSelector((state) => state.auth?.accessToken);
+
   const isAnswer = message?.isAnswer;
+
+  async function handleSave() {
+    await saveMessage(message?.id, message?.content, token);
+  }
 
   return (
     <Animated.View
@@ -30,6 +38,7 @@ export default function Message({
           isAnswer={isAnswer}
           typing={isTyping}
           handleFinishTyping={handleFinishTyping}
+          onSave={handleSave}
         >
           {message?.content}
         </MessageContent>

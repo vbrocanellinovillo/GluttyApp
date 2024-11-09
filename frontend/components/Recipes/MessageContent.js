@@ -1,11 +1,12 @@
 import AnimatedText from "../UI/Loading/AnimatedText";
 import TypeWriter from "react-native-typewriter";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { MESSAGE_FONT_SIZE } from "../../constants/chatbot";
 import { Colors } from "../../constants/colors";
 import ErrorResponse from "./ErrorResponse";
 import { useEffect } from "react";
+import SaveMessage from "./SaveMessage";
 
 export default function MessageContent({
   isAnswer,
@@ -14,6 +15,7 @@ export default function MessageContent({
   children,
   typing = 1,
   handleFinishTyping,
+  onSave,
 }) {
   function handleFinish() {
     handleFinishTyping && handleFinishTyping();
@@ -39,15 +41,18 @@ export default function MessageContent({
       ) : isAnswer && isError ? (
         <ErrorResponse />
       ) : isAnswer ? (
-        <TypeWriter
-          typing={typing}
-          style={styles.text}
-          maxDelay={10}
-          minDelay={5}
-          onTypingEnd={handleFinish}
-        >
-          {children}
-        </TypeWriter>
+        <>
+          <TypeWriter
+            typing={typing}
+            style={styles.text}
+            maxDelay={10}
+            minDelay={5}
+            onTypingEnd={handleFinish}
+          >
+            {children}
+          </TypeWriter>
+          {typing === 0 && <SaveMessage onSave={onSave} />}
+        </>
       ) : (
         <TextCommonsRegular style={styles.text}>{children}</TextCommonsRegular>
       )}
