@@ -1,5 +1,10 @@
 import { Input } from "@rneui/themed";
-import { Dimensions, KeyboardAvoidingView, StyleSheet } from "react-native";
+import {
+  Dimensions,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  StyleSheet,
+} from "react-native";
 import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
 import { View } from "react-native";
@@ -35,11 +40,7 @@ export default function RecipesInput({
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior="position"
-      keyboardVerticalOffset={height * 0.15}
-      style={containerStyle}
-    >
+    <View style={[styles.container, containerStyle]}>
       <Input
         inputContainerStyle={[styles.control, inputStyle]}
         style={textStyle}
@@ -59,11 +60,14 @@ export default function RecipesInput({
         onFocus={onFocus}
         onBlur={onBlur}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+  },
+
   control: {
     backgroundColor: "white",
     borderRadius: 30,

@@ -1,7 +1,10 @@
 import {
   Dimensions,
   Keyboard,
+  KeyboardAvoidingView,
+  SafeAreaView,
   StyleSheet,
+  Text,
   View,
 } from "react-native";
 import RecipesInput from "../../../components/Recipes/RecipesInput";
@@ -104,33 +107,49 @@ export default function Recipes() {
   }
 
   return (
-    <View style={styles.container}>
-      <Messages
-        messages={messages}
-        isLoading={isLoading}
-        isError={isError}
-        isTyping={isTyping}
-        handleFinishTyping={handleCancel}
-        isInputFocued={focusedInput}
-      />
-      <RecipesInput
-        value={textValue}
-        onChange={handleChange}
-        placeholder="¿Que piensas comer hoy?"
-        isTyping={isTyping}
-        onSend={handleSend}
-        onCancel={handleCancel}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-    </View>
+    <SafeAreaView style={styles.area}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="height"
+        keyboardVerticalOffset={height * 0.15}
+      >
+        {messages?.length > 0 ? (
+          <Messages
+            messages={messages}
+            isLoading={isLoading}
+            isError={isError}
+            isTyping={isTyping}
+            handleFinishTyping={handleCancel}
+            focusedInput={focusedInput}
+          />
+        ) : (
+          <View style={{ flex: 1, backgroundColor: "red" }}>
+            <Text>filtritos rapidos</Text>
+          </View>
+        )}
+        <RecipesInput
+          value={textValue}
+          onChange={handleChange}
+          placeholder="¿Que piensas comer hoy?"
+          isTyping={isTyping}
+          onSend={handleSend}
+          onCancel={handleCancel}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  area: {
+    flex: 1,
+  },
+
   container: {
     flex: 1,
-    paddingBottom: height * 0.11,
     paddingHorizontal: width * 0.03,
+    marginBottom: height * 0.06,
   },
 });
