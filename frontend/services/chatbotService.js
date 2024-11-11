@@ -58,7 +58,6 @@ export async function consultarMensajes(token) {
 
   const requestOptions = {
     method: "GET",
-    body: formdata,
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -71,24 +70,4 @@ export async function consultarMensajes(token) {
   }
 }
 
-// CONSULTA ESPECÍFICA DE UN MENSAJE
-export async function consultarMensajeEspecifico(id_mensaje, token) {
-  const requestUrl = url + "get-message/";
 
-  const formdata = new FormData();
-  formdata.append("id", id_mensaje);
-
-  const requestOptions = {
-    method: "POST",
-    body: formdata,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  try {
-    const response = await httpRequest(requestUrl, requestOptions);
-    return response;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-}
