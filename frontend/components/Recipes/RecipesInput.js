@@ -65,8 +65,7 @@ export default function RecipesInput({
 }
 
 const styles = StyleSheet.create({
-  container: {
-  },
+  container: {},
 
   control: {
     backgroundColor: "white",

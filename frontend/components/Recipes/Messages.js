@@ -17,7 +17,6 @@ export default function Messages({
 
   useEffect(() => {
     if (!focusedInput) {
-
       listRef.current.scrollToOffset({
         offset: contentHeight + INSET_BOTTOM * 100,
         animated: true,
