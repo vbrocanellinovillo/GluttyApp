@@ -184,7 +184,7 @@ export async function getMapPoints(token) {
 }
 
 //Actualización en la branch
-export async function updateBranch(branch, id, token) {
+export async function updateBranch(branch, id, token, id_elim = []) {
   const formdata = new FormData();
   formdata.append("name", branch.name);
   formdata.append("phone", branch.phone);
@@ -198,7 +198,17 @@ export async function updateBranch(branch, id, token) {
   formdata.append("latitude", branch.latitude);
   formdata.append("longitude", branch.longitude);
   formdata.append("branch_id", id);
-
+  formdata.append("image_ids_to_delete", JSON.stringify(id_elim))
+  if (branch.photos) {
+    branch.photos.forEach((photo) => {
+      formdata.append("image", {
+        uri: photo.url || photo.uri,
+        name: photo.fileName || "photo",
+        type: photo.mimeType,
+      });
+    });
+  }
+    
   const requestOptions = {
     method: "PUT",
     body: formdata,

@@ -6,6 +6,7 @@ import { Colors } from "../../../../constants/colors";
 import { addBranch } from "../../../../services/commerceService";
 import { useDispatch, useSelector } from "react-redux";
 import { commerceActions } from "../../../../context/commerce";
+import { updateBranch } from "../../../../services/commerceService";
 
 export default function Photos({ navigation, route }) {
   const receivedBranch = route.params.branch;
@@ -20,15 +21,33 @@ export default function Photos({ navigation, route }) {
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
 
   const branch = route.params.branch;
+  const id_photos = branch.photos.map(photo => photo.id);
+  const id_elim = [];
 
   function goBack() {
     navigation.goBack();
   }
 
-  function finish(images) {
-   console.log("poner lógica del guardado de las fotos.")
-  }
+  function finish(selectedImages) {
+    console.log(selectedImages); // Aquí puedes ver las imágenes que fueron seleccionadas
+    branch.photos = selectedImages;
+    console.log(branch.photos)
 
+    console.log(id_elim); // Imágenes eliminadas (si las hay)
+
+    console.log("poner lógica del guardado de las fotos.");
+    console.log(branch.photos)
+    save();
+
+
+  }
+  
+
+  const removeImage = (id) => {
+    id_elim.push(id);
+    setImages((prevImages) => prevImages.filter((image) => image.id !== id));
+  };
+  
   function closeModalHandler() {
     setShowModal(false);
 
@@ -49,16 +68,16 @@ export default function Photos({ navigation, route }) {
   function closeConfirm() {
     setConfirmModalVisible(false);
   }
-  console.log("que ondaaa")
-  console.log(branch.pictures)
+  
   async function save() {
     setIsLoading(true);
 
     try {
-      const response = await addBranch(receivedBranch, token);
-      dispatch(commerceActions.addBranch({ branch: response }));
+      console.log("wtf hermanita anda")
+      console.log(branch.photos); // Fotos originales del branch (si las hay)
+      const response = await updateBranch(branch, branch.id, token, id_elim);
       setIsError(false);
-      setMessage("Sucursal cargada exitosamente");
+      setMessage("Sucursal actualizada exitosamente");
       setShowModal(true);
     } catch (error) {
       setMessage(error.message);
@@ -67,6 +86,12 @@ export default function Photos({ navigation, route }) {
     } finally {
       setIsLoading(false);
     }
+  }
+
+   // Nueva función para manejar la eliminación de una imagen
+   function onRemoveImage(id) {
+    id_elim.push(id);
+    console.log("Imagen eliminada con id:", id);
   }
 
   return (
@@ -94,7 +119,12 @@ export default function Photos({ navigation, route }) {
         isError={isError}
         onClose={closeModalHandler}
       />
-      <PhotosForm onBack={goBack} onNext={finish} initialImages={branch.pictures} />
+      <PhotosForm 
+        onBack={goBack} 
+        onNext={finish} 
+        initialImages={branch.photos} 
+        onRemoveImage={onRemoveImage} // Pasamos la función al PhotosForm
+      />
     </>
   );
 }

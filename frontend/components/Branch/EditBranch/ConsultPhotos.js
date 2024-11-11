@@ -63,14 +63,11 @@ const styles = StyleSheet.create({
 });*/
 
 export function ConsultPhotos({ branch }) {
-  const pictures = branch.pictures || [];
+  const pictures = branch.photos || [];
   const navigation = useNavigation();
-  console.log("PEDRAAAA")
-  console.log(branch.pictures)
+
 
   const handlePress = () => {
-    console.log("PEDRAAAA")
-    console.log(branch.pictures)
     navigation.navigate("EditBranchStack", {
       screen: "EditPhotos",
       params: { branch }, 
@@ -80,10 +77,10 @@ export function ConsultPhotos({ branch }) {
   return (
     <BranchDataItem title="Fotos" onPressPrencil={handlePress}>
       <ScrollView horizontal contentContainerStyle={styles.imageRow}>
-        {pictures.map((picture, index) => (
+        {pictures.map((photo, index) => (
           <View key={index} style={styles.imageContainer}>
             <Image
-              source={{ uri: picture }}
+              source={{ uri: photo.url }}
               style={styles.image}
             />
           </View>
