@@ -40,8 +40,8 @@ export function ViewBranch({ route }) {
     }, [id, token]) // Dependencias
   );
   
-
-
+console.log("le branch:")
+console.log(branch)
 
   if (isloading) {
     return <ViewBranchSkeleton />;
