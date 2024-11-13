@@ -15,6 +15,7 @@ from django.db.models import Q
 from .serializers import LocationSerializer
 from comercios.models import Commerce, Branch
 from django.db import connection, transaction
+import json
 
 # Función para buscar el comercio según una query y filtros
 @api_view(["POST"])
@@ -252,23 +253,27 @@ def update_branch(request):
             return Response({"error": location_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
         # Manejar eliminación de imágenes específicas
-        image_ids_to_delete = request.data.get("image_ids_to_delete", [])
+        image_ids_to_delete = request.data.get("image_ids_to_delete", "[]")  # Obtiene la cadena JSON
+        try:
+            image_ids_to_delete = json.loads(image_ids_to_delete)  # Convierte la cadena JSON en un array de Python
+        except json.JSONDecodeError:
+            image_ids_to_delete = []  # En caso de error, asignar un array vacío
+        print("imagenes a borrar: ", image_ids_to_delete)
         for image_id in image_ids_to_delete:
-            picture = PictureBranch.objects.filter(id=image_id, branch=branch).first()
-            branch.deletePicture(picture)
+            branch.deletePicture(image_id)
             
         # Agregar nuevas imágenes si las hay
-        images = request.FILES.getlist("images")
+        images = request.FILES.getlist("image")
         if images:
-                try:
-                    #for image in images:
-                    print("hola"+str(images))
-                    for image in images:
-                        picture_link, public_id = upload_to_cloudinary(image)
-                        new_picture = PictureBranch.objects.create(branch=branch, photo_url=picture_link, public_id=public_id)
-                        new_picture.save()
-                except Exception as e:
-                    raise ValidationError(f"Error al subir la imagen: {str(e)}")
+            try:
+                #for image in images:
+                print("hola"+str(images))
+                for image in images:
+                    picture_link, public_id = upload_to_cloudinary(image)
+                    new_picture = PictureBranch.objects.create(branch=branch, photo_url=picture_link, public_id=public_id)
+                    new_picture.save()
+            except Exception as e:
+                raise ValidationError(f"Error al subir la imagen: {str(e)}")
 
         return Response({"detail": "Sucursal actualizada correctamente."}, status=status.HTTP_200_OK)
     except ValidationError as e:

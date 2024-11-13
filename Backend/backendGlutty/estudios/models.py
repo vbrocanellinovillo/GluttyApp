@@ -3,6 +3,8 @@ from django.db import models
 from sqlalchemy import null
 from usuarios.models import Celiac  # Importamos la relación con el celiaco
 import random
+# from encrypted_model_fields.fields import EncryptedCharField, EncryptedDateField, EncryptedIntegerField
+from secured_fields import EncryptedCharField, EncryptedDecimalField, EncryptedDateField
 
 VARIABLE_MAP = {
     "IgA Anti-Transglutaminasa": "atTG_IgA",
@@ -31,32 +33,33 @@ class BloodTest(models.Model):
 
     # Datos específicos del estudio
     test_date = models.DateField(blank=False)  # Fecha del estudio
-    lab = models.CharField(max_length=150, blank=False, null=True, default=null) # Lugar en que se hizo el estudio
+    #lab = models.CharField(max_length=150, blank=False, null=True, default=null) # Lugar en que se hizo el estudio
+    lab = EncryptedCharField(max_length=150, blank=False, null=True, default=None)  # cifrado
     registration_date = models.DateField(auto_now_add=True)  # Fecha en que se registra en el sistema
-    url = models.URLField(max_length=500, blank=True, null=True)
-    public_id = models.CharField(max_length=300, null=True, default=None)
+    url = EncryptedCharField(max_length=500, blank=True, null=True)
+    public_id = EncryptedCharField(max_length=300, null=True, default=None)
     
     # Valores de los estudios
-    atTG_IgA = models.CharField(max_length=8, null=True, blank=True, verbose_name='IgA anti Transglutaminasa', default=None)
-    aDGP_IgA = models.CharField(max_length=8, null=True, blank=True, verbose_name='IgA anti Gliadina Deaminada', default=None)
-    aDGP_IgG = models.CharField(max_length=8, null=True, blank=True, verbose_name='IgG anti Gliadina Deaminada', default=None)
+    atTG_IgA = EncryptedCharField(max_length=8, null=True, blank=True, verbose_name='IgA anti Transglutaminasa', default=None)
+    aDGP_IgA = EncryptedCharField(max_length=8, null=True, blank=True, verbose_name='IgA anti Gliadina Deaminada', default=None)
+    aDGP_IgG = EncryptedCharField(max_length=8, null=True, blank=True, verbose_name='IgG anti Gliadina Deaminada', default=None)
     
     # Opcionales
-    antiendomisio = models.CharField(max_length=8, null=True, blank=True, choices=[("Positivo", "Positivo"), ("Negativo", "Negativo")], verbose_name='Anticuerpos antiendomisio (EMA)', default=None)
-    hemoglobina = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, default=None)
-    hematocrito = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, default=None)
-    ferritina = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    hierro_serico = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    vitamina_b12 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    calcio_serico = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    vitamina_d = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    alt = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, verbose_name='ALT (alanina aminotransferasa)', default=None)
-    ast = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, verbose_name='AST (aspartato aminotransferasa)', default=None)
-    colesterol_total = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    colesterol_hdl = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    colesterol_ldl = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    trigliceridos = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
-    glucemia = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    antiendomisio = EncryptedCharField(max_length=8, null=True, blank=True, choices=[("Positivo", "Positivo"), ("Negativo", "Negativo")], verbose_name='Anticuerpos antiendomisio (EMA)', default=None)
+    hemoglobina = EncryptedDecimalField(max_digits=4, decimal_places=2, null=True, blank=True, default=None)
+    hematocrito = EncryptedDecimalField(max_digits=4, decimal_places=2, null=True, blank=True, default=None)
+    ferritina = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    hierro_serico = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    vitamina_b12 = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    calcio_serico = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    vitamina_d = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    alt = EncryptedDecimalField(max_digits=4, decimal_places=2, null=True, blank=True, verbose_name='ALT (alanina aminotransferasa)', default=None)
+    ast = EncryptedDecimalField(max_digits=4, decimal_places=2, null=True, blank=True, verbose_name='AST (aspartato aminotransferasa)', default=None)
+    colesterol_total = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    colesterol_hdl = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    colesterol_ldl = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    trigliceridos = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
+    glucemia = EncryptedDecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=None)
 
     class Meta:
         verbose_name = "Estudio de Sangre"

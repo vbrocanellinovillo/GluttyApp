@@ -197,32 +197,32 @@ def ask_for_title(message):
 
 
 # Función que trae un favorito según el id
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def get_saved_message_by_id(request):
-    username = request.user.username
-    user = User.objects.filter(username=username).first()
+# @api_view(["POST"])
+# @permission_classes([IsAuthenticated])
+# def get_saved_message_by_id(request):
+#     username = request.user.username
+#     user = User.objects.filter(username=username).first()
     
-    if not user:
-        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+#     if not user:
+#         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
-    message_id = request.data.get("id")
-    if not message_id:
-        return Response({"error": "Falta el ID del mensaje."}, status=status.HTTP_400_BAD_REQUEST)
+#     message_id = request.data.get("id")
+#     if not message_id:
+#         return Response({"error": "Falta el ID del mensaje."}, status=status.HTTP_400_BAD_REQUEST)
     
-    try:
-        chat = get_object_or_404(ChatMessage, id=message_id, user=request.user)
-        chat_data = {
-            "message": chat.getMessage(),
-            "title": chat.getTitle()
-        }
-        connection.close()
-        return Response(chat_data, status=status.HTTP_200_OK)
+#     try:
+#         chat = get_object_or_404(ChatMessage, id=message_id, user=request.user)
+#         chat_data = {
+#             "message": chat.getMessage(),
+#             "title": chat.getTitle()
+#         }
+#         connection.close()
+#         return Response(chat_data, status=status.HTTP_200_OK)
            
 
-    except Exception as e:
-        connection.close()
-        return Response({"error": f"Error al obtener mensaje favorito: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#     except Exception as e:
+#         connection.close()
+#         return Response({"error": f"Error al obtener mensaje favorito: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 # Función que trae todos los favoritos

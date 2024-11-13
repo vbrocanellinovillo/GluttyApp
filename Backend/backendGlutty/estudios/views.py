@@ -86,6 +86,8 @@ def register_analysis(request):
         aDGP_IgG = None if aDGP_IgG == 'undefined' or aDGP_IgG == 'null'else aDGP_IgG
         aDGP_IgA = None if aDGP_IgA == 'undefined' or aDGP_IgA == 'null'else aDGP_IgA
         antiendomisio = None if antiendomisio == 'undefined' or antiendomisio == 'null' else antiendomisio
+        if antiendomisio == "NEGATIVO":
+            antiendomisio = "Negativo" 
 
         #Crear objeto EstudioSangre
         analysis = BloodTest.objects.create(
@@ -427,6 +429,7 @@ def get_initial_data(request):
         # Validación por si no tiene estudios cargados
         if latest_analysis:
             non_null_variables = latest_analysis.get_random_non_null_variable()
+            print(non_null_variables)
         
         initial_data["statistics"] = non_null_variables
         

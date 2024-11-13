@@ -47,10 +47,21 @@ class Branch(models.Model):
         return self.location
     
     def deletePicture(self, id_picture):
+        # if id_picture:
+        #     picture = PictureBranch.objects.filter(id=id_picture, branch=self).first()
+        #     cloudinary.api.delete_resources(picture.public_id, resource_type="image", type="upload")
+        #     picture.delete()
+        print(f"id_picture: {id_picture}, branch_id: {self.id}")
         if id_picture:
-            picture = PictureBranch.objects.filter(id=id_picture, branch=self).first()
-            cloudinary.api.delete_resources(picture.public_id, resource_type="image", type="upload")
-            picture.delete()
+            try:
+                picture = PictureBranch.objects.get(id=id_picture, branch=self)
+                cloudinary.api.delete_resources(picture.public_id, resource_type="image", type="upload")
+                picture.delete()
+            except PictureBranch.DoesNotExist:
+                # Manejar el caso en que la imagen no exista
+                print("La imagen no se encontró.")
+                return False
+        return True
 
 # Modelo LINKS FOTOS DE SUCURSAL
 class PictureBranch(models.Model):

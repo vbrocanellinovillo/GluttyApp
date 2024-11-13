@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # 'django-extensions',
+    "encrypted_model_fields",
+    "secured_fields",
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
@@ -180,6 +182,11 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 # Cohere
 COHERE_API_KEY = os.getenv("API_KEY_COHERE")
+
+FIELD_ENCRYPTION_KEY = "ua_2g-EbSucMmIADSjrJzTNRkCk_MpZjCRIbsmeDxME="
+
+SECURED_FIELDS_KEY = os.getenv("SECURED_FIELDS_KEY")
+SECURED_FIELDS_HASH_SALT = os.getenv("SECURED_FIELDS_HASH_SALT")
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
