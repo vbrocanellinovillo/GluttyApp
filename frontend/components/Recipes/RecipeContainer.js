@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Asegúrate de tener @expo/vector-icons instalada
 
-export default function RecipeContainer({ title, content, onDelete }) {
+export default function RecipeContainer({ title, message, created_at, onDelete }) {
     const [expanded, setExpanded] = useState(false);
 
     function toggleExpand() {
@@ -13,10 +13,10 @@ export default function RecipeContainer({ title, content, onDelete }) {
         <TouchableOpacity onPress={toggleExpand} style={styles.container}>
             <Text style={styles.recipeTitle}>{title}</Text>
             {expanded ? (
-                <Text style={styles.recipeContent}>{content}</Text>
+                <Text style={styles.recipeContent}>{message}</Text>
             ) : (
                 <Text style={styles.recipeContent} numberOfLines={2}>
-                    {content}
+                    {message}
                 </Text>
             )}
             {expanded && (
@@ -30,14 +30,14 @@ export default function RecipeContainer({ title, content, onDelete }) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#f3f3f3',
-        padding: 15,
+        backgroundColor: '#d9d9d9',
+        padding: 20,
         marginBottom: 15,
         borderRadius: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1.5 },
         shadowOpacity: 0.1,
-        shadowRadius: 5,
+        shadowRadius: 3,
         elevation: 3,
         position: 'relative',
     },
@@ -50,10 +50,13 @@ const styles = StyleSheet.create({
     recipeContent: {
         fontSize: 14,
         color: '#555',
+        paddingBottom: 15,
+        marginBottom: 10,
     },
     deleteIcon: {
         position: 'absolute',
         bottom: 10,
         right: 10,
+        paddingBottom: 10,
     },
 });

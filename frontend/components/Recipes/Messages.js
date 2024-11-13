@@ -11,8 +11,18 @@ export default function Messages({
   isError,
   isTyping,
   handleFinishTyping,
+  focusedInput,
 }) {
   if (!messages) return;
+
+  useEffect(() => {
+    if (!focusedInput) {
+      listRef.current.scrollToOffset({
+        offset: contentHeight + INSET_BOTTOM * 100,
+        animated: true,
+      });
+    }
+  }, [focusedInput]);
 
   const [contentHeight, setContentHeight] = useState(0);
 
@@ -56,6 +66,7 @@ export default function Messages({
 const styles = StyleSheet.create({
   overallContainer: {
     flex: 1,
+    paddingBottom: INSET_BOTTOM * 0.1,
   },
 
   container: {

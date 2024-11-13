@@ -1,8 +1,9 @@
 import {
   Dimensions,
   Keyboard,
+  KeyboardAvoidingView,
+  SafeAreaView,
   StyleSheet,
-  View,
 } from "react-native";
 import RecipesInput from "../../../components/Recipes/RecipesInput";
 import { useState } from "react";
@@ -10,6 +11,7 @@ import Messages from "../../../components/Recipes/Messages";
 import { Message } from "../../../models/Message";
 import { useSelector } from "react-redux";
 import { enviarConsultaChatbot } from "../../../services/chatbotService";
+import InitialMessages from "../../../components/Recipes/InitialMessages";
 
 const height = Dimensions.get("window").height;
 const width = Dimensions.get("window").width;
@@ -103,34 +105,72 @@ export default function Recipes() {
     setFocusedInput(false);
   }
 
+  async function handleFilter(filter) {
+    const now = new Date();
+
+    const time = `${now.getHours()}:${now.getMinutes()}`;
+
+    const newMessage = new Message(messages.length, filter, false, time);
+    const prompt = filter;
+
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    setTextValue("");
+
+    setTimeout(() => {
+      const analyzingMessage = new Message(
+        messages.length + 1,
+        "Analizando...",
+        true,
+        time
+      );
+      setMessages((prevMessages) => [...prevMessages, analyzingMessage]);
+    }, 1000);
+
+    await sendMessage(prompt);
+  }
+
   return (
-    <View style={styles.container}>
-      <Messages
-        messages={messages}
-        isLoading={isLoading}
-        isError={isError}
-        isTyping={isTyping}
-        handleFinishTyping={handleCancel}
-        isInputFocued={focusedInput}
-      />
-      <RecipesInput
-        value={textValue}
-        onChange={handleChange}
-        placeholder="¿Que piensas comer hoy?"
-        isTyping={isTyping}
-        onSend={handleSend}
-        onCancel={handleCancel}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-    </View>
+    <SafeAreaView style={styles.area}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="height"
+        keyboardVerticalOffset={height * 0.15}
+      >
+        {messages?.length > 0 ? (
+          <Messages
+            messages={messages}
+            isLoading={isLoading}
+            isError={isError}
+            isTyping={isTyping}
+            handleFinishTyping={handleCancel}
+            focusedInput={focusedInput}
+          />
+        ) : (
+          <InitialMessages onFilter={handleFilter} />
+        )}
+        <RecipesInput
+          value={textValue}
+          onChange={handleChange}
+          placeholder="¿Que piensas comer hoy?"
+          isTyping={isTyping}
+          onSend={handleSend}
+          onCancel={handleCancel}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  area: {
+    flex: 1,
+  },
+
   container: {
     flex: 1,
-    paddingBottom: height * 0.11,
     paddingHorizontal: width * 0.03,
+    marginBottom: height * 0.06,
   },
 });
