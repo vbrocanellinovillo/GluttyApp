@@ -12,18 +12,40 @@ from django.db import connection
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from spanlp.palabrota import Palabrota
-from spanlp.domain.strategies import Preprocessing, JaccardIndex, CosineSimilarity, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
+import re
+from spanlp.domain.strategies import RemovePunctuation, RemoveNumbers, Preprocessing, JaccardIndex, CosineSimilarity, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
 
 # Configuración del detector de malas palabras
-strategies = [TextToLower(), RemoveUnicodeCharacters(), NumbersToVowelsInLowerCase(), NumbersToConsonantsInLowerCase(), RemoveTicks(), RemoveUrls(), RemoveAccents(), RemoveEmoticons()]
-#jaccard = JaccardIndex(threshold=0.9, normalize=False, n_gram=2, clean_strategies=strategies)
-#cosine = CosineSimilarity(0.9, normalize=False, clean_strategies=strategies)
-palabrota = Palabrota()
-
+strategies = [TextToLower(), RemovePunctuation(), RemoveNumbers(),  RemoveUnicodeCharacters(), NumbersToVowelsInLowerCase(), NumbersToConsonantsInLowerCase(), RemoveUrls(), RemoveEmoticons()]
+jaccard = JaccardIndex(threshold=0.9, normalize=True, clean_strategies=strategies)
+cosine = CosineSimilarity(0.9, normalize=True, clean_strategies=strategies)
+palabrota = Palabrota(
+    exclude=["huevo", "huevos", "hoyo", "negro", "negra", "gallina", "guiso", "tirar", 
+             "pinche", "bolsa", "calabaza", "animal", "basura", "pisa", "cono", "pato", 
+             "arepa", "come", "calienta", "cuchara"],
+    distance_metric=cosine
+)
 # Función que verifica si hay palabras inapropiadas en el contenido
 def detect_inappropriate_words(content):
     result = Preprocessing().clean(data=content, clean_strategies=strategies)
-    return palabrota.contains_palabrota(result)
+    print("palabras limpias")
+    print(result)
+    bro = jaccard.normalize(content)
+    print(bro)
+    content = re.sub(r'\d+', '', content)
+    content = re.sub(r'[^\w\s]', '', content)
+    print(content)
+    content = re.sub(r'[áéíóúÁÉÍÓÚ]', lambda match: match.group(0).lower(), content)
+    exclude = ["minimo", "huevo", "huevos", "hoyo", "negro", "negra", "gallina", "guiso", "tirar", 
+           "pinche", "bolsa", "calabaza", "animal", "basura", "pisa", "cono", "pato", 
+           "arepa", "come", "calienta", "cuchara", "azúcar"]
+
+# Dividir el texto en palabras, filtrar las palabras excluidas, y volver a unir el texto
+    content = ' '.join([word for word in content.split() if word.lower() not in exclude])
+    print("content")
+    print(content)
+    print(content)
+    return palabrota.contains_palabrota(content.lower())
 
 # Función que crea el POST
 @api_view(["POST"])
@@ -40,6 +62,7 @@ def create_post(request):
         
         # Verificar si el contenido contiene palabras inapropiadas
         if post_content and detect_inappropriate_words(post_content):
+            print()
             return Response(
                 {"error": "Tu publicación no cumple con las normas de la comunidad por lo que no será publicada.\nGlutty te recuerda que fomentamos un espacio positivo, sano y respetuoso."},
                 status=status.HTTP_400_BAD_REQUEST
