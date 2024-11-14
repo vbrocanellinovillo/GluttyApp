@@ -16,9 +16,10 @@ import re
 from spanlp.domain.strategies import RemovePunctuation, RemoveNumbers, Preprocessing, JaccardIndex, CosineSimilarity, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
 
 # Configuración del detector de malas palabras
-strategies = [TextToLower(), RemovePunctuation(), RemoveNumbers(),  RemoveUnicodeCharacters(), NumbersToVowelsInLowerCase(), NumbersToConsonantsInLowerCase(), RemoveUrls(), RemoveEmoticons()]
+strategies = [TextToLower(), RemoveNumbers(), RemoveUnicodeCharacters(), NumbersToVowelsInLowerCase(), NumbersToConsonantsInLowerCase(), RemoveUrls(), RemoveEmoticons()]
 jaccard = JaccardIndex(threshold=0.9, normalize=True, clean_strategies=strategies)
-cosine = CosineSimilarity(0.9, normalize=True, clean_strategies=strategies)
+cosine = CosineSimilarity(0.9,normalize=True, clean_strategies=strategies)
+
 palabrota = Palabrota(
     exclude=["huevo", "huevos", "hoyo", "negro", "negra", "gallina", "guiso", "tirar", 
              "pinche", "bolsa", "calabaza", "animal", "basura", "pisa", "cono", "pato", 
@@ -35,10 +36,17 @@ def detect_inappropriate_words(content):
     content = re.sub(r'\d+', '', content)
     content = re.sub(r'[^\w\s]', '', content)
     print(content)
-    content = re.sub(r'[áéíóúÁÉÍÓÚ]', lambda match: match.group(0).lower(), content)
+    replacements = {
+        'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u',
+        'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U'
+    }
+
+    # Función lambda que usa el diccionario de reemplazos
+    content = re.sub(r'[áéíóúÁÉÍÓÚ]', lambda match: replacements[match.group(0)], content)
     exclude = ["minimo", "huevo", "huevos", "hoyo", "negro", "negra", "gallina", "guiso", "tirar", 
            "pinche", "bolsa", "calabaza", "animal", "basura", "pisa", "cono", "pato", 
-           "arepa", "come", "calienta", "cuchara", "azúcar"]
+           "arepa", "come", "calienta", "cuchara", "azúcar", "banana", "bananas", "almendra", "almendras", "cucharada", "cucharadita", "para", "asegurate", "canela", "engrasar", "la", "lo", "el", "ella", "eso", 
+           "esa", "preparar", "preparacion", "preparando", "machacar", "machaca", "agrega", "engrasala", "con", "cocinar", "cocina", "pequeño", "pequeños", "lado", "lados", "arce", "acompañar", "acompaña", "acompañados", "acompañado"]
 
 # Dividir el texto en palabras, filtrar las palabras excluidas, y volver a unir el texto
     content = ' '.join([word for word in content.split() if word.lower() not in exclude])
