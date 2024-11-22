@@ -8,6 +8,7 @@ import BranchesStack from "./BranchesStack";
 import Profile from "../../screens/Profile/Profile";
 import PrivacityAndSecurity from "../../screens/Profile/PrivacityAndSecurity";
 import CommunityStack from "../Community/CommunityStack";
+import { Dashboard } from "../../screens/Commerce/Dashboard";
 
 export default function CommerceTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -86,7 +87,11 @@ export default function CommerceTabs() {
         position="LEFT"
         options={{ title: "Mis Sucursales" }}
       />
-      <CurvedBottomBarExpo.Screen name="Community" position="CIRCLE" />
+      <CurvedBottomBarExpo.Screen 
+      name="Dashboard" 
+      component={Dashboard}
+      position="CIRCLE" />
+      
       <CurvedBottomBarExpo.Screen
         name="Menu"
         position="RIGHT"
