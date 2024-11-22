@@ -5,17 +5,23 @@ import RankedBranches from "../../components/Dashboard/RankedBranches"
 import Combobox from "../../components/UI/Controls/Combobox"
 import { useState } from "react"
 import { Colors } from "../../constants/colors"
+import LikesChart from "../../components/Dashboard/LikesChart"
 
 export function Dashboard() {
     const branches = ["Entresano Nueva Cba", "Entresano Cerro", "Entresano Gral. Paz"]; // Corrección: array válido
     const tiempo = [
-        { label: "Última Semana", value: "MALE" },
-        { label: "Últimos 30 días", value: "FEMALE" },
-        { label: "Últimos 3 meses", value: "OTHER" },
+        { label: "Última Semana", value: "week" },
+        { label: "Últimos 30 días", value: "month" },
+        { label: "Últimos 3 meses", value: "quarter" },
       ];
 
       const [selectedTime, setSelectedTime] = useState("");
-    
+      const data = [
+        { label: "0 - 18", percentage: 100 },
+        { label: "18 - 35", percentage: 0 },
+        { label: "35 - 55", percentage: 50 },
+        { label: "+55", percentage: 80 },
+      ];
     return (
         <>
         <View style={styles.comboContainer}>
@@ -45,6 +51,9 @@ export function Dashboard() {
                     title="Ranking sucursales más visitadas"
                     branches={branches} // Array corregido
                 />
+            </View>
+            <View style={styles.rankedContainer}>
+                <LikesChart data={data} />
             </View>
         </>
     );
