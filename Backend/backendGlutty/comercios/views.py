@@ -419,11 +419,15 @@ def get_all_menues(request):
             
             # Convertir el tamaño a megabytes
             file_size_kb = round(file_size / 1024, 2)
+            
+            # Url
+            file_url = resource.get("secure_url")
         
             menu_data = {
                 "id": menu.id,
                 "file_name": file_name,
                 "file_size": file_size_kb,
+                "file_url": file_url
             }
         
         # Agregar el comercio completo a la lista de todos los comercios

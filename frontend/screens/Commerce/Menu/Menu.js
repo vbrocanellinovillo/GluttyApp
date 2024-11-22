@@ -28,24 +28,22 @@ export default function Menu() {
 
   const token = useSelector((state) => state.auth.accessToken);
 
+  useEffect(() => {
+    fetchMenues();
+  }, []);
+
   async function fetchMenues() {
+    setIsFetching(true);
     try {
       const data = await getAllMenues(token);
       setMenues(data.menues);
       setErrorFetching(false);
     } catch (error) {
       setErrorFetching(true);
-    }
-  }
-
-  useEffect(() => {
-    setIsFetching(true);
-    try {
-      fetchMenues();
     } finally {
       setIsFetching(false);
     }
-  }, []);
+  }
 
   const closeModalHandler = () => {
     setIsError(false);
