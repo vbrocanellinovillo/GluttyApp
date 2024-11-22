@@ -67,9 +67,9 @@ export default function CommerceTabs() {
         const isCommunity = selectedTab === "CommunityStack";
         return (
           <View style={styles.btnCircleUp}>
-            <TouchableOpacity onPress={() => navigate("CommunityStack")}>
+            <TouchableOpacity onPress={() => navigate("Dashboard")}>
               <MaterialIcons
-                name="groups"
+                name="insights"
                 color={isCommunity ? Colors.mJordan : Colors.locro}
                 size={25}
               />
