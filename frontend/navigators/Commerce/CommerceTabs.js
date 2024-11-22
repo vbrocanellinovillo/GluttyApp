@@ -81,16 +81,18 @@ export default function CommerceTabs() {
       tabBar={renderTabBar}
       height={80}
     >
+      <CurvedBottomBarExpo.Screen 
+        name="Dashboard" 
+        component={Dashboard}
+        position="CIRCLE" />
+        
       <CurvedBottomBarExpo.Screen
         name="Sucursales"
         component={BranchesStack}
         position="LEFT"
         options={{ title: "Mis Sucursales" }}
       />
-      <CurvedBottomBarExpo.Screen 
-      name="Dashboard" 
-      component={Dashboard}
-      position="CIRCLE" />
+
       
       <CurvedBottomBarExpo.Screen
         name="Menu"
