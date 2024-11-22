@@ -3,10 +3,15 @@ import MyMenues from "./MyMenues";
 import AddMenues from "./AddMenues";
 import { Divider } from "react-native-paper";
 
-export default function MenuContainer({ menues, onSave, onDelete }) {
+export default function MenuContainer({
+  menues,
+  onSave,
+  onDelete,
+  onVisualize,
+}) {
   return (
     <View style={styles.menu}>
-      <MyMenues menues={menues} onDelete={onDelete} />
+      <MyMenues menues={menues} onDelete={onDelete} onVisualize={onVisualize} />
       <Divider />
       <AddMenues onSave={onSave} />
     </View>

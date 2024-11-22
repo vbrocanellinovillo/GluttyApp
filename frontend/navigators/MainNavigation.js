@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import MainUserStack from "./User/MainUserStack";
 import MainCommerceStack from "./Commerce/MainCommerceStack";
 import MainCommunityStack from "./Community/MainCommunityStack";
+import PdfScreen from "../screens/Pdf/PdfScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,11 @@ export default function MainNavigation() {
           gestureDirection: "vertical",
           animation: "slide_from_bottom",
         }}
+      />
+      <Stack.Screen
+        name="PdfScreen"
+        component={PdfScreen}
+        options={{ headerShown: true, headerBackTitle: "Volver" }}
       />
     </Stack.Navigator>
   );

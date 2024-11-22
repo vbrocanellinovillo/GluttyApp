@@ -12,7 +12,7 @@ import MenuesSkeleton from "../../../components/UI/Loading/MenuesSkeleton";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
 import { Colors } from "../../../constants/colors";
 
-export default function Menu() {
+export default function Menu({ navigation }) {
   const [menues, setMenues] = useState([]);
 
   const [isFetching, setIsFetching] = useState(false);
@@ -93,6 +93,10 @@ export default function Menu() {
     }
   };
 
+  const visualizePdf = ({ url, name }) => {
+    navigation.navigate("PdfScreen", { url, name });
+  };
+
   if (errorFetching) {
     return (
       <GluttyErrorScreen width={300} height={300}>
@@ -134,6 +138,7 @@ export default function Menu() {
         menues={menues}
         onSave={enviarPdf}
         onDelete={confirmDelete}
+        onVisualize={visualizePdf}
       />
     </>
   );
