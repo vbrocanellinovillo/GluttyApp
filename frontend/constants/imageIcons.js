@@ -6,3 +6,6 @@ export const heart =
 
 export const comment =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1732303343/comment2x_j3yu2n.webp";
+  
+export const fire =  
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732303323/fueguitoo2x_n32vcv.webp";

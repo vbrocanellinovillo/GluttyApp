@@ -26,13 +26,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
   icon: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     resizeMode: "contain",
     marginBottom: 8,
   },
   number: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#333",
   },
