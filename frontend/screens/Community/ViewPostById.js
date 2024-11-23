@@ -62,7 +62,7 @@ export default function ViewPostById({ route, navigation }) {
           const selectedPost = await getPostById(id, token);
           setIsLoading(false);
           setPost(selectedPost);
-          console.log("el posteo lindo:     ", selectedPost);
+          //console.log("el posteo lindo:     ", selectedPost);
         } catch (error) {
           setIsError(true);
         } finally {
