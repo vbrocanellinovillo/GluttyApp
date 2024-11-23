@@ -1,6 +1,15 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet, Image, Keyboard, FlatList } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Asegúrate de tener @expo/vector-icons instalado
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Keyboard,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import LoadingGlutty from "../UI/Loading/LoadingGlutty";
 import GluttyModal from "../UI/GluttyModal";
 import { Colors } from "../../constants/colors";
@@ -23,7 +32,6 @@ export default function AddComment({ id_post }) {
   const handleSend = async () => {
     try {
       Keyboard.dismiss();
-      console.log("Iniciando subida del comentario");
       setIsLoading(true);
 
       const nuevoComentario = await addComment(id_post, comment, token); // Publica el comentario
@@ -32,7 +40,6 @@ export default function AddComment({ id_post }) {
       setCommentAddedModal(true);
       setComment("");
     } catch (error) {
-      console.log(comment);
       console.error("Error al subir el comentario:", error);
       setIsLoading(false);
       setIsError(true);
@@ -42,17 +49,20 @@ export default function AddComment({ id_post }) {
   };
 
   return (
-    <>
-      {/* Renderizar comentarios utilizando FlatList */}
-      <FlatList
-        data={comentarios}
-        keyExtractor={(item, index) => index.toString()} // Usa un índice único si no hay un ID
-        renderItem={({ item }) => (
-          <View style={styles.commentContainer}>
-            <Comment comment={item} />
-          </View>
-        )}
-      />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} nestedScrollEnabled={true}>
+        {/* Renderizar comentarios */}
+        <View style={styles.commentsContainer}>
+          {comentarios.map((item, index) => (
+            <View key={index} style={styles.commentContainer}>
+              <Comment comment={item} />
+            </View>
+          ))}
+        </View>
+      </ScrollView>
 
       <View style={styles.container}>
         {/* Cargando */}
@@ -89,8 +99,8 @@ export default function AddComment({ id_post }) {
           placeholderTextColor="#8B857E"
           value={comment}
           onChangeText={setComment}
-          multiline={true} // Permite múltiples líneas
-          textAlignVertical="top" // Alinea el texto al inicio verticalmente
+          multiline={true}
+          textAlignVertical="top"
         />
 
         {/* Botones */}
@@ -101,7 +111,7 @@ export default function AddComment({ id_post }) {
           <Ionicons name="arrow-forward" size={22} color="black" />
         </TouchableOpacity>
       </View>
-    </>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -114,6 +124,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     margin: 10,
+  },
+  commentsContainer: {
+    flex: 1,
+    marginBottom: 10,
   },
   commentContainer: {
     marginBottom: 10,
@@ -137,4 +151,3 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
-
