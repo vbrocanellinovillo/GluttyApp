@@ -6,6 +6,8 @@ import Combobox from "../../components/UI/Controls/Combobox"
 import { useState } from "react"
 import { Colors } from "../../constants/colors"
 import LikesChart from "../../components/Dashboard/LikesChart"
+import LikedPost from "../../components/Dashboard/PopularPost"
+import { ScrollView } from "react-native-gesture-handler"
 
 export function Dashboard() {
     const branches = ["Entresano Nueva Cba", "Entresano Cerro", "Entresano Gral. Paz"]; // Corrección: array válido
@@ -22,6 +24,23 @@ export function Dashboard() {
         { label: "35 - 55", percentage: 50 },
         { label: "+55", percentage: 80 },
       ];
+
+      const samplePost = [{
+        name: "Entresano",
+        username: "entresano",
+        content:
+          "¡Hola a todos! 🍴❌ Estoy buscando recomendaciones de restaurantes en Buenos Aires que ofrezcan opciones 100% libres de gluten.",
+        userImage: "",
+        date: "Hace 2 días",
+        likes: 120,
+        comments_number: 15,
+        tags: ["Sin gluten", "Buenos Aires", "Restaurantes"],
+        images: [],
+      }];
+    
+      function handlePostPress() {
+        console.log("Post presionado");
+      }
     return (
         <>
         <View style={styles.comboContainer}>
@@ -39,6 +58,8 @@ export function Dashboard() {
             placeholderColor="#333"
             />
         </View>
+        <ScrollView style={styles.scrollContainer} >
+        
 
             <View style={styles.container}>
                 <BoxDashboard image={heart} number={120} />
@@ -55,11 +76,20 @@ export function Dashboard() {
             <View style={styles.rankedContainer}>
                 <LikesChart data={data} />
             </View>
+            <View style={styles.appContainer}>
+                <LikedPost post={samplePost} onPress={handlePostPress} />
+            </View>
+        </ScrollView>
         </>
     );
 }
 
 const styles = StyleSheet.create({
+    scrollContainer: {
+        flex: 1,
+        backgroundColor: "#f5f5f5",
+        marginBottom: 80,
+      },    
     container: {
         flexDirection: "row", 
         justifyContent: "space-around", 
@@ -81,4 +111,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         padding: 16,
     },
+    appContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f5f5f5",
+        padding: 16,
+      },
 });
