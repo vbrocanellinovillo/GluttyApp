@@ -34,23 +34,27 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
+
   title: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#5D4037",
     marginBottom: 12,
   },
+
   row: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 12,
   },
+
   label: {
     width: 60,
     fontSize: 14,
     color: "#5D4037",
     fontWeight: "bold",
   },
+
   progressBar: {
     flex: 1,
     height: 10,
@@ -59,11 +63,13 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginHorizontal: 8,
   },
+
   progress: {
     height: "100%",
     backgroundColor: "#DE761D",
     borderRadius: 5,
   },
+  
   percentage: {
     fontSize: 14,
     fontWeight: "bold",

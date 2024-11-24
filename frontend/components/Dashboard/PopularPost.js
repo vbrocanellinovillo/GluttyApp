@@ -1,26 +1,16 @@
-//Aca poner lógica de popular post
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, StyleSheet } from "react-native";
 import { Colors } from "../../constants/colors";
-import PostItem from "../Community/PostItem";
 import PostCarousel from "./PostCarousel";
-
 
 export default function LikedPost({ post, onPress }) {
   return (
     <View style={styles.container}>
       {/* Título superior */}
       <Text style={styles.title}>Tus publicaciones más likeada</Text>
-      
+
       {/* Contenedor del post */}
-      <PostCarousel posts={post} onPress={onPress}></PostCarousel>
-      {/* Slider / Footer */}
-      <View style={styles.sliderContainer}>
-        <View style={styles.slider}>
-          <View style={styles.sliderThumb} />
-        </View>
-      </View>
+      <PostCarousel posts={post} onPress={onPress} />
     </View>
   );
 }
@@ -36,21 +26,25 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+
   title: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#463333",
     marginBottom: 12,
   },
+
   postContainer: {
     backgroundColor: "#E7E7E7",
     padding: 16,
     borderRadius: 10,
   },
+
   sliderContainer: {
     marginTop: 16,
     alignItems: "center",
   },
+
   slider: {
     width: "80%",
     height: 6,
@@ -58,6 +52,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     position: "relative",
   },
+
   sliderThumb: {
     width: 20,
     height: 6,

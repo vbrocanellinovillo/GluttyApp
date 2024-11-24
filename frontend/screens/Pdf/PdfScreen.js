@@ -1,5 +1,5 @@
 import { useLayoutEffect } from "react";
-import { StyleSheet, } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import WebView from "react-native-webview";
 
 export default function PdfScreen({ navigation, route }) {
@@ -17,6 +17,7 @@ export default function PdfScreen({ navigation, route }) {
     <WebView
       style={styles.container}
       source={{ uri: url }}
+      
     />
   );
 }
