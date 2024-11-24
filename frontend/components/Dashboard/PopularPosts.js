@@ -1,16 +1,36 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, Dimensions } from "react-native";
 import { Colors } from "../../constants/colors";
 import PostCarousel from "./PostCarousel";
+import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 
-export default function LikedPost({ post, onPress }) {
+const height = Dimensions.get("window").height;
+
+export default function PoularPosts({ posts, onPress }) {
+  const [width, setWidth] = useState(undefined);
+
+  function findDimentions({ nativeEvent }) {
+    setWidth(nativeEvent.layout.width);
+  }
+
   return (
     <View style={styles.container}>
       {/* Título superior */}
-      <Text style={styles.title}>Tus publicaciones más likeada</Text>
+      <TextCommonsMedium style={styles.title}>
+        Tus publicaciones más likeadas
+      </TextCommonsMedium>
 
       {/* Contenedor del post */}
-      <PostCarousel posts={post} onPress={onPress} />
+      <View style={styles.postContainer} onLayout={findDimentions}>
+        {width && (
+          <PostCarousel
+            posts={posts}
+            onPress={onPress}
+            height={height * 0.35}
+            width={width}
+          />
+        )}
+      </View>
     </View>
   );
 }
@@ -35,8 +55,6 @@ const styles = StyleSheet.create({
   },
 
   postContainer: {
-    backgroundColor: "#E7E7E7",
-    padding: 16,
     borderRadius: 10,
   },
 

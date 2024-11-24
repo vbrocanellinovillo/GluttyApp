@@ -6,8 +6,8 @@ import Combobox from "../../components/UI/Controls/Combobox";
 import { useState } from "react";
 import { Colors } from "../../constants/colors";
 import LikesChart from "../../components/Dashboard/LikesChart";
-import LikedPost from "../../components/Dashboard/PopularPost";
 import { ScrollView } from "react-native-gesture-handler";
+import PoularPosts from "../../components/Dashboard/PopularPosts";
 
 export function Dashboard() {
   const branches = [
@@ -56,7 +56,6 @@ export function Dashboard() {
           data={tiempo}
           onChange={(value) => setSelectedTime(value)} // Manejador de cambio
           value={selectedTime}
-          handleBlur={() => console.log("Blurred")}
           name="tiempo"
           errors={null} // Si tienes validación, ajusta este valor
           touched={null} // Si tienes validación, ajusta este valor
@@ -65,7 +64,10 @@ export function Dashboard() {
           placeholderColor="#333"
         />
       </View>
-      <ScrollView style={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        contentInset={{ bottom: 150 }}
+      >
         <View style={styles.iconsContainer}>
           <BoxDashboard image={heart} number={120} />
           <BoxDashboard image={star} number={80} />
@@ -84,7 +86,8 @@ export function Dashboard() {
             <LikesChart data={data} />
           </View>
         </View>
-        <LikedPost post={samplePost} onPress={handlePostPress} />
+
+        <PoularPosts posts={samplePost} onPress={handlePostPress} />
       </ScrollView>
     </View>
   );
@@ -99,6 +102,7 @@ const styles = StyleSheet.create({
 
   scrollContainer: {
     flex: 1,
+    gap: 20,
   },
 
   iconsContainer: {
@@ -110,7 +114,6 @@ const styles = StyleSheet.create({
   ranks: {
     flexDirection: "row",
     gap: 20,
-    marginTop: 20,
   },
 
   rankedContainer: {

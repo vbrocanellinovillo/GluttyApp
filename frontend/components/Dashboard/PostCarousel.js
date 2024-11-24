@@ -1,11 +1,11 @@
-import { View, StyleSheet } from "react-native";
-import Carousel, { Pagination } from "react-native-reanimated-carousel";
-import PostItem from "../Community/PostItem";
-import { useSharedValue } from "react-native-reanimated";
 import { useRef } from "react";
+import { StyleSheet, View } from "react-native";
+import Carousel, { Pagination } from "react-native-reanimated-carousel";
+import { useSharedValue } from "react-native-reanimated";
 import { Colors } from "../../constants/colors";
+import PostItem from "../Community/PostItem";
 
-export default function PostCarousel({ posts, height = 100, onPress }) {
+export default function PostCarousel({ height, width, posts }) {
   const progress = useSharedValue(0);
   const carouselRef = useRef();
 
@@ -21,29 +21,17 @@ export default function PostCarousel({ posts, height = 100, onPress }) {
   };
 
   return (
-    <View style={[styles.container, { height }]}>
+    <View style={{ height }}>
       <Carousel
         ref={carouselRef}
-        width={300}
+        loop
+        autoPlay
         pagingEnabled
         data={posts}
-        scrollAnimationDuration={800}
+        width={width}
+        scrollAnimationDuration={1500}
         onProgressChange={progress}
-        renderItem={({ item }) => (
-          <PostItem
-            post={item}
-            curved={true}
-            iconPost="close-outline" // Cambiar ícono si se necesita
-          />
-        )}
-        mode="horizontal-stack"
-        modeConfig={{
-          moveSize: 10,
-          stackInterval: 500,
-          scaleInterval: 0.08,
-          rotateZDeg: 60,
-          snapDirection: "left",
-        }}
+        renderItem={({ item }) => <PostItem curved post={item} />}
       />
       <Pagination.Basic
         progress={progress}
@@ -58,15 +46,15 @@ export default function PostCarousel({ posts, height = 100, onPress }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 30,
-    alignItems: "center",
-  },
-
   dotsContainer: {
-    gap: 15,
-    marginTop: -30,
-    height: 2,
+    position: "absolute",
+    bottom: 10,
+    height: 20,
+    gap: 10,
+    backgroundColor: "#ddd",
+    justifyContent: "center",
+    padding: 5,
+    borderRadius: 20,
   },
 
   activeDot: {
