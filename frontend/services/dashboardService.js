@@ -3,26 +3,25 @@ import { httpRequest } from "../utils/http";
 
 const url = backendUrl + "comercios/";
 
-// top 3 branches
-export async function dataDashboard(token) {
-    //url que nos pasen las chicas jeje
-    const requestUrl = url + "";
+  export async function dataDashboard(token, time) {
+    const requestUrl = url + "get-dashboard/";
+    const formdata = new FormData();
+    formdata.append("filter_time", time);
 
     const requestOptions = {
-        //lo que nos pasen las xikas
-        method: "",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      try {
-        const response = await httpRequest(requestUrl, requestOptions);
-        return response;
-      } catch (error) {
-        throw new Error(error.message);
-      }
-   
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: formdata,
+    };
+  
+    try {
+      const data = await httpRequest(requestUrl, requestOptions);
+      return data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
-
 

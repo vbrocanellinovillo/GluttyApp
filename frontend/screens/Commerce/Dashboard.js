@@ -3,31 +3,53 @@ import BoxDashboard from "../../components/Dashboard/boxDashboard";
 import { comment, heart, star, fire } from "../../constants/imageIcons";
 import RankedBranches from "../../components/Dashboard/RankedBranches";
 import Combobox from "../../components/UI/Controls/Combobox";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Colors } from "../../constants/colors";
 import LikesChart from "../../components/Dashboard/LikesChart";
 import { ScrollView } from "react-native-gesture-handler";
 import PoularPosts from "../../components/Dashboard/PopularPosts";
+import { dataDashboard } from "../../services/dashboardService";
+import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
 export function Dashboard() {
+
+  const tiempo = [
+    { label: "Última Semana", value: "week" },
+    { label: "Últimos 15 días", value: "fortnight"},
+    { label: "Últimos 30 días", value: "month" },
+    { label: "Últimos 3 meses", value: "quarter" },
+  ];
+
+
+  const [datos, setDatos] = useState("");
+
+  var rank_branch, rank_likes, liked_posts, comments, favorites, likes = ""
+
+  /*{
+  "age_distribution": [{"label": "0 - 18", "percentage": 0}, {"label": "18 - 35", "percentage": 0}, {"label": "35 - 60", "percentage": 0}, {"label": "+60", "percentage": 0}],
+   "comments": 0, 
+   "favorites": 0, 
+   "likes": 0, 
+   "top_branches": [], 
+   "top_posts": []}
+
+*/
   const branches = [
     "Entresano Nueva Cba",
     "Entresano Cerro",
     "Entresano Gral. Paz",
   ]; // Corrección: array válido
-  const tiempo = [
-    { label: "Última Semana", value: "week" },
-    { label: "Últimos 30 días", value: "month" },
-    { label: "Últimos 3 meses", value: "quarter" },
-  ];
-
   const [selectedTime, setSelectedTime] = useState("");
+
   const data = [
     { label: "0 - 18", percentage: 100 },
     { label: "18 - 35", percentage: 0 },
     { label: "35 - 55", percentage: 50 },
     { label: "+55", percentage: 80 },
   ];
+
+  const token = useSelector((state) => state.auth.accessToken);
 
   const samplePost = [
     {
@@ -48,13 +70,43 @@ export function Dashboard() {
     console.log("Post presionado");
   }
 
+  console.log("linea 72")
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  async function fetchData() {
+    try {
+      const response = await dataDashboard(token, "week");
+      setDatos(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  
+  async function timeSelected(time){
+    setSelectedTime(time)
+    console.log("SOFIA TROLA", time)
+    try {
+      const resp = await dataDashboard(token, time)
+      console.log("la respuestaaa",resp)
+      setDatos(resp)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  console.log("eeee", datos.age_distribution)
+
   return (
     <View style={styles.container}>
       <View style={styles.comboContainer}>
         <Combobox
-          placeholder="Seleccione el tiempo"
+          placeholder="Última Semana"
           data={tiempo}
-          onChange={(value) => setSelectedTime(value)} // Manejador de cambio
+          onChange={(value) => timeSelected(value)} // Manejador de cambio
           value={selectedTime}
           name="tiempo"
           errors={null} // Si tienes validación, ajusta este valor
@@ -69,9 +121,9 @@ export function Dashboard() {
         contentInset={{ bottom: 150 }}
       >
         <View style={styles.iconsContainer}>
-          <BoxDashboard image={heart} number={120} />
-          <BoxDashboard image={star} number={80} />
-          <BoxDashboard image={comment} number={45} />
+          <BoxDashboard image={heart} number={datos.likes} />
+          <BoxDashboard image={star} number={datos.favorites} />
+          <BoxDashboard image={comment} number={datos.comments} />
         </View>
 
         <View style={styles.ranks}>
@@ -79,15 +131,15 @@ export function Dashboard() {
             <RankedBranches
               image={fire}
               title="Ranking sucursales más visitadas"
-              branches={branches}
+              branches={datos.top_branches}
             />
           </View>
           <View style={styles.rankedContainer}>
-            <LikesChart data={data} />
+            <LikesChart data={datos.age_distribution} />
           </View>
         </View>
 
-        <PoularPosts posts={samplePost} onPress={handlePostPress} />
+        <PoularPosts posts={datos.top_posts} onPress={handlePostPress} />
       </ScrollView>
     </View>
   );
