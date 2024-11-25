@@ -8,6 +8,7 @@ import BranchesStack from "./BranchesStack";
 import Profile from "../../screens/Profile/Profile";
 import PrivacityAndSecurity from "../../screens/Profile/PrivacityAndSecurity";
 import CommunityStack from "../Community/CommunityStack";
+import { Dashboard } from "../../screens/Commerce/Dashboard";
 
 export default function CommerceTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -67,9 +68,9 @@ export default function CommerceTabs() {
         const isCommunity = selectedTab === "CommunityStack";
         return (
           <View style={styles.btnCircleUp}>
-            <TouchableOpacity onPress={() => navigate("CommunityStack")}>
+            <TouchableOpacity onPress={() => navigate("Dashboard")}>
               <MaterialIcons
-                name="groups"
+                name="insights"
                 color={isCommunity ? Colors.mJordan : Colors.locro}
                 size={25}
               />
@@ -80,13 +81,19 @@ export default function CommerceTabs() {
       tabBar={renderTabBar}
       height={80}
     >
+      <CurvedBottomBarExpo.Screen 
+        name="Dashboard" 
+        component={Dashboard}
+        position="CIRCLE" />
+        
       <CurvedBottomBarExpo.Screen
         name="Sucursales"
         component={BranchesStack}
         position="LEFT"
         options={{ title: "Mis Sucursales" }}
       />
-      <CurvedBottomBarExpo.Screen name="Community" position="CIRCLE" />
+
+      
       <CurvedBottomBarExpo.Screen
         name="Menu"
         position="RIGHT"

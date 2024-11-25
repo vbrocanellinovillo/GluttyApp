@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 24,
+    fontSize: 21,
     color: Colors.mJordan,
   },
 

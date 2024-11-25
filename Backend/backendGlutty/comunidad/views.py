@@ -15,24 +15,13 @@ from spanlp.palabrota import Palabrota
 import re
 from spanlp.domain.strategies import RemovePunctuation, RemoveNumbers, Preprocessing, JaccardIndex, CosineSimilarity, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
 
-# Configuración del detector de malas palabras
-strategies = [TextToLower(), RemoveNumbers(), RemoveUnicodeCharacters(), NumbersToVowelsInLowerCase(), NumbersToConsonantsInLowerCase(), RemoveUrls(), RemoveEmoticons()]
-jaccard = JaccardIndex(threshold=0.9, normalize=True, clean_strategies=strategies)
-cosine = CosineSimilarity(0.9,normalize=True, clean_strategies=strategies)
-
 palabrota = Palabrota(
     exclude=["huevo", "huevos", "hoyo", "negro", "negra", "gallina", "guiso", "tirar", 
              "pinche", "bolsa", "calabaza", "animal", "basura", "pisa", "cono", "pato", 
-             "arepa", "come", "calienta", "cuchara"],
-    distance_metric=cosine
+             "arepa", "come", "calienta", "cuchara"]
 )
 # Función que verifica si hay palabras inapropiadas en el contenido
 def detect_inappropriate_words(content):
-    result = Preprocessing().clean(data=content, clean_strategies=strategies)
-    print("palabras limpias")
-    print(result)
-    bro = jaccard.normalize(content)
-    print(bro)
     content = re.sub(r'\d+', '', content)
     content = re.sub(r'[^\w\s]', '', content)
     print(content)

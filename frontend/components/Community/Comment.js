@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   date: {
     color: "grey",
-    fontSize: 12,
+    fontSize: 10,
     marginTop: 15,
     marginLeft: 220,
   },

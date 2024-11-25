@@ -62,7 +62,7 @@ export default function ViewPostById({ route, navigation }) {
           const selectedPost = await getPostById(id, token);
           setIsLoading(false);
           setPost(selectedPost);
-          console.log("el posteo lindo:     ", selectedPost);
+          //console.log("el posteo lindo:     ", selectedPost);
         } catch (error) {
           setIsError(true);
         } finally {
@@ -107,7 +107,7 @@ if (isLoading) {
         ]}
         closeButtonText="Cancelar"
       />
-      <ScrollView>
+      <ScrollView style={styles.scroll}>
         {/* Mostrar el post */}
         <PostItem
           post={post}
@@ -128,7 +128,7 @@ if (isLoading) {
 
         {/* Agregar un nuevo comentario */}
         <AddComment id_post={id} />
-      </ScrollView>
+        </ScrollView>
     </>
   );
 }
@@ -139,4 +139,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.mJordan,
   },
+  scroll: {
+    marginBottom: 100,
+  }
 });

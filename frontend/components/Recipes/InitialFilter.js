@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: "500",
     textAlign: "center",
     color: Colors.mJordan,

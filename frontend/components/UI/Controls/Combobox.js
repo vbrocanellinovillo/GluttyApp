@@ -37,7 +37,7 @@ export default function Combobox({
             ? { color: Colors.redError }
             : { color: placeholderColor ? placeholderColor : "#aaa" }
         }
-        onBlur={() => handleBlur(name)}
+        onBlur={handleBlur && (() => handleBlur(name))}
         value={value}
       />
 

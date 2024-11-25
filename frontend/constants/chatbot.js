@@ -1,4 +1,4 @@
-export const MESSAGE_FONT_SIZE = 18;
+export const MESSAGE_FONT_SIZE = 16;
 
 export const INITIAL_FILTERS = [
   { id: 1, prompt: "Idea de almuerzo SIN TACC rico y nutritivo" },
