@@ -30,9 +30,6 @@ class Commerce(models.Model):
     def getName(self):
         return self.name
 
-    # menu_url = models.URLField(max_length=500, blank=True, null=True)
-    # menu_pages = models.IntegerField(blank=True, null=True)
-
 # Modelo SUCURSAL
 class Branch(models.Model):
     commerce = models.ForeignKey(Commerce, on_delete=models.CASCADE, related_name="branches")
@@ -47,10 +44,6 @@ class Branch(models.Model):
         return self.location
     
     def deletePicture(self, id_picture):
-        # if id_picture:
-        #     picture = PictureBranch.objects.filter(id=id_picture, branch=self).first()
-        #     cloudinary.api.delete_resources(picture.public_id, resource_type="image", type="upload")
-        #     picture.delete()
         print(f"id_picture: {id_picture}, branch_id: {self.id}")
         if id_picture:
             try:
@@ -81,3 +74,9 @@ class Location(models.Model):
     address = models.CharField(max_length=255, blank=False)
     latitude =  models.FloatField(blank=False, null=False)
     longitude = models.FloatField(blank=False, null=False)
+
+# Modelo para las VISUALIZACIONES DE LAS SUCURSALES en el mapa
+class BranchView(models.Model):
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="views")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -82,6 +82,10 @@ class Celiac(models.Model):
     def getMessages(self):
         return self.messages.all()
     
+    def calculateAge(self):
+        today = date.today()
+        return today.year - self.date_birth.year - ((today.month, today.day) < (self.date_birth.month, self.date_birth.day))
+    
 class Session(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="session")
     session_initialized = models.BooleanField(default=False)

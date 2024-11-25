@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.http import StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 import requests
@@ -14,6 +15,7 @@ from .validations import *
 from django.db.models import Q
 from .serializers import LocationSerializer
 from comercios.models import Commerce, Branch
+from comunidad.models import *
 from django.db import connection, transaction
 import json
 
@@ -214,6 +216,21 @@ def get_branch(request):
         # Agregar las fotos con los id
         photos_data = [{"id": picture.id, "url": picture.photo_url} for picture in branch_pictures if branch.is_active]
         branch_data["photos"] = photos_data
+        
+        username = request.user.username
+        user = User.objects.filter(username=username).first()
+
+        if user.is_commerce:
+            user_commerce = Commerce.objects.filter(user=user).first()
+        
+        # Agregar una vista a la sucursal si no es el mismo comercio quien la ve
+        if user_commerce != branch.commerce:
+            new_view = BranchView.objects.create(
+                    branch=branch,
+                    user=user
+                )
+            new_view.save()
+        
         connection.close()
         return Response(branch_data, status=status.HTTP_200_OK)
     except Exception as e:
@@ -542,4 +559,108 @@ def get_branches(request):
     
     except Exception as e:
         connection.close()
-        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+from collections import Counter
+from django.db.models import Count
+from datetime import timedelta
+from django.utils.timezone import now
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_info_dashboard(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    commerce = Commerce.objects.filter(user=user).first()
+
+    # Validar si el comercio existe
+    if not commerce:
+        return Response({"error": "Comercio no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+    # Obtener filtro de tiempo desde el request
+    filter_time = request.data.get("filter_time")
+    if not filter_time:
+        return Response({"error": "El tiempo para filtrar es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Mapear filtro de tiempo a días
+        if filter_time == "Última semana":
+            filter_days = 7
+        elif filter_time == "Últimos 15 días":
+            filter_days = 15
+        elif filter_time == "Último mes":
+            filter_days = 30
+        elif filter_time == "Últimos 3 meses":
+            filter_days = 90
+        else:
+            return Response({"error": "Filtro de tiempo no válido."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Calcular fecha límite para el filtro
+        date_threshold = now() - timedelta(days=filter_days)
+
+        # 1. Cantidad de likes, comentarios y favoritos (de publicaciones del comercio)
+        posts = Post.objects.filter(user=commerce.user)
+        likes_count = Like.objects.filter(post__in=posts, created_at__gte=date_threshold).count()
+        comments_count = Comment.objects.filter(post__in=posts, created_at__gte=date_threshold).count()
+        favorites_count = Favorite.objects.filter(post__in=posts, created_at__gte=date_threshold).count()
+
+        # 2. Rango de edades de usuarios celiacos que dieron like a publicaciones dentro del tiempo filtrado
+        likes = Like.objects.filter(post__in=posts, created_at__gte=date_threshold)
+        celiac_users = Celiac.objects.filter(user__in=likes.values("user"))
+
+        # Calcular distribución de edades
+        age_distribution = Counter()
+        for celiac in celiac_users:
+            age = celiac.calculateAge()
+            if age <= 18:
+                age_distribution["0 - 18"] += 1
+            elif 18 < age <= 35:
+                age_distribution["18 - 35"] += 1
+            elif 35 < age <= 60:
+                age_distribution["35 - 60"] += 1
+            else:
+                age_distribution["+60"] += 1
+
+        # Calcular porcentajes del total
+        total_celiacs = len(celiac_users)
+        age_percentages = [
+            {"label": "0 - 18", "percentage": (age_distribution["0 - 18"] / total_celiacs) * 100 if total_celiacs > 0 else 0},
+            {"label": "18 - 35", "percentage": (age_distribution["18 - 35"] / total_celiacs) * 100 if total_celiacs > 0 else 0},
+            {"label": "35 - 60", "percentage": (age_distribution["35 - 60"] / total_celiacs) * 100 if total_celiacs > 0 else 0},
+            {"label": "+60", "percentage": (age_distribution["+60"] / total_celiacs) * 100 if total_celiacs > 0 else 0},
+        ]
+
+        # 3. Top 3 sucursales más vistas dentro del tiempo filtrado
+        branch_views = BranchView.objects.filter(branch__commerce=commerce, created_at__gte=date_threshold)
+        top_branches = (
+            branch_views.values("branch__name")
+            .annotate(view_count=Count("id"))
+            .order_by("-view_count")[:3]
+        )
+        top_branches_list = [{"branch": b["branch__name"], "views": b["view_count"]} for b in top_branches]
+
+        # 4. Top 3 publicaciones más likeadas dentro del tiempo filtrado
+        top_liked_posts = (
+            Like.objects.filter(post__in=posts, created_at__gte=date_threshold)
+            .values("post_id", "post__body")
+            .annotate(like_count=Count("id"))
+            .order_by("-like_count")[:3]
+        )
+        top_posts_list = [
+            {"post_id": post["post_id"], "likes": post["like_count"], "body": post["post__body"]}
+            for post in top_liked_posts
+        ]
+
+        # Respuesta final
+        return Response({
+            "likes": likes_count,
+            "comments": comments_count,
+            "favorites": favorites_count,
+            "age_distribution": age_percentages,
+            "top_branches": top_branches_list,
+            "top_posts": top_posts_list,
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
