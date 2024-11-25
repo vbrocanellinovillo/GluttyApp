@@ -5,7 +5,7 @@ export default function LikesChart({ data }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Likes</Text>
-      {data.map((item, index) => (
+      {data?.map((item, index) => (
         <View key={index} style={styles.row}>
           <Text style={styles.label}>{item.label}</Text>
           <View style={styles.progressBar}>
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#DE761D",
     borderRadius: 5,
   },
-  
+
   percentage: {
     fontSize: 14,
     fontWeight: "bold",
