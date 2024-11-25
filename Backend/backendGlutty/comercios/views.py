@@ -220,11 +220,10 @@ def get_branch(request):
         username = request.user.username
         user = User.objects.filter(username=username).first()
 
-        if user.is_commerce:
-            user_commerce = Commerce.objects.filter(user=user).first()
+        user_commerce = branch.commerce.user
         
         # Agregar una vista a la sucursal si no es el mismo comercio quien la ve
-        if user_commerce != branch.commerce:
+        if user != user_commerce:
             new_view = BranchView.objects.create(
                     branch=branch,
                     user=user

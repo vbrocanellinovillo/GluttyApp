@@ -14,4 +14,5 @@ urlpatterns = [
     path("get-menu/", get_menu, name="get_menu"),
     path("get-all-menues/", get_all_menues, name="get_all_menues"),
     path("search-commerce/", search_commerce, name="search_commerce"),
+    path("get-dashboard/", get_info_dashboard, name="get_info_dashboard"),
 ]
