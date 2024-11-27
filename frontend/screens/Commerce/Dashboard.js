@@ -11,6 +11,7 @@ import PoularPosts from "../../components/Dashboard/PopularPosts";
 import { dataDashboard } from "../../services/dashboardService";
 import { useSelector } from "react-redux";
 import GluttyErrorScreen from "../../components/UI/GluttyErrorScreen";
+import DashboardSkeleton from "../../components/UI/Loading/DashboardSkeleton";
 
 export function Dashboard() {
   const tiempo = [
@@ -40,23 +41,19 @@ export function Dashboard() {
   async function fetchData() {
     setIsLoading(true);
     try {
-      const response = await dataDashboard(token, "week");
+      const response = await dataDashboard(token, "Última semana");
       setDashData(response);
       setIsError(false);
     } catch (error) {
       setIsError(true);
     } finally {
-      setIsLoading(false);
+       setIsLoading(false);
     }
   }
 
   if (isLoading) {
     // Hacer skeleton
-    return (
-      <View>
-        <Text>cargando...</Text>
-      </View>
-    );
+    return  <DashboardSkeleton/>;
   } else if (isError) {
     return (
       <GluttyErrorScreen width={240} height={240}>
@@ -156,4 +153,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f5f5f5",
   },
+
 });
