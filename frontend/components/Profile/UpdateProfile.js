@@ -17,6 +17,7 @@ import { useRef, useState } from "react";
 import BottomSheet from "@devvie/bottom-sheet";
 import ImageSheetOptions from "../UI/UserImage/ImageSheetOptions";
 import { Portal } from "react-native-paper";
+import FormButtonsGroup from "../UI/Controls/FormButtonsGroup";
 
 export default function UpdateProfile({
   isCommerce,
@@ -94,7 +95,7 @@ export default function UpdateProfile({
   return (
     <DismissKeyboardContainer>
       <>
-        <ScrollView>
+        <ScrollView contentInset={{ bottom: 150 }}>
           <View style={styles.imageContainer}>
             <UserImage
               dimensions={160}
@@ -116,6 +117,11 @@ export default function UpdateProfile({
               celiac={userData.celiac_data}
             />
           )}
+          <FormButtonsGroup
+            prev="Cancelar"
+            next="Guardar"
+            overallContainerStyle={styles.buttons}
+          />
         </ScrollView>
         <Portal>
           <BottomSheet ref={sheetRef} height={200}>
@@ -133,5 +139,9 @@ export default function UpdateProfile({
 const styles = StyleSheet.create({
   imageContainer: {
     alignItems: "center",
+  },
+
+  buttons: {
+    paddingHorizontal: 50,
   },
 });

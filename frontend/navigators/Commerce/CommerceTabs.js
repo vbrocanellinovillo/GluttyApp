@@ -1,6 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+  FontAwesome6,
+} from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
 import MainHeader from "../../components/UI/Header/MainHeader";
 import Menu from "../../screens/Commerce/Menu/Menu";
@@ -9,26 +13,37 @@ import Profile from "../../screens/Profile/Profile";
 import PrivacityAndSecurity from "../../screens/Profile/PrivacityAndSecurity";
 import CommunityStack from "../Community/CommunityStack";
 import { Dashboard } from "../../screens/Commerce/Dashboard";
+import Map from "../../screens/User/Map/Map";
 
 export default function CommerceTabs() {
   const _renderIcon = (routeName, selectedTab) => {
     let icon = "";
 
     switch (routeName) {
+      case "Home":
+        icon = "home";
+        break;
       case "Sucursales":
         icon = "store";
         break;
       case "Menu":
         icon = "clipboard-text";
         break;
+      case "Mapa":
+        icon = "map-location-dot";
+        break;
     }
 
+    const color = routeName === selectedTab ? Colors.mJordan : Colors.locro;
+
     return (
-      <MaterialCommunityIcons
-        name={icon}
-        size={25}
-        color={routeName === selectedTab ? Colors.mJordan : Colors.locro}
-      />
+      <>
+        {routeName === "Mapa" ? (
+          <FontAwesome6 name="map-location-dot" size={22} color={color} />
+        ) : (
+          <MaterialCommunityIcons name={icon} size={25} color={color} />
+        )}
+      </>
     );
   };
 
@@ -63,9 +78,9 @@ export default function CommerceTabs() {
       type="DOWN"
       borderTopLeftRight
       bgColor={Colors.humita}
-      initialRouteName="Home"
+      initialRouteName="Dashboard"
       renderCircle={({ selectedTab, navigate }) => {
-        const isCommunity = selectedTab === "CommunityStack";
+        const isCommunity = selectedTab === "Dashboard";
         return (
           <View style={styles.btnCircleUp}>
             <TouchableOpacity onPress={() => navigate("Dashboard")}>
@@ -81,23 +96,36 @@ export default function CommerceTabs() {
       tabBar={renderTabBar}
       height={80}
     >
-      <CurvedBottomBarExpo.Screen 
-        name="Dashboard" 
+      <CurvedBottomBarExpo.Screen
+        name="Dashboard"
         component={Dashboard}
-        position="CIRCLE" />
-        
+        position="CIRCLE"
+      />
+      <CurvedBottomBarExpo.Screen
+        name="Home"
+        component={CommunityStack}
+        options={{ headerShown: false }}
+        position="LEFT"
+      />
       <CurvedBottomBarExpo.Screen
         name="Sucursales"
         component={BranchesStack}
         position="LEFT"
         options={{ title: "Mis Sucursales" }}
       />
-
-      
       <CurvedBottomBarExpo.Screen
         name="Menu"
         position="RIGHT"
         component={Menu}
+      />
+      <CurvedBottomBarExpo.Screen
+        name="Mapa"
+        position="RIGHT"
+        component={Map}
+        options={{
+          headerShown: false,
+          tabBarIcon: () => <FontAwesome6 name="map-location-dot" size={22} />,
+        }}
       />
       <CurvedBottomBarExpo.Screen
         name="UserData"
@@ -108,11 +136,6 @@ export default function CommerceTabs() {
         name="PrivacityAndSecurity"
         component={PrivacityAndSecurity}
         options={{ title: "Privacidad y Seguridad" }}
-      />
-      <CurvedBottomBarExpo.Screen
-        name="CommunityStack"
-        component={CommunityStack}
-        options={{ headerShown: false }}
       />
     </CurvedBottomBarExpo.Navigator>
   );
