@@ -18,6 +18,10 @@ from comercios.models import Commerce, Branch
 from comunidad.models import *
 from django.db import connection, transaction
 import json
+from collections import Counter
+from django.db.models import Count
+from datetime import timedelta
+from django.utils.timezone import now
 
 # Función para buscar el comercio según una query y filtros
 @api_view(["POST"])
@@ -563,12 +567,6 @@ def get_branches(request):
     except Exception as e:
         connection.close()
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-from collections import Counter
-from django.db.models import Count
-from datetime import timedelta
-from django.utils.timezone import now
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -588,13 +586,13 @@ def get_info_dashboard(request):
 
     try:
         # Mapear filtro de tiempo a días
-        if filter_time == "Última semana":
+        if filter_time == "week":
             filter_days = 7
-        elif filter_time == "Últimos 15 días":
+        elif filter_time == "fortnight":
             filter_days = 15
-        elif filter_time == "Último mes":
+        elif filter_time == "month":
             filter_days = 30
-        elif filter_time == "Últimos 3 meses":
+        elif filter_time == "quarter":
             filter_days = 90
         else:
             return Response({"error": "Filtro de tiempo no válido."}, status=status.HTTP_400_BAD_REQUEST)
@@ -655,6 +653,7 @@ def get_info_dashboard(request):
             for post in top_liked_posts
         ]
 
+        connection.close()
         # Respuesta final
         return Response({
             "likes": likes_count,
