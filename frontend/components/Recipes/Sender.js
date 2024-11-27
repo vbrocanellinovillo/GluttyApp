@@ -21,7 +21,7 @@ export default function Sender({ isAnswer }) {
         </TextCommonsRegular>
       ) : (
         <TextCommonsRegular style={[styles.textTop, styles.userText]}>
-          Tu - {username}
+          Tú - {username}
         </TextCommonsRegular>
       )}
     </>

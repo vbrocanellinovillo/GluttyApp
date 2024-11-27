@@ -8,6 +8,7 @@ import Button from "../UI/Controls/Button";
 import { Colors } from "../../constants/colors";
 import NavigationText from "../UI/Navigation/NavigationText";
 import { formatDateToYYYYMMDD } from "../../utils/dateFunctions";
+import { color } from "@rneui/base";
 
 const sexes = [
   { label: "Masculino", value: "MALE" },
