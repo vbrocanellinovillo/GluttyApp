@@ -97,7 +97,7 @@ export default function CommerceTabs() {
       height={80}
     >
       <CurvedBottomBarExpo.Screen
-        name="Dashboard"
+        name="Estadísticas"
         component={Dashboard}
         position="CIRCLE"
       />

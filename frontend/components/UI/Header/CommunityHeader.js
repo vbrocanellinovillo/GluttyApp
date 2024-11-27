@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Header from "./Header";
 import { Colors } from "../../../constants/colors";
@@ -6,6 +6,7 @@ import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import UserImage from "../UserImage/UserImage";
 import * as Haptics from "expo-haptics";
 import TextCommonsBold from "../FontsTexts/TextCommonsBold";
+import { gluttyTitulo } from "../../../constants/glutty";
 
 export default function CommunityHeader({ options, navigation }) {
   function toggleDrawer() {
@@ -31,12 +32,17 @@ export default function CommunityHeader({ options, navigation }) {
             style={styles.menu}
           />
         </Pressable>
-        <TextCommonsBold style={styles.text}>
+        <Image
+        source={{
+          uri: gluttyTitulo}}
+        style={styles.image}
+      />
+        {/* <TextCommonsBold style={styles.text}>
           Glutty.
           <TextCommonsMedium style={styles.title}>
             {options.title}
           </TextCommonsMedium>
-        </TextCommonsBold>
+        </TextCommonsBold> */}
       </View>
       <UserImage dimensions={68} onPress={toggleDrawer} />
     </Header>
@@ -78,5 +84,9 @@ const styles = StyleSheet.create({
   menu: {
     paddingRight: 7,
     paddingLeft: 5,
+  },
+  image: {
+    height: 42,
+    width: 135, 
   },
 });

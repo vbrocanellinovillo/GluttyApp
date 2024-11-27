@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
-    gap: 20,
+    gap: 15,
   },
 
   username: {
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 24,
+    fontSize: 20,
     color: Colors.mJordan,
   },
 
