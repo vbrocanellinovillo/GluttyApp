@@ -1,5 +1,5 @@
 export const thumbGlutty =
-  "https://res.cloudinary.com/dksmkvi49/image/upload/v1720213929/Glutty_haciendo_dedo_mucza1.webp";
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732740160/thumb_glutty_sxqtf7.webp";
 
 export const sadGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1719530424/triste_edit-removebg-preview_uurefr.png";
@@ -8,7 +8,7 @@ export const jumpingGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1718920847/Glutty-saltando-unscreen_xmvdgw.gif";
 
 export const smileGlutty =
-  "https://res.cloudinary.com/dksmkvi49/image/upload/v1721774190/parado_sonriendo-removebg-preview_an3tym.png";
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732739381/smile_glutty_v9c9iy.webp";
 
 export const superMarketGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1722470711/Fondo_de_pantalla_inicio_iz8lim.webp";

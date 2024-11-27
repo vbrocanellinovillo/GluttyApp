@@ -9,14 +9,17 @@ import { Colors } from "../../constants/colors";
 import NavigationText from "../UI/Navigation/NavigationText";
 import { formatDateToYYYYMMDD } from "../../utils/dateFunctions";
 import { color } from "@rneui/base";
+import GluttyModal from "../UI/GluttyModal";
+import { useState } from "react";
 
 const sexes = [
   { label: "Masculino", value: "MALE" },
   { label: "Femenino", value: "FEMALE" },
-  { label: "Otro", value: "OTHER" },
 ];
 
 export default function UserRegister({ onSubmit }) {
+  const [isModalVisible, setModalVisible] = useState(false);
+
   function submitHandler(values) {
     onSubmit(values, false);
   }
@@ -57,7 +60,7 @@ export default function UserRegister({ onSubmit }) {
         }
 
         if (sex.trim() === "") {
-          errors.sex = "Genero requerido";
+          errors.sex = "Sexo requerido";
         }
 
         if (dateBirth === undefined) {
@@ -142,17 +145,20 @@ export default function UserRegister({ onSubmit }) {
             touched={touched.lastName}
             autoCapitalize="words"
           />
-          <FormGroup>
-            <Combobox
-              data={sexes}
-              placeholder="Sexo"
-              onChange={(item) => setFieldValue("sex", item)}
-              value={values.sex}
-              touched={touched.sex}
-              errors={errors.sex}
-              name="sex"
-              handleBlur={handleBlur}
-            />
+           <FormGroup>
+              <Combobox
+                data={sexes}
+                placeholder="Sexo"
+                onChange={(item) => {
+                  setFieldValue("sex", item);
+                  setModalVisible(true); // Muestra el modal
+                }}
+                value={values.sex}
+                touched={touched.sex}
+                errors={errors.sex}
+                name="sex"
+                handleBlur={handleBlur}
+              />
             <DatePicker
               placeholder="Fecha nacimiento"
               onChange={(date) => setFieldValue("dateBirth", date)}
@@ -209,6 +215,20 @@ export default function UserRegister({ onSubmit }) {
               ¿Ya tenes cuenta?
             </NavigationText>
           </View>
+
+          <GluttyModal
+            visible={isModalVisible}
+            onClose={() => setModalVisible(false)}
+            message="El sexo nos servirá para analizar las variables de tus estudios médicos."
+            closeButton={false}
+            buttons={[
+              {
+            text: "Aceptar",
+            color: Colors.mJordan,
+            onPress: () => setModalVisible(false),
+          },
+        ]}
+        />
         </>
       )}
     </Formik>
