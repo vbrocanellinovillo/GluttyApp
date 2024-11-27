@@ -1,9 +1,12 @@
-import { StyleSheet, Pressable, View } from "react-native";
+import { StyleSheet, Pressable, View, Text } from "react-native";
 import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userAddGlutty, userGlutty } from "../../../constants/glutty";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
+import { authActions } from "../../../context/auth";
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Colors } from "../../../constants/colors";
 
 export default function UserImage({
   onPress,
@@ -13,9 +16,8 @@ export default function UserImage({
   source,
 }) {
   const borderRadius = dimensions / 2;
-  //const image =
-  //  "https://pbs.twimg.com/profile_images/1605246082144997381/2H9mNjaD_400x400.jpg";
   const image = useSelector((state) => state.auth.image);
+  const dispatch = useDispatch();
 
   const imageLink = source
     ? { uri: source }
@@ -40,6 +42,10 @@ export default function UserImage({
     />
   );
 
+  function deletePicture(){
+    dispatch(authActions.setImage(undefined));
+  }
+
   function pressImageHandler() {
     Haptics.selectionAsync();
     onPress && onPress();
@@ -54,14 +60,23 @@ export default function UserImage({
       style={({ pressed }) => (pressed ? [styles.pressed, style] : style)}
     >
       {isForm ? (
-        <View style={styles.addPhotoContainer}>
-          {showImage}
-          <TextCommonsRegular style={styles.addPhotoText}>
-            Agregar foto de perfil (opcional)
-          </TextCommonsRegular>
-        </View>
+        <>
+          
+          <View style={styles.addPhotoContainer}>
+            {showImage}
+            <TextCommonsRegular style={styles.addPhotoText}>
+              Agregar foto de perfil (opcional)
+            </TextCommonsRegular>
+          </View>
+        </>
+        
       ) : (
         showImage
+      )}
+      {(isForm && image) && (
+          <Pressable onPress={deletePicture} style={styles.iconContainer}>
+          <Icon name="close" size={15} color="white" />
+        </Pressable>
       )}
     </Pressable>
   );
@@ -85,5 +100,15 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "500",
     textAlign: "center",
+  },
+  iconContainer: {
+    position: 'absolute',
+    top: 5, 
+    right: 50,
+    backgroundColor: Colors.mJordan, 
+    borderRadius: 40,
+    padding: 8, 
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
