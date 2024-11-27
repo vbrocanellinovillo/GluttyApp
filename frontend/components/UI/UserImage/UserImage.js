@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     position: 'absolute',
-    top: 5, 
+    top: 5,   
     right: 50,
     backgroundColor: Colors.mJordan, 
     borderRadius: 40,
