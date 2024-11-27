@@ -151,7 +151,7 @@ export default function Recipes() {
         <RecipesInput
           value={textValue}
           onChange={handleChange}
-          placeholder="¿Que piensas comer hoy?"
+          placeholder="¿Qué piensas comer hoy?"
           isTyping={isTyping}
           onSend={handleSend}
           onCancel={handleCancel}

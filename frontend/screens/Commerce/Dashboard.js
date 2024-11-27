@@ -3,58 +3,72 @@ import BoxDashboard from "../../components/Dashboard/boxDashboard";
 import { comment, heart, star, fire } from "../../constants/imageIcons";
 import RankedBranches from "../../components/Dashboard/RankedBranches";
 import Combobox from "../../components/UI/Controls/Combobox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Colors } from "../../constants/colors";
 import LikesChart from "../../components/Dashboard/LikesChart";
 import { ScrollView } from "react-native-gesture-handler";
 import PoularPosts from "../../components/Dashboard/PopularPosts";
+import { dataDashboard } from "../../services/dashboardService";
+import { useSelector } from "react-redux";
+import GluttyErrorScreen from "../../components/UI/GluttyErrorScreen";
+import DashboardSkeleton from "../../components/UI/Loading/DashboardSkeleton";
 
 export function Dashboard() {
-  const branches = [
-    "Entresano Nueva Cba",
-    "Entresano Cerro",
-    "Entresano Gral. Paz",
-  ]; // Corrección: array válido
   const tiempo = [
     { label: "Última Semana", value: "week" },
+    { label: "Últimos 15 días", value: "fortnight" },
     { label: "Últimos 30 días", value: "month" },
     { label: "Últimos 3 meses", value: "quarter" },
   ];
 
-  const [selectedTime, setSelectedTime] = useState("");
-  const data = [
-    { label: "0 - 18", percentage: 100 },
-    { label: "18 - 35", percentage: 0 },
-    { label: "35 - 55", percentage: 50 },
-    { label: "+55", percentage: 80 },
-  ];
-
-  const samplePost = [
-    {
-      name: "Entresano",
-      username: "entresano",
-      content:
-        "¡Hola a todos! 🍴❌ Estoy buscando recomendaciones de restaurantes en Buenos Aires que ofrezcan opciones 100% libres de gluten.",
-      userImage: "",
-      date: "Hace 2 días",
-      likes: 120,
-      comments_number: 15,
-      tags: ["Sin gluten", "Buenos Aires", "Restaurantes"],
-      images: [],
-    },
-  ];
+  const token = useSelector((state) => state.auth.accessToken);
 
   function handlePostPress() {
     console.log("Post presionado");
+  }
+
+  const [dashData, setDashData] = useState(undefined);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  const [selectedTime, setSelectedTime] = useState();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    setIsLoading(true);
+    try {
+      const response = await dataDashboard(token, "Última semana");
+      setDashData(response);
+      setIsError(false);
+    } catch (error) {
+      setIsError(true);
+    } finally {
+       setIsLoading(false);
+    }
+  }
+
+  if (isLoading) {
+    // Hacer skeleton
+    return  <DashboardSkeleton/>;
+  } else if (isError) {
+    return (
+      <GluttyErrorScreen width={240} height={240}>
+        Error cargando los datos. Por favor intente de nuevo más tarde
+      </GluttyErrorScreen>
+    );
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.comboContainer}>
         <Combobox
-          placeholder="Seleccione el tiempo"
+          placeholder="Última Semana"
           data={tiempo}
-          onChange={(value) => setSelectedTime(value)} // Manejador de cambio
+          onChange={() => undefined} // Manejador de cambio
           value={selectedTime}
           name="tiempo"
           errors={null} // Si tienes validación, ajusta este valor
@@ -69,9 +83,9 @@ export function Dashboard() {
         contentInset={{ bottom: 150 }}
       >
         <View style={styles.iconsContainer}>
-          <BoxDashboard image={heart} number={120} />
-          <BoxDashboard image={star} number={80} />
-          <BoxDashboard image={comment} number={45} />
+          <BoxDashboard image={heart} number={dashData?.likes} />
+          <BoxDashboard image={star} number={dashData?.favorites} />
+          <BoxDashboard image={comment} number={dashData?.comments} />
         </View>
 
         <View style={styles.ranks}>
@@ -79,15 +93,15 @@ export function Dashboard() {
             <RankedBranches
               image={fire}
               title="Ranking sucursales más visitadas"
-              branches={branches}
+              branches={dashData?.top_branches}
             />
           </View>
           <View style={styles.rankedContainer}>
-            <LikesChart data={data} />
+            <LikesChart data={dashData?.age_distribution} />
           </View>
         </View>
 
-        <PoularPosts posts={samplePost} onPress={handlePostPress} />
+        <PoularPosts posts={dashData?.top_posts} onPress={handlePostPress} />
       </ScrollView>
     </View>
   );
@@ -139,4 +153,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f5f5f5",
   },
+
 });

@@ -8,11 +8,11 @@ export default function RankedBranches({ image, title, branches }) {
         <Text style={styles.title}>{title}</Text>
         <Image source={{ uri: image }} style={styles.image} />
       </View>
-      {branches.map((branch, index) => (
+      {branches?.map((branch, index) => (
         <Text key={index} style={styles.branch}>
           <Text style={styles.rank}>#{index + 1} </Text>{" "}
           {/* Negrita para el número */}
-          {branch || "-"}
+          {branch?.branch || "-"}
         </Text>
       ))}
     </View>
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 8,
   },
-  
+
   rank: {
     fontWeight: "bold", // Negrita para los números
   },
