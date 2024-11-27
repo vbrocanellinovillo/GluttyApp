@@ -98,7 +98,8 @@ export default function UserRegister({ onSubmit }) {
         }
 
         return errors;
-      }}
+      }} 
+
       onSubmit={submitHandler}
     >
       {({
@@ -192,6 +193,7 @@ export default function UserRegister({ onSubmit }) {
             errors={errors.repeatPassword}
             touched={touched.repeatPassword}
             autoCapitalize="none"
+            check
           />
           <View style={styles.buttonContainer}>
             <Button

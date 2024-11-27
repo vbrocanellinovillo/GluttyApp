@@ -125,6 +125,7 @@ export default function FormControl({
   labelColor,
   editable = true, // Nueva propiedad editable con valor por defecto true
   autocompleteOptions = [], // que lleguen de la forma {id, name}
+  check = false
 }) {
   const [hideText, setHideText] = useState(secure ? true : false);
   const [filteredOptions, setFilteredOptions] = useState([]);
@@ -203,6 +204,7 @@ export default function FormControl({
         }
       />
       {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
+      {check && touched && !errors && <Text style={styles.rightText}>¡Suena bien!</Text>}
       {filteredOptions.length > 0 && (
         <View>
           <ScrollView contentContainerStyle={styles.autocompleteContainer}>
@@ -245,6 +247,11 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 16,
     color: Colors.redError,
+  },
+
+  rightText: {
+    fontSize: 16,
+    color: Colors.roca,
   },
 
   textarea: {
