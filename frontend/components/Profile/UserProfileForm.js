@@ -140,16 +140,6 @@ export default function UserProfileForm({ onSubmit, user, celiac }) {
                 errors={errors.email}
                 touched={touched.email}
               />
-              <View style={styles.buttonContainer}>
-                <Button
-                  backgroundColor={Colors.locro}
-                  color={Colors.mJordan}
-                  onPress={handleSubmit}
-                >
-                  Guardar cambios
-                </Button>
-              </View>
-              <View style={styles.bottomText}></View>
             </Form>
           )}
         </Formik>
@@ -163,11 +153,6 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
 
-  buttonContainer: {
-    marginTop: 12,
-    paddingBottom: 140,
-  },
-
   combobox: {
     paddingHorizontal: 14,
     paddingVertical: 16,
@@ -175,9 +160,5 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 10,
     flex: 1,
-  },
-
-  bottomText: {
-    paddingBottom: 140,
   },
 });

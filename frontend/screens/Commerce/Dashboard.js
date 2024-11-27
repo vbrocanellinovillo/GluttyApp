@@ -41,7 +41,7 @@ export function Dashboard() {
   async function fetchData() {
     setIsLoading(true);
     try {
-      const response = await dataDashboard(token, "Última semana");
+      const response = await dataDashboard(token, "week");
       setDashData(response);
       setIsError(false);
     } catch (error) {
@@ -50,6 +50,24 @@ export function Dashboard() {
        setIsLoading(false);
     }
   }
+
+  async function updateData(time) {
+    setIsLoading(true);
+    console.log(time)
+    
+    try {
+      const response = await dataDashboard(token, time);
+      setSelectedTime(time);
+      setDashData(response);
+      setIsError(false);
+
+    } catch (error) {
+      setIsError(true);
+    } finally {
+       setIsLoading(false);
+    }
+  }
+
 
   if (isLoading) {
     // Hacer skeleton
@@ -68,7 +86,7 @@ export function Dashboard() {
         <Combobox
           placeholder="Última Semana"
           data={tiempo}
-          onChange={() => undefined} // Manejador de cambio
+          onChange={(value) => updateData(value)} // Manejador de cambio
           value={selectedTime}
           name="tiempo"
           errors={null} // Si tienes validación, ajusta este valor
@@ -139,9 +157,20 @@ const styles = StyleSheet.create({
   },
 
   comboboxStyle: {
-    backgroundColor: "#fff",
-    borderColor: Colors.mJordan,
+    backgroundColor: "#F5F5F5", // Fondo gris claro
+    borderRadius: 20, // Bordes redondeados
+    borderColor: "#F5F5F5",
+    paddingHorizontal: 16, // Espaciado interno horizontal
+    paddingVertical: 12, // Espaciado interno vertical más grande
+    //flexDirection: "row", // Alinear ícono y texto en una fila
+    alignItems: "center", // Centrar contenido verticalmente
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
+  
 
   comboContainer: {
     marginBottom: 20,

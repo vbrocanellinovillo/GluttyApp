@@ -1,9 +1,7 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import Form from "../UI/Forms/Form";
 import FormTitle from "../UI/Forms/FormTitle";
 import FormControl from "../UI/Controls/FormControl";
-import Button from "../UI/Controls/Button";
-import { Colors } from "../../constants/colors";
 import { Formik } from "formik";
 
 export default function CommerceProfileForm({ onSubmit, user, commerce }) {
@@ -101,16 +99,6 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
               //errors={errors.}
               //touched={touched.email}
             />
-            <View style={styles.buttonContainer}>
-              <Button
-                backgroundColor={Colors.locro}
-                color={Colors.mJordan}
-                onPress={handleSubmit}
-              >
-                Guardar cambios
-              </Button>
-            </View>
-            <View style={styles.bottomText}></View>
           </Form>
         )}
       </Formik>
@@ -123,11 +111,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
 
-  buttonContainer: {
-    marginTop: 12,
-    paddingBottom: 140,
-  },
-
   combobox: {
     paddingHorizontal: 14,
     paddingVertical: 16,
@@ -135,9 +118,5 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 10,
     flex: 1,
-  },
-
-  bottomText: {
-    paddingBottom: 140,
   },
 });
