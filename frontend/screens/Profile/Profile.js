@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../context/auth";
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { getUser, update } from "../../services/userService";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 import GluttyModal from "../../components/UI/GluttyModal";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
@@ -30,24 +30,26 @@ export default function Profile() {
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    async function getUserData() {
-      try {
-        setIsFetching(true);
-        const response = await getUser(token);
-        setUserData(response);
-        setIsError(false);
-      } catch (error) {
-        setIsError(true);
-        setMessage(error.message);
-        setShowModal(true);
-      } finally {
-        setIsFetching(false);
-      }
-    }
+  useFocusEffect(
+    useCallback(() => {
+      getUserData();
+    }, [token])
+  );
 
-    getUserData();
-  }, [token]);
+  async function getUserData() {
+    try {
+      setIsFetching(true);
+      const response = await getUser(token);
+      setUserData(response);
+      setIsError(false);
+    } catch (error) {
+      setIsError(true);
+      setMessage(error.message);
+      setShowModal(true);
+    } finally {
+      setIsFetching(false);
+    }
+  }
 
   function closeModalHandler() {
     setShowModal(false);

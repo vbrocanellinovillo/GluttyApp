@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userAddGlutty, userGlutty } from "../../../constants/glutty";
 import TextCommonsRegular from "../FontsTexts/TextCommonsRegular";
 import { authActions } from "../../../context/auth";
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from "react-native-vector-icons/MaterialIcons";
 import { Colors } from "../../../constants/colors";
 
 export default function UserImage({
@@ -42,7 +42,7 @@ export default function UserImage({
     />
   );
 
-  function deletePicture(){
+  function deletePicture() {
     dispatch(authActions.setImage(undefined));
   }
 
@@ -61,7 +61,6 @@ export default function UserImage({
     >
       {isForm ? (
         <>
-          
           <View style={styles.addPhotoContainer}>
             {showImage}
             <TextCommonsRegular style={styles.addPhotoText}>
@@ -69,12 +68,11 @@ export default function UserImage({
             </TextCommonsRegular>
           </View>
         </>
-        
       ) : (
         showImage
       )}
-      {(isForm && image) && (
-          <Pressable onPress={deletePicture} style={styles.iconContainer}>
+      {isForm && image && (
+        <Pressable onPress={deletePicture} style={styles.iconContainer}>
           <Icon name="close" size={15} color="white" />
         </Pressable>
       )}
@@ -101,14 +99,15 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     textAlign: "center",
   },
+
   iconContainer: {
-    position: 'absolute',
-    top: 5,   
+    position: "absolute",
+    top: 5,
     right: 50,
-    backgroundColor: Colors.mJordan, 
+    backgroundColor: Colors.mJordan,
     borderRadius: 40,
-    padding: 8, 
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 8,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -1,14 +1,13 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import Form from "../UI/Forms/Form";
 import FormTitle from "../UI/Forms/FormTitle";
 import FormControl from "../UI/Controls/FormControl";
 import FormGroup from "../UI/Forms/FormGroup";
-import Button from "../UI/Controls/Button";
-import { Colors } from "../../constants/colors";
 import Combobox from "../UI/Controls/Combobox";
 import DatePicker from "../UI/Controls/DatePicker";
 import { Formik } from "formik";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
+import FormButtonsGroup from "../UI/Controls/FormButtonsGroup";
 
 const sexos = [
   { label: "Masculino", value: "MALE" },
@@ -16,7 +15,14 @@ const sexos = [
   { label: "Otro", value: "OTHER" },
 ];
 
-export default function UserProfileForm({ onSubmit, user, celiac }) {
+export default function UserProfileForm({
+  onSubmit,
+  user,
+  celiac,
+  handleCancel,
+  prev,
+  next,
+}) {
   function submitHandler(values) {
     onSubmit(values);
   }
@@ -139,6 +145,12 @@ export default function UserProfileForm({ onSubmit, user, celiac }) {
                 handleBlur={handleBlur}
                 errors={errors.email}
                 touched={touched.email}
+              />
+              <FormButtonsGroup
+                prev={prev}
+                onPrev={handleCancel}
+                next={next}
+                onNext={handleSubmit}
               />
             </Form>
           )}

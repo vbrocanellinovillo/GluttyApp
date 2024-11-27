@@ -17,7 +17,7 @@ import { useRef, useState } from "react";
 import BottomSheet from "@devvie/bottom-sheet";
 import ImageSheetOptions from "../UI/UserImage/ImageSheetOptions";
 import { Portal } from "react-native-paper";
-import FormButtonsGroup from "../UI/Controls/FormButtonsGroup";
+import { useNavigation } from "@react-navigation/native";
 
 export default function UpdateProfile({
   isCommerce,
@@ -27,6 +27,8 @@ export default function UpdateProfile({
 }) {
   // Manejo de la imagen
   const sheetRef = useRef();
+
+  const navigation = useNavigation();
 
   const [cameraPermissions, requestCameraPermissions] = useCameraPermissions();
   const [galleryPermissions, requestGalleryPermissions] =
@@ -92,13 +94,23 @@ export default function UpdateProfile({
     onSubmit(values);
   }
 
+  function handleCancel() {
+    navigation.goBack();
+  }
+
+  const prev = "Cancelar";
+  const next = "Guardar";
+
   return (
     <DismissKeyboardContainer>
       <>
-        <ScrollView contentInset={{ bottom: 150 }}>
+        <ScrollView
+          contentInset={{ bottom: 150 }}
+          contentContainerStyle={styles.container}
+        >
           <View style={styles.imageContainer}>
             <UserImage
-              dimensions={160}
+              dimensions={130}
               isForm
               onPress={openImageOptions}
               source={takenImage && takenImage.uri}
@@ -109,19 +121,20 @@ export default function UpdateProfile({
               onSubmit={submitHandler}
               user={userData.user_data}
               commerce={userData.commerce_data}
+              prev={prev}
+              next={next}
+              handleCancel={handleCancel}
             />
           ) : (
             <UserProfileForm
               onSubmit={submitHandler}
               user={userData.user_data}
               celiac={userData.celiac_data}
+              prev={prev}
+              next={next}
+              handleCancel={handleCancel}
             />
           )}
-          <FormButtonsGroup
-            prev="Cancelar"
-            next="Guardar"
-            overallContainerStyle={styles.buttons}
-          />
         </ScrollView>
         <Portal>
           <BottomSheet ref={sheetRef} height={200}>
@@ -137,11 +150,11 @@ export default function UpdateProfile({
 }
 
 const styles = StyleSheet.create({
-  imageContainer: {
-    alignItems: "center",
+  container: {
+    gap: 14,
   },
 
-  buttons: {
-    paddingHorizontal: 50,
+  imageContainer: {
+    alignItems: "center",
   },
 });

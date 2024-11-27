@@ -3,8 +3,16 @@ import Form from "../UI/Forms/Form";
 import FormTitle from "../UI/Forms/FormTitle";
 import FormControl from "../UI/Controls/FormControl";
 import { Formik } from "formik";
+import FormButtonsGroup from "../UI/Controls/FormButtonsGroup";
 
-export default function CommerceProfileForm({ onSubmit, user, commerce }) {
+export default function CommerceProfileForm({
+  onSubmit,
+  user,
+  commerce,
+  handleCancel,
+  prev,
+  next,
+}) {
   function submitHandler(values) {
     onSubmit(values);
   }
@@ -98,6 +106,12 @@ export default function CommerceProfileForm({ onSubmit, user, commerce }) {
               handleBlur={handleBlur}
               //errors={errors.}
               //touched={touched.email}
+            />
+            <FormButtonsGroup
+              prev={prev}
+              onPrev={handleCancel}
+              next={next}
+              onNext={handleSubmit}
             />
           </Form>
         )}
