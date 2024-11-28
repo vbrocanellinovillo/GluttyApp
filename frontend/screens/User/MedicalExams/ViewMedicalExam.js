@@ -1,7 +1,6 @@
-import React, { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Colors } from "../../../constants/colors";
 import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
@@ -17,7 +16,6 @@ import {
 } from "../../../services/medicalExamService";
 import ContextualMenu from "../../../components/UI/contextualMenu";
 import GluttyModal from "../../../components/UI/GluttyModal";
-import MedicalStatistics from "./MedicalStatistics";
 import ViewMedicalExamSkeleton from "../../../components/UI/Loading/ViewMedicalExamSkeleton";
 import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 
@@ -31,30 +29,26 @@ export default function ViewMedicalExam({ navigation, route }) {
   const [showEliminarModal, setShowEliminarModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  console.log("LA RUTAAAA: ")
-  console.log(route)
   const id = route.params.id;
   const token = useSelector((state) => state.auth.accessToken);
 
-  useFocusEffect(
-    useCallback(() => {
-      const cargarEstudioMedico = async () => {
-        try {
-          setIsLoading(true);
-          const medicExam = await getMedicalExamById(id, token);
-          setMedicalExam(medicExam);
-        } catch (error) {
-          setIsError(true);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      if (id && token) {
-        cargarEstudioMedico();
+  useEffect(() => {
+    const cargarEstudioMedico = async () => {
+      try {
+        setIsLoading(true);
+        const medicExam = await getMedicalExamById(id, token);
+        setMedicalExam(medicExam);
+      } catch (error) {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
       }
-    }, [id, token])
-  );
+    };
+
+    if (id && token) {
+      cargarEstudioMedico();
+    }
+  }, [id, token]);
 
   // Función para manejar la eliminación
   async function handleDelete() {
@@ -84,17 +78,26 @@ export default function ViewMedicalExam({ navigation, route }) {
     try {
       setIsDeleting(true);
       const response = await deleteMedicalExam(id, token);
-      setMessage("Se eliminó el análisis.");  // Mensaje de confirmación de eliminación
-      setShowEliminarModal(false);  // Cerrar modal de confirmación de eliminación
-      setShowModal(true);  // Mostrar modal de que se eliminó el análisis
+      setMessage("Se eliminó el análisis."); // Mensaje de confirmación de eliminación
+      setShowEliminarModal(false); // Cerrar modal de confirmación de eliminación
+      setShowModal(true); // Mostrar modal de que se eliminó el análisis
     } catch (error) {
       setIsError(true);
-      setMessage(error.message);  // Si hay error, mostrar el mensaje de error
+      setMessage(error.message); // Si hay error, mostrar el mensaje de error
       setShowModal(true);
     } finally {
-      setIsDeleting(false);  // Detener la animación de carga
+      setIsDeleting(false); // Detener la animación de carga
     }
   }
+
+  function navigatePdf() {
+    navigation.navigate("PdfScreen", {
+      name: medicalExam?.pdf_info?.file_name,
+      url: medicalExam?.pdf_info?.url,
+    });
+  }
+
+  const hasPdf = medicalExam?.pdf_info !== undefined;
 
   return (
     <>
@@ -165,10 +168,11 @@ export default function ViewMedicalExam({ navigation, route }) {
             </View>
           </View>
 
-          {/* PDF */}
-          <View>
-            <Button style={styles.pdf}>Ver PDF</Button>
-          </View>
+          {hasPdf && (
+            <Button style={styles.pdf} onPress={navigatePdf}>
+              Ver PDF
+            </Button>
+          )}
 
           {/* VARIABLES */}
           <TextCommonsMedium style={styles.titleVarMed}>
@@ -177,7 +181,10 @@ export default function ViewMedicalExam({ navigation, route }) {
           <ScrollView style={styles.scrollview}>
             {medicalExam.variables.map((item) => (
               <View key={item.variable_name}>
-                {item.value === "Positivo" || item.value === "Negativo" || item.value === "NEGATIVO" || item.value === "POSITIVO"? (
+                {item.value === "Positivo" ||
+                item.value === "Negativo" ||
+                item.value === "NEGATIVO" ||
+                item.value === "POSITIVO" ? (
                   <FormSectionContainer>
                     <ValorPosNeg
                       label={item.variable_name}
@@ -270,16 +277,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.locro,
     marginLeft: 20,
+    marginTop: 30
   },
+
   pdf: {
-    marginTop: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    width: 350,
     backgroundColor: Colors.locro,
     borderRadius: 10,
     marginHorizontal: 20,
-    marginBottom: 30,
+    marginTop: 14,
   },
 });
