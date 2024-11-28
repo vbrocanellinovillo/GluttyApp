@@ -6,11 +6,11 @@ export default function PhotosContainer({ photos }) {
     <View>
       <DetailTitle>Fotos</DetailTitle>
       <ScrollView style={styles.photos} horizontal showsHorizontalScrollIndicator={false}>
-        {photos.map((photo, index) => (
+        {photos?.map((photo) => (
           <Image
-            source={{ uri: photo }}
+            source={{ uri: photo?.url }}
             style={styles.photo}
-            key={index}
+            key={photo?.id}
           />
         ))}
       </ScrollView>

@@ -29,6 +29,8 @@ export default function AnimatedInfoDetails({
   children,
   minimum,
   maximum,
+  disableGesture = false,
+  customHeight = undefined,
 }) {
   const height = useSharedValue(minimum ? minimum : MIN_HEIGHT);
   const [maxHeight, setMaxHeight] = useState(maximum ? maximum : MAX_HEIGHT);
@@ -85,11 +87,17 @@ export default function AnimatedInfoDetails({
               entering={FadeIn}
               exiting={FadeOut}
             />
-            <GestureDetector gesture={Pan}>
+            {disableGesture ? (
               <Animated.View style={[styles.container, animatedHeight]}>
                 {children}
               </Animated.View>
-            </GestureDetector>
+            ) : (
+              <GestureDetector gesture={Pan}>
+                <Animated.View style={[styles.container, animatedHeight]}>
+                  {children}
+                </Animated.View>
+              </GestureDetector>
+            )}
           </View>
         </Portal>
       )}

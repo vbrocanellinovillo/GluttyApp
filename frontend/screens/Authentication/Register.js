@@ -1,16 +1,13 @@
 import RegisterForm from "../../components/Authentication/RegisterForm";
-import { authActions } from "../../context/auth";
-import { login, register } from "../../services/userService";
+import { register } from "../../services/userService";
 import { useState } from "react";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { Colors } from "../../constants/colors";
 import GluttyModal from "../../components/UI/GluttyModal";
-import { useDispatch } from "react-redux";
 import { ImageBackground } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Register() {
-  //const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const [isloading, setisloading] = useState(false);
