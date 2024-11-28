@@ -8,18 +8,6 @@ import PhotosContainer from "./PhotosContainer";
 import DetailsGeneralInfo from "./DetailsGeneralInfo";
 import ErrorBranchDetails from "./ErrorBranchDetails";
 
-const PHOTOS = [
-  { photo: "http://dummyimage.com/227x100.png/5fa2dd/ffffff" },
-  { photo: "http://dummyimage.com/144x100.png/dddddd/000000" },
-  { photo: "http://dummyimage.com/243x100.png/ff4444/ffffff" },
-  { photo: "http://dummyimage.com/220x100.png/dddddd/000000" },
-  { photo: "http://dummyimage.com/178x100.png/dddddd/000000" },
-  { photo: "http://dummyimage.com/149x100.png/cc0000/ffffff" },
-];
-
-const DESCRIPTION =
-  "Esta es una descripción harcodeada que uso para probar hasta que suban los cambios en el back";
-
 export default function BranchDetails({ branch }) {
   if (!branch) return <ErrorBranchDetails />;
 
@@ -29,8 +17,8 @@ export default function BranchDetails({ branch }) {
         <View style={styles.imageContainer}>
           <Image
             source={{
-              uri: branch.commerce_picture
-                ? branch.commerce_picture
+              uri: branch?.commerce_picture
+                ? branch?.commerce_picture
                 : thumbGlutty,
             }}
             style={styles.image}
@@ -38,22 +26,22 @@ export default function BranchDetails({ branch }) {
         </View>
       </View>
       <TextCommonsMedium style={styles.commerceName}>
-        {branch.commerce_name}
+        {branch?.commerce_name}
       </TextCommonsMedium>
       <View style={styles.details}>
         <Divider />
         <DetailsGeneralInfo
-          address={branch.address}
-          phone={branch.phone}
-          optionalPhone={branch.optional_phone}
+          address={branch?.address}
+          phone={branch?.phone}
+          optionalPhone={branch?.optional_phone}
         />
         <Divider />
-        <PhotosContainer photos={branch.pictures} />
+        <PhotosContainer photos={branch?.photos} />
         <Divider />
         <AditionalInfo
-          onlyTakeAway={branch.just_takeaway}
-          separatedKitchen={branch.separated_kitchen}
-          description={branch.commerce_description}
+          onlyTakeAway={branch?.just_takeaway}
+          separatedKitchen={branch?.separated_kitchen}
+          description={branch?.commerce_description}
         />
       </View>
     </View>
