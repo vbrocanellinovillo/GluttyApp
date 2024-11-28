@@ -210,13 +210,13 @@ def get_branch(request):
             "longitude": branch.location.longitude,
             "separated_kitchen": branch.separated_kitchen,
             "just_takeaway": branch.just_takeaway,
+
         }
-        photos_data = []
-        branch_pictures = PictureBranch.objects.filter(branch=branch)
-        for picture in branch_pictures:
-            photos_data.append(picture.photo_url)
-        branch_data["pictures"] = photos_data
         
+        menus_data = [{"id": menu.id, "menu_url": menu.menu_url} for menu in branch.commerce.menu.all()]
+        branch_data["menus"] = menus_data
+        
+        branch_pictures = PictureBranch.objects.filter(branch=branch)
         # Agregar las fotos con los id
         photos_data = [{"id": picture.id, "url": picture.photo_url} for picture in branch_pictures if branch.is_active]
         branch_data["photos"] = photos_data

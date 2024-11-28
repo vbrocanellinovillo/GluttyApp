@@ -271,6 +271,7 @@ def get_analysis(request):
             pdf_info = {
                 "file_name": resource.get("display_name"),
                 "file_size_kb": round(resource.get("bytes", 0) / 1024, 2),  # Tamaño en KB
+                "url": analysis.url,
                 "id": analysis.id
             }
             analysis_data["pdf_info"] = pdf_info
