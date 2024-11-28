@@ -14,6 +14,7 @@ import PrivacityAndSecurity from "../../screens/Profile/PrivacityAndSecurity";
 import CommunityStack from "../Community/CommunityStack";
 import { Dashboard } from "../../screens/Commerce/Dashboard";
 import Map from "../../screens/User/Map/Map";
+import PrincipalHeader from "../../components/UI/Header/PrincipalHeader";
 
 export default function CommerceTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -78,15 +79,15 @@ export default function CommerceTabs() {
       type="DOWN"
       borderTopLeftRight
       bgColor={Colors.humita}
-      initialRouteName="Dashboard"
+      initialRouteName="Estadísticas"
       renderCircle={({ selectedTab, navigate }) => {
-        const isCommunity = selectedTab === "Dashboard";
+        const isDashboard = selectedTab === "Estadísticas";
         return (
           <View style={styles.btnCircleUp}>
-            <TouchableOpacity onPress={() => navigate("Dashboard")}>
+            <TouchableOpacity onPress={() => navigate("Estadísticas")}>
               <MaterialIcons
                 name="insights"
-                color={isCommunity ? Colors.mJordan : Colors.locro}
+                color={isDashboard ? Colors.mJordan : Colors.locro}
                 size={25}
               />
             </TouchableOpacity>
@@ -100,6 +101,11 @@ export default function CommerceTabs() {
         name="Estadísticas"
         component={Dashboard}
         position="CIRCLE"
+        options={{
+          header: ({ navigation, options }) => (
+            <PrincipalHeader navigation={navigation} options={options} />
+          ),
+        }}
       />
       <CurvedBottomBarExpo.Screen
         name="Home"
@@ -124,7 +130,6 @@ export default function CommerceTabs() {
         component={Map}
         options={{
           headerShown: false,
-          tabBarIcon: () => <FontAwesome6 name="map-location-dot" size={22} />,
         }}
       />
       <CurvedBottomBarExpo.Screen

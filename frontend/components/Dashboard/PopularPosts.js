@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
 
   postContainer: {
     borderRadius: 10,
+    paddingVertical: 10,
   },
 
   sliderContainer: {

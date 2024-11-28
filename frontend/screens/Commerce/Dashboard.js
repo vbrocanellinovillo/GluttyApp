@@ -1,10 +1,9 @@
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import BoxDashboard from "../../components/Dashboard/boxDashboard";
 import { comment, heart, star, fire } from "../../constants/imageIcons";
 import RankedBranches from "../../components/Dashboard/RankedBranches";
 import Combobox from "../../components/UI/Controls/Combobox";
 import { useEffect, useState } from "react";
-import { Colors } from "../../constants/colors";
 import LikesChart from "../../components/Dashboard/LikesChart";
 import { ScrollView } from "react-native-gesture-handler";
 import PoularPosts from "../../components/Dashboard/PopularPosts";
@@ -12,6 +11,7 @@ import { dataDashboard } from "../../services/dashboardService";
 import { useSelector } from "react-redux";
 import GluttyErrorScreen from "../../components/UI/GluttyErrorScreen";
 import DashboardSkeleton from "../../components/UI/Loading/DashboardSkeleton";
+import { smileGlutty } from "../../constants/glutty";
 
 export function Dashboard() {
   const tiempo = [
@@ -47,31 +47,27 @@ export function Dashboard() {
     } catch (error) {
       setIsError(true);
     } finally {
-       setIsLoading(false);
+      setIsLoading(false);
     }
   }
 
   async function updateData(time) {
     setIsLoading(true);
-    console.log(time)
-    
+
     try {
       const response = await dataDashboard(token, time);
       setSelectedTime(time);
       setDashData(response);
       setIsError(false);
-
     } catch (error) {
       setIsError(true);
     } finally {
-       setIsLoading(false);
+      setIsLoading(false);
     }
   }
 
-
   if (isLoading) {
-    // Hacer skeleton
-    return  <DashboardSkeleton/>;
+    return <DashboardSkeleton />;
   } else if (isError) {
     return (
       <GluttyErrorScreen width={240} height={240}>
@@ -82,7 +78,7 @@ export function Dashboard() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.comboContainer}>
+      <View style={styles.topContainer}>
         <Combobox
           placeholder="Última Semana"
           data={tiempo}
@@ -95,6 +91,7 @@ export function Dashboard() {
           style={styles.comboboxStyle}
           placeholderColor="#333"
         />
+        <Image source={{ uri: smileGlutty }} style={styles.image} />
       </View>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
@@ -152,8 +149,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  comboboxContainer: {
-    marginBottom: 50,
+  topContainer: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+    marginBottom: 14,
+  },
+
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
   },
 
   comboboxStyle: {
@@ -170,7 +176,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
-  
 
   comboContainer: {
     marginBottom: 20,
@@ -182,5 +187,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f5f5f5",
   },
-
 });
