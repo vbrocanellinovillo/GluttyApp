@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "600",
     color: Colors.mJordan,
   },

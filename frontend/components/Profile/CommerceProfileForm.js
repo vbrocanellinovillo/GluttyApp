@@ -30,22 +30,29 @@ export default function CommerceProfileForm({
           cuit: commerce.cuit,
           description: commerce.description,
         }}
-        validate={({ username, email, name }) => {
+        validate={({ username, email, name, cuit }) => {
           const errors = {};
-
+        
           if (username.trim() === "") {
             errors.username = "Nombre de usuario requerido";
           }
-
+        
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(email)) {
-            errors.email = "Email invalido";
+            errors.email = "Email inválido";
           }
-
+        
           if (name.trim() === "") {
             errors.name = "Nombre de comercio requerido";
           }
-          // FALTAN VALIDACIONES
+        
+          // Validación de CUIT
+          if (!cuit || cuit.trim() === "") {
+            errors.cuit = "CUIT requerido";
+          } else if (cuit.length != 11) {
+            errors.cuit = "CUIT de longitud inválida (debe tener 11 caracteres)";
+          }
+        
           return errors;
         }}
         onSubmit={submitHandler}
@@ -93,8 +100,8 @@ export default function CommerceProfileForm({
               name="cuit"
               handleChange={handleChange}
               handleBlur={handleBlur}
-              //errors={errors.email}
-              //touched={touched.email}
+              errors={errors.cuit}
+              touched={touched.cuit}
             />
 
             <FormControl

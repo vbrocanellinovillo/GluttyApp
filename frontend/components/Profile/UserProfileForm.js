@@ -12,7 +12,6 @@ import FormButtonsGroup from "../UI/Controls/FormButtonsGroup";
 const sexos = [
   { label: "Masculino", value: "MALE" },
   { label: "Femenino", value: "FEMALE" },
-  { label: "Otro", value: "OTHER" },
 ];
 
 export default function UserProfileForm({
@@ -42,42 +41,49 @@ export default function UserProfileForm({
             dateBirth: celiac?.date_birth,
             email: user?.email,
           }}
-          validate={({
-            username,
-            firstName,
-            lastName,
-            sex,
-            dateBirth,
-            email,
-          }) => {
+          validate={({ 
+            username, 
+            firstName, 
+            lastName, 
+            sex, 
+            dateBirth, 
+            email }) => {
             const errors = {};
+          
             if (username.trim() === "") {
               errors.username = "Nombre de usuario requerido";
             }
-
+          
             if (firstName.trim() === "") {
               errors.firstName = "Nombre requerido";
             }
-
+          
             if (lastName.trim() === "") {
               errors.lastName = "Apellido requerido";
             }
-
+          
             if (sex.trim() === "") {
               errors.sex = "Sexo requerido";
             }
-
-            if (dateBirth === undefined) {
+          
+            if (!dateBirth) {
               errors.dateBirth = "Fecha requerida";
+            } else {
+              const selectedDate = new Date(dateBirth);
+              const today = new Date();
+              if (selectedDate > today) {
+                errors.dateBirth = "Fecha inválida, mayor a la actual";
+              }
             }
-
+          
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-              errors.email = "Email invalido";
+              errors.email = "Email inválido";
             }
-
+          
             return errors;
           }}
+          
           onSubmit={submitHandler}
         >
           {({
