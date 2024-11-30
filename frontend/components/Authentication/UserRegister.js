@@ -7,10 +7,9 @@ import DatePicker from "../UI/Controls/DatePicker";
 import Button from "../UI/Controls/Button";
 import { Colors } from "../../constants/colors";
 import NavigationText from "../UI/Navigation/NavigationText";
-import { formatDateToYYYYMMDD } from "../../utils/dateFunctions";
-import { color } from "@rneui/base";
 import GluttyModal from "../UI/GluttyModal";
 import { useState } from "react";
+import { checkUsername } from "../../services/userService";
 
 const sexes = [
   { label: "Masculino", value: "MALE" },
@@ -47,6 +46,7 @@ export default function UserRegister({ onSubmit }) {
         repeatPassword,
       }) => {
         const errors = {};
+
         if (username.trim() === "") {
           errors.username = "Nombre de usuario requerido";
         }
@@ -101,8 +101,7 @@ export default function UserRegister({ onSubmit }) {
         }
 
         return errors;
-      }} 
-
+      }}
       onSubmit={submitHandler}
     >
       {({
@@ -124,6 +123,7 @@ export default function UserRegister({ onSubmit }) {
             errors={errors.username}
             touched={touched.username}
             autoCapitalize="none"
+            asyncValidation={checkUsername}
           />
           <FormControl
             label="Nombre"
@@ -145,20 +145,20 @@ export default function UserRegister({ onSubmit }) {
             touched={touched.lastName}
             autoCapitalize="words"
           />
-           <FormGroup>
-              <Combobox
-                data={sexes}
-                placeholder="Sexo"
-                onChange={(item) => {
-                  setFieldValue("sex", item);
-                  setModalVisible(true); // Muestra el modal
-                }}
-                value={values.sex}
-                touched={touched.sex}
-                errors={errors.sex}
-                name="sex"
-                handleBlur={handleBlur}
-              />
+          <FormGroup>
+            <Combobox
+              data={sexes}
+              placeholder="Sexo"
+              onChange={(item) => {
+                setFieldValue("sex", item);
+                setModalVisible(true); // Muestra el modal
+              }}
+              value={values.sex}
+              touched={touched.sex}
+              errors={errors.sex}
+              name="sex"
+              handleBlur={handleBlur}
+            />
             <DatePicker
               placeholder="Fecha nacimiento"
               onChange={(date) => setFieldValue("dateBirth", date)}
@@ -223,12 +223,12 @@ export default function UserRegister({ onSubmit }) {
             closeButton={false}
             buttons={[
               {
-            text: "Aceptar",
-            color: Colors.mJordan,
-            onPress: () => setModalVisible(false),
-          },
-        ]}
-        />
+                text: "Aceptar",
+                color: Colors.mJordan,
+                onPress: () => setModalVisible(false),
+              },
+            ]}
+          />
         </>
       )}
     </Formik>

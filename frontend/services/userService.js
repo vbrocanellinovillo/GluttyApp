@@ -216,3 +216,24 @@ export async function verifyCode(username, verificationCode) {
     throw new Error(error.message);
   }
 }
+
+export async function checkUsername(username) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+  };
+
+  const requestUrl = url + "check-username/";
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+
+    if (!response?.available) {
+      throw new Error("Ese nombre de usuario ya existe");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
