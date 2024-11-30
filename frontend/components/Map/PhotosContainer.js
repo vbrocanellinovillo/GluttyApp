@@ -1,31 +1,24 @@
-import { Image, ScrollView, StyleSheet, View } from "react-native";
-import DetailTitle from "./DetailTitle";
+import { Image, StyleSheet } from "react-native";
+import ElementsContainer from "./ElementsContainer";
 
-export default function PhotosContainer({ photos }) {
+export default function PhotosContainer({ photos = [] }) {
   return (
-    <View>
-      <DetailTitle>Fotos</DetailTitle>
-      <ScrollView style={styles.photos} horizontal showsHorizontalScrollIndicator={false}>
-        {photos?.map((photo) => (
-          <Image
-            source={{ uri: photo?.url }}
-            style={styles.photo}
-            key={photo?.id}
-          />
-        ))}
-      </ScrollView>
-    </View>
+    <ElementsContainer title="Fotos" items={photos}>
+      {photos?.map((photo) => (
+        <Image
+          key={photo?.id}
+          source={{ uri: photo?.url }}
+          style={styles.photo}
+        />
+      ))}
+    </ElementsContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  photos: {
-    marginTop: 4,
-  },
-
   photo: {
-    width: 130,
-    height: 160,
+    width: 100,
+    height: 110,
     objectFit: "fill",
     marginRight: 10,
   },

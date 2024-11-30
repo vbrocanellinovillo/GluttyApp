@@ -5,7 +5,7 @@ import DetailText from "./DetailText";
 export default function ServiceInfo({ children, containerStyle, textStyle }) {
   return (
     <View style={[styles.service, containerStyle]}>
-      <Ionicons name="checkmark-circle" size={25} color="green" />
+      <Ionicons name="checkmark-circle" size={22} color="green" />
       <DetailText style={textStyle}>{children}</DetailText>
     </View>
   );

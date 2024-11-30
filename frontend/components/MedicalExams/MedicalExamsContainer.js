@@ -9,6 +9,7 @@ import MedicalExamsSkeleton from "../UI/Loading/MedicalExamsSkeleton";
 import { Text } from "react-native";
 import GluttyErrorScreen from "../UI/GluttyErrorScreen";
 import { doctorGlutty, sadGlutty } from "../../constants/glutty";
+import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 
 export function MedicalExamsContainer({ isLoading, isError }) {
   const [exams, setExams] = useState([]);
@@ -50,32 +51,28 @@ export function MedicalExamsContainer({ isLoading, isError }) {
       height: 500,
       width: '100%',
       justifyContent: 'flex-start',
-      //justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
-     // backgroundColor: '#f8f9fa' // color suave para mejorar la apariencia
     }}>
       <Image 
         source={{uri:doctorGlutty}}
         style={{ width: 100, height: 100, marginBottom: 10, marginTop: 20, objectFit:"contain" }}
       />
-      <Text style={{
+      <TextCommonsMedium style={{
         fontSize: 18,
         fontWeight: 'bold',
         color: '#333',
         marginBottom: 10,
         textAlign: 'center'
       }}>
-        No tienes exámenes cargados por el momento
-      </Text>
+        Aún no hay estudios médicos cargados
+      </TextCommonsMedium>
     </View>
   }else{
     if (!loading && exams) {
       content = <MedicalExamsList medicalExams={exams.analysis} />;
      }
   }
-
-   
 
   return (
     <View style={styles.container}>

@@ -1,8 +1,9 @@
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
 import Button from "../UI/Controls/Button";
 import { useNavigation } from "@react-navigation/native";
+import { gluttyFeed } from "../../constants/glutty";
 
 export default function GluttyFeedButton() {
   const navigation = useNavigation();
@@ -13,14 +14,10 @@ export default function GluttyFeedButton() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.textContainer}>
-        <TextCommonsMedium style={[styles.text, styles.glutty]}>
-          Glutty
-        </TextCommonsMedium>
-        <TextCommonsMedium style={[styles.text, styles.feed]}>
-          Feed
-        </TextCommonsMedium>
-      </View>
+      <Image
+        source={{uri: gluttyFeed}}
+        style={styles.image}></Image>
+      
       <Button
         style={styles.button}
         textStyle={styles.buttonText}
@@ -40,7 +37,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    //marginTop: -10,
+    marginTop: -15,
   },
 
   textContainer: {
@@ -73,5 +70,13 @@ const styles = StyleSheet.create({
   buttonText: {
     color: Colors.whiteJordan,
     fontSize: 18,
+  },
+  image: {
+    width: 200,
+    height: 80,
+    objectFit: "contain",
+    marginLeft: 8,
+    marginTop: 8,
+    marginBottom: -5,
   },
 });

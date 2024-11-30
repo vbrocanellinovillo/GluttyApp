@@ -129,16 +129,19 @@ def register(request):
                     else:
                         print(celiac_serializer.errors)
                         # Si hay errores, lanzar excepción para que la transacción se revierta
-                        raise ValidationError(celiac_serializer.errors)
-                        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                        raise ValidationError(format_serializer_errors(celiac_serializer.errors))  # Formatear erroresraise ValidationError(celiac_serializer.errors)
+                        # return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
-                    raise ValidationError(f"Error al crear el perfil de celíaco: {str(e)}")
+                    raise ValidationError(e)
 
             # Respuesta de éxito
             return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
-        print(serializer.errors)
+        # print(serializer.errors)
+        # # Si el serializer.is_valid da error
+        # return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         # Si el serializer.is_valid da error
-        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        formatted_errors = format_serializer_errors(serializer.errors)  # Formatear errores
+        return Response({"error": formatted_errors}, status=status.HTTP_400_BAD_REQUEST)
     
     except ValidationError as e:
         # Si ocurre un error de validación, revertimos todo el proceso
@@ -147,6 +150,20 @@ def register(request):
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def format_serializer_errors(errors):
+    """
+    Convierte los errores del serializador en un formato de texto plano o una estructura amigable.
+    """
+    formatted_errors = []
+    for field, messages in errors.items():
+        if isinstance(messages, list):
+            for message in messages:
+                formatted_errors.append(f"{message}")
+        else:
+            formatted_errors.append(f"{messages}")
+    return formatted_errors
 
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})

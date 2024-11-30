@@ -191,7 +191,7 @@ SECURED_FIELDS_HASH_SALT = os.getenv("SECURED_FIELDS_HASH_SALT")
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "es"
 
 TIME_ZONE = "America/Argentina/Cordoba"
 
