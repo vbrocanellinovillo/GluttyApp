@@ -3,15 +3,15 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Picker from "../UI/Controls/Picker";
 import CheckboxControl from "../UI/Controls/CheckboxControl";
 
-const SchedulePicker = (schedules) => {
-//   const [schedules, setSchedules] = useState([
-//     {
-//       id: 1,
-//       day: "Lunes",
-//       startHour: "08:00",
-//       endHour: "20:00",
-//     },
-//   ]);
+const SchedulePicker = (    ) => {
+  const [schedules, setSchedules] = useState([
+    {
+      id: 1,
+      day: "Lunes",
+      startHour: "08:00",
+      endHour: "20:00",
+    },
+  ]);
   const [allSame, setAllSame] = useState(false); // Estado para el checkbox
 
   const daysOfWeek = [
@@ -43,12 +43,12 @@ const SchedulePicker = (schedules) => {
         // Genera un nuevo arreglo con los días de la semana
         const updatedSchedules = [
           { id: 1, day: "Lunes", startHour, endHour},
-          { day: "Martes", startHour, endHour },
-          { day: "Miércoles", startHour, endHour },
-          { day: "Jueves", startHour, endHour },
-          { day: "Viernes", startHour, endHour },
-          { day: "Sábado", startHour, endHour },
-          { day: "Domingo", startHour, endHour },
+          { id: 2, day: "Martes", startHour, endHour },
+          { id: 3,day: "Miércoles", startHour, endHour },
+          { id: 4, day: "Jueves", startHour, endHour },
+          { id: 5, day: "Viernes", startHour, endHour },
+          { id: 6, day: "Sábado", startHour, endHour },
+          { id: 7, day: "Domingo", startHour, endHour },
         ];
     
         // Actualiza el estado con los nuevos horarios
