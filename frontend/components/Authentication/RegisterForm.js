@@ -112,7 +112,7 @@ export default function RegisterForm({ onSubmit }) {
                 options={OPTIONS}
                 onSelect={selectOption}
                 selectedColor={Colors.humita}
-                defaultColor="white"
+                defaultColor="rgba(244, 244, 244, 0.6)"
               />
             </View>
             {selectedOption == 1 && <UserRegister onSubmit={submitHandler} />}
