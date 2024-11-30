@@ -1,5 +1,6 @@
 from django.db import models
 import datetime
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from sqlalchemy import null
@@ -85,6 +86,11 @@ class Celiac(models.Model):
     def calculateAge(self):
         today = date.today()
         return today.year - self.date_birth.year - ((today.month, today.day) < (self.date_birth.month, self.date_birth.day))
+    
+    def clean(self):
+        # Validar que la fecha de nacimiento sea menor que la fecha actual
+        if self.date_birth > date.today():
+            raise ValidationError("La fecha de nacimiento debe ser anterior a la fecha actual.")
     
 class Session(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="session")

@@ -1,3 +1,4 @@
+from datetime import date
 from rest_framework import serializers
 import re
 
@@ -9,3 +10,8 @@ def validate_password(value):
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', value):
         raise serializers.ValidationError("La contraseña debe contener al menos un carácter especial.")
     return value
+
+def validate_datebirth(datebirth):
+    if datebirth > date.today():
+            raise serializers.ValidationError("La fecha de nacimiento debe ser previa a la fecha actual.")
+    return datebirth

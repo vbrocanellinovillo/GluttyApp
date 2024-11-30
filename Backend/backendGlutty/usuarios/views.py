@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from django.shortcuts import render, get_object_or_404
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -79,6 +80,7 @@ def verify_code(request):
     else:
         return Response({"error": "Invalid or expired verification code."}, status=status.HTTP_400_BAD_REQUEST)
 
+# Vista para el registro
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @transaction.atomic
@@ -92,11 +94,9 @@ def register(request):
         if serializer.is_valid():
             # Guardar el usuario
             usuario = serializer.save()
-            
+
             # Manejar la imagen de perfil si se proporciona
             image = request.FILES.get('image')
-            print(str(image))
-            
             if image:
                 try:
                     picture_link, public_id = upload_to_cloudinary(image)
@@ -110,60 +110,64 @@ def register(request):
 
             # Validar si es comercio o persona y en base a eso realizar el registro
             if usuario.is_commerce:
-                try:
-                    commerce = Commerce.objects.create(
-                        user=usuario,
-                        name=request.data.get("name"),
-                        cuit=request.data.get("cuit"),
-                        description=request.data.get("description")
-                    )
-                    commerce.save()
-                except Exception as e:
-                    raise ValidationError(f"Error al crear el comercio: {str(e)}")
+                commerce = Commerce.objects.create(
+                    user=usuario,
+                    name=request.data.get("name"),
+                    cuit=request.data.get("cuit"),
+                    description=request.data.get("description")
+                )
+                commerce.save()
             else:
-                try:
-                    celiac_serializer = CeliacSerializer(data=request.data)
-                    if celiac_serializer.is_valid():
-                        # Guardar el usuario
-                        celiac_serializer.save(user=usuario)
-                    else:
-                        print(celiac_serializer.errors)
-                        # Si hay errores, lanzar excepción para que la transacción se revierta
-                        raise ValidationError(format_serializer_errors(celiac_serializer.errors))  # Formatear erroresraise ValidationError(celiac_serializer.errors)
-                        # return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-                except Exception as e:
-                    raise ValidationError(e)
+                # Validación de la fecha de nacimiento antes de guardar el celíaco
+                date_birth = datetime.strptime(request.data.get("date_birth"), '%Y-%m-%d').date()
+                if date_birth > date.today():
+                    usuario.delete()
+                    return Response({"error": "La fecha de nacimiento debe ser menor a la fecha actual."}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Crear el celíaco solo si la fecha es válida
+                celiac_serializer = CeliacSerializer(data=request.data)
+                if celiac_serializer.is_valid():
+                    celiac_serializer.save(user=usuario)
+                else:
+                    formatted_errors = format_serializer_errors(celiac_serializer.errors)
+                    raise ValidationError(formatted_errors)
 
-            # Respuesta de éxito
             return Response({"detail": "Usuario registrado correctamente."}, status=status.HTTP_201_CREATED)
-        # print(serializer.errors)
-        # # Si el serializer.is_valid da error
-        # return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        # Si el serializer.is_valid da error
+
         formatted_errors = format_serializer_errors(serializer.errors)  # Formatear errores
         return Response({"error": formatted_errors}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     except ValidationError as e:
-        # Si ocurre un error de validación, revertimos todo el proceso
-        if usuario:  # Solo cerramos la conexión si el usuario fue creado
-            usuario.delete()  # Eliminamos el usuario si hubo un error en el celíaco
+        # Manejo de errores de validación
+        if usuario:
+            usuario.delete()  # Eliminamos el usuario si hubo un error
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+# Función para tratar errores
 def format_serializer_errors(errors):
     """
-    Convierte los errores del serializador en un formato de texto plano o una estructura amigable.
+    Convierte los errores del serializador en un formato limpio para enviar.
     """
-    formatted_errors = []
-    for field, messages in errors.items():
-        if isinstance(messages, list):
-            for message in messages:
-                formatted_errors.append(f"{message}")
-        else:
-            formatted_errors.append(f"{messages}")
-    return formatted_errors
+    if isinstance(errors, dict):
+        formatted_errors = []
+        for field, messages in errors.items():
+            # Maneja listas de mensajes por campo
+            if isinstance(messages, list):
+                formatted_errors.append(' '.join(messages))
+            else:
+                formatted_errors.append(messages)
+        return ". ".join(formatted_errors)
+    elif isinstance(errors, list):
+        # Si es una lista de errores, únela en un string
+        return " ".join(errors)
+    else:
+        # Si es un string simple, devuélvelo tal cual
+        return str(errors)
+
 
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: UsuarioSerializer})

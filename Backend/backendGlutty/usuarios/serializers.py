@@ -1,5 +1,6 @@
+from django.forms import ValidationError
 from rest_framework import serializers
-from .validations import validate_password
+from .validations import validate_password, validate_datebirth
 from .models import *
 
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -46,9 +47,8 @@ class CeliacSerializer(serializers.ModelSerializer):
         model = Celiac
         fields = ['first_name', 'last_name', 'sex', 'date_birth']
     
-    def validate_date_birth(self, value):
-        # Verificar que la fecha de nacimiento sea anterior a la fecha actual
-        if value > date.today():
-            raise serializers.ValidationError("La fecha del análisis debe ser previa a la fecha actual.")
-        return value
-        
+    # def validate(self, data):
+    #     # Llamar a clean() para validar el objeto completo
+    #     instance = Celiac(**data)
+    #     instance.clean()  # Llamamos al método clean para que ejecute las validaciones
+    #     return data
