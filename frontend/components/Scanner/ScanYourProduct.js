@@ -1,6 +1,7 @@
 import { Image, StyleSheet } from "react-native";
 import DetailContainer from "./DetailContainer";
 import GradientText from "../UI/GradientText";
+import { scanner } from "../../constants/imageIcons";
 
 export default function ScanYourProduct() {
   return (
@@ -8,7 +9,7 @@ export default function ScanYourProduct() {
       <GradientText style={styles.title}>Escanea tus productos!</GradientText>
       <Image
         source={{
-          uri: "https://res.cloudinary.com/dksmkvi49/image/upload/v1721774401/sin-gluten_v4pqjx.webp",
+          uri: scanner,
         }}
         style={styles.image}
       />
