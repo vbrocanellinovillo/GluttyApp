@@ -213,8 +213,18 @@ def get_branch(request):
 
         }
         
-        menus_data = [{"id": menu.id, "menu_url": menu.menu_url} for menu in branch.commerce.menu.all()]
-        branch_data["menus"] = menus_data
+        branch_data["menus"] = []
+        
+        for menu in branch.commerce.menu.all():
+            if menu.menu_url:
+                resource = cloudinary.api.resource(menu.public_id, resource_type="image")
+                pdf_info = {
+                    "file_name": resource.get("display_name"),
+                    "file_size_kb": round(resource.get("bytes", 0) / 1024, 2),  # Tamaño en KB
+                    "url": menu.menu_url,
+                    "id": menu.id
+                }
+            branch_data["menus"].append(pdf_info)
         
         branch_pictures = PictureBranch.objects.filter(branch=branch)
         # Agregar las fotos con los id
