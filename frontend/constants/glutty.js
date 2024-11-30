@@ -5,7 +5,7 @@ export const sadGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1719530424/triste_edit-removebg-preview_uurefr.png";
 
 export const jumpingGlutty =
-  "https://res.cloudinary.com/dksmkvi49/image/upload/v1718920847/Glutty-saltando-unscreen_xmvdgw.gif";
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732977868/Glutty-saltando-2--unscreen_fxecar.gif";
 
 export const smileGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1732739381/smile_glutty_v9c9iy.webp";
