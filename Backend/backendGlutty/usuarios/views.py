@@ -85,7 +85,7 @@ def check_username_availability(request):
     """
     Endpoint para verificar si un nombre de usuario ya existe (POST).
     """
-    username = request.data.get("username"),
+    username = request.data.get("username")
     if not username:
         return Response({"error": "El nombre de usuario es obligatorio."}, status=status.HTTP_400_BAD_REQUEST)
     
