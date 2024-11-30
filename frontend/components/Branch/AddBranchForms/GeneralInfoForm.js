@@ -8,6 +8,8 @@ import CheckboxControl from "../../UI/Controls/CheckboxControl";
 import TextCommonsRegular from "../../UI/FontsTexts/TextCommonsRegular";
 import FormButtonsGroup from "../../UI/Controls/FormButtonsGroup";
 import PhoneInput from "../../UI/Controls/PhoneInput";
+import SchedulePicker from "../ScheduleComponent";
+import { useState } from "react";
 
 export default function GeneralInfoForm({ onNext, onCancel, branch }) {
   function submitHandler({
@@ -16,13 +18,25 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
     optionalPhone,
     separatedKitchen,
     onlyTakeAway,
+    schedules = [],
   }) {
     // Si el telefono solo es codigo de pais lo borro (maximo 3 caracteres por codigo, ademas del +)
     if (optionalPhone && optionalPhone?.trim().length < 5) {
       optionalPhone = "";
     }
-
-    onNext(name, phone, optionalPhone, separatedKitchen, onlyTakeAway);
+   console.log("Que ondaaa ", schedules)
+    onNext(name, phone, optionalPhone, separatedKitchen, onlyTakeAway,schedules);
+  }
+  const [schedules, setSchedules] = useState(schedules);
+  if (schedules == []) {
+    setSchedules([
+      {
+        id: 1,
+        day: "Lunes",
+        startHour: "08:00",
+        endHour: "20:00",
+      },
+    ])
   }
 
   //INITIAL VALUES TENGO QUE AGREGAR LOS VALORES CUANDO PASO LA BRANCH.
@@ -100,6 +114,9 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
                 handleBlur={handleBlur}
                 touched={touched.optionalPhone}
                 errors={errors.optionalPhone}
+              />
+              <SchedulePicker 
+                schedules = {schedules}
               />
               <View style={styles.checkboxServices}>
                 <TextCommonsRegular style={styles.checkboxServicesText}>

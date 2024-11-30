@@ -16,6 +16,9 @@ export default function Picker({
   buttonStyle,
   onValueChange,
   onPressButton,
+  cointainerStyle,
+  textStyle,
+  dropButton = true,
 }) {
   const [visible, setVisible] = useState(false);
   const [option, setOption] = useState(value);
@@ -41,13 +44,14 @@ export default function Picker({
       <Pressable
         onPress={toggleVisible}
         style={({ pressed }) =>
-          pressed ? [styles.container, styles.pressed] : [styles.container]
+          pressed ? [styles.container, styles.pressed, cointainerStyle] : [styles.container, cointainerStyle]
         }
       >
-        <TextCommonsRegular style={styles.valueText}>
+        <TextCommonsRegular style={[styles.valueText , textStyle]}>
           {value}
         </TextCommonsRegular>
-        <Ionicons name="chevron-down" color={Colors.mJordan} size={18} />
+        {dropButton && (
+        <Ionicons name="chevron-down" color={Colors.mJordan} size={15} />)}
       </Pressable>
       <BlurContainer
         visible={visible}
@@ -118,6 +122,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     paddingBottom: 14,
     paddingHorizontal: 18,
+    
   },
 
   button: {
