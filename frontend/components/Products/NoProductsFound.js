@@ -18,12 +18,12 @@ const styles = StyleSheet.create({
   gluttyContainer: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "flex-end",
+    alignItems: "center",
   },
 
   image: {
-    width: 300,
-    height: 300,
+    width: 180,
+    height: 190,
     objectFit: "contain",
   },
 });

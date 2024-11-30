@@ -30,23 +30,24 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 10,
     paddingHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: 15,
     backgroundColor: "#E3E3E3",
     shadowColor: "#1D1B20",
-    shadowOffset: { width: 1, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 2,
+    shadowOffset: { width: 0.5, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
     marginVertical: 16,
+    
   },
 
   name: {
-    fontSize: 25,
+    fontSize: 20,
     marginBottom: 10,
     fontWeight: "500",
   },
 
   brand: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "300",
   },
 

@@ -9,3 +9,6 @@ export const comment =
   
 export const fire =  
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1732303323/fueguitoo2x_n32vcv.webp";
+
+export const scanner = 
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732995400/scanner_dcn1sk.webp"

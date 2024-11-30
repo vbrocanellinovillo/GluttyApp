@@ -56,7 +56,7 @@ export function MedicalExamsContainer({ isLoading, isError }) {
     }}>
       <Image 
         source={{uri:doctorGlutty}}
-        style={{ width: 100, height: 100, marginBottom: 10, marginTop: 20, objectFit:"contain" }}
+        style={{ width: 120, height: 120, marginBottom: 10, marginTop: 20, objectFit:"contain" }}
       />
       <TextCommonsMedium style={{
         fontSize: 18,

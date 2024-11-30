@@ -184,8 +184,7 @@ export default function ProductsList({
   if (isError)
     content = (
       <GluttyErrorScreen width={250} height={250}>
-        Ocurrio un error al buscar las productos, por favor intente de nuevo mas
-        tarde
+        Ocurrió un error al buscar las productos, por favor intente de nuevamente
       </GluttyErrorScreen>
     );
 

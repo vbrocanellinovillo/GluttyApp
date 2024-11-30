@@ -39,8 +39,8 @@ export function getRecommendedChips(
     selectedChips = [
       isSelectedBrand(recommendedChips[0]),
       isSelectedBrand(recommendedChips[1]),
-      (handleSelects = [handleSelectBrand, handleSelectBrand]),
     ];
+    handleSelects = [handleSelectBrand, handleSelectBrand];
   }
 
   return { recommendedChips, selectedChips, handleSelects };
@@ -89,6 +89,8 @@ export default function RecommendedFilters({
           selectedChips[0] && {
             name: "close",
             type: "ionicon",
+            size: 18,
+            color: Colors.mJordan,
           }
         }
         iconRight
@@ -108,13 +110,15 @@ export default function RecommendedFilters({
           selectedChips[1] && {
             name: "close",
             type: "ionicon",
+            size: 18,
+            color: Colors.mJordan,
           }
         }
         iconRight
         iconContainerStyle={styles.chipIcon}
       />
       <TouchableOpacity onPress={toggleFiltersDialog}>
-        <Ionicons name="filter" size={24} />
+        <Ionicons name="filter" size={22} color={Colors.mJordan} />
       </TouchableOpacity>
     </View>
   );
@@ -125,23 +129,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingRight: 14,
+    paddingRight: 12,
     paddingBottom: 22,
-    gap: 24,
+    gap: 15,
   },
 
   chip: {
-    paddingHorizontal: 18,
+    paddingHorizontal: 8,
     backgroundColor: "white",
     flex: 1,
-    borderRadius: 4,
-    borderWidth: 0.3,
-    height: 50,
+    borderRadius: 22,
+    borderWidth: 0.9,
+    height: 51,
     justifyContent: "center",
+    marginLeft: 10,
   },
 
   chipText: {
-    fontSize: 12,
+    fontSize: 10, // Ajustado para mejor legibilidad
+    fontWeight: "",
     color: Colors.mJordan,
   },
 
@@ -150,7 +156,6 @@ const styles = StyleSheet.create({
   },
 
   chipIcon: {
-    height: 20,
-    top: "-2%",
+    marginLeft: 4, // Asegura un pequeño espacio entre el texto y el ícono
   },
 });
