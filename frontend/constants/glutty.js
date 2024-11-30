@@ -2,7 +2,7 @@ export const thumbGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1732740160/thumb_glutty_sxqtf7.webp";
 
 export const sadGlutty =
-  "https://res.cloudinary.com/dksmkvi49/image/upload/v1719530424/triste_edit-removebg-preview_uurefr.png";
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732995401/GLUTTY_DOC3x_bwu7r4.webp";
 
 export const jumpingGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1732977868/Glutty-saltando-2--unscreen_fxecar.gif";
@@ -14,7 +14,7 @@ export const superMarketGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1722470711/Fondo_de_pantalla_inicio_iz8lim.webp";
 
 export const mechanicGlutty =
-  "https://res.cloudinary.com/dksmkvi49/image/upload/v1722988056/mecanico_pqa9y9.webp";
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732979472/glutriste_pdqn2b.webp";
 
 export const userAddGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1723302406/Logo_Usuario_Add_cjk84p.webp";
@@ -35,4 +35,7 @@ export const gluttyChef =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1729978409/gluttyChef_irppsm.webp";
 
 export const gluttyTitulo =
-  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732742943/glutty_text_lg7ov9.webp"
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732742943/glutty_text_lg7ov9.webp";
+
+export const gluttyFeed = 
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732981425/glutty_feed_g0q7ci.webp";

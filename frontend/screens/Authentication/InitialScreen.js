@@ -4,6 +4,7 @@ import Button from "../../components/UI/Controls/Button";
 import TextCommonsRegular from "../../components/UI/FontsTexts/TextCommonsRegular";
 import { LinearGradient } from "expo-linear-gradient";
 import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
+import { gluttyTitulo } from "../../constants/glutty";
 
 export default function InitialScreen({ navigation }) {
   function login() {
@@ -21,7 +22,11 @@ export default function InitialScreen({ navigation }) {
       start={{ x: 1, y: 0.75 }}
       end={{ x: 0, y: 0.25 }}
     >
-      <TextCommonsMedium style={styles.gluttyText}>Glutty.</TextCommonsMedium>
+      {/*<TextCommonsMedium style={styles.gluttyText}>Glutty.</TextCommonsMedium>*/}
+      <Image
+      source={{uri: gluttyTitulo}}
+      style={styles.gluttyImage}
+      ></Image>
       <View style={styles.options}>
         <TextCommonsRegular style={styles.title}>
           Comencemos...
@@ -132,5 +137,12 @@ const styles = StyleSheet.create({
     overflow: "hidden", // Asegura que la imagen respete el borde redondeado
     resizeMode: "contain",
     marginTop: -17,
+  },
+  gluttyImage:{
+    marginTop: 90,
+    marginLeft: 15,
+    width: 300,
+    height: 100,
+    objectFit: "contain",
   },
 });

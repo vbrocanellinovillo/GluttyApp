@@ -150,6 +150,27 @@ def add_branch(request):
                 longitude=request.data.get("longitude"),
             )
             new_location.save()
+            
+            # Crear horarios para la nueva sucursal
+            schedules = request.data.get("schedules", [])
+            created_schedules = []
+            for schedule in schedules:
+                Schedule.objects.create(
+                    branch=new_branch,
+                    day=schedule["day"],
+                    min_time=schedule["min_time"],
+                    max_time=schedule["max_time"],
+                )
+                
+            new_schedules = new_branch.schedules.all()
+            created_schedules= [
+                {
+                    "day": new_schedule.get_day_display(),
+                    "min_time": new_schedule.min_time,
+                    "max_time": new_schedule.max_time,
+                }
+                for new_schedule in new_schedules
+            ]
 
             # Obtener los datos de la sucursal recién creada
             branch_data = {
@@ -162,6 +183,7 @@ def add_branch(request):
                 "longitude": new_location.longitude,
                 "separated_kitchen": new_branch.separated_kitchen,
                 "just_takeaway": new_branch.just_takeaway,
+                "schedules": created_schedules,
             }
             
             # Manejar imágenes de la sucursal 
@@ -197,6 +219,15 @@ def get_branch(request):
     
     try:
         branch = get_object_or_404(Branch, id=branch_id)
+        schedules = branch.schedules.all()
+        schedule_data = [
+            {
+                "day": schedule.get_day_display(),
+                "min_time": schedule.min_time,
+                "max_time": schedule.max_time,
+            }
+            for schedule in schedules
+        ]
         branch_data = {
             "commerce_name": branch.commerce.name,
             "commerce_picture": branch.commerce.user.profile_picture,
@@ -210,7 +241,8 @@ def get_branch(request):
             "longitude": branch.location.longitude,
             "separated_kitchen": branch.separated_kitchen,
             "just_takeaway": branch.just_takeaway,
-
+            "schedules": schedule_data,
+            "is_open_now": branch.is_open_now(),
         }
         
         branch_data["menus"] = []
@@ -281,6 +313,27 @@ def update_branch(request):
             location_serializer.save()
         else:
             return Response({"error": location_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Actualizar horarios
+        schedules = request.data.get("schedules", [])
+        
+        for schedule in schedules:
+            # Buscar si ya existe un horario para la misma sucursal y día
+            existing_schedule = branch.schedules.filter(day=schedule["day"]).first()
+
+            if existing_schedule:
+                # Si existe un horario para este día, actualízalo
+                existing_schedule.min_time = schedule["min_time"]
+                existing_schedule.max_time = schedule["max_time"]
+                existing_schedule.save()
+            else:
+                # Si no existe, crea un nuevo horario
+                Schedule.objects.create(
+                    branch=branch,
+                    day=schedule["day"],
+                    min_time=schedule["min_time"],
+                    max_time=schedule["max_time"],
+                )
         
         # Manejar eliminación de imágenes específicas
         image_ids_to_delete = request.data.get("image_ids_to_delete", "[]")  # Obtiene la cadena JSON

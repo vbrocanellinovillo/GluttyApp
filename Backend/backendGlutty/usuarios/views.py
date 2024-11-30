@@ -82,6 +82,22 @@ def verify_code(request):
 
 # Vista para el registro
 @api_view(['POST'])
+@permission_classes([AllowAny])  # Permitir que cualquiera acceda, incluso si no están autenticados
+def check_username_availability(request):
+    """
+    Endpoint para verificar si un nombre de usuario ya existe (POST).
+    """
+    username = request.data.get("username"),
+    if not username:
+        return Response({"error": "El nombre de usuario es obligatorio."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Verificar si el nombre de usuario ya existe en la base de datos
+    if User.objects.filter(username=username).exists():
+        return Response({"available": False, "message": "El nombre de usuario ya está en uso."}, status=status.HTTP_200_OK)
+    
+    return Response({"available": True, "message": "El nombre de usuario está disponible."}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
 @permission_classes([AllowAny])
 @transaction.atomic
 def register(request):

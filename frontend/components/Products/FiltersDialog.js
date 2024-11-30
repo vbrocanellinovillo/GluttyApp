@@ -145,7 +145,7 @@ export default function FiltersDialog({
             <Button
               mode="contained"
               onPress={submitSearch}
-              buttonColor={Colors.uva}
+              buttonColor={Colors.mJordan}
               textColor="white"
             >
               Buscar
@@ -153,8 +153,8 @@ export default function FiltersDialog({
             <Button
               mode="outlined"
               onPress={toggleFilters}
-              style={{ borderColor: Colors.uva }}
-              textColor={Colors.uva}
+              style={{ borderColor: Colors.mJordan }}
+              textColor={Colors.mJordan}
             >
               Cancelar
             </Button>
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
 
   subtitle: {
     color: Colors.mJordan,
-    fontSize: 25,
+    fontSize: 20,
     marginBottom: 6,
   },
 

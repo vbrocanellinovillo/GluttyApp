@@ -54,8 +54,8 @@ export default function ProductDetails({ product, onDismiss }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 40,
-    paddingTop: 120,
+    paddingHorizontal: 30,
+    paddingTop: 140,
   },
 
   detail: {
@@ -76,12 +76,15 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "white",
     borderRadius: 12,
+    marginBottom:10,
+    paddingBottom:5,
+    paddingTop:5,
   },
 
   shadow: {
     shadowColor: "black",
     shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.4,
     shadowRadius: 3,
   },
 
@@ -95,10 +98,11 @@ const styles = StyleSheet.create({
   tag: {
     backgroundColor: "green",
     borderRadius: 12,
-    paddingVertical: 5,
+    paddingVertical: 8,
     paddingHorizontal: 20,
     flexDirection: "row",
     gap: 10,
+    justifyContent: "center",
   },
 
   tagText: {
@@ -109,7 +113,7 @@ const styles = StyleSheet.create({
   info: {
     borderRadius: 12,
     backgroundColor: "white",
-    paddingVertical: 16,
+    paddingVertical: 20,
     paddingHorizontal: 12,
     gap: 10,
     overflow: "hidden",
@@ -120,6 +124,7 @@ const styles = StyleSheet.create({
     gap: 50,
     overflow: "hidden",
     marginBottom: 4,
+    fontStyle:"italic",
   },
 
   topInfoItem: {

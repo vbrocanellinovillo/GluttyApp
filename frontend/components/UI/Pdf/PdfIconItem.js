@@ -10,6 +10,7 @@ export default function PdfIconItem({
   textStyle,
   contentStyle,
   containerStyle,
+  ...props
 }) {
   return (
     <View style={[styles.container, containerStyle]}>
@@ -19,7 +20,7 @@ export default function PdfIconItem({
           size={iconSize || 32}
           color={iconColor || "red"}
         />
-        <TextCommonsRegular style={[styles.textStyle, textStyle]}>
+        <TextCommonsRegular style={[styles.textStyle, textStyle]} {...props}>
           {name}
         </TextCommonsRegular>
       </View>
