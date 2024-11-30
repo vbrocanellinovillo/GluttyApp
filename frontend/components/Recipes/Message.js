@@ -9,6 +9,9 @@ import TriangleResponse from "./TriangleResponse";
 import TimeText from "./TimeText";
 import { saveMessage } from "../../services/chatbotService";
 import { useSelector } from "react-redux";
+import { useState } from "react";
+import GluttyModal from "../UI/GluttyModal";
+import LoadingGlutty from "../UI/Loading/LoadingGlutty";
 
 export default function Message({
   message,
@@ -21,38 +24,69 @@ export default function Message({
 
   const isAnswer = message?.isAnswer;
 
+  const [isLoadingSave, setIsLoadingSave] = useState(false); // Estado para el botón guardar
+  const [modalVisible, setModalVisible] = useState(false); // Control del modal
+  const [modalMessage, setModalMessage] = useState(""); // Mensaje del modal
+  const [isErrorModal, setIsErrorModal] = useState(false); // Error en el modal
+
   async function handleSave() {
-    await saveMessage(message?.id, message?.content, token);
+    try {
+      setIsLoadingSave(true);
+      await saveMessage(message?.id, message?.content, token);
+      setModalMessage("Mensaje guardado correctamente.");
+      setIsErrorModal(false);
+      setModalVisible(true); // Mostrar el modal tras éxito
+      setIsLoadingSave(false)
+    } catch (error) {
+      setModalMessage(`Error al guardar: ${error.message}`);
+      setIsErrorModal(true);
+      setModalVisible(true); // Mostrar el modal en caso de error
+    } finally {
+      setIsLoadingSave(false);
+    }
   }
 
   return (
-    <Animated.View
-      style={{ alignItems: isAnswer ? "stretch" : "flex-end" }}
-      entering={FadeIn}
-    >
-      <Sender isAnswer={isAnswer} />
-      <View style={[styles.container, { width: isAnswer ? "90%" : "70%" }]}>
-        <MessageContent
-          isLoading={isLoading}
-          isError={isError}
-          isAnswer={isAnswer}
-          typing={isTyping}
-          handleFinishTyping={handleFinishTyping}
-          onSave={handleSave}
-        >
-          {message?.content}
-        </MessageContent>
-        <TriangleResponse isAnswer={isAnswer} />
-      </View>
-
-      <TimeText isAnswer={isAnswer}>{message?.time}</TimeText>
-
-      {isAnswer && (
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: gluttyChef }} style={styles.image} />
+    <>
+      <Animated.View
+        style={{ alignItems: isAnswer ? "stretch" : "flex-end" }}
+        entering={FadeIn}
+      >
+        <Sender isAnswer={isAnswer} />
+        <View style={[styles.container, { width: isAnswer ? "90%" : "70%" }]}>
+          <MessageContent
+            isLoading={isLoading}
+            isError={isError}
+            isAnswer={isAnswer}
+            typing={isTyping}
+            handleFinishTyping={handleFinishTyping}
+            onSave={handleSave}
+            //isLoadingSave={isLoadingSave} // Pasar el estado del botón guardar
+          >
+            {message?.content}
+          </MessageContent>
+          <TriangleResponse isAnswer={isAnswer} />
         </View>
-      )}
-    </Animated.View>
+
+        <TimeText isAnswer={isAnswer}>{message?.time}</TimeText>
+
+        {isAnswer && (
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: gluttyChef }} style={styles.image} />
+          </View>
+        )}
+      </Animated.View>
+
+      {/* Modal para el estado del guardado */}
+      <LoadingGlutty visible={isLoadingSave}></LoadingGlutty>
+      <GluttyModal
+        visible={modalVisible}
+        isError={isErrorModal}
+        message={modalMessage}
+        onClose={() => setModalVisible(false)} // Cerrar el modal
+        closeButton={true}
+      />
+    </>
   );
 }
 

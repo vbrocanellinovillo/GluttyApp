@@ -2,7 +2,7 @@ export const thumbGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1732740160/thumb_glutty_sxqtf7.webp";
 
 export const sadGlutty =
-  "https://res.cloudinary.com/dksmkvi49/image/upload/v1732995401/GLUTTY_DOC3x_bwu7r4.webp";
+  "https://res.cloudinary.com/dksmkvi49/image/upload/v1733005766/sad_glutty_again3x_klgzrs.webp";
 
 export const jumpingGlutty =
   "https://res.cloudinary.com/dksmkvi49/image/upload/v1732977868/Glutty-saltando-2--unscreen_fxecar.gif";
