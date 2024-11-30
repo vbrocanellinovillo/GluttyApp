@@ -55,6 +55,17 @@ class Branch(models.Model):
                 print("La imagen no se encontró.")
                 return False
         return True
+    
+    def is_open_now(self):
+        now = timezone.now()
+        current_day = now.isoweekday()  # 1=Lunes, 7=Domingo
+        current_time = now.time()
+
+        return self.schedules.filter(
+            day=current_day,
+            min_time__lte=current_time,
+            max_time__gte=current_time
+        ).exists()
 
 # Modelo LINKS FOTOS DE SUCURSAL
 class PictureBranch(models.Model):
