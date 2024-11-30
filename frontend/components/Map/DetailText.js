@@ -12,7 +12,7 @@ export default function DetailText({ children, style }) {
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 16,
+    fontSize: 14,
     color: Colors.mJordan,
   },
 });

@@ -7,8 +7,9 @@ import AditionalInfo from "./AditionalInfo";
 import PhotosContainer from "./PhotosContainer";
 import DetailsGeneralInfo from "./DetailsGeneralInfo";
 import ErrorBranchDetails from "./ErrorBranchDetails";
+import MenusContainer from "./MenusContainer";
 
-export default function BranchDetails({ branch }) {
+export default function BranchDetails({ branch, handlePdf }) {
   if (!branch) return <ErrorBranchDetails />;
 
   return (
@@ -37,6 +38,7 @@ export default function BranchDetails({ branch }) {
         />
         <Divider />
         <PhotosContainer photos={branch?.photos} />
+        <MenusContainer menus={branch?.menus} handlePdf={handlePdf} />
         <Divider />
         <AditionalInfo
           onlyTakeAway={branch?.just_takeaway}
@@ -68,24 +70,24 @@ const styles = StyleSheet.create({
     shadowColor: "black",
     shadowRadius: 5,
     shadowOpacity: 0.5,
-    elevation: 5
+    elevation: 5,
   },
 
   image: {
     width: "100%",
     height: "100%",
     borderRadius: 60,
-    objectFit: "contain",
+    resizeMode: "center"
   },
 
   commerceName: {
     textAlign: "center",
-    fontSize: 26,
+    fontSize: 22,
     color: Colors.mJordan,
   },
 
   details: {
     marginTop: 10,
-    gap: 18,
+    gap: 14,
   },
 });
