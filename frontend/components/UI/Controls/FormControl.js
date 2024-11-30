@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, ScrollView, Pressable } from "react-native";
 import { TextInput } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
 import TextCommonsMedium from "../FontsTexts/TextCommonsMedium";
 import * as Haptics from "expo-haptics";
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 export default function FormControl({
   label,
@@ -24,10 +24,31 @@ export default function FormControl({
   labelColor,
   editable = true, // Nueva propiedad editable con valor por defecto true
   autocompleteOptions = [], // que lleguen de la forma {id, name}
-  check = false
+  check = false,
+  asyncValidation = undefined,
 }) {
+  const [formErrors, setErrors] = useState(errors);
   const [hideText, setHideText] = useState(secure ? true : false);
   const [filteredOptions, setFilteredOptions] = useState([]);
+
+  useEffect(() => {
+    setErrors(errors);
+  }, [errors]);
+
+  useEffect(() => {
+    if (asyncValidation) {
+      validateAsync();
+    }
+  }, [value]);
+
+  async function validateAsync() {
+    try {
+      await asyncValidation(value);
+      setErrors("");
+    } catch (error) {
+      setErrors(error.message);
+    }
+  }
 
   const hasAutocomplete = autocompleteOptions.length > 0;
 
@@ -63,7 +84,7 @@ export default function FormControl({
           <Text
             style={{
               color:
-                touched && errors
+                touched && formErrors
                   ? Colors.redError
                   : labelColor
                   ? labelColor
@@ -78,7 +99,8 @@ export default function FormControl({
             ? [styles.formControl, styles.textarea, style]
             : [styles.formControl, style],
           {
-            borderColor: touched && errors ? Colors.redError : Colors.mJordan,
+            borderColor:
+              touched && formErrors ? Colors.redError : Colors.mJordan,
           },
         ]}
         secureTextEntry={hideText}
@@ -102,8 +124,10 @@ export default function FormControl({
           )
         }
       />
-      {errors && touched && <Text style={styles.errorText}>{errors}</Text>}
-      {check && touched && !errors && (
+      {formErrors && touched && (
+        <Text style={styles.errorText}>{formErrors}</Text>
+      )}
+      {check && touched && !formErrors && (
         <View style={styles.successContainer}>
           <Icon name="check-circle" size={20} color="green" />
           <Text style={styles.successMessage}>¡Suena bien!</Text>
@@ -153,7 +177,6 @@ const styles = StyleSheet.create({
     color: Colors.redError,
   },
 
-
   textarea: {
     minHeight: 100,
     paddingBottom: 30,
@@ -187,12 +210,12 @@ const styles = StyleSheet.create({
   },
 
   successContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
   },
   successMessage: {
-    color: 'green',
+    color: "green",
     marginLeft: 5,
     fontSize: 14,
   },
