@@ -7,9 +7,16 @@ export default function AditionalInfo({
   separatedKitchen,
   onlyTakeAway,
   description,
+  schedule = "FUNCA",
 }) {
   return (
     <>
+      {schedule && (
+        <View>
+          <DetailTitle>Horarios del negocio</DetailTitle>
+          <DetailText>{schedule}</DetailText>
+        </View>
+      )}
       {description && (
         <View>
           <DetailTitle>Descripción</DetailTitle>
