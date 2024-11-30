@@ -8,6 +8,7 @@ from .views import *
 urlpatterns = [
     path("users-list/", UsuarioAPIView.as_view(), name="users-list"),
     path("register/", register, name="register"),
+    path('check-username/', check_username_availability, name='check_username'),
     path("login/", login, name="login"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("update/<int:user_id>/", update, name="update"),
