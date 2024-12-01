@@ -6,7 +6,7 @@ import { scanner } from "../../constants/imageIcons";
 export default function ScanYourProduct() {
   return (
     <DetailContainer style={styles.container}>
-      <GradientText style={styles.title}>Escanea tus productos!</GradientText>
+      <GradientText style={styles.title}>Escaneá tus productos!</GradientText>
       <Image
         source={{
           uri: scanner,

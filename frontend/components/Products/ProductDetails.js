@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     gap: 50,
     overflow: "hidden",
     marginBottom: 4,
-    fontStyle:"italic",
+    
   },
 
   topInfoItem: {

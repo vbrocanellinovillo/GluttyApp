@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
 
   animatedIcon: {
     position: "absolute",
-    top: "40%",
+    top: "75",
     left: "45%",
   },
 });

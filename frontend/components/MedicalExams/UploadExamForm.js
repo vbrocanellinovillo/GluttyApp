@@ -13,7 +13,7 @@ export default function UploadExamForm({ onCancel, onOmit, onReadPdf }) {
     <View style={styles.container}>
       <View style={styles.section}>
         <TextCommonsMedium style={styles.title}>
-          Carga automatica los valores con el .pdf de tu examen
+          Carga automática de estudio médico cargando el resultado en .pdf (opcional)
         </TextCommonsMedium>
         <DocumentPickerControl onPickDocument={handleDocumentPick} />
       </View>
@@ -41,8 +41,9 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 28,
+    fontSize: 25,
     color: Colors.mJordan,
     textAlign: "center",
+    //fontStyle: "italic",
   },
 });

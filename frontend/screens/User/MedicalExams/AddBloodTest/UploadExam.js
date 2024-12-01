@@ -70,7 +70,7 @@ export default function UploadExam({ navigation }) {
     // Agregarle boton para volver a eso
     return (
       <GluttyErrorScreen height={200} width={200}>
-        Ocurrio un error. Por favor intente cargar su estudio más tarde
+        Ocurrió un error. Por favor intente cargar su estudio más tarde
       </GluttyErrorScreen>
     );
   }
@@ -81,7 +81,7 @@ export default function UploadExam({ navigation }) {
       <GluttyModal
         visible={isError}
         isError={true}
-        message="Ocurrio un error al leer el pdf. Se continuará con la carga manual"
+        message="Ocurrió un error al leer el pdf. Se continuará con la carga manual"
         onClose={closeModalHandler}
       />
       <UploadExamForm onCancel={cancel} onOmit={skip} onReadPdf={readPdf} />

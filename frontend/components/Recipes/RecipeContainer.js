@@ -21,8 +21,9 @@ export default function RecipeContainer({ title, message, created_at, onDelete }
             )}
             {expanded && (
                 <TouchableOpacity onPress={onDelete} style={styles.deleteIcon}>
-                    <Ionicons name="trash-outline" size={20} color="#ff3333" />
+                    <Ionicons name="trash-outline" size={22} color="#ff3333" />
                 </TouchableOpacity>
+
             )}
         </TouchableOpacity>
     );
