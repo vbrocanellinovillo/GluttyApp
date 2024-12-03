@@ -345,3 +345,29 @@ export async function deletePost(id, token) {
     throw new Error(error.message);
   }
 }
+
+export async function deleteComment(id, token) {
+  const requestUrl = url + "delete-comment/";
+
+  const formdata = new FormData();
+
+  formdata.append("id", id);
+
+  formdata.append("token", token);
+
+  const requestOptions = {
+    method: "DELETE",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}

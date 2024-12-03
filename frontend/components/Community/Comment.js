@@ -1,9 +1,20 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // Asegúrate de tener instalado @expo/vector-icons
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import TextCommonsRegular from "../UI/FontsTexts/TextCommonsRegular";
+import { useState } from "react";
+import GluttyModal from "../UI/GluttyModal";
+import { ErrorMessage } from "formik";
+import { Colors } from "../../constants/colors";
+import { deleteComment } from "../../services/communityService";
 
-export default function Comment({ comment, is_mine }) {
+export default function Comment({ comment, is_mine, token }) {
+  const [visible, setIsVisible] = useState(false);
+  const [showEliminarModal, setShowEliminarModal] = useState(false);
+  const [error, setIsError] = useState(false);
+  const [errorMessage, setMessage] = useState(false);
+  const [modalExito, setModalExito] = useState(false);
+
   function formatDateTime(isoDate) {
     const date = new Date(isoDate);
 
@@ -20,6 +31,33 @@ export default function Comment({ comment, is_mine }) {
     // Formatear en "YYYY-MM-DD HH:mm:ss"
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
+
+  async function handleConfirmDelete(id) {
+    try {
+      //setIsLoading(true);
+      const response = await deleteComment(id, token);
+      setMessage("El post fue eliminado con éxito");
+      setModalExito(true);
+    } catch (error) {
+      setIsError(true);
+      setMessage(error.message || "Error desconocido"); // Maneja errores también
+      setModalExito(true);
+      console.log(error.message);
+    } finally {
+      //setIsLoading(false);
+    }
+    setShowEliminarModal(false);
+  }
+
+  function closeModalDeleteHandler(){
+    setShowEliminarModal(false)
+  }
+
+  function closeModalHandler() {
+    setModalExito(false);
+  }
+
+  console.log("comentario", comment);
   return (
     <View style={styles.commentContainer}>
       <View style={styles.header}>
@@ -57,6 +95,40 @@ export default function Comment({ comment, is_mine }) {
       <TextCommonsRegular style={styles.date}>
         {formatDateTime(comment.created_at)}
       </TextCommonsRegular>
+
+      {/* Icono de tacho de basura si el comentario es del usuario */}
+      {is_mine && (
+        <TouchableOpacity
+          style={styles.trashIcon}
+          onPress={() => {
+            // Llama al Glutty Modal
+            setShowEliminarModal(true);
+          }}
+        >
+          <Ionicons name="trash-outline" size={20} color="#ff3333" />
+        </TouchableOpacity>
+      )}
+      <GluttyModal
+        visible={showEliminarModal}
+        onClose={closeModalDeleteHandler}
+        message="¿Seguro que desea eliminar el comentario?"
+        other
+        buttons={[
+          {
+            text: "Confirmar",
+            bg: "green",
+            color: Colors.whiteGreen,
+            onPress: () => handleConfirmDelete(comment.comment_id)
+          },
+        ]}
+        closeButtonText="Cancelar"
+      />
+      <GluttyModal
+        isError={error}
+        message={errorMessage}
+        onClose={closeModalHandler}
+        visible={modalExito}
+      />
     </View>
   );
 }
@@ -109,5 +181,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginTop: 15,
     marginLeft: 220,
+  },
+  trashIcon: {
+    position: "absolute",
+    top: 10,
+    right: 15,
+    zIndex: 1, // Asegura que esté sobre otros elementos
   },
 });

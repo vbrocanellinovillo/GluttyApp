@@ -27,6 +27,9 @@ export default function ViewPostById({ route, navigation }) {
 
   const id = route.params?.id;
   const token = useSelector((state) => state.auth.accessToken);
+  const username = useSelector((state) => state.auth.userData.username);
+
+  let is_mine = false;
 
   function closeModalHandler() {
     setShowModal(false);
@@ -118,11 +121,11 @@ if (isLoading) {
         {/* Mostrar los comentarios */}
         {post?.comments?.length > 0 ? (
           post.comments.map((comment, index) => (
-            <Comment key={index} comment={comment} />
+            is_mine = comment.user === username,
+            <Comment key={index} comment={comment} is_mine={is_mine} token={token} />
           ))
         ) : (
-          <TextCommonsRegular style={styles.noComments}>
-            
+          <TextCommonsRegular style={styles.noComments}>    
           </TextCommonsRegular>
         )}
 
