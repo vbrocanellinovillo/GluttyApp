@@ -86,6 +86,13 @@ if (isLoading) {
       return <ConsultarPostSkeleton />;
   }
 
+  function handleDeleteComment(commentId) {
+    setPost((prevPost) => ({
+      ...prevPost,
+      comments: prevPost.comments.filter((comment) => comment.comment_id !== commentId),
+    }));
+  }
+
   return (
     <>
       <GluttyModal
@@ -122,7 +129,7 @@ if (isLoading) {
         {post?.comments?.length > 0 ? (
           post.comments.map((comment, index) => (
             is_mine = comment.user === username,
-            <Comment key={index} comment={comment} is_mine={is_mine} token={token} />
+            <Comment key={index} comment={comment} is_mine={is_mine} token={token} onDelete={handleDeleteComment}/>
           ))
         ) : (
           <TextCommonsRegular style={styles.noComments}>    

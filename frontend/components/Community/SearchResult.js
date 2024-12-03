@@ -28,7 +28,7 @@ export default function SearchResult({
     >
       <Ionicons
         name={icon}
-        size={24}
+        size={22}
         color={Colors.mJordan}
         style={iconStyle}
       />

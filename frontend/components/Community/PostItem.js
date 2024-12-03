@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   },
 
   date: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "400",
     color: "grey",
   },

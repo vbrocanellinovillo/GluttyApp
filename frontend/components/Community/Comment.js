@@ -8,7 +8,7 @@ import { ErrorMessage } from "formik";
 import { Colors } from "../../constants/colors";
 import { deleteComment } from "../../services/communityService";
 
-export default function Comment({ comment, is_mine, token }) {
+export default function Comment({ comment, is_mine, token, onDelete }) {
   const [visible, setIsVisible] = useState(false);
   const [showEliminarModal, setShowEliminarModal] = useState(false);
   const [error, setIsError] = useState(false);
@@ -38,6 +38,7 @@ export default function Comment({ comment, is_mine, token }) {
       const response = await deleteComment(id, token);
       setMessage("El post fue eliminado con éxito");
       setModalExito(true);
+      onDelete && onDelete(id);
     } catch (error) {
       setIsError(true);
       setMessage(error.message || "Error desconocido"); // Maneja errores también
