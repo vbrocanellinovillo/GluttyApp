@@ -117,6 +117,7 @@ export default function Feed({ navigation }) {
         unfocus
         disableKeyboard
         style={searchbarStyle}
+        placeholder="Búsqueda de etiquetas..."
       />
       <ButtonsOptions
         options={OPTIONS}

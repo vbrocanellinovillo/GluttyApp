@@ -80,7 +80,7 @@ export default function Searchbar({
 const styles = StyleSheet.create({
   search: {
     backgroundColor: "white",
-    paddingHorizontal: 20,
+    paddingHorizontal: 18,
     paddingVertical: 5,
     borderRadius: 10,
     fontSize: 26,
