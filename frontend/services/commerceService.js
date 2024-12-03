@@ -107,7 +107,8 @@ export async function getPdfById(id, token) {
 
 export async function addBranch(branch, token) {
   const requestUrl = url + "add-branch/";
-
+  console.log("deja de llorar:")
+  console.log(branch.schedules)
   const formdata = new FormData();
 
   formdata.append("name", branch.name);
@@ -117,6 +118,13 @@ export async function addBranch(branch, token) {
     "separated_kitchen",
     branch.separatedKitchen ? "True" : "False"
   );
+  branch.schedules.forEach((schedule) => {
+    formdata.append("schedules", {
+      day: schedule.day || "1",
+      min_time: schedule.min_time || "08:00:00",
+      max_time: schedule.max_time || "20:00:00",
+    });
+  });
   formdata.append("just_takeaway", branch.onlyTakeAway ? "True" : "False");
   formdata.append("address", branch.address);
   formdata.append("latitude", branch.coordinates.latitude);
@@ -131,6 +139,10 @@ export async function addBranch(branch, token) {
       });
     });
   }
+  console.log("Formdata")
+  console.log(formdata)
+  console.log("FormData Schedules:");
+  console.log(formdata.getAll("schedules")); 
 
   const requestOptions = {
     method: "POST",

@@ -6,6 +6,7 @@ export default function GeneralInfo({ navigation }) {
     name,
     phone,
     optionalPhone,
+    schedules,
     separatedKitchen,
     onlyTakeAway
   ) {
@@ -13,6 +14,7 @@ export default function GeneralInfo({ navigation }) {
       name,
       phone,
       optionalPhone,
+      schedules,
       separatedKitchen,
       onlyTakeAway
     );

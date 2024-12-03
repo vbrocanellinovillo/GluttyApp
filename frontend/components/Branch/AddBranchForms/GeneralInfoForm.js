@@ -12,34 +12,54 @@ import SchedulePicker from "../ScheduleComponent";
 import { useState } from "react";
 
 export default function GeneralInfoForm({ onNext, onCancel, branch }) {
-  function submitHandler({
-    name,
-    phone,
-    optionalPhone,
-    separatedKitchen,
-    onlyTakeAway,
-    schedules = [],
-  }) {
-    // Si el telefono solo es codigo de pais lo borro (maximo 3 caracteres por codigo, ademas del +)
-    if (optionalPhone && optionalPhone?.trim().length < 5) {
-      optionalPhone = "";
-    }
-   console.log("Que ondaaa ", schedules)
-    onNext(name, phone, optionalPhone, separatedKitchen, onlyTakeAway,schedules);
-  }
-  const [schedules, setSchedules] = useState(schedules);
-  if (schedules == []) {
-    setSchedules([
+  const [schedules, setSchedules] = useState(
+    branch?.schedules || [
       {
         id: 1,
         day: "Lunes",
         startHour: "08:00",
         endHour: "20:00",
       },
-    ])
+    ]
+  );
+
+
+  function submitHandler({
+    name,
+    phone,
+    optionalPhone,
+    separatedKitchen,
+    onlyTakeAway,
+  }) {
+    const form_schedules = formatearSchedules(schedules)
+    console.log("jorariross: ", form_schedules)
+    
+
+    if (optionalPhone && optionalPhone?.trim().length < 5) {
+      optionalPhone = "";
+    }
+    console.log("formateooo: ", form_schedules)
+    onNext(name, phone, optionalPhone,form_schedules, separatedKitchen, onlyTakeAway);
   }
 
-  //INITIAL VALUES TENGO QUE AGREGAR LOS VALORES CUANDO PASO LA BRANCH.
+  function formatearSchedules(schedules){
+    const daysOfWeekMapping = {
+      Lunes: "1",
+      Martes: "2",
+      Miércoles: "3",
+      Jueves: "4",
+      Viernes: "5",
+      Sábado: "6",
+      Domingo: "7",
+    };
+  
+    return schedules.map(({ day, startHour, endHour }) => ({
+      day: daysOfWeekMapping[day],
+      min_time: `${startHour}:00`,
+      max_time: `${endHour}:00`,
+      }))
+  }
+
   return (
     <DismissKeyboardContainer>
       <ScrollView contentContainerStyle={styles.container}>
@@ -51,24 +71,14 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
             separatedKitchen: branch?.separated_kitchen || "",
             onlyTakeAway: branch?.just_takeaway || "",
           }}
-          validate={({
-            name,
-            phone,
-            optionalPhone,
-            separatedKitchen,
-            onlyTakeAway,
-          }) => {
+          validate={(values) => {
             const errors = {};
-
-            if (name?.trim() === "") {
+            if (values.name?.trim() === "") {
               errors.name = "Nombre requerido";
             }
-
-            // Ver de cuantos números tiene que ser el telefono
-            if (phone?.trim().length < 7 || phone.trim().length > 15) {
+            if (values.phone?.trim().length < 7 || values.phone.trim().length > 15) {
               errors.phone = "Se requiere al menos un número de teléfono";
             }
-
             return errors;
           }}
           onSubmit={submitHandler}
@@ -115,8 +125,9 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
                 touched={touched.optionalPhone}
                 errors={errors.optionalPhone}
               />
-              <SchedulePicker 
-                schedules = {schedules}
+              <SchedulePicker
+                schedules={schedules}
+                setSchedules={setSchedules}
               />
               <View style={styles.checkboxServices}>
                 <TextCommonsRegular style={styles.checkboxServicesText}>
@@ -150,6 +161,7 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
     </DismissKeyboardContainer>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
