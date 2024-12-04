@@ -228,6 +228,7 @@ def get_branch(request):
         schedules = branch.schedules.all()
         schedule_data = [
             {
+                "id": schedule.id,
                 "day": schedule.get_day_display(),
                 "min_time": schedule.min_time,
                 "max_time": schedule.max_time,
@@ -321,20 +322,33 @@ def update_branch(request):
             return Response({"error": location_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
         # Actualizar horarios
-        schedules = request.data.get("schedules", [])
-        
+        schedules = request.data.get("schedules", "[]")
+        print(schedules)
+        try:
+            schedules = json.loads(schedules)  # Convierte la cadena JSON en un array de Python
+        except json.JSONDecodeError:
+            schedules = []  # En caso de error, asignar un array vacío
+        print(schedules)
+        if schedules:
+            branch.deleteSchedules()
         for schedule in schedules:
             # Buscar si ya existe un horario para la misma sucursal y día
-            existing_schedule = branch.schedules.filter(day=schedule["day"]).first()
-
-            if existing_schedule:
-                # Si existe un horario para este día, actualízalo
-                existing_schedule.min_time = schedule["min_time"]
-                existing_schedule.max_time = schedule["max_time"]
-                existing_schedule.save()
-            else:
-                # Si no existe, crea un nuevo horario
-                Schedule.objects.create(
+            # existing_schedule = branch.schedules.filter(day=schedule["day"]).first()
+                    
+            # if existing_schedule:
+            #     # Si existe un horario para este día, actualízalo
+            #     existing_schedule.min_time = schedule["min_time"]
+            #     existing_schedule.max_time = schedule["max_time"]
+            #     existing_schedule.save()
+            # else:
+            #     # Si no existe, crea un nuevo horario
+            #     Schedule.objects.create(
+            #         branch=branch,
+            #         day=schedule["day"],
+            #         min_time=schedule["min_time"],
+            #         max_time=schedule["max_time"],
+            #     )
+            Schedule.objects.create(
                     branch=branch,
                     day=schedule["day"],
                     min_time=schedule["min_time"],

@@ -49,6 +49,9 @@ class Comment(models.Model):
     content = models.CharField(max_length=300, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        ordering = ["-created_at"]
+    
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="favorites")

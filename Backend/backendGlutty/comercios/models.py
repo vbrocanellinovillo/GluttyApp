@@ -66,6 +66,11 @@ class Branch(models.Model):
             min_time__lte=current_time,
             max_time__gte=current_time
         ).exists()
+    
+    def deleteSchedules(self):
+        schedules = self.schedules.all()
+        for schedule in schedules:
+            schedule.delete()
 
 # Modelo LINKS FOTOS DE SUCURSAL
 class PictureBranch(models.Model):

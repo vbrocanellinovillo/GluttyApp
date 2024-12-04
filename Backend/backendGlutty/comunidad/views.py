@@ -14,6 +14,7 @@ from django.core.paginator import Paginator
 from spanlp.palabrota import Palabrota
 import re
 from spanlp.domain.strategies import RemovePunctuation, RemoveNumbers, Preprocessing, JaccardIndex, CosineSimilarity, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
+from datetime import datetime, timedelta
 
 palabrota = Palabrota(
     exclude=["huevo", "huevos", "hoyo", "negro", "negra", "gallina", "guiso", "tirar", 
@@ -109,7 +110,57 @@ def create_post(request):
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
+
+def format_time(timestamp):
+    """
+    Formatea un timestamp y devuelve un tiempo relativo ('hace X minutos', etc.)
+    o una fecha formateada. Soporta tanto strings ISO 8601 como objetos datetime.
+    """
+    # Si el timestamp ya es un objeto datetime, no necesita conversión
+    if isinstance(timestamp, datetime):
+        date_time = timestamp
+    elif isinstance(timestamp, str):
+        # Si es un string, convertirlo a datetime
+        try:
+            date_time = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+        except ValueError as e:
+            raise ValueError(f"El timestamp '{timestamp}' no es válido. Error: {e}")
+    else:
+        raise ValueError("El timestamp debe ser un string ISO 8601 o un objeto datetime.")
+
+    # Obtener el tiempo actual con la misma zona horaria
+    now = datetime.now(date_time.tzinfo)
+
+    # Calcular la diferencia entre el tiempo actual y el timestamp
+    delta = now - date_time
+
+    # Formatear el tiempo en un string relativo
+    if delta < timedelta(minutes=1):
+        seconds = int(delta.total_seconds())
+        return f"Hace {seconds} segundos"
+    elif delta < timedelta(hours=1):
+        if (delta.total_seconds() // 60) == 1:
+            return f"Hace 1 minuto"
+        else:    
+            minutes = int(delta.total_seconds() // 60)
+            return f"Hace {minutes} minutos"
+    elif delta < timedelta(days=1):
+        if (delta.total_seconds() // 3600) == 1:
+            return f"Hace 1 hora"
+        else:
+            hours = int(delta.total_seconds() // 3600)
+            return f"Hace {hours} horas"
+    elif delta < timedelta(days=2):
+        return "Hace 1 día"
+    elif delta < timedelta(days=3):
+        return "Hace 2 días"
+    elif delta < timedelta(days=4):
+        return "Hace 3 días"
+    else:
+        return date_time.strftime("%H:%M - %d/%m/%Y")
+
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_post_by_id(request):
@@ -135,7 +186,7 @@ def get_post_by_id(request):
             "name": Post.get_name(post.user),
             "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
             "body": post.body,
-            "created_at": post.created_at,
+            "created_at": format_time(post.created_at),
             "likes": post.likes_number,
             "user_liked": user_liked,  # Indica si el usuario actual ha dado like al post
             "user_faved": user_faved,
@@ -148,7 +199,7 @@ def get_post_by_id(request):
                     "name": Post.get_name(comment.user),
                     "profile_picture": comment.user.profile_picture if comment.user.profile_picture else None,
                     "content": comment.content,
-                    "created_at": comment.created_at
+                    "created_at": format_time(comment.created_at)
                 }
                 for comment in post.comments.all()
             ],
@@ -244,7 +295,7 @@ def add_comment(request):
             "name": Post.get_name(comment.user),
             "profile_picture": profile_picture,
             "content": comment.content,
-            "created_at": comment.created_at,
+            "created_at": format_time(comment.created_at),
         }
         
         connection.close()
@@ -325,7 +376,7 @@ def get_favorites(request):
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
                 "body": post.body,
-                "created_at": post.created_at,
+                "created_at": format_time(post.created_at),
                 "likes": post.likes_number,
                 "user_liked": user_liked,
                 "user_faved": user_faved,
@@ -378,7 +429,7 @@ def get_my_posts(request):
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
                 "body": post.body,
-                "created_at": post.created_at,
+                "created_at": format_time(post.created_at),
                 "likes": post.likes_number,
                 "comments_number": post.comments_number,
                 "user_liked": user_liked,
@@ -438,7 +489,7 @@ def get_recent_posts(request):
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
                 "body": post.body,
-                "created_at": post.created_at,
+                "created_at": format_time(post.created_at),
                 "likes": post.likes_number,
                 "comments_number": post.comments_number,
                 "user_liked": user_liked,
@@ -496,7 +547,7 @@ def get_popular_posts(request):
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
                 "body": post.body,
-                "created_at": post.created_at,
+                "created_at": format_time(post.created_at),
                 "likes": post.likes_number,
                 "comments_number": post.comments_number,
                 "user_liked": user_liked,
@@ -527,7 +578,6 @@ def filter_posts_by_labels(labels, user, order_by):
     return posts
 
 
-
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def search_labels(request):
@@ -537,11 +587,20 @@ def search_labels(request):
 
     # Filtrar etiquetas que contengan el término de búsqueda (case insensitive)
     matching_labels = Label.objects.filter(name__icontains=search_term)
+    matching_usernames = User.objects.filter(username__icontains=search_term)
 
     # Devolver los nombres de las etiquetas coincidentes
     labels_data = [{"id": label.id,
                     "name": label.name,
+                    "is_user": False
                     } for label in matching_labels]
+    
+    # for user in matching_usernames:
+    #     {
+    #         "id": user.id,
+    #         "name": user.username,
+    #         "is_user": 
+    #     }
     
     connection.close()
     return Response({"labels": labels_data}, status=status.HTTP_200_OK)
