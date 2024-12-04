@@ -7,11 +7,11 @@ import PostItem from "./PostItem";
 import ErrorPosts from "./ErrorPosts";
 import NoPosts from "./NoPosts";
 import {
-  COMMUNITY_BOTTOM_INSET,
   communityPaginationFooterStyle,
   PAGE_SIZE,
 } from "../../constants/community";
 import PaginationFooter from "../UI/Loading/PaginationFooter";
+import PostsList from "./PostsList";
 
 const height = Dimensions.get("window").height * 0.2;
 
@@ -59,42 +59,22 @@ export default function InitialPosts() {
     }
   }
 
-  if (isLoading) {
-    return <PostsSkeleton curved style={styles.list} />;
-  }
-
-  if (!isLoading && isError) {
-    return (
-      <ErrorPosts
-        curved
-        postsStyle={styles.list}
-        onRefresh={fetchPosts}
-      />
-    );
-  }
-
-  if (!isLoading && !isError && posts.length == 0) {
-    return <NoPosts>Explora los posteos de la comunidad!</NoPosts>;
-  }
-
   return (
     <View>
-      {posts?.length > 0 && (
-        <FlatList
-          data={posts}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <PostItem post={item} curved />}
-          contentContainerStyle={styles.list}
-          showsVerticalScrollIndicator={false}
-          onEndReached={changePage}
-          ListFooterComponent={
-            <PaginationFooter
-              hasNextPage={hasNextPage}
-              style={communityPaginationFooterStyle}
-            />
-          }
-        />
-      )}
+      <PostsList
+        posts={posts}
+        curved
+        hasNextPage={hasNextPage}
+        onPageChange={changePage}
+        onRefresh={fetchPosts}
+        isError={isError}
+        isLoading={isLoading}
+        style={styles.list}
+        NoContentComponent={() => (
+          <NoPosts>Explora los posteos de la comunidad!</NoPosts>
+        )}
+        bottomInset={700}
+      />
     </View>
   );
 }
@@ -103,6 +83,5 @@ const styles = StyleSheet.create({
   list: {
     padding: 2,
     gap: 16,
-    paddingBottom: 400,
   },
 });
