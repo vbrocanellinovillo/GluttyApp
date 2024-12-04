@@ -10,8 +10,8 @@ function getPosts(postsArray) {
   const posts = [];
 
   for (let dataPoint of postsArray) {
-    const postDate = new Date(dataPoint.created_at);
-    const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
+    //const postDate = new Date(dataPoint.created_at);
+    //const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
 
     const newPost = new Post(
       dataPoint.post_id,
@@ -20,7 +20,7 @@ function getPosts(postsArray) {
       dataPoint.profile_picture,
       dataPoint.body,
       dataPoint.labels,
-      date,
+      dataPoint.created_at,
       dataPoint.comments_number,
       dataPoint.likes,
       dataPoint.images,
@@ -192,8 +192,8 @@ export async function getPostById(id, token) {
   try {
     const response = await httpRequest(requestUrl, requestOptions);
 
-    const postDate = new Date(response.created_at);
-    const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
+   // const postDate = new Date(response.created_at);
+    //const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
     const newPost = new Post(
       response.post_id,
       response.name,
@@ -201,7 +201,7 @@ export async function getPostById(id, token) {
       response.profile_picture,
       response.body,
       response.labels,
-      date,
+      response.created_at,
       response.comments_number,
       response.likes,
       response.images,

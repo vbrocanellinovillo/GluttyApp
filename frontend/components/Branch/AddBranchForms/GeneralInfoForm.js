@@ -17,8 +17,8 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
       {
         id: 1,
         day: "Lunes",
-        startHour: "08:00",
-        endHour: "20:00",
+        min_time: "08:00",
+        max_time: "20:00",
       },
     ]
   );
@@ -32,6 +32,7 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
     onlyTakeAway,
   }) {
     const form_schedules = formatearSchedules(schedules)
+    console.log(schedules)
     console.log("jorariross: ", form_schedules)
     
 
@@ -39,7 +40,7 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
       optionalPhone = "";
     }
     console.log("formateooo: ", form_schedules)
-    onNext(name, phone, optionalPhone,form_schedules, separatedKitchen, onlyTakeAway);
+    onNext(name, phone, optionalPhone, separatedKitchen, onlyTakeAway, form_schedules);
   }
 
   function formatearSchedules(schedules){
@@ -53,10 +54,10 @@ export default function GeneralInfoForm({ onNext, onCancel, branch }) {
       Domingo: "7",
     };
   
-    return schedules.map(({ day, startHour, endHour }) => ({
+    return schedules.map(({ day, min_time, max_time }) => ({
       day: daysOfWeekMapping[day],
-      min_time: `${startHour}:00`,
-      max_time: `${endHour}:00`,
+      min_time: `${min_time}:00`,
+      max_time: `${max_time}:00`,
       }))
   }
 

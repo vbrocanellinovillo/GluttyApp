@@ -120,6 +120,26 @@ export async function update(id, isCommerce, userData, token) {
   }
 }
 
+export async function forgotPassword(email) {
+  const formdata = new FormData();
+  formdata.append("email", email);
+  
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+  };
+
+  //VER AXA
+  const requestUrl = url + "change-password/";
+
+  try {
+    //const response = await httpRequest(requestUrl, requestOptions);
+    //return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 export async function changePassword(username, currentPassword, newPassword) {
   const formdata = new FormData();
   formdata.append("username", username);

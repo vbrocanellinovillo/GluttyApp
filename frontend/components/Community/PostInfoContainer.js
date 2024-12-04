@@ -5,6 +5,7 @@ import { useState } from "react";
 import { addFavorite, addLike } from "../../services/communityService";
 import { useSelector } from "react-redux";
 import Animated from "react-native-reanimated";
+import { useNavigation } from "@react-navigation/native";
 
 export default function PostInfoContainer({
   likes,
@@ -20,6 +21,7 @@ export default function PostInfoContainer({
   const [sumLiked, setSumLiked] = useState(likes);
 
   const token = useSelector((state) => state.auth.accessToken);
+  const navigation = useNavigation();
 
   async function handleLike() {
     try {
@@ -46,9 +48,13 @@ export default function PostInfoContainer({
     }
   }
 
+  function handleComment() {
+    navigation.navigate("ViewPostById", {id});
+  }
+
   return (
     <Animated.View style={[styles.container, style]}>
-      <PostInfo icon="chatbubble-ellipses" number={comments} />
+      <PostInfo icon="chatbubble-ellipses" number={comments} onPress={handleComment} />
       <PostInfo
         icon={isLiked ? "heart" : "heart-outline"}
         iconColor={isLiked && Colors.redLike}

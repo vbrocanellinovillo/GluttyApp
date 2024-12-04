@@ -19,11 +19,13 @@ export default function Picker({
   cointainerStyle,
   textStyle,
   dropButton = true,
+  isConsulting = false,
 }) {
   const [visible, setVisible] = useState(false);
   const [option, setOption] = useState(value);
 
   function toggleVisible() {
+    if(isConsulting){return};
     Haptics.selectionAsync();
     setVisible((prevVisible) => !prevVisible);
   }

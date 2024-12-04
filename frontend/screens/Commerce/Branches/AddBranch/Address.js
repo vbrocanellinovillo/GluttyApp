@@ -17,7 +17,6 @@ export default function Address({ navigation, route }) {
     );
 
     recivedBranch.coordinates = coords;
-
     navigation.navigate("MapConfirmation", { branch: recivedBranch });
   }
 

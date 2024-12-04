@@ -65,7 +65,7 @@ export default function ViewPostById({ route, navigation }) {
           const selectedPost = await getPostById(id, token);
           setIsLoading(false);
           setPost(selectedPost);
-          //console.log("el posteo lindo:     ", selectedPost);
+          console.log("el posteo lindo:     ", selectedPost);
         } catch (error) {
           setIsError(true);
         } finally {
@@ -105,7 +105,7 @@ if (isLoading) {
       <GluttyModal
         visible={showEliminarModal}
         onClose={closeModalDeleteHandler}
-        message="¿Seguro que desea eliminar el estudio?"
+        message="¿Seguro que desea eliminar el post?"
         other
         buttons={[
           {

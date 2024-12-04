@@ -195,6 +195,7 @@ export async function updateBranch(branch, id, token, id_elim = []) {
   formdata.append("name", branch.name);
   formdata.append("phone", branch.phone);
   formdata.append("optional_phone", branch.optionalPhone);
+  formdata.append("schedules", JSON.stringify(branch?.schedules));
   formdata.append(
     "separated_kitchen",
     branch.separatedKitchen ? "True" : "False"

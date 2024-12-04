@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Picker from "../UI/Controls/Picker";
 import CheckboxControl from "../UI/Controls/CheckboxControl";
 
-const SchedulePicker = ({ schedules, setSchedules }) => {
+const SchedulePicker = ({ schedules, setSchedules, isConsulting=false }) => {
   const [allSame, setAllSame] = useState(false);
 
   const daysOfWeek = [
@@ -27,12 +27,12 @@ const SchedulePicker = ({ schedules, setSchedules }) => {
   const handleCheckboxChange = (name, checked) => {
     setAllSame(checked);
     if (checked) {
-      const { startHour, endHour } = schedules[0];
+      const { min_time, max_time } = schedules[0];
       const updatedSchedules = daysOfWeek.map((day, index) => ({
         id: index + 1,
         day: day.label,
-        startHour,
-        endHour,
+        min_time,
+        max_time,
       }));
       setSchedules(updatedSchedules);
     } else {
@@ -45,14 +45,16 @@ const SchedulePicker = ({ schedules, setSchedules }) => {
       ...prevSchedules,
       {
         id: Date.now(),
-        day: "",
-        startHour: "00",
-        endHour: "00",
+        day: "Lunes",
+        min_time: "00:00",
+        max_time: "00:00",
       },
     ]);
   };
 
   const updateSchedule = (id, field, value) => {
+    //Agregar validación de horarios
+
     setSchedules((prevSchedules) =>
       prevSchedules.map((schedule) =>
         schedule.id === id ? { ...schedule, [field]: value } : schedule
@@ -62,6 +64,8 @@ const SchedulePicker = ({ schedules, setSchedules }) => {
   
 
   const removeSchedule = (id) => {
+    console.log("Estoy eliminando")
+    console.log(schedules)
     setSchedules((prevSchedules) =>
       prevSchedules.filter((schedule) => schedule.id !== id)
     );
@@ -81,16 +85,18 @@ const SchedulePicker = ({ schedules, setSchedules }) => {
             textStyle={styles.textStyle}
             cointainerStyle={styles.pickerCointaner}
             dropButton = {false}
+            isConsulting = {isConsulting}
           />
           {/* Selector de hora de inicio */}
           <Picker
             data={hours}
-            value={schedule.startHour}
+            value={schedule.min_time}
             cointainerStyle={styles.pickerHour}
             textStyle={styles.textStyle}
             dropButton = {false}
+            isConsulting = {isConsulting}
             onValueChange={(value) =>
-              updateSchedule(schedule.id, "startHour", value)
+              updateSchedule(schedule.id, "min_time", value)
             
             }
           />
@@ -98,16 +104,17 @@ const SchedulePicker = ({ schedules, setSchedules }) => {
           {/* Selector de hora de fin */}
           <Picker
             data={hours}
-            value={schedule.endHour}
+            value={schedule.max_time}
             cointainerStyle={styles.pickerHour}
             textStyle={styles.textStyle}
             dropButton = {false}
+            isConsulting = {isConsulting}
             onValueChange={(value) =>
-              updateSchedule(schedule.id, "endHour", value)
+              updateSchedule(schedule.id, "max_time", value)
             }
           />
           {/* Botón para eliminar */}
-          {(schedule.id != 1) && (
+          {(schedule.id != 1 && !isConsulting) && (
           <TouchableOpacity
             style={styles.removeButton}
             onPress={() => removeSchedule(schedule.id)}
@@ -117,18 +124,19 @@ const SchedulePicker = ({ schedules, setSchedules }) => {
         </View>
       ))}
       {/* Botón para agregar nuevo horario */}
-      {(!allSame) && (
+      {(!allSame && !isConsulting) && (
       <TouchableOpacity style={styles.addButton} onPress={addSchedule}>
         <Text style={styles.addText}>+ Agregar nuevo horario</Text>
       </TouchableOpacity>)}
       {/* Botón para hacer todos los días iguales */}
+      { (!isConsulting) && (
     <CheckboxControl
         title="Todos mis horarios son iguales"
         checked={allSame}
         setChecked={handleCheckboxChange}
         name="allSame"
         style={styles.checkbox}
-      />
+      />)}
     </View>
   );
 };
