@@ -50,7 +50,6 @@ export default function Photos({ navigation, route }) {
   }
 
   async function save() {
-    console.log(receivedBranch)
     setIsLoading(true);
 
     try {

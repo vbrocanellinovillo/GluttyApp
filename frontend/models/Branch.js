@@ -3,9 +3,9 @@ export class Branch {
     name,
     phone,
     optionalPhone,
-    schedules,
     separatedKitchen,
     onlyTakeAway,
+    schedules,
     address,
     coordinates,
     photos

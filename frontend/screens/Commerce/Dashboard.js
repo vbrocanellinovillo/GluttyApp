@@ -35,10 +35,10 @@ export function Dashboard() {
   const [selectedTime, setSelectedTime] = useState();
 
   useEffect(() => {
-    fetchData();
+    cargaSchedules();
   }, []);
 
-  async function fetchData() {
+  async function cargaSchedules() {
     setIsLoading(true);
     try {
       const response = await dataDashboard(token, "week");

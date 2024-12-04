@@ -19,15 +19,21 @@ export default function EditGeneralInfo({ navigation, route }) {
     phone,
     optionalPhone,
     separatedKitchen,
-    onlyTakeAway
+    onlyTakeAway,
+    schedules
   ) {
     (branch.name = name),
       (branch.phone = phone),
       (branch.optionalPhone = optionalPhone),
       (branch.separatedKitchen = separatedKitchen),
-      (branch.onlyTakeAway = onlyTakeAway);
+      (branch.onlyTakeAway = onlyTakeAway),
+      (branch.schedules = schedules),
+      (branch.photos = undefined)
+
 
     try {
+      console.log("lo que mando a actualizarrr")
+      console.log(branch)
       setisloading(true);
       console.log("Branch" + branch.id);
       console.log(branch)

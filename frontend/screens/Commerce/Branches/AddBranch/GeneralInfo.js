@@ -6,19 +6,18 @@ export default function GeneralInfo({ navigation }) {
     name,
     phone,
     optionalPhone,
-    schedules,
     separatedKitchen,
-    onlyTakeAway
+    onlyTakeAway,
+    schedules,
   ) {
     const newBranch = new Branch(
       name,
       phone,
       optionalPhone,
-      schedules,
       separatedKitchen,
-      onlyTakeAway
+      onlyTakeAway,
+      schedules
     );
-
     navigation.navigate("Address", { branch: newBranch });
   }
 
