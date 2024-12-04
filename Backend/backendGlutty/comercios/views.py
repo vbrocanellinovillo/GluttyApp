@@ -19,7 +19,7 @@ from comunidad.models import *
 from django.db import connection, transaction
 import json
 from collections import Counter
-from django.db.models import Count
+from django.db.models import Count, Subquery
 from datetime import timedelta
 from django.utils.timezone import now
 
@@ -152,7 +152,13 @@ def add_branch(request):
             new_location.save()
             
             # Crear horarios para la nueva sucursal
-            schedules = request.data.get("schedules", [])
+            schedules = request.data.get("schedules", "[]")
+            print(schedules)
+            try:
+                schedules = json.loads(schedules)  # Convierte la cadena JSON en un array de Python
+            except json.JSONDecodeError:
+                schedules = []  # En caso de error, asignar un array vacío
+            
             created_schedules = []
             for schedule in schedules:
                 Schedule.objects.create(
@@ -705,17 +711,34 @@ def get_info_dashboard(request):
         top_branches_list = [{"branch": b["branch__name"], "views": b["view_count"]} for b in top_branches]
 
         # 4. Top 3 publicaciones más likeadas dentro del tiempo filtrado
-        top_liked_posts = (
+        # Obtener los IDs de los tres posteos más likeados
+        top_liked_posts_ids = (
             Like.objects.filter(post__in=posts, created_at__gte=date_threshold)
-            .values("post_id", "post__body")
+            .values("post_id")  # Solo los IDs de los posteos
             .annotate(like_count=Count("id"))
             .order_by("-like_count")[:3]
         )
+
+        # Obtener los objetos Post correspondientes
+        top_liked_posts = Post.objects.filter(id__in=Subquery(top_liked_posts_ids.values("post_id")))
+        
+        print(top_liked_posts)
+        
         top_posts_list = [
-            {"post_id": post["post_id"], "likes": post["like_count"], "body": post["post__body"]}
+            {"post_id": post.id,
+             "user": post.user.username,
+             "name": Post.get_name(post.user),
+             "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+             "body": post.body,
+             "created_at": post.created_at,
+             "likes": post.likes_number,
+             "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+             "comments_number": post.comments_number,
+             "likes": post.likes_number,
+             "labels": [label.label.name for label in post.labels.all()]}
             for post in top_liked_posts
         ]
-
+        
         connection.close()
         # Respuesta final
         return Response({
