@@ -31,7 +31,7 @@ export default function PasswordForm({ onSubmit }) {
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-            errors.email = "Email invalido";
+            errors.email = "Email inválido";
             }
 
             if (emailConfirm !== email) {

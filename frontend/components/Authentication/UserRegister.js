@@ -69,7 +69,7 @@ export default function UserRegister({ onSubmit }) {
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-          errors.email = "Email invalido";
+          errors.email = "Email inválido";
         }
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
