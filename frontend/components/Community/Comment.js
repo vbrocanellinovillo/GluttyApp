@@ -15,22 +15,22 @@ export default function Comment({ comment, is_mine, token, onDelete }) {
   const [errorMessage, setMessage] = useState(false);
   const [modalExito, setModalExito] = useState(false);
 
-  function formatDateTime(isoDate) {
-    const date = new Date(isoDate);
+  // function formatDateTime(isoDate) {
+  //   const date = new Date(isoDate);
 
-    // Extraer partes de la fecha
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Mes empieza en 0
-    const day = String(date.getDate()).padStart(2, "0");
+  //   // Extraer partes de la fecha
+  //   const year = date.getFullYear();
+  //   const month = String(date.getMonth() + 1).padStart(2, "0"); // Mes empieza en 0
+  //   const day = String(date.getDate()).padStart(2, "0");
 
-    // Extraer partes de la hora
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
+  //   // Extraer partes de la hora
+  //   const hours = String(date.getHours()).padStart(2, "0");
+  //   const minutes = String(date.getMinutes()).padStart(2, "0");
+  //   const seconds = String(date.getSeconds()).padStart(2, "0");
 
-    // Formatear en "YYYY-MM-DD HH:mm:ss"
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  }
+  //   // Formatear en "YYYY-MM-DD HH:mm:ss"
+  //   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  // }
 
   async function handleConfirmDelete(id) {
     try {
@@ -94,7 +94,7 @@ export default function Comment({ comment, is_mine, token, onDelete }) {
       </TextCommonsRegular>
 
       <TextCommonsRegular style={styles.date}>
-        {formatDateTime(comment.created_at)}
+        {comment.created_at}
       </TextCommonsRegular>
 
       {/* Icono de tacho de basura si el comentario es del usuario */}
@@ -181,7 +181,8 @@ const styles = StyleSheet.create({
     color: "grey",
     fontSize: 10,
     marginTop: 15,
-    marginLeft: 220,
+    textAlign: "right", // Justificación a la derecha
+    marginRight: 20, // Ajusta el margen derecho según sea necesario
   },
   trashIcon: {
     position: "absolute",
