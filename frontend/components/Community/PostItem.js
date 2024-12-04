@@ -49,14 +49,15 @@ export default function PostItem({
   }
 
   function handlePress() {
-    Haptics.selectionAsync();
-    if (iconPost != "chevron-forward-outline") {
-      onPressIcon && onPressIcon();
-    } else {
-      onPress && onPress();
-    }
+   
+    onPress && onPress();
+    
   }
 
+  function handlePressIcon(){
+    Haptics.selectionAsync();
+    onPressIcon && onPressIcon();
+  }
   function animateIcon(icon, color) {
     setAnimationIcon(icon);
     setAnimationColor(color);
@@ -86,7 +87,7 @@ export default function PostItem({
             </TextCommonsRegular>
           </View>
           {borrar && (
-            <Pressable onPress={handlePress}>
+            <Pressable onPress={handlePressIcon}>
               <Ionicons style={styles.verMas} name={iconPost} />
             </Pressable>
           )}
