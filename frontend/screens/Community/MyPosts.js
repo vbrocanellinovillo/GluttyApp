@@ -78,7 +78,7 @@ export default function MyPosts({ navigation, route, del = false }) {
   }
 
   if (isError && !isLoading) {
-    content = <ErrorPosts style={styles.errorPosts} />;
+    content = <ErrorPosts style={styles.errorPosts} onRefresh={fetchMyPosts} />;
   }
 
   if (!isLoading && !isError && posts && posts.length > 0) {

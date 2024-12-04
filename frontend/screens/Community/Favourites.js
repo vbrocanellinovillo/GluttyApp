@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-import AddPostButton from "../../components/Community/AddPostButton";
 import { Divider } from "react-native-paper";
-import { getInitialPosts, getFavorite } from "../../services/communityService";
+import { getFavorite } from "../../services/communityService";
 import PostItem from "../../components/Community/PostItem";
 import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
 import ErrorPosts from "../../components/Community/ErrorPosts";
 import NoPosts from "../../components/Community/NoPosts";
-import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
 import { useIsFocused } from "@react-navigation/native";
 import {
   COMMUNITY_BOTTOM_INSET,
@@ -22,7 +20,6 @@ const height = Dimensions.get("window").height * 0.5;
 export default function MyPosts({ navigation }) {
   const token = useSelector((state) => state.auth.accessToken);
   const isFocused = useIsFocused(); // Verifica si la pantalla está enfocada
-
 
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +45,7 @@ export default function MyPosts({ navigation }) {
 
     try {
       const data = await getFavorite(token, page, pageSize);
-      
+
       if (data) {
         setPosts((prevPosts) => (isFirstPage ? data : [...prevPosts, ...data]));
         setHasNextPage(data?.length === pageSize);
@@ -74,7 +71,7 @@ export default function MyPosts({ navigation }) {
   }
 
   if (isError && !isLoading) {
-    content = <ErrorPosts style={styles.errorPosts} />;
+    content = <ErrorPosts style={styles.errorPosts} onRefresh={fetchMyPosts} />;
   }
 
   if (!isLoading && !isError && posts && posts.length > 0) {

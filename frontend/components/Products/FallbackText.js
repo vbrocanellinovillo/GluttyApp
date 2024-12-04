@@ -13,6 +13,6 @@ const styles = StyleSheet.create({
   text: {
     fontStyle: "italic",
     fontWeight: "300",
-    fontSize: 16
+    fontSize: 16,
   },
 });

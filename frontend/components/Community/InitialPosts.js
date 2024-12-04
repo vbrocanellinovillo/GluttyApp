@@ -7,6 +7,7 @@ import PostItem from "./PostItem";
 import ErrorPosts from "./ErrorPosts";
 import NoPosts from "./NoPosts";
 import {
+  COMMUNITY_BOTTOM_INSET,
   communityPaginationFooterStyle,
   PAGE_SIZE,
 } from "../../constants/community";
@@ -64,7 +65,11 @@ export default function InitialPosts() {
 
   if (!isLoading && isError) {
     return (
-      <ErrorPosts curved postsStyle={styles.list} style={styles.errorPosts} />
+      <ErrorPosts
+        curved
+        postsStyle={styles.list}
+        onRefresh={fetchPosts}
+      />
     );
   }
 
@@ -98,11 +103,6 @@ const styles = StyleSheet.create({
   list: {
     padding: 2,
     gap: 16,
-    paddingBottom: 750,
-  },
-
-  errorPosts: {
-    height: "30%",
-    paddingBottom: height,
+    paddingBottom: 400,
   },
 });

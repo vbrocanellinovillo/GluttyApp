@@ -80,7 +80,10 @@ export default function Feed({ navigation }) {
 
   if (isLoading) content = <PostsSkeleton />;
 
-  if (isError && !isLoading) content = <ErrorPosts style={styles.errorPosts} />;
+  if (isError && !isLoading)
+    content = (
+      <ErrorPosts style={styles.errorPosts} onRefresh={() => refetch()} />
+    );
 
   if (!isError && !isLoading && data && posts.length > 0)
     content = (
