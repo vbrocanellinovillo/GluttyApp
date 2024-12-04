@@ -9,32 +9,35 @@ import NavigationText from "../UI/Navigation/NavigationText";
 import { Formik } from "formik";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
-import PasswordForm from "./PasswordForm";
-import { useNavigation } from "@react-navigation/native";
 
-export default function LoginForm({ onSubmit }) {
-  function submitHandler({ username, password }) {
-    onSubmit(username, password);
+export default function PasswordForm({ onSubmit }) {
+  function submitHandler({ email, emailConfirm }) {
+    onSubmit(email, emailConfirm);
   }
-
-  const navigation = useNavigation()
+  
 
   return (
     <DismissKeyboardContainer>
       <View style={styles.container}>
         <FormHeader/>
         <Formik
-          initialValues={{ username: "", password: "" }}
-          validate={({ username, password }) => {
+          initialValues={{ email: "", emailConfirm:""}}
+          validate={({ email, emailConfirm }) => {
             const errors = {};
 
-            if (username.trim() === "") {
-              errors.username = "Usuario requerido";
+            if (email.trim() === "") {
+              errors.email = "Email requerido";
             }
 
-            if (password.trim() === "") {
-              errors.password = "Contraseña requerida";
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+            errors.email = "Email inválido";
             }
+
+            if (emailConfirm !== email) {
+                errors.emailConfirm = "Los emails no coinciden";
+              }
+              console.log(errors)
 
             return errors;
           }}
@@ -49,26 +52,25 @@ export default function LoginForm({ onSubmit }) {
             handleSubmit,
           }) => (
             <Form>
-              <FormTitle color={Colors.mJordan}>Iniciar Sesión</FormTitle>
+              <FormTitle color={Colors.mJordan}>Ingresa tu email</FormTitle>
               <FormControl
-                label="Usuario"
-                value={values.username}
-                name="username"
+                label="Email"
+                value={values.email}
+                name="email"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                touched={touched.username}
-                errors={errors.username}
+                touched={touched.email}
+                errors={errors.email}
                 autoCapitalize="none"
               />
               <FormControl
-                label="Contraseña"
-                secure
-                value={values.password}
-                name="password"
+                label="Confirma email"
+                value={values.emailConfirm}
+                name="emailConfirm"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                touched={touched.password}
-                errors={errors.password}
+                touched={touched.emailConfirm}
+                errors={errors.emailConfirm}
                 autoCapitalize="none"
               />
               <View style={styles.buttonContainer}>
@@ -77,17 +79,10 @@ export default function LoginForm({ onSubmit }) {
                   color={Colors.mJordan}
                   onPress={handleSubmit}
                 >
-                  Iniciar Sesión
+                  Cambiar contraseña
                 </Button>
               </View>
-              <View  style={styles.forgotPasswordContainer}>
-                <Pressable onPress={() => navigation.navigate("ChangePassword")}>
-                  <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
-                </Pressable>
-              </View>
-              <NavigationText action={"Registrate"} href={"Register"}>
-                ¿Todavía no tenes cuenta?
-              </NavigationText>
+              
             </Form>
           )}
         </Formik>
@@ -102,16 +97,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  forgotPasswordContainer: {
-    marginTop: 20,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  linkText: {
-    color: Colors.oceanBlue, 
-    fontSize: 14,
-    textDecorationLine: 'underline',
-  },
 
   buttonContainer: {
     marginTop: 20,
