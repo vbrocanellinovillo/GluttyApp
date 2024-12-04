@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View, Text } from "react-native";
 import Form from "../UI/Forms/Form";
 import FormControl from "../UI/Controls/FormControl";
 import FormHeader from "../UI/Forms/FormHeader";
@@ -9,11 +9,15 @@ import NavigationText from "../UI/Navigation/NavigationText";
 import { Formik } from "formik";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
+import PasswordForm from "./PasswordForm";
+import { useNavigation } from "@react-navigation/native";
 
 export default function LoginForm({ onSubmit }) {
   function submitHandler({ username, password }) {
     onSubmit(username, password);
   }
+
+  const navigation = useNavigation()
 
   return (
     <DismissKeyboardContainer>
@@ -76,6 +80,11 @@ export default function LoginForm({ onSubmit }) {
                   Iniciar Sesión
                 </Button>
               </View>
+              <View  style={styles.forgotPasswordContainer}>
+                <Pressable onPress={() => navigation.navigate("ChangePassword")}>
+                  <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
+                </Pressable>
+              </View>
               <NavigationText action={"Registrate"} href={"Register"}>
                 ¿Todavía no tenes cuenta?
               </NavigationText>
@@ -91,6 +100,17 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 100,
     alignItems: "center",
+  },
+
+  forgotPasswordContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  linkText: {
+    color: Colors.oceanBlue, 
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
 
   buttonContainer: {
