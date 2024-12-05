@@ -24,7 +24,7 @@ export default function EditGeneralInfo({ navigation, route }) {
   ) {
     (branch.name = name),
       (branch.phone = phone),
-      (branch.optionalPhone = optionalPhone),
+      (branch.optional_phone = optionalPhone),
       (branch.separatedKitchen = separatedKitchen),
       (branch.onlyTakeAway = onlyTakeAway),
       (branch.schedules = schedules),

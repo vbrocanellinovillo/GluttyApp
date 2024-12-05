@@ -74,6 +74,7 @@ export default function Photos({ navigation, route }) {
 
     try {
       console.log("wtf hermanita anda")
+      branch.schedules = []
       console.log(branch.photos); // Fotos originales del branch (si las hay)
       const response = await updateBranch(branch, branch.id, token, id_elim);
       setIsError(false);
