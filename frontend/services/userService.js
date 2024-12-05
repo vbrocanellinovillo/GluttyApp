@@ -257,6 +257,8 @@ export async function verifyCode(username, verificationCode) {
   }
 }
 
+
+
 export async function checkUsername(username) {
   const formdata = new FormData();
   formdata.append("username", username);
