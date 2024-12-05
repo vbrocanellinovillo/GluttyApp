@@ -140,6 +140,26 @@ export async function forgotPassword(username) {
   }
 }
 
+export async function forgotPasswordCode(username, code) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+  formdata.append("code", code);
+  
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+  };
+
+  const requestUrl = url + "verify-recovery-code/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 export async function changePassword(username, currentPassword, newPassword) {
   const formdata = new FormData();
   formdata.append("username", username);
