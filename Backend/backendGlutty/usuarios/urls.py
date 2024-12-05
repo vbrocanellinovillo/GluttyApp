@@ -17,5 +17,7 @@ urlpatterns = [
     path("verify-code/", verify_code, name="verify-code"),
     path("delete/", delete, name="delete"),
     path("logout/", logout, name="logout"),
-    path("get-user/", get_user, name="get_user")
+    path("get-user/", get_user, name="get_user"),
+    path("send-password-recovery-code/", send_password_recovery_code, name="send_password_recovery_code"),
+    path("verify-recovery-code/", verify_recovery_code, name="verify_recovery_code"),
 ]

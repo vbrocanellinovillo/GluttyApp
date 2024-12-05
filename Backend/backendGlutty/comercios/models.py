@@ -120,3 +120,14 @@ class Schedule(models.Model):
 
     def __str__(self):
         return f"{self.get_day_display()} ({self.min_time} - {self.max_time}) - {self.branch.name}"
+    
+    def __getattribute__(self, name):
+        """
+        Sobrescribe el comportamiento al acceder a los atributos.
+        """
+        # Si se accede a min_time o max_time, devolver el formato HH:MM
+        if name == "min_time" or name == "max_time":
+            value = super().__getattribute__(name)  # Obtiene el valor original
+            if isinstance(value, (datetime.time,)):
+                return value.strftime("%H:%M")  # Formatea a HH:MM
+        return super().__getattribute__(name)  # Comportamiento normal para otros atributos
