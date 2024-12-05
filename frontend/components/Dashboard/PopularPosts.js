@@ -26,7 +26,7 @@ export default function PoularPosts({ posts, onPress }) {
           <PostCarousel
             posts={posts}
             onPress={onPress}
-            height={height * 0.35}
+            height={height * 0.50}
             width={width}
           />
         )}

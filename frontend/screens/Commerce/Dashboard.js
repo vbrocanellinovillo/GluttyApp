@@ -95,7 +95,7 @@ export function Dashboard() {
       </View>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
-        contentInset={{ bottom: 150 }}
+        contentInset={{ bottom: 270 }}
       >
         <View style={styles.iconsContainer}>
           <BoxDashboard image={heart} number={dashData?.likes} />
@@ -126,7 +126,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    gap: 10,
+    paddingBottom: 40,
+   //gap: 10,
+    marginBottom: 30,
   },
 
   scrollContainer: {
