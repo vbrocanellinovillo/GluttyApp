@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet, Text, Alert } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { forgotPasswordCode } from "../../services/userService"; // Asegúrate de que la función correcta está importada
+import {
+    forgotPassword,
+    forgotPasswordCode
+  } from "../../services/userService";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { Colors } from "../../constants/colors"; // Asegúrate de que Colors tenga los valores que deseas
 
@@ -14,7 +17,8 @@ export default function PasswordCodeVerification() {
 
   // Obtener el username desde los parámetros de la ruta (o desde el estado global)
   const route = useRoute();
-  const { username } = route.params; // Asegúrate de que el username se pase como parámetro
+  const { username } = route.params; 
+  console.log("user " + username)
 
   const resendCode = async () => {
     Haptics.selectionAsync();
@@ -57,15 +61,19 @@ export default function PasswordCodeVerification() {
       return;
     }
 
+    console.log(code.join(""));
+
     try {
       setIsLoading(true);
-      //await forgotPasswordCode(username, code.join("")); // Asegúrate de que se llama a la función correcta
+      await forgotPasswordCode(username, code.join("")); 
       Alert.alert("Éxito", "Código verificado correctamente.");
-      navigation.navigate("SetNewPassword"); // Navega a la pantalla para establecer nueva contraseña
+      navigation.navigate("SetNewPassword");                                                                       
     } catch (err) {
       const errorMessage =
         err.response?.data?.message || "El código no es válido. Intente nuevamente.";
+      
       setError(errorMessage);
+      
     } finally {
       setIsLoading(false);
     }

@@ -29,8 +29,9 @@ export default function ChangePassword() {
     try {
       setisloading(true);
       //para cuando este lo del back
-      const forgotPasswordResponse = await forgotPassword(values);
+      const forgotPasswordResponse = await forgotPassword(values.username);
       const username = values.username; 
+      console.log("changep " + values.username)
       navigation.navigate("PasswordCodeVerification", { username }); 
       setModal(true);
 

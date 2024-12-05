@@ -11,8 +11,10 @@ import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 
 export default function PasswordForm({ onSubmit }) {
-  function submitHandler({ username, usernameConfirm }) {
-    onSubmit(username, usernameConfirm);
+  function submitHandler( values ) {
+    console.log("values " + values.username)
+    onSubmit(values);
+    
   }
   
 
@@ -30,7 +32,7 @@ export default function PasswordForm({ onSubmit }) {
             }
 
             if (username !== usernameConfirm) {
-                errors.emailConfirm = "Los username no coinciden";
+                errors.usernameConfirm = "Los username no coinciden";
               }
               console.log(errors)
 
