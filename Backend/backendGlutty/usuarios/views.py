@@ -80,6 +80,56 @@ def verify_code(request):
     else:
         return Response({"error": "Invalid or expired verification code."}, status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def send_password_recovery_code(request):
+    username = request.data.get('username')
+    if not username:
+        return Response({"error": "username es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    user = get_object_or_404(User, username=username)
+    recovery_code = user.generate_password_code()
+    
+    message = f"""
+    ¡Hola {user.username}! ¡Recupera tu contraseña en Glutty!
+
+    Tu código de verificación es: {recovery_code}. Ingrésalo en la app para recuperar tu contraseña.
+
+    Si no solicitaste este cambio, por favor ignora este mensaje.
+
+    Te agradecemos nuevamente,
+    Equipo Glutty.
+    """
+    
+    send_mail(
+        'Recuperación de contraseña en Glutty',
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        fail_silently=False,
+    )
+    
+    return Response({"message": "Código de verificación para recuperar la contraseña enviado."}, status=status.HTTP_200_OK)
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def verify_recovery_code(request):
+    code = request.data.get('code')
+    username = request.data.get('username')
+    
+    user = get_object_or_404(User, username=username)
+    print("code")
+    if user.password_code == code and timezone.now() < user.password_code_expires:
+        print("hola")
+        return Response({"message": "Código válido. Ahora puedes cambiar tu contraseña."}, status=status.HTTP_200_OK)
+    else:
+        if code == user.password_code:
+            user.is_changing_password = False
+            user.save()
+        return Response({"error": "Código de verificación inválido o expirado."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 # Vista para el registro
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Permitir que cualquiera acceda, incluso si no están autenticados
@@ -204,6 +254,11 @@ def login(request):
 
     if usuario is None:
         raise AuthenticationFailed("Usuario no encontrado.")
+
+    # Comprobar si el usuario está cambiando su contraseña
+    if usuario.is_changing_password:
+        return Response({"error": "No se puede iniciar sesión mientras se cambia la contraseña."}, status=status.HTTP_403_FORBIDDEN)
+
     
     sesion, created = Session.objects.get_or_create(user=usuario)
 
@@ -262,6 +317,7 @@ def login(request):
     response_data["is_commerce"] = usuario.is_commerce
     response_data["access_token"] = access_token
     response_data["refresh_token"] = str(refresh)
+    response_data["is_changing_password"] = usuario.is_changing_password
 
     return Response(response_data, status=status.HTTP_200_OK)
 
@@ -405,24 +461,23 @@ def delete(request):
 
 # @swagger_auto_schema(method='post', request_body=UsuarioSerializer, responses={200: "Contraseña cambiada exitosamente."})
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def changePassword(request):
     """
     Permite cambiar la contraseña
     """
     username = request.data["username"]
-    old_password = request.data["old_password"]
-    new_password = request.data["new_password"]
     
-    if not all([username, old_password, new_password]):
+    new_password = request.data["new_password"]
+
+    if not all([username, new_password]):
         return Response({
             'status': '400',
             'error': "Todos los campos son obligatorios",
             'data': []
         }, status=status.HTTP_400_BAD_REQUEST)
-        
-    if request.user.username != username:
-        return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+    
     
     usuario = User.objects.filter(username=username).first()
     
@@ -432,16 +487,31 @@ def changePassword(request):
             'error': "Usuario no encontrado",
             'data': []
         }, status=status.HTTP_404_NOT_FOUND)
-    
-    if not usuario.check_password(old_password):
+
+    if not usuario.is_changing_password:
+        old_password = request.data["old_password"]
+
+        if request.user.username != username:
+            return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
+        
+        if not old_password:
             return Response({
-                        'status': '400',
-                        'error': "La contraseña antigua no es correcta",
-                        'data': []
-                    }, status=status.HTTP_400_BAD_REQUEST)
+                'status': '400',
+                'error': "La contraseña antigua es obligatoria",
+                'data': []
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not usuario.check_password(old_password):
+            return Response({
+                'status': '400',
+                'error': "La contraseña antigua no es correcta",
+                'data': []
+            }, status=status.HTTP_400_BAD_REQUEST)
             
     usuario.set_password(new_password)
+    usuario.is_changing_password = False
     usuario.save()
+    
     
     return Response({
         'status': '200',

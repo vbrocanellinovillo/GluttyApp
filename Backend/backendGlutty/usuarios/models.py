@@ -23,7 +23,10 @@ class User(AbstractUser):
     profile_picture = models.CharField(blank=True)
     verification_code = models.CharField(max_length=6, blank=True, null=True)
     verification_code_expires = models.DateTimeField(blank=True, null=True)
-
+    password_code = models.CharField(max_length=6, blank=True, null=True)
+    password_code_expires = models.DateTimeField(blank=True, null=True)
+    is_changing_password = models.BooleanField(default=False)
+    
     objects = CustomUserManager()
 
     USERNAME_FIELD = "username"
@@ -36,6 +39,14 @@ class User(AbstractUser):
         code = ''.join(random.choices(string.digits, k=6))
         self.verification_code = code
         self.verification_code_expires = timezone.now() + datetime.timedelta(minutes=5)
+        self.save()
+        return code
+
+    def generate_password_code(self):
+        code = ''.join(random.choices(string.digits, k=6))
+        self.password_code = code
+        self.password_code_expires = timezone.now() + datetime.timedelta(minutes=5)
+        self.is_changing_password = True
         self.save()
         return code
     

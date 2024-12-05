@@ -629,7 +629,7 @@ def get_branches(request):
         commerce = Commerce.objects.filter(user=user).first()
         # Obtener un solo objeto de comercio asociado al usuario
         #commerce = Commerce.objects.get(user=user)
-        branches = Branch.objects.filter(is_active=True, commerce=commerce)
+        branches = Branch.objects.filter(is_active__exact=True, commerce=commerce)
         for branch in branches:
             branch_data = {
                 "id": branch.id,
