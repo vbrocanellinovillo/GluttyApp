@@ -14,6 +14,7 @@ from django.core.paginator import Paginator
 from spanlp.palabrota import Palabrota
 import re
 from spanlp.domain.strategies import RemovePunctuation, RemoveNumbers, Preprocessing, JaccardIndex, CosineSimilarity, TextToLower, RemoveUnicodeCharacters, NumbersToVowelsInLowerCase, NumbersToConsonantsInLowerCase, RemoveTicks, RemoveUrls, RemoveAccents, RemoveEmoticons
+from datetime import datetime, timedelta
 
 palabrota = Palabrota(
     exclude=["huevo", "huevos", "hoyo", "negro", "negra", "gallina", "guiso", "tirar", 
@@ -35,7 +36,7 @@ def detect_inappropriate_words(content):
     exclude = ["minimo", "huevo", "huevos", "hoyo", "negro", "negra", "gallina", "guiso", "tirar", 
            "pinche", "bolsa", "calabaza", "animal", "basura", "pisa", "cono", "pato", 
            "arepa", "come", "calienta", "cuchara", "azúcar", "banana", "bananas", "almendra", "almendras", "cucharada", "cucharadita", "para", "asegurate", "canela", "engrasar", "la", "lo", "el", "ella", "eso", 
-           "esa", "preparar", "preparacion", "preparando", "machacar", "machaca", "agrega", "engrasala", "con", "cocinar", "cocina", "pequeño", "pequeños", "lado", "lados", "arce", "acompañar", "acompaña", "acompañados", "acompañado"]
+           "esa", "preparar", "preparacion", "preparando", "machacar", "machaca", "agrega", "engrasala", "con", "cocinar", "cocina", "pequeño", "pequeños", "lado", "lados", "arce", "acompañar", "acompaña", "acompañados", "acompañado", "verano", "calor"]
 
 # Dividir el texto en palabras, filtrar las palabras excluidas, y volver a unir el texto
     content = ' '.join([word for word in content.split() if word.lower() not in exclude])
@@ -109,7 +110,57 @@ def create_post(request):
     
     except Exception as e:
         return Response({"error": f"Error inesperado: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
+
+def format_time(timestamp):
+    """
+    Formatea un timestamp y devuelve un tiempo relativo ('hace X minutos', etc.)
+    o una fecha formateada. Soporta tanto strings ISO 8601 como objetos datetime.
+    """
+    # Si el timestamp ya es un objeto datetime, no necesita conversión
+    if isinstance(timestamp, datetime):
+        date_time = timestamp
+    elif isinstance(timestamp, str):
+        # Si es un string, convertirlo a datetime
+        try:
+            date_time = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+        except ValueError as e:
+            raise ValueError(f"El timestamp '{timestamp}' no es válido. Error: {e}")
+    else:
+        raise ValueError("El timestamp debe ser un string ISO 8601 o un objeto datetime.")
+
+    # Obtener el tiempo actual con la misma zona horaria
+    now = datetime.now(date_time.tzinfo)
+
+    # Calcular la diferencia entre el tiempo actual y el timestamp
+    delta = now - date_time
+
+    # Formatear el tiempo en un string relativo
+    if delta < timedelta(minutes=1):
+        seconds = int(delta.total_seconds())
+        return f"Hace {seconds} segundos"
+    elif delta < timedelta(hours=1):
+        if (delta.total_seconds() // 60) == 1:
+            return f"Hace 1 minuto"
+        else:    
+            minutes = int(delta.total_seconds() // 60)
+            return f"Hace {minutes} minutos"
+    elif delta < timedelta(days=1):
+        if (delta.total_seconds() // 3600) == 1:
+            return f"Hace 1 hora"
+        else:
+            hours = int(delta.total_seconds() // 3600)
+            return f"Hace {hours} horas"
+    elif delta < timedelta(days=2):
+        return "Hace 1 día"
+    elif delta < timedelta(days=3):
+        return "Hace 2 días"
+    elif delta < timedelta(days=4):
+        return "Hace 3 días"
+    else:
+        return date_time.strftime("%H:%M - %d/%m/%Y")
+
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def get_post_by_id(request):
@@ -135,7 +186,7 @@ def get_post_by_id(request):
             "name": Post.get_name(post.user),
             "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
             "body": post.body,
-            "created_at": post.created_at,
+            "created_at": format_time(post.created_at),
             "likes": post.likes_number,
             "user_liked": user_liked,  # Indica si el usuario actual ha dado like al post
             "user_faved": user_faved,
@@ -148,7 +199,7 @@ def get_post_by_id(request):
                     "name": Post.get_name(comment.user),
                     "profile_picture": comment.user.profile_picture if comment.user.profile_picture else None,
                     "content": comment.content,
-                    "created_at": comment.created_at
+                    "created_at": format_time(comment.created_at)
                 }
                 for comment in post.comments.all()
             ],
@@ -244,7 +295,7 @@ def add_comment(request):
             "name": Post.get_name(comment.user),
             "profile_picture": profile_picture,
             "content": comment.content,
-            "created_at": comment.created_at,
+            "created_at": format_time(comment.created_at),
         }
         
         connection.close()
@@ -325,7 +376,7 @@ def get_favorites(request):
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
                 "body": post.body,
-                "created_at": post.created_at,
+                "created_at": format_time(post.created_at),
                 "likes": post.likes_number,
                 "user_liked": user_liked,
                 "user_faved": user_faved,
@@ -378,7 +429,7 @@ def get_my_posts(request):
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
                 "body": post.body,
-                "created_at": post.created_at,
+                "created_at": format_time(post.created_at),
                 "likes": post.likes_number,
                 "comments_number": post.comments_number,
                 "user_liked": user_liked,
@@ -438,7 +489,7 @@ def get_recent_posts(request):
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
                 "body": post.body,
-                "created_at": post.created_at,
+                "created_at": format_time(post.created_at),
                 "likes": post.likes_number,
                 "comments_number": post.comments_number,
                 "user_liked": user_liked,
@@ -496,7 +547,7 @@ def get_popular_posts(request):
                 "name": Post.get_name(post.user),
                 "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
                 "body": post.body,
-                "created_at": post.created_at,
+                "created_at": format_time(post.created_at),
                 "likes": post.likes_number,
                 "comments_number": post.comments_number,
                 "user_liked": user_liked,
@@ -517,34 +568,77 @@ def get_popular_posts(request):
         connection.close()
         return Response({"error": f"Error al obtener los posteos populares: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-def filter_posts_by_labels(labels, user, order_by):
-    # Convierte el string separado por comas en una lista de enteros
-    label_ids = [int(label_id) for label_id in labels.split(',') if label_id.isdigit()]
     
-    posts = Post.objects.filter(labels__label__id__in=label_ids).distinct().order_by(order_by, '-id')[:30]  # Cambia el 30 por el número de posts a obtener
-    
+from django.db.models import Q
+
+def filter_posts_by_labels(data, user, order_by):
+    # Construimos filtros dinámicos usando Q
+    label_ids = [item["id"] for item in data if not item["is_user"]]
+    user_ids = [item["id"] for item in data if item["is_user"]]
+
+    # Creamos una consulta combinada para etiquetas y usuarios
+    filters = Q()
+    if label_ids:
+        filters |= Q(labels__label__id__in=label_ids)
+    if user_ids:
+        filters |= Q(user__id__in=user_ids)
+
+    # Filtrar posts según los filtros combinados y ordenar en SQL
+    posts = (
+        Post.objects.filter(filters)
+        .distinct()  # Nos aseguramos de que no haya duplicados
+        .order_by(order_by, "-id")[:30]  # Ordenamos y limitamos en SQL
+    )
+
     connection.close()
     return posts
 
 
+import uuid
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def search_labels(request):
-    search_term = request.data.get("q", None) # Obtener la consulta de búsqueda
+    search_term = request.data.get("q", None)  # Obtener la consulta de búsqueda
     if not search_term:
-        return Response({"labels": []}, status=status.HTTP_200_OK)
+        return Response({"results": []}, status=status.HTTP_200_OK)
 
     # Filtrar etiquetas que contengan el término de búsqueda (case insensitive)
     matching_labels = Label.objects.filter(name__icontains=search_term)
+    matching_users = User.objects.filter(username__icontains=search_term)
 
-    # Devolver los nombres de las etiquetas coincidentes
-    labels_data = [{"id": label.id,
-                    "name": label.name,
-                    } for label in matching_labels]
-    
+    # Construir la lista de resultados para las etiquetas
+    labels_data = [
+        {
+            "id": label.id,
+            "id_front": str(uuid.uuid4()),  # Generar un ID único para el frontend
+            "name": label.name,
+            "is_user": False,  # Esto indica que es una etiqueta
+        }
+        for label in matching_labels
+    ]
+
+    # Construir la lista de resultados para los usuarios
+    users_data = [
+        {
+            "id": user.id,
+            "id_front": str(uuid.uuid4()),  # Generar un ID único para el frontend
+            "name": user.username,
+            "profile_picture": user.profile_picture if user.profile_picture else None,
+            "is_user": True,  # Esto indica que es un usuario
+        }
+        for user in matching_users
+    ]
+
+    # Combinar ambos resultados en una sola lista
+    results = labels_data + users_data
+
+    # Cerrar la conexión de la base de datos
     connection.close()
-    return Response({"labels": labels_data}, status=status.HTTP_200_OK)
+
+    # Devolver la respuesta con los resultados
+    return Response({"results": results}, status=status.HTTP_200_OK)
+
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])

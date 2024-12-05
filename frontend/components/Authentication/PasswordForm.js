@@ -9,32 +9,32 @@ import NavigationText from "../UI/Navigation/NavigationText";
 import { Formik } from "formik";
 import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
-import PasswordForm from "./PasswordForm";
-import { useNavigation } from "@react-navigation/native";
 
-export default function LoginForm({ onSubmit }) {
-  function submitHandler({ username, password }) {
-    onSubmit(username, password);
+export default function PasswordForm({ onSubmit }) {
+  function submitHandler( values ) {
+    console.log("values " + values.username)
+    onSubmit(values);
+    
   }
-
-  const navigation = useNavigation()
+  
 
   return (
     <DismissKeyboardContainer>
       <View style={styles.container}>
         <FormHeader/>
         <Formik
-          initialValues={{ username: "", password: "" }}
-          validate={({ username, password }) => {
+          initialValues={{ username: "", usernameConfirm:""}}
+          validate={({ username, usernameConfirm }) => {
             const errors = {};
 
             if (username.trim() === "") {
-              errors.username = "Usuario requerido";
+              errors.username = "Username requerido";
             }
 
-            if (password.trim() === "") {
-              errors.password = "Contraseña requerida";
-            }
+            if (username !== usernameConfirm) {
+                errors.usernameConfirm = "Los username no coinciden";
+              }
+              console.log(errors)
 
             return errors;
           }}
@@ -49,9 +49,9 @@ export default function LoginForm({ onSubmit }) {
             handleSubmit,
           }) => (
             <Form>
-              <FormTitle color={Colors.mJordan}>Iniciar Sesión</FormTitle>
+              <FormTitle color={Colors.mJordan}>Ingresa tu username</FormTitle>
               <FormControl
-                label="Usuario"
+                label="Username"
                 value={values.username}
                 name="username"
                 handleChange={handleChange}
@@ -61,14 +61,13 @@ export default function LoginForm({ onSubmit }) {
                 autoCapitalize="none"
               />
               <FormControl
-                label="Contraseña"
-                secure
-                value={values.password}
-                name="password"
+                label="Confirma username"
+                value={values.usernameConfirm}
+                name="usernameConfirm"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                touched={touched.password}
-                errors={errors.password}
+                touched={touched.usernameConfirm}
+                errors={errors.usernameConfirm}
                 autoCapitalize="none"
               />
               <View style={styles.buttonContainer}>
@@ -77,17 +76,10 @@ export default function LoginForm({ onSubmit }) {
                   color={Colors.mJordan}
                   onPress={handleSubmit}
                 >
-                  Iniciar Sesión
+                  Cambiar contraseña
                 </Button>
               </View>
-              <View  style={styles.forgotPasswordContainer}>
-                <Pressable onPress={() => navigation.navigate("ChangePassword")}>
-                  <Text style={styles.linkText}>¿Olvidaste tu contraseña?</Text>
-                </Pressable>
-              </View>
-              <NavigationText action={"Registrate"} href={"Register"}>
-                ¿Todavía no tenes cuenta?
-              </NavigationText>
+              
             </Form>
           )}
         </Formik>
@@ -102,16 +94,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  forgotPasswordContainer: {
-    marginTop: 20,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  linkText: {
-    color: Colors.oceanBlue, 
-    fontSize: 14,
-    textDecorationLine: 'underline',
-  },
 
   buttonContainer: {
     marginTop: 20,

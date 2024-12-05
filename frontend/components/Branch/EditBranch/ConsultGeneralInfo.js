@@ -5,10 +5,22 @@ import Form from "../../UI/Forms/Form";
 import FormControl from "../../UI/Controls/FormControl";
 import CheckboxControl from "../../UI/Controls/CheckboxControl";
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import SchedulePicker from "../ScheduleComponent";
+import { useEffect } from "react";
 
 export function ConsultGeneralInfo({ branch }) {
   const navigation = useNavigation();
+  const [schedules, setSchedules] = useState(
+    branch?.schedules
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  console.log("que verga tenes:?")
+  console.log(branch?.schedules)
 
+
+  console.log(schedules)
+  
   const handlePress = (branch) => {
     navigation.navigate("EditBranchStack", {
       screen: "EditGeneralInfo",
@@ -48,6 +60,11 @@ export function ConsultGeneralInfo({ branch }) {
               editable={false}
             />
           </View>
+          <SchedulePicker
+                schedules={schedules}
+                isEditing ={true}
+                isConsulting={true}
+              />
           <View style={styles.checkboxServices}>
             <TextCommonsRegular style={styles.checkboxServicesText}>
               Servicios Ofrecidos

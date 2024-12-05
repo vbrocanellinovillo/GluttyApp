@@ -77,11 +77,11 @@ export default function BloodTest({ navigation, route }) {
         pdf
       );
       setIsError(false);
-      setMessage("Estudio medico registrado correctamente!");
+      setMessage("Estudio médico registrado correctamente!");
       setShowModal(true);
     } catch (error) {
       setIsError(true);
-      setMessage("Ocurrio un error. Por favor intente de nuevo más tarde");
+      setMessage("Ocurrió un error. Por favor intente de nuevo más tarde");
       setShowModal(true);
     } finally {
       setIsLoading(false);

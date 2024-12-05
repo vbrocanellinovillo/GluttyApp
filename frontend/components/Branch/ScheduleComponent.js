@@ -3,62 +3,40 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Picker from "../UI/Controls/Picker";
 import CheckboxControl from "../UI/Controls/CheckboxControl";
 
-const SchedulePicker = (    ) => {
-  const [schedules, setSchedules] = useState([
-    {
-      id: 1,
-      day: "Lunes",
-      startHour: "08:00",
-      endHour: "20:00",
-    },
-  ]);
-  const [allSame, setAllSame] = useState(false); // Estado para el checkbox
+const SchedulePicker = ({ schedules, setSchedules, isConsulting=false }) => {
+  const [allSame, setAllSame] = useState(false);
 
   const daysOfWeek = [
-    { label: "Lunes", value: "1" },
-    { label: "Martes", value: "2" },
-    { label: "Miércoles", value: "3" },
-    { label: "Jueves", value: "4" },
-    { label: "Viernes", value: "5" },
-    { label: "Sábado", value: "6" },
-    { label: "Domingo", value: "7" },
+    { label: "Lunes", value: "Lunes" },
+    { label: "Martes", value: "Martes" },
+    { label: "Miércoles", value: "Miércoles" },
+    { label: "Jueves", value: "Jueves" },
+    { label: "Viernes", value: "Viernes" },
+    { label: "Sábado", value: "Sábado" },
+    { label: "Domingo", value: "Domingo" },
   ];
 
   const hours = Array.from({ length: 24 }, (_, hour) => {
-    const formattedHour = hour.toString().padStart(2, "0"); // Formatea las horas con dos dígitos
+    const formattedHour = hour.toString().padStart(2, "0");
     return ["00", "15", "30", "45"].map((minute) => ({
       label: `${formattedHour}:${minute}`,
       value: `${formattedHour}:${minute}`,
     }));
   }).flat();
-  
-  console.log("los schedules: ", schedules);
-  
+
   const handleCheckboxChange = (name, checked) => {
     setAllSame(checked);
     if (checked) {
-        // Obtén el horario de inicio y fin del primer elemento de `schedules`
-        const { startHour, endHour } = schedules[0];
-    
-        // Genera un nuevo arreglo con los días de la semana
-        const updatedSchedules = [
-          { id: 1, day: "Lunes", startHour, endHour},
-          { id: 2, day: "Martes", startHour, endHour },
-          { id: 3,day: "Miércoles", startHour, endHour },
-          { id: 4, day: "Jueves", startHour, endHour },
-          { id: 5, day: "Viernes", startHour, endHour },
-          { id: 6, day: "Sábado", startHour, endHour },
-          { id: 7, day: "Domingo", startHour, endHour },
-        ];
-    
-        // Actualiza el estado con los nuevos horarios
-        setSchedules(updatedSchedules);
-      }
-    else{
-        const { startHour, endHour } = schedules[0];
-        const updatedSchedules = [
-            { id: 1, day: "Lunes", startHour, endHour}]
-            setSchedules(updatedSchedules);
+      const { min_time, max_time } = schedules[0];
+      const updatedSchedules = daysOfWeek.map((day, index) => ({
+        id: index + 1,
+        day: day.label,
+        min_time,
+        max_time,
+      }));
+      setSchedules(updatedSchedules);
+    } else {
+      setSchedules([schedules[0]]);
     }
   };
 
@@ -67,24 +45,27 @@ const SchedulePicker = (    ) => {
       ...prevSchedules,
       {
         id: Date.now(),
-        day: "",
-        startHour: "00",
-        startMinute: "00",
-        endHour: "00",
-        endMinute: "00",
+        day: "Lunes",
+        min_time: "00:00",
+        max_time: "00:00",
       },
     ]);
   };
 
   const updateSchedule = (id, field, value) => {
+    //Agregar validación de horarios
+
     setSchedules((prevSchedules) =>
       prevSchedules.map((schedule) =>
         schedule.id === id ? { ...schedule, [field]: value } : schedule
       )
     );
   };
+  
 
   const removeSchedule = (id) => {
+    console.log("Estoy eliminando")
+    console.log(schedules)
     setSchedules((prevSchedules) =>
       prevSchedules.filter((schedule) => schedule.id !== id)
     );
@@ -100,20 +81,22 @@ const SchedulePicker = (    ) => {
           <Picker
             data={daysOfWeek}
             value={schedule.day}
-            onValueChange={(value) => updateSchedule(schedule.id, "day", value)}
+            onValueChange={(label) => updateSchedule(schedule.id, "day", label)}
             textStyle={styles.textStyle}
             cointainerStyle={styles.pickerCointaner}
             dropButton = {false}
+            isConsulting = {isConsulting}
           />
           {/* Selector de hora de inicio */}
           <Picker
             data={hours}
-            value={schedule.startHour}
+            value={schedule.min_time}
             cointainerStyle={styles.pickerHour}
             textStyle={styles.textStyle}
             dropButton = {false}
+            isConsulting = {isConsulting}
             onValueChange={(value) =>
-              updateSchedule(schedule.id, "startHour", value)
+              updateSchedule(schedule.id, "min_time", value)
             
             }
           />
@@ -121,16 +104,17 @@ const SchedulePicker = (    ) => {
           {/* Selector de hora de fin */}
           <Picker
             data={hours}
-            value={schedule.endHour}
+            value={schedule.max_time}
             cointainerStyle={styles.pickerHour}
             textStyle={styles.textStyle}
             dropButton = {false}
+            isConsulting = {isConsulting}
             onValueChange={(value) =>
-              updateSchedule(schedule.id, "endHour", value)
+              updateSchedule(schedule.id, "max_time", value)
             }
           />
           {/* Botón para eliminar */}
-          {(schedule.id != 1) && (
+          {(schedule.id != 1 && !isConsulting) && (
           <TouchableOpacity
             style={styles.removeButton}
             onPress={() => removeSchedule(schedule.id)}
@@ -140,18 +124,19 @@ const SchedulePicker = (    ) => {
         </View>
       ))}
       {/* Botón para agregar nuevo horario */}
-      {(!allSame) && (
+      {(!allSame && !isConsulting) && (
       <TouchableOpacity style={styles.addButton} onPress={addSchedule}>
         <Text style={styles.addText}>+ Agregar nuevo horario</Text>
       </TouchableOpacity>)}
       {/* Botón para hacer todos los días iguales */}
+      { (!isConsulting) && (
     <CheckboxControl
         title="Todos mis horarios son iguales"
         checked={allSame}
         setChecked={handleCheckboxChange}
         name="allSame"
         style={styles.checkbox}
-      />
+      />)}
     </View>
   );
 };

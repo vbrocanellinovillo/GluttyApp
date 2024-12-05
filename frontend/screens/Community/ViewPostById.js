@@ -65,7 +65,7 @@ export default function ViewPostById({ route, navigation }) {
           const selectedPost = await getPostById(id, token);
           setIsLoading(false);
           setPost(selectedPost);
-          //console.log("el posteo lindo:     ", selectedPost);
+          console.log("el posteo lindo:     ", selectedPost);
         } catch (error) {
           setIsError(true);
         } finally {
@@ -86,6 +86,13 @@ if (isLoading) {
       return <ConsultarPostSkeleton />;
   }
 
+  function handleDeleteComment(commentId) {
+    setPost((prevPost) => ({
+      ...prevPost,
+      comments: prevPost.comments.filter((comment) => comment.comment_id !== commentId),
+    }));
+  }
+
   return (
     <>
       <GluttyModal
@@ -98,7 +105,7 @@ if (isLoading) {
       <GluttyModal
         visible={showEliminarModal}
         onClose={closeModalDeleteHandler}
-        message="¿Seguro que desea eliminar el estudio?"
+        message="¿Seguro que desea eliminar el post?"
         other
         buttons={[
           {
@@ -122,7 +129,7 @@ if (isLoading) {
         {post?.comments?.length > 0 ? (
           post.comments.map((comment, index) => (
             is_mine = comment.user === username,
-            <Comment key={index} comment={comment} is_mine={is_mine} token={token} />
+            <Comment key={index} comment={comment} is_mine={is_mine} token={token} onDelete={handleDeleteComment}/>
           ))
         ) : (
           <TextCommonsRegular style={styles.noComments}>    

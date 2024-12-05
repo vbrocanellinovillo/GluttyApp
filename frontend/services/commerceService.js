@@ -107,7 +107,8 @@ export async function getPdfById(id, token) {
 
 export async function addBranch(branch, token) {
   const requestUrl = url + "add-branch/";
-
+  console.log("deja de llorar:");
+  console.log(branch.schedules);
   const formdata = new FormData();
 
   formdata.append("name", branch.name);
@@ -117,6 +118,7 @@ export async function addBranch(branch, token) {
     "separated_kitchen",
     branch.separatedKitchen ? "True" : "False"
   );
+  formdata.append("schedules", JSON.stringify(branch?.schedules));
   formdata.append("just_takeaway", branch.onlyTakeAway ? "True" : "False");
   formdata.append("address", branch.address);
   formdata.append("latitude", branch.coordinates.latitude);
@@ -131,6 +133,10 @@ export async function addBranch(branch, token) {
       });
     });
   }
+  console.log("Formdata");
+  console.log(formdata);
+  console.log("FormData Schedules:");
+  console.log(formdata.getAll("schedules"));
 
   const requestOptions = {
     method: "POST",
@@ -188,7 +194,8 @@ export async function updateBranch(branch, id, token, id_elim = []) {
   const formdata = new FormData();
   formdata.append("name", branch.name);
   formdata.append("phone", branch.phone);
-  formdata.append("optional_phone", branch.optionalPhone);
+  formdata.append("optional_phone", branch.optional_phone);
+  formdata.append("schedules", JSON.stringify(branch?.schedules));
   formdata.append(
     "separated_kitchen",
     branch.separatedKitchen ? "True" : "False"
@@ -198,7 +205,7 @@ export async function updateBranch(branch, id, token, id_elim = []) {
   formdata.append("latitude", branch.latitude);
   formdata.append("longitude", branch.longitude);
   formdata.append("branch_id", id);
-  formdata.append("image_ids_to_delete", JSON.stringify(id_elim))
+  formdata.append("image_ids_to_delete", JSON.stringify(id_elim));
   if (branch.photos) {
     branch.photos.forEach((photo) => {
       formdata.append("image", {
@@ -208,7 +215,7 @@ export async function updateBranch(branch, id, token, id_elim = []) {
       });
     });
   }
-    
+
   const requestOptions = {
     method: "PUT",
     body: formdata,
@@ -288,6 +295,32 @@ export async function getSearchData(
   };
 
   const requestUrl = url + "search-commerce/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function deleteBranch(id, token) {
+  const requestUrl = url + "delete-branch/";
+
+  const formdata = new FormData();
+
+  formdata.append("branch_id", id);
+
+  formdata.append("token", token);
+
+  const requestOptions = {
+    method: "DELETE",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);

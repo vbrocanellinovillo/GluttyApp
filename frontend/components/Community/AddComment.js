@@ -28,6 +28,8 @@ export default function AddComment({ id_post }) {
   const [comentarios, setComentarios] = useState([]); // Estado para manejar el array de comentarios
 
   const token = useSelector((state) => state.auth.accessToken);
+  const username = useSelector((state) => state.auth.userData.username);
+
 
   const handleSend = async () => {
     try {
@@ -48,6 +50,13 @@ export default function AddComment({ id_post }) {
     }
   };
 
+  const handleDeleteComment = (commentId) => {
+    setComentarios((prevComentarios) =>
+      prevComentarios.filter((comment) => comment.comment_id !== commentId)
+    );
+  };
+
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -58,7 +67,7 @@ export default function AddComment({ id_post }) {
         <View style={styles.commentsContainer}>
           {comentarios.map((item, index) => (
             <View key={index} style={styles.commentContainer}>
-              <Comment comment={item} />
+              <Comment comment={item} is_mine={true} token={token} onDelete={handleDeleteComment} />
             </View>
           ))}
         </View>

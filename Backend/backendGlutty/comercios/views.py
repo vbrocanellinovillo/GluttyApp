@@ -19,7 +19,7 @@ from comunidad.models import *
 from django.db import connection, transaction
 import json
 from collections import Counter
-from django.db.models import Count
+from django.db.models import Count, Subquery
 from datetime import timedelta
 from django.utils.timezone import now
 
@@ -152,9 +152,13 @@ def add_branch(request):
             new_location.save()
             
             # Crear horarios para la nueva sucursal
-            schedules = request.data.get("schedules", [])
-            print('schedules')
-            print(request.data)
+            schedules = request.data.get("schedules", "[]")
+            print(schedules)
+            try:
+                schedules = json.loads(schedules)  # Convierte la cadena JSON en un array de Python
+            except json.JSONDecodeError:
+                schedules = []  # En caso de error, asignar un array vacío
+            
             created_schedules = []
             for schedule in schedules:
                 Schedule.objects.create(
@@ -227,6 +231,7 @@ def get_branch(request):
         schedules = branch.schedules.all()
         schedule_data = [
             {
+                "id": schedule.id,
                 "day": schedule.get_day_display(),
                 "min_time": schedule.min_time,
                 "max_time": schedule.max_time,
@@ -320,20 +325,33 @@ def update_branch(request):
             return Response({"error": location_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
         # Actualizar horarios
-        schedules = request.data.get("schedules", [])
-        
+        schedules = request.data.get("schedules", "[]")
+        print(schedules)
+        try:
+            schedules = json.loads(schedules)  # Convierte la cadena JSON en un array de Python
+        except json.JSONDecodeError:
+            schedules = []  # En caso de error, asignar un array vacío
+        print(schedules)
+        if schedules:
+            branch.deleteSchedules()
         for schedule in schedules:
             # Buscar si ya existe un horario para la misma sucursal y día
-            existing_schedule = branch.schedules.filter(day=schedule["day"]).first()
-
-            if existing_schedule:
-                # Si existe un horario para este día, actualízalo
-                existing_schedule.min_time = schedule["min_time"]
-                existing_schedule.max_time = schedule["max_time"]
-                existing_schedule.save()
-            else:
-                # Si no existe, crea un nuevo horario
-                Schedule.objects.create(
+            # existing_schedule = branch.schedules.filter(day=schedule["day"]).first()
+                    
+            # if existing_schedule:
+            #     # Si existe un horario para este día, actualízalo
+            #     existing_schedule.min_time = schedule["min_time"]
+            #     existing_schedule.max_time = schedule["max_time"]
+            #     existing_schedule.save()
+            # else:
+            #     # Si no existe, crea un nuevo horario
+            #     Schedule.objects.create(
+            #         branch=branch,
+            #         day=schedule["day"],
+            #         min_time=schedule["min_time"],
+            #         max_time=schedule["max_time"],
+            #     )
+            Schedule.objects.create(
                     branch=branch,
                     day=schedule["day"],
                     min_time=schedule["min_time"],
@@ -614,7 +632,7 @@ def get_branches(request):
         commerce = Commerce.objects.filter(user=user).first()
         # Obtener un solo objeto de comercio asociado al usuario
         #commerce = Commerce.objects.get(user=user)
-        branches = Branch.objects.filter(is_active=True, commerce=commerce)
+        branches = Branch.objects.filter(is_active__exact=True, commerce=commerce)
         for branch in branches:
             branch_data = {
                 "id": branch.id,
@@ -710,17 +728,34 @@ def get_info_dashboard(request):
         top_branches_list = [{"branch": b["branch__name"], "views": b["view_count"]} for b in top_branches]
 
         # 4. Top 3 publicaciones más likeadas dentro del tiempo filtrado
-        top_liked_posts = (
+        # Obtener los IDs de los tres posteos más likeados
+        top_liked_posts_ids = (
             Like.objects.filter(post__in=posts, created_at__gte=date_threshold)
-            .values("post_id", "post__body")
+            .values("post_id")  # Solo los IDs de los posteos
             .annotate(like_count=Count("id"))
             .order_by("-like_count")[:3]
         )
+
+        # Obtener los objetos Post correspondientes
+        top_liked_posts = Post.objects.filter(id__in=Subquery(top_liked_posts_ids.values("post_id")))
+        
+        print(top_liked_posts)
+        
         top_posts_list = [
-            {"post_id": post["post_id"], "likes": post["like_count"], "body": post["post__body"]}
+            {"post_id": post.id,
+             "user": post.user.username,
+             "name": Post.get_name(post.user),
+             "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+             "body": post.body,
+             "created_at": post.created_at,
+             "likes": post.likes_number,
+             "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+             "comments_number": post.comments_number,
+             "likes": post.likes_number,
+             "labels": [label.label.name for label in post.labels.all()]}
             for post in top_liked_posts
         ]
-
+        
         connection.close()
         # Respuesta final
         return Response({

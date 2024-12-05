@@ -5,6 +5,7 @@ export class Branch {
     optionalPhone,
     separatedKitchen,
     onlyTakeAway,
+    schedules,
     address,
     coordinates,
     photos
@@ -13,6 +14,7 @@ export class Branch {
     this.phone = phone;
     this.optionalPhone = optionalPhone;
     this.separatedKitchen = separatedKitchen;
+    this.schedules = schedules;
     this.onlyTakeAway = onlyTakeAway;
     this.address = address;
     this.coordinates = coordinates;

@@ -1,24 +1,17 @@
 import { useEffect, useState, useCallback } from "react";
-import { Dimensions, FlatList, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import AddPostButton from "../../components/Community/AddPostButton";
 import { Divider } from "react-native-paper";
 import { getMyPosts } from "../../services/communityService";
-import PostItem from "../../components/Community/PostItem";
-import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
-import ErrorPosts from "../../components/Community/ErrorPosts";
 import NoPosts from "../../components/Community/NoPosts";
-import {
-  COMMUNITY_BOTTOM_INSET,
-  communityPaginationFooterStyle,
-  PAGE_SIZE,
-} from "../../constants/community";
-import PaginationFooter from "../../components/UI/Loading/PaginationFooter";
+import { PAGE_SIZE } from "../../constants/community";
 import { useFocusEffect } from "@react-navigation/native";
+import PostsList from "../../components/Community/PostsList";
 
 const height = Dimensions.get("window").height * 0.5;
 
-export default function MyPosts({ navigation, route, del = false }) {
+export default function MyPosts({ route }) {
   const token = useSelector((state) => state.auth.accessToken);
 
   const [posts, setPosts] = useState([]);
@@ -71,54 +64,26 @@ export default function MyPosts({ navigation, route, del = false }) {
     }
   }
 
-  let content = <></>;
-
-  if (isLoading) {
-    content = <PostsSkeleton />;
-  }
-
-  if (isError && !isLoading) {
-    content = <ErrorPosts style={styles.errorPosts} />;
-  }
-
-  if (!isLoading && !isError && posts && posts.length > 0) {
-    content = (
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <PostItem
-            post={item}
-            onPress={() => navigation.navigate("ViewPostById", { id: item.id })}
-          />
-        )}
-        contentInset={{ bottom: COMMUNITY_BOTTOM_INSET }}
-        onEndReached={changePage}
-        ListFooterComponent={
-          <PaginationFooter
-            hasNextPage={hasNextPage}
-            style={communityPaginationFooterStyle}
-          />
-        }
-      />
-    );
-  }
-
-  if (!isLoading && !isError && (!posts || posts.length == 0)) {
-    content = (
-      <NoPosts>
-        Comienza a publicar tus posteos para compartir con la comunidad!
-      </NoPosts>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <AddPostButton style={styles.button} />
       </View>
       <Divider />
-      {content}
+      <PostsList
+        posts={posts}
+        hasNextPage={hasNextPage}
+        onPageChange={changePage}
+        onRefresh={fetchMyPosts}
+        isError={isError}
+        isLoading={isLoading}
+        style={styles.list}
+        NoContentComponent={() => (
+          <NoPosts>
+            Comienza a publicar tus posteos para compartir con la comunidad!
+          </NoPosts>
+        )}
+      />
     </View>
   );
 }

@@ -1,15 +1,22 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import DetailText from "./DetailText";
 import DetailTitle from "./DetailTitle";
 import PhonesContainer from "./PhonesContainer";
+import StatusIndicator from "./StatusIndicator";
 
-export default function DetailsGeneralInfo({ address, phone, optionalPhone }) {
+export default function DetailsGeneralInfo({ address, phone, optionalPhone, isOpen }) {
   return (
     <View style={styles.infoContainer}>
-      <View>
-        <DetailTitle>Ubicación</DetailTitle>
-        <DetailText>{address}</DetailText>
+      <View style={styles.cabeceraContainer}>
+        <View>
+          <DetailTitle>Ubicación</DetailTitle>
+          <DetailText>{address}</DetailText>
+        </View>
+        <View>
+          <StatusIndicator isOpen={isOpen}/>
+        </View>
       </View>
+      
       <PhonesContainer phone={phone} optionalPhone={optionalPhone} />
     </View>
   );
@@ -18,5 +25,12 @@ export default function DetailsGeneralInfo({ address, phone, optionalPhone }) {
 const styles = StyleSheet.create({
   infoContainer: {
     gap: 14,
+    
   },
+  cabeceraContainer:{
+    flexDirection: "row",
+    justifyContent: "space-between", // Ajusta la separación horizontal
+    alignItems: "center",
+    paddingRight: 50
+  }
 });

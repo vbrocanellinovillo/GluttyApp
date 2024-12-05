@@ -120,6 +120,46 @@ export async function update(id, isCommerce, userData, token) {
   }
 }
 
+export async function forgotPassword(username) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+  
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+  };
+
+  //VER AXA
+  const requestUrl = url + "send-password-recovery-code/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function forgotPasswordCode(username, code) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+  formdata.append("code", code);
+  
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+  };
+
+  const requestUrl = url + "verify-recovery-code/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 export async function changePassword(username, currentPassword, newPassword) {
   const formdata = new FormData();
   formdata.append("username", username);
@@ -216,6 +256,8 @@ export async function verifyCode(username, verificationCode) {
     throw new Error(error.message);
   }
 }
+
+
 
 export async function checkUsername(username) {
   const formdata = new FormData();
