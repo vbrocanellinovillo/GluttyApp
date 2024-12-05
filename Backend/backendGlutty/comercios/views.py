@@ -153,6 +153,8 @@ def add_branch(request):
             
             # Crear horarios para la nueva sucursal
             schedules = request.data.get("schedules", [])
+            print('schedules')
+            print(request.data)
             created_schedules = []
             for schedule in schedules:
                 Schedule.objects.create(
@@ -161,6 +163,9 @@ def add_branch(request):
                     min_time=schedule["min_time"],
                     max_time=schedule["max_time"],
                 )
+                print(schedule["day"])
+                print(schedule["min_time"])
+                print(schedule["max_time"])
                 
             new_schedules = new_branch.schedules.all()
             created_schedules= [
