@@ -11,8 +11,8 @@ import DismissKeyboardContainer from "../UI/Forms/DismissKeyboadContainer";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 
 export default function PasswordForm({ onSubmit }) {
-  function submitHandler({ email, emailConfirm }) {
-    onSubmit(email, emailConfirm);
+  function submitHandler({ username, usernameConfirm }) {
+    onSubmit(username, usernameConfirm);
   }
   
 
@@ -21,21 +21,16 @@ export default function PasswordForm({ onSubmit }) {
       <View style={styles.container}>
         <FormHeader/>
         <Formik
-          initialValues={{ email: "", emailConfirm:""}}
-          validate={({ email, emailConfirm }) => {
+          initialValues={{ username: "", usernameConfirm:""}}
+          validate={({ username, usernameConfirm }) => {
             const errors = {};
 
-            if (email.trim() === "") {
-              errors.email = "Email requerido";
+            if (username.trim() === "") {
+              errors.username = "Username requerido";
             }
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-            errors.email = "Email inválido";
-            }
-
-            if (emailConfirm !== email) {
-                errors.emailConfirm = "Los emails no coinciden";
+            if (username !== usernameConfirm) {
+                errors.emailConfirm = "Los username no coinciden";
               }
               console.log(errors)
 
@@ -52,25 +47,25 @@ export default function PasswordForm({ onSubmit }) {
             handleSubmit,
           }) => (
             <Form>
-              <FormTitle color={Colors.mJordan}>Ingresa tu email</FormTitle>
+              <FormTitle color={Colors.mJordan}>Ingresa tu username</FormTitle>
               <FormControl
-                label="Email"
-                value={values.email}
-                name="email"
+                label="Username"
+                value={values.username}
+                name="username"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                touched={touched.email}
-                errors={errors.email}
+                touched={touched.username}
+                errors={errors.username}
                 autoCapitalize="none"
               />
               <FormControl
-                label="Confirma email"
-                value={values.emailConfirm}
-                name="emailConfirm"
+                label="Confirma username"
+                value={values.usernameConfirm}
+                name="usernameConfirm"
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-                touched={touched.emailConfirm}
-                errors={errors.emailConfirm}
+                touched={touched.usernameConfirm}
+                errors={errors.usernameConfirm}
                 autoCapitalize="none"
               />
               <View style={styles.buttonContainer}>

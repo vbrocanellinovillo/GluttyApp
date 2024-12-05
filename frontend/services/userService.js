@@ -120,9 +120,9 @@ export async function update(id, isCommerce, userData, token) {
   }
 }
 
-export async function forgotPassword(email) {
+export async function forgotPassword(username) {
   const formdata = new FormData();
-  formdata.append("email", email);
+  formdata.append("username", username);
   
   const requestOptions = {
     method: "POST",
@@ -130,11 +130,11 @@ export async function forgotPassword(email) {
   };
 
   //VER AXA
-  const requestUrl = url + "change-password/";
+  const requestUrl = url + "send-password-recovery-code/";
 
   try {
-    //const response = await httpRequest(requestUrl, requestOptions);
-    //return response;
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
   } catch (error) {
     throw new Error(error.message);
   }

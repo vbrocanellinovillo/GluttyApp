@@ -29,7 +29,7 @@ export default function ChangePassword() {
     try {
       setisloading(true);
       //para cuando este lo del back
-      //const forgotPasswordResponse = await forgotPassword(values);
+      const forgotPasswordResponse = await forgotPassword(values);
       setModal(true);
 
     } catch (error) {
