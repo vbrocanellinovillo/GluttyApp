@@ -11,7 +11,8 @@ import MenusContainer from "./MenusContainer";
 
 export default function BranchDetails({ branch, handlePdf }) {
   if (!branch) return <ErrorBranchDetails />;
-
+  console.log("berea")
+  console.log(branch.is_open_now)
   return (
     <View style={styles.branch}>
       <View style={styles.imageRow}>
@@ -35,6 +36,7 @@ export default function BranchDetails({ branch, handlePdf }) {
           address={branch?.address}
           phone={branch?.phone}
           optionalPhone={branch?.optional_phone}
+          isOpen={branch?.is_open_now}
         />
         <Divider />
         <PhotosContainer photos={branch?.photos} />
@@ -44,6 +46,7 @@ export default function BranchDetails({ branch, handlePdf }) {
           onlyTakeAway={branch?.just_takeaway}
           separatedKitchen={branch?.separated_kitchen}
           description={branch?.commerce_description}
+          schedule={branch?.schedules}
         />
       </View>
     </View>
