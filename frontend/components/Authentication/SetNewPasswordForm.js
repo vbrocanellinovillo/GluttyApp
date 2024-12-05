@@ -19,6 +19,8 @@ export default function SetNewPasswordForm({ onSubmit }){
     return (
         <DismissKeyboardContainer>
           <View style={styles.container}>
+          <Text style={styles.title}>Nueva contraseña</Text>
+
             <Formik
               initialValues={{
                 newPassword: "",
@@ -96,7 +98,7 @@ export default function SetNewPasswordForm({ onSubmit }){
                       color={Colors.mJordan}
                       onPress={handleSubmit}
                     >
-                      Estableceeer nueva contraseña wtfffff
+                      Establecer nueva contraseña
                     </Button>
                   </View>
                 </Form>
@@ -110,7 +112,7 @@ export default function SetNewPasswordForm({ onSubmit }){
 
 const styles = StyleSheet.create({
     container: {
-      paddingTop: 300,
+      paddingTop: 270,
       alignItems: "center",
     },
   
@@ -118,4 +120,10 @@ const styles = StyleSheet.create({
     buttonContainer: {
       marginTop: 20,
     },
+    title: {
+        fontSize: 30,
+        fontWeight: "bold",
+        marginBottom: 10,
+        color: Colors.mJordan, 
+      },
   });

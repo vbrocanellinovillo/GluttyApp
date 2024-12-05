@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "rgb(211, 211, 211)", // Asegúrate de que Colors.background tenga el color deseado
+    backgroundColor: "rgb(255, 255, 255)", 
   },
   title: {
     fontSize: 28,
@@ -148,17 +148,17 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.inputBackground || "white", 
   },
   error: {
-    color: Colors.error, // Cambia según tus colores
+    color: Colors.error, 
     marginBottom: 10,
     textAlign: "center",
   },
   button: {
-    backgroundColor: Colors.locro, // Cambia según tus colores
+    backgroundColor: Colors.locro, 
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 40,
     marginVertical: 10,
-    shadowColor: Colors.dark,
+    shadowColor: Colors.mJordan,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -167,12 +167,12 @@ const styles = StyleSheet.create({
     shadowRadius: 3.5,
   },
   buttonText: {
-    color: "white",
+    color: Colors.mJordan,
     fontSize: 18,
     fontWeight: "bold",
   },
   resendText: {
-    color: Colors.primary, // Cambia según tus colores
+    color: Colors.primary, 
     fontSize: 14,
     textDecorationLine: "underline",
     marginTop: 10,
