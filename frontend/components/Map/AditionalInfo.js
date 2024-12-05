@@ -7,14 +7,22 @@ export default function AditionalInfo({
   separatedKitchen,
   onlyTakeAway,
   description,
-  schedule = "FUNCA",
+  schedule,
 }) {
+  const schedulesString = schedule.map((horario) => {
+    const minTime = horario.min_time.slice(0, 5); // Quita los segundos
+    const maxTime = horario.max_time.slice(0, 5); // Quita los segundos
+    return `${horario.day} - ${minTime} a ${maxTime}`;
+  }).join("\n"); // Une las cadenas con un salto de línea
+console.log("puta")
+console.log(schedule);
+
   return (
     <>
-      {schedule && (
+      {schedulesString && (
         <View>
           <DetailTitle>Horarios del negocio</DetailTitle>
-          <DetailText>{schedule}</DetailText>
+          <DetailText>{schedulesString}</DetailText>
         </View>
       )}
       {description && (

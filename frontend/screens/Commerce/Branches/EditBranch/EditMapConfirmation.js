@@ -6,6 +6,7 @@
   import GluttyModal from "../../../../components/UI/GluttyModal";
   import { useDispatch } from "react-redux";
   import { commerceActions } from "../../../../context/commerce";
+  import { Branch } from "../../../../models/Branch";
   export default function EditMapConfirmation({ navigation, route }) {
     console.log(route)
     const receivedBranch = route.params?.params?.branch;
@@ -19,18 +20,23 @@
 
     const token = useSelector((state) => state.auth.accessToken);
 
+
     async function saveUpdatesBranch(
       selectedAddress,
-      marker
+      marker,
     ) {
         receivedBranch.latitude = marker.latitude
         receivedBranch.address = selectedAddress
         receivedBranch.longitude = marker.longitude
 
+
       try {
         setisloading(true);
         console.log("Branch" + receivedBranch.id);
         console.log(receivedBranch)
+        //receivedBranch.optionalPhone = receivedBranch.optional_Phone
+        receivedBranch.photos = undefined
+        receivedBranch.schedules = []
         const response = await updateBranch(receivedBranch, receivedBranch.id, token);
         setMessage(response.detail);
         setShowModal(true);

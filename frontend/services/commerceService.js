@@ -194,7 +194,7 @@ export async function updateBranch(branch, id, token, id_elim = []) {
   const formdata = new FormData();
   formdata.append("name", branch.name);
   formdata.append("phone", branch.phone);
-  formdata.append("optional_phone", branch.optionalPhone);
+  formdata.append("optional_phone", branch.optional_phone);
   formdata.append("schedules", JSON.stringify(branch?.schedules));
   formdata.append(
     "separated_kitchen",
@@ -295,6 +295,32 @@ export async function getSearchData(
   };
 
   const requestUrl = url + "search-commerce/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function deleteBranch(id, token) {
+  const requestUrl = url + "delete-branch/";
+
+  const formdata = new FormData();
+
+  formdata.append("branch_id", id);
+
+  formdata.append("token", token);
+
+  const requestOptions = {
+    method: "DELETE",
+    body: formdata,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  };
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);

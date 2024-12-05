@@ -1,8 +1,11 @@
-import { StyleSheet, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { Post } from "../../models/Post";
 import PostItem from "./PostItem";
 import BlurError from "../UI/BlurError";
 import { getRandomDate } from "../../utils/dateFunctions";
+import { useState } from "react";
+import * as Haptics from "expo-haptics";
+import { sleep } from "../../utils/utilFunctions";
 
 const POSTS = [
   new Post(
@@ -47,7 +50,18 @@ export default function ErrorPosts({
   containerStyle,
   textStyle,
   iconStyle,
+  onRefresh,
 }) {
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function handleRefresh() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setRefreshing(true);
+    await sleep(1000);
+    onRefresh && onRefresh();
+    setRefreshing(false);
+  }
+
   const backdropPosts = (
     <View style={postsStyle}>
       {POSTS.map((post) => (
@@ -57,7 +71,17 @@ export default function ErrorPosts({
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          style={styles.refreshControl}
+        />
+      }
+      showsVerticalScrollIndicator={false}
+    >
       <BlurError
         backdrop={backdropPosts}
         style={[styles.blurred, style]}
@@ -65,7 +89,7 @@ export default function ErrorPosts({
         textStyle={[styles.textStyle, textStyle]}
         iconStyle={[styles.iconStyle, iconStyle]}
       />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -75,7 +99,8 @@ const styles = StyleSheet.create({
   },
 
   blurred: {
-    justifyContent: "center",
+    paddingTop: 100,
+    justifyContent: "flex-start",
     alignItems: "center",
   },
 
@@ -92,5 +117,9 @@ const styles = StyleSheet.create({
 
   iconStyle: {
     fontSize: 45,
+  },
+
+  refreshControl: {
+    marginBottom: 10,
   },
 });

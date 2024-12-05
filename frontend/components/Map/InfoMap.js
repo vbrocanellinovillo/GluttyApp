@@ -44,6 +44,8 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
     try {
       const detailsBranch = await getBranch(id, token);
       setBranch(detailsBranch);
+      console.log("branchess")
+      console.log(branch)
       setIsError(false);
     } catch (error) {
       setBranch(undefined);

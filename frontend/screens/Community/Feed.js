@@ -1,14 +1,9 @@
-import { Dimensions, FlatList, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import Searchbar from "../../components/UI/Controls/Searchbar";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getFeed } from "../../services/communityService";
-import ErrorPosts from "../../components/Community/ErrorPosts";
-import PostsSkeleton from "../../components/UI/Loading/PostsSkeleton";
-import PostItem from "../../components/Community/PostItem";
 import {
-  COMMUNITY_BOTTOM_INSET,
-  communityPaginationFooterStyle,
   PAGE_SIZE,
   searchbarStyle,
 } from "../../constants/community";
@@ -18,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import NoPosts from "../../components/Community/NoPosts";
 import TagChips from "../../components/Community/TagChips";
 import { communityActions } from "../../context/community";
-import PaginationFooter from "../../components/UI/Loading/PaginationFooter";
+import PostsList from "../../components/Community/PostsList";
 
 const height = Dimensions.get("window").height * 0.5;
 
@@ -76,40 +71,6 @@ export default function Feed({ navigation }) {
     }
   }
 
-  let content = <></>;
-
-  if (isLoading) content = <PostsSkeleton />;
-
-  if (isError && !isLoading) content = <ErrorPosts style={styles.errorPosts} />;
-
-  if (!isError && !isLoading && data && posts.length > 0)
-    content = (
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <PostItem
-            post={item}
-            onPress={() => navigation.navigate("ViewPostById", { id: item.id })}
-          />
-        )}
-        contentInset={{ bottom: COMMUNITY_BOTTOM_INSET }}
-        onEndReached={changePage}
-        ListFooterComponent={
-          <PaginationFooter
-            hasNextPage={hasNextPage}
-            style={communityPaginationFooterStyle}
-          />
-        }
-      />
-    );
-
-  if (!isError && !isLoading && data && posts.length == 0) {
-    content = (
-      <NoPosts>Comienza a compartir tus experiencias con la comunidad!</NoPosts>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <Searchbar
@@ -129,7 +90,20 @@ export default function Feed({ navigation }) {
         onSelect={handleChangeOption}
       />
       {tags && <TagChips tags={tags} onDeleteTag={handleRemoveFilter} />}
-      {content}
+      <PostsList
+        posts={posts}
+        hasNextPage={hasNextPage}
+        onPageChange={changePage}
+        onRefresh={() => refetch()}
+        isError={isError}
+        isLoading={isLoading}
+        style={styles.list}
+        NoContentComponent={() => (
+          <NoPosts>
+            Comienza a compartir tus experiencias con la comunidad!
+          </NoPosts>
+        )}
+      />
     </View>
   );
 }

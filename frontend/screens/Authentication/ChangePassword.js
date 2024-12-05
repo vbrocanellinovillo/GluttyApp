@@ -22,14 +22,16 @@ export default function ChangePassword() {
 
   function closeConfirmModal() {
     setModal(false);
-    navigation.navigate("Initial")
+    //navigation.navigate("PasswordCodeVerification"); 
   }
 
   async function submitHandler(values) {
     try {
       setisloading(true);
       //para cuando este lo del back
-      //const forgotPasswordResponse = await forgotPassword(values);
+      const forgotPasswordResponse = await forgotPassword(values);
+      const username = values.username; 
+      navigation.navigate("PasswordCodeVerification", { username }); 
       setModal(true);
 
     } catch (error) {
