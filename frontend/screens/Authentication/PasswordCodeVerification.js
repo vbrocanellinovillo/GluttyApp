@@ -6,8 +6,7 @@ import {
     forgotPasswordCode
   } from "../../services/userService";
 import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
-import { Colors } from "../../constants/colors"; // Asegúrate de que Colors tenga los valores que deseas
-
+import { Colors } from "../../constants/colors"; 
 export default function PasswordCodeVerification() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,17 +14,16 @@ export default function PasswordCodeVerification() {
   const navigation = useNavigation();
   const inputsRef = useRef([]);
 
-  // Obtener el username desde los parámetros de la ruta (o desde el estado global)
+  
   const route = useRoute();
   const { username } = route.params; 
-  console.log("user " + username)
 
   const resendCode = async () => {
     Haptics.selectionAsync();
     setIsResending(true);
     try {
-      await forgotPassword(username); // Sólo reenviar si el temporizador ha terminado
-      setTimeLeft(300); // Reiniciar el temporizador a 5 minutos
+      await forgotPassword(username); 
+      setTimeLeft(300); 
       setIsError(false);
       setMessage("Se ha enviado el codigo a: " + email);
       setShowModal(true);
@@ -67,7 +65,8 @@ export default function PasswordCodeVerification() {
       setIsLoading(true);
       await forgotPasswordCode(username, code.join("")); 
       Alert.alert("Éxito", "Código verificado correctamente.");
-      navigation.navigate("SetNewPassword");                                                                       
+      
+      navigation.navigate("SetNewPassword", { username });                                                                       
     } catch (err) {
       const errorMessage =
         err.response?.data?.message || "El código no es válido. Intente nuevamente.";
@@ -106,9 +105,7 @@ export default function PasswordCodeVerification() {
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Verificar Código</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={resendCode}>
-        <Text style={styles.resendText}>¿No recibiste el código? Envíalo de nuevo</Text>
-      </TouchableOpacity>
+      
     </View>
   );
 }
@@ -119,19 +116,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: Colors.background, // Asegúrate de que Colors.background tenga el color deseado
+    backgroundColor: "rgb(211, 211, 211)", // Asegúrate de que Colors.background tenga el color deseado
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     marginBottom: 10,
-    color: Colors.primary, // Cambia según tus colores
+    color: Colors.primary, 
   },
   description: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 30,
-    color: Colors.text, // Cambia según tus colores
+    color: Colors.text, 
     paddingHorizontal: 10,
   },
   codeInputContainer: {
@@ -141,14 +138,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   codeInput: {
-    width: 50, // Ancho fijo para que parezca un cuadro
-    height: 50, // Alto fijo para que parezca un cuadro
-    borderWidth: 2, // Grosor del borde
-    borderColor: Colors.lightGray, // Cambia según tus colores
+    width: 50, 
+    height: 50, 
+    borderWidth: 2, 
+    borderColor: Colors.lightGray, 
     borderRadius: 10,
     textAlign: "center",
-    fontSize: 24, // Aumentar el tamaño de la fuente para mejor legibilidad
-    backgroundColor: Colors.inputBackground || "white", // Cambia según tus colores
+    fontSize: 24, 
+    backgroundColor: Colors.inputBackground || "white", 
   },
   error: {
     color: Colors.error, // Cambia según tus colores
@@ -156,7 +153,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   button: {
-    backgroundColor: Colors.primary, // Cambia según tus colores
+    backgroundColor: Colors.locro, // Cambia según tus colores
     borderRadius: 10,
     paddingVertical: 15,
     paddingHorizontal: 40,

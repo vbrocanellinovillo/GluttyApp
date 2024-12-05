@@ -31,8 +31,9 @@ export default function ChangePassword() {
       //para cuando este lo del back
       const forgotPasswordResponse = await forgotPassword(values.username);
       const username = values.username; 
-      console.log("changep " + values.username)
+      
       navigation.navigate("PasswordCodeVerification", { username }); 
+      
       setModal(true);
 
     } catch (error) {
@@ -61,7 +62,7 @@ export default function ChangePassword() {
       <GluttyModal
         visible={modal}
         isError={false}
-        message={"Se envió el mail xd"}
+        message={"Mail enviado!"}
         onClose={closeConfirmModal}>
         
       </GluttyModal>

@@ -181,6 +181,26 @@ export async function changePassword(username, currentPassword, newPassword) {
   }
 }
 
+export async function changeForgottenPassword(username,  new_password) {
+  const formdata = new FormData();
+  formdata.append("username", username);
+  formdata.append("new_password", new_password);
+
+  const requestOptions = {
+    method: "POST",
+    body: formdata,
+  };
+
+  const requestUrl = url + "change-password/";
+
+  try {
+    const response = await httpRequest(requestUrl, requestOptions);
+    return response;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 export async function logoutSesion(username, token) {
   const formdata = new FormData();
   formdata.append("username", username);
