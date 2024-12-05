@@ -5,6 +5,7 @@ import { Colors } from "../../constants/colors";
 import InitialScreen from "../../screens/Authentication/InitialScreen";
 import { ImageBackground } from "react-native";
 import { EmailVerification } from "../../screens/Authentication/EmailVerification";
+import { ForgotPassword } from "../../screens/Authentication/ForgotPassword";
 import ChangePassword from "../../screens/Authentication/ChangePassword";
 
 const AuthNav = createNativeStackNavigator();
@@ -23,6 +24,10 @@ export default function AuthNavigation() {
         component={EmailVerification}
       />
       <AuthNav.Screen name="ChangePassword" component={ChangePassword}/>
+      <AuthNav.Screen name="ForgotPassword"
+        component={ForgotPassword}
+      />
     </AuthNav.Navigator>
+    
   );
 }
