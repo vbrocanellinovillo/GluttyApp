@@ -167,6 +167,9 @@ def add_branch(request):
                     min_time=schedule["min_time"],
                     max_time=schedule["max_time"],
                 )
+                print(schedule["day"])
+                print(schedule["min_time"])
+                print(schedule["max_time"])
                 
             new_schedules = new_branch.schedules.all()
             created_schedules= [
