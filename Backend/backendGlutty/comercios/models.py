@@ -115,7 +115,6 @@ class Schedule(models.Model):
     max_time = models.TimeField(blank=False, null=False)
 
     class Meta:
-        unique_together = ('branch', 'day')  # Evitar duplicados de días para una sucursal
         ordering = ['branch', 'day']  # Ordenar por sucursal y día
 
     def __str__(self):
@@ -131,3 +130,13 @@ class Schedule(models.Model):
             if isinstance(value, (datetime.time,)):
                 return value.strftime("%H:%M")  # Formatea a HH:MM
         return super().__getattribute__(name)  # Comportamiento normal para otros atributos
+    
+    def clean(self):
+        """
+        Validación personalizada para asegurar que max_time sea mayor que min_time.
+        """
+        super().clean()  # Llama a la validación predeterminada
+        if self.max_time <= self.min_time:
+            raise ValidationError({
+                "max_time": "El horario máximo debe ser mayor que el horario mínimo.",
+            })
