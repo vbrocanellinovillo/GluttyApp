@@ -41,7 +41,9 @@ export default function Recipes() {
 
     const now = new Date();
 
-    const time = `${now.getHours()}:${now.getMinutes()}`;
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const time = `${hours}:${minutes}`;
 
     const newMessage = new Message(messages.length, textValue, false, time);
     const prompt = textValue;
@@ -68,7 +70,10 @@ export default function Recipes() {
       const response = await enviarConsultaChatbot(prompt, token);
 
       const now = new Date();
-      const time = `${now.getHours()}:${now.getMinutes()}`;
+
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const time = `${hours}:${minutes}`;
 
       setMessages((prevMessages) => {
         const updatedMessages = prevMessages;
@@ -108,7 +113,9 @@ export default function Recipes() {
   async function handleFilter(filter) {
     const now = new Date();
 
-    const time = `${now.getHours()}:${now.getMinutes()}`;
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const time = `${hours}:${minutes}`;
 
     const newMessage = new Message(messages.length, filter, false, time);
     const prompt = filter;
