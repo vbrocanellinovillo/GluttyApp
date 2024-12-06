@@ -13,12 +13,13 @@ export default function SearchResult({
   userContainerStyle,
   result,
 }) {
+  const value = result?.result;
+
   function handlePress() {
     Haptics.selectionAsync();
-    onPress && onPress(result);
+    onPress &&
+      onPress({ id: value?.id, isUser: result?.isUser, name: value?.name });
   }
-
-  const value = result?.result;
 
   return (
     <Pressable

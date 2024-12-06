@@ -107,6 +107,13 @@ export async function getFeed(token, option, filters, signal, page, pageSize) {
 
   const tagsId = filters && filters?.map((filter) => filter.id).join(",");
 
+  const adaptedFilters =
+    filters &&
+    filters.map((filter) => ({
+      id: filter?.id,
+      is_user: filter?.isUser,
+    }));
+
   if (option === 1) {
     requestUrl += "get-popular-posts/";
   } else {
@@ -119,7 +126,11 @@ export async function getFeed(token, option, filters, signal, page, pageSize) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ labels: tagsId, page: page, page_size: pageSize }),
+    body: JSON.stringify({
+      labels: adaptedFilters,
+      page: page,
+      page_size: pageSize,
+    }),
     signal,
   };
 

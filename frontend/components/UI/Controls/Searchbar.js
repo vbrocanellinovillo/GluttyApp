@@ -1,8 +1,8 @@
 import { Input } from "@rneui/themed";
-import { StyleSheet, View } from "react-native";
-import { Colors } from "../../../constants/colors";
-import Animated from "react-native-reanimated";
 import { useEffect, useRef } from "react";
+import { StyleSheet } from "react-native";
+import Animated from "react-native-reanimated";
+import { Colors } from "../../../constants/colors";
 
 export default function Searchbar({
   value = "",
@@ -72,6 +72,7 @@ export default function Searchbar({
         placeholderTextColor={placeholderTextColor}
         ref={inputRef}
         showSoftInputOnFocus={!disableKeyboard}
+        autoFocus={focused}
       />
     </Animated.View>
   );

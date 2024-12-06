@@ -1,23 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = { tags: [] };
+const initialState = { results: [] };
 
 const communitySlice = createSlice({
   name: "community",
   initialState,
   reducers: {
-    addTag(state, action) {
-      const tag = action.payload?.tag;
-      const index = state.tags.findIndex((t) => t.id === tag.id);
+    addResult(state, action) {
+      const result = action.payload?.result;
+      const index = state.results.findIndex((r) => r.id === result.id);
       if (index === -1) {
-        state.tags.push(tag);
+        state.results.push(result);
       }
     },
 
-    removeTag(state, action) {
-      const tag = action.payload?.tag;
-      const filteredTags = state.tags.filter((t) => t.id !== tag.id);
-      state.tags = filteredTags;
+    removeResult(state, action) {
+      const result = action.payload?.result;
+      const filteredResults = state.results.filter((r) => r.id !== result.id);
+      state.results = filteredResults;
     },
   },
 });
