@@ -1,8 +1,7 @@
 import { Pressable, StyleSheet } from "react-native";
-import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
-import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "../../constants/colors";
 import * as Haptics from "expo-haptics";
+import UserResult from "./UserResult";
+import TagResult from "./TagResult";
 
 export default function SearchResult({
   onPress,
@@ -10,12 +9,16 @@ export default function SearchResult({
   textStyle,
   iconStyle,
   icon = "search-outline",
-  tag,
+  imageStyle,
+  userContainerStyle,
+  result,
 }) {
   function handlePress() {
     Haptics.selectionAsync();
-    onPress && onPress(tag);
+    onPress && onPress(result);
   }
+
+  const value = result?.result;
 
   return (
     <Pressable
@@ -26,15 +29,21 @@ export default function SearchResult({
       }
       onPress={handlePress}
     >
-      <Ionicons
-        name={icon}
-        size={22}
-        color={Colors.mJordan}
-        style={iconStyle}
-      />
-      <TextCommonsMedium style={[styles.text, textStyle]}>
-        #{tag.name}
-      </TextCommonsMedium>
+      {result?.isUser ? (
+        <UserResult
+          textStyle={textStyle}
+          containerStyle={userContainerStyle}
+          imageStyle={imageStyle}
+          user={value}
+        />
+      ) : (
+        <TagResult
+          iconStyle={iconStyle}
+          icon={icon}
+          textStyle={textStyle}
+          tag={value}
+        />
+      )}
     </Pressable>
   );
 }
@@ -56,11 +65,5 @@ const styles = StyleSheet.create({
 
   pressed: {
     opacity: 0.7,
-  },
-
-  text: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: Colors.mJordan,
   },
 });

@@ -8,9 +8,9 @@ export default function SearchResultsList({ results, onSelectTag }) {
     <FlatList
       data={results}
       renderItem={({ item }) => (
-        <SearchResult onPress={onSelectTag} tag={item} />
+        <SearchResult onPress={onSelectTag} result={item} />
       )}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item) => item?.id_front?.toString()}
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
     />

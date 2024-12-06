@@ -32,6 +32,7 @@ export default function CancelSearch({
           focused={true}
           style={searchbarStyle}
           value={value}
+          placeholder="Buscar"
         />
       </Animated.View>
       <Pressable

@@ -1,8 +1,9 @@
 import { backendUrl } from "../constants/backend";
 import { Post } from "../models/Post";
-import { formatDateTimeToYYYYMMDDHHMMSS } from "../utils/dateFunctions";
-import { httpRequest } from "../utils/http";
+import { UserSearch } from "../models/UserSearch";
 import { Tag } from "../models/Tag";
+import { httpRequest } from "../utils/http";
+import { CommunitySearchResult } from "../models/CommunitySearchResult";
 
 const url = backendUrl + "comunidad/";
 
@@ -10,9 +11,6 @@ function getPosts(postsArray) {
   const posts = [];
 
   for (let dataPoint of postsArray) {
-    //const postDate = new Date(dataPoint.created_at);
-    //const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
-
     const newPost = new Post(
       dataPoint.post_id,
       dataPoint.name,
@@ -35,15 +33,32 @@ function getPosts(postsArray) {
   return posts;
 }
 
-function getTags(tagsArray) {
-  const tags = [];
+function getResults(resultsArray) {
+  const searchResults = [];
 
-  for (let tag of tagsArray) {
-    const newTag = new Tag(tag.id, tag.name);
-    tags.push(newTag);
+  for (let dataPoint of resultsArray) {
+    const isUser = dataPoint?.is_user;
+
+    const idResult = dataPoint?.id;
+    const name = dataPoint?.name;
+
+    let result;
+    if (isUser) {
+      result = new UserSearch(idResult, name, dataPoint?.profile_picture);
+    } else {
+      result = new Tag(idResult, name);
+    }
+
+    const searchResult = new CommunitySearchResult(
+      dataPoint?.id_front,
+      isUser,
+      result
+    );
+
+    searchResults.push(searchResult);
   }
 
-  return tags;
+  return searchResults;
 }
 
 export async function getInitialPosts(token, page, pageSize) {
@@ -192,7 +207,7 @@ export async function getPostById(id, token) {
   try {
     const response = await httpRequest(requestUrl, requestOptions);
 
-   // const postDate = new Date(response.created_at);
+    // const postDate = new Date(response.created_at);
     //const date = formatDateTimeToYYYYMMDDHHMMSS(postDate);
     const newPost = new Post(
       response.post_id,
@@ -314,7 +329,8 @@ export async function searchCommunity(token, searchTerm, signal) {
 
   try {
     const response = await httpRequest(requestUrl, requestOptions);
-    return getTags(response.labels);
+
+    return getResults(response.results);
   } catch (error) {
     throw new Error(error.message);
   }
