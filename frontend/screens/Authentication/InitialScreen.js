@@ -51,7 +51,7 @@ export default function InitialScreen({ navigation }) {
         >
           Ya soy Glutty usuario
         </Button>
-        <TextCommonsRegular style={styles.textoDeAbajo}>
+        {/* <TextCommonsRegular style={styles.textoDeAbajo}>
           O inicia sesión con
         </TextCommonsRegular>
 
@@ -62,7 +62,7 @@ export default function InitialScreen({ navigation }) {
             }}
             style={styles.imageGoogle}
           />
-        </View>
+        </View> */}
       </View>
     </LinearGradient>
   );

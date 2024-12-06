@@ -153,30 +153,30 @@ def add_branch(request):
             
             # Crear horarios para la nueva sucursal
             schedules = request.data.get("schedules", "[]")
-            print(schedules)
             try:
                 schedules = json.loads(schedules)  # Convierte la cadena JSON en un array de Python
             except json.JSONDecodeError:
                 schedules = []  # En caso de error, asignar un array vacío
-            
-            created_schedules = []
+
             for schedule in schedules:
+                min_time = schedule["min_time"]
+                max_time = schedule["max_time"]
+                
+                # Validar que max_time sea mayor que min_time
+                if max_time <= min_time:
+                    return Response(
+                        {"error": f"El horario para el día {schedule['day']} tiene un 'max_time' menor o igual a 'min_time'."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                
+                # Crear el horario si es válido
                 Schedule.objects.create(
                     branch=new_branch,
                     day=schedule["day"],
-                    min_time=schedule["min_time"],
-                    max_time=schedule["max_time"],
+                    min_time=min_time,
+                    max_time=max_time,
                 )
-                
-            new_schedules = new_branch.schedules.all()
-            created_schedules= [
-                {
-                    "day": new_schedule.get_day_display(),
-                    "min_time": new_schedule.min_time,
-                    "max_time": new_schedule.max_time,
-                }
-                for new_schedule in new_schedules
-            ]
+
 
             # Obtener los datos de la sucursal recién creada
             branch_data = {
@@ -322,38 +322,35 @@ def update_branch(request):
             return Response({"error": location_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
         # Actualizar horarios
+        # Actualizar horarios
         schedules = request.data.get("schedules", "[]")
-        print(schedules)
         try:
             schedules = json.loads(schedules)  # Convierte la cadena JSON en un array de Python
         except json.JSONDecodeError:
             schedules = []  # En caso de error, asignar un array vacío
-        print(schedules)
+
         if schedules:
             branch.deleteSchedules()
+
         for schedule in schedules:
-            # Buscar si ya existe un horario para la misma sucursal y día
-            # existing_schedule = branch.schedules.filter(day=schedule["day"]).first()
-                    
-            # if existing_schedule:
-            #     # Si existe un horario para este día, actualízalo
-            #     existing_schedule.min_time = schedule["min_time"]
-            #     existing_schedule.max_time = schedule["max_time"]
-            #     existing_schedule.save()
-            # else:
-            #     # Si no existe, crea un nuevo horario
-            #     Schedule.objects.create(
-            #         branch=branch,
-            #         day=schedule["day"],
-            #         min_time=schedule["min_time"],
-            #         max_time=schedule["max_time"],
-            #     )
-            Schedule.objects.create(
-                    branch=branch,
-                    day=schedule["day"],
-                    min_time=schedule["min_time"],
-                    max_time=schedule["max_time"],
+            min_time = schedule["min_time"]
+            max_time = schedule["max_time"]
+            
+            # Validar que max_time sea mayor que min_time
+            if max_time <= min_time:
+                return Response(
+                    {"error": f"El horario para el día {schedule['day']} tiene un 'max_time' menor o igual a 'min_time'."},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
+            
+            # Crear el horario si es válido
+            Schedule.objects.create(
+                branch=branch,
+                day=schedule["day"],
+                min_time=min_time,
+                max_time=max_time,
+            )
+
         
         # Manejar eliminación de imágenes específicas
         image_ids_to_delete = request.data.get("image_ids_to_delete", "[]")  # Obtiene la cadena JSON
