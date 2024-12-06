@@ -43,7 +43,6 @@ def ask_chatbot(request):
         "Make sure the recipe uses only ingredients that are safe for people with celiac disease. "
         "Generate a detailed recipe that follows these rules and is gluten-free, including ingredients and clear steps.\n"
         "Always answer in Spanish."
-        "Always add a short title summarizing what you said, in the last line of the text"
     )
 
     chat_history_send = [{"role": message["role"], "message": message["message"]} for message in chat_history]
