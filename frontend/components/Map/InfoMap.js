@@ -1,5 +1,5 @@
 import { Keyboard, StyleSheet } from "react-native";
-import MapView, { AnimatedRegion } from "react-native-maps";
+import { AnimatedRegion } from "react-native-maps";
 import MapMarker from "./MapMarker";
 import { useEffect, useRef, useState } from "react";
 import DetailsContainer from "./DetailsContainer";
@@ -44,8 +44,6 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
     try {
       const detailsBranch = await getBranch(id, token);
       setBranch(detailsBranch);
-      console.log("branchess")
-      console.log(branch)
       setIsError(false);
     } catch (error) {
       setBranch(undefined);

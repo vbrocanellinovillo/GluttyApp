@@ -153,8 +153,9 @@ const styles = StyleSheet.create({
     width: 80
   },
   title: {
-    fontSize: 18,
-    fontWeight: "bold",
+    fontSize: 15,
+    //fontWeight: "bold",
+    marginTop: 17,
     marginBottom: 16,
   },
   scheduleRow: {

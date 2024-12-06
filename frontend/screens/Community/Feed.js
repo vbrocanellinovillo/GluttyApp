@@ -3,10 +3,7 @@ import Searchbar from "../../components/UI/Controls/Searchbar";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getFeed } from "../../services/communityService";
-import {
-  PAGE_SIZE,
-  searchbarStyle,
-} from "../../constants/community";
+import { PAGE_SIZE, searchbarStyle } from "../../constants/community";
 import ButtonsOptions from "../../components/UI/Controls/ButtonsOptions";
 import { Colors } from "../../constants/colors";
 import { useQuery } from "@tanstack/react-query";
@@ -30,15 +27,15 @@ export default function Feed({ navigation }) {
   const [hasNextPage, setHasNextPage] = useState(true);
   const pageSize = PAGE_SIZE;
 
-  const tags = useSelector((state) => state.community.tags);
+  const results = useSelector((state) => state.community?.results);
   const dispatch = useDispatch();
 
   const token = useSelector((state) => state.auth.accessToken);
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["feed", selectedOption, tags],
+    queryKey: ["feed", selectedOption, results],
     queryFn: ({ signal }) =>
-      getFeed(token, selectedOption, tags, signal, page, pageSize),
+      getFeed(token, selectedOption, results, signal, page, pageSize),
   });
 
   function handleChangeOption(option) {
@@ -51,7 +48,7 @@ export default function Feed({ navigation }) {
   }
 
   function handleRemoveFilter(filter) {
-    dispatch(communityActions.removeTag({ tag: filter }));
+    dispatch(communityActions.removeResult({ result: filter }));
   }
 
   useEffect(() => {
@@ -78,7 +75,7 @@ export default function Feed({ navigation }) {
         unfocus
         disableKeyboard
         style={searchbarStyle}
-        placeholder="Búsqueda de etiquetas..."
+        placeholder="Explora en la comunidad!"
       />
       <ButtonsOptions
         options={OPTIONS}
@@ -89,7 +86,7 @@ export default function Feed({ navigation }) {
         selectedTextStyle={styles.selectedTextStyle}
         onSelect={handleChangeOption}
       />
-      {tags && <TagChips tags={tags} onDeleteTag={handleRemoveFilter} />}
+      {results && <TagChips tags={results} onDeleteTag={handleRemoveFilter} />}
       <PostsList
         posts={posts}
         hasNextPage={hasNextPage}

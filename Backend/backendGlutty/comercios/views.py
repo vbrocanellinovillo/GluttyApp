@@ -167,9 +167,6 @@ def add_branch(request):
                     min_time=schedule["min_time"],
                     max_time=schedule["max_time"],
                 )
-                print(schedule["day"])
-                print(schedule["min_time"])
-                print(schedule["max_time"])
                 
             new_schedules = new_branch.schedules.all()
             created_schedules= [
@@ -712,14 +709,14 @@ def get_info_dashboard(request):
         # Calcular porcentajes del total
         total_celiacs = len(celiac_users)
         age_percentages = [
-            {"label": "0 - 18", "percentage": (age_distribution["0 - 18"] / total_celiacs) * 100 if total_celiacs > 0 else 0},
-            {"label": "18 - 35", "percentage": (age_distribution["18 - 35"] / total_celiacs) * 100 if total_celiacs > 0 else 0},
-            {"label": "35 - 60", "percentage": (age_distribution["35 - 60"] / total_celiacs) * 100 if total_celiacs > 0 else 0},
-            {"label": "+60", "percentage": (age_distribution["+60"] / total_celiacs) * 100 if total_celiacs > 0 else 0},
+            {"label": "0 - 18", "percentage": int((age_distribution["0 - 18"] / total_celiacs) * 100) if total_celiacs > 0 else 0},
+            {"label": "18 - 35", "percentage": int((age_distribution["18 - 35"] / total_celiacs) * 100) if total_celiacs > 0 else 0},
+            {"label": "35 - 60", "percentage": int((age_distribution["35 - 60"] / total_celiacs) * 100) if total_celiacs > 0 else 0},
+            {"label": "+60", "percentage": int((age_distribution["+60"] / total_celiacs) * 100) if total_celiacs > 0 else 0},
         ]
 
         # 3. Top 3 sucursales más vistas dentro del tiempo filtrado
-        branch_views = BranchView.objects.filter(branch__commerce=commerce, created_at__gte=date_threshold)
+        branch_views = BranchView.objects.filter(branch__commerce=commerce, created_at__gte=date_threshold, branch__is_active__exact=True)
         top_branches = (
             branch_views.values("branch__name")
             .annotate(view_count=Count("id"))

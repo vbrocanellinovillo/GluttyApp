@@ -25,8 +25,11 @@ export default function TagChip({
       }
       onPress={handlePress}
     >
+      {tag?.isUser && (
+        <Ionicons name="person" size={16} color={Colors.vainilla} />
+      )}
       <TextCommonsMedium style={[styles.text, textStyle]}>
-        {tag.name}
+        {tag?.name}
       </TextCommonsMedium>
       <Ionicons
         name="close"

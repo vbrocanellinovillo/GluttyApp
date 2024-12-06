@@ -11,8 +11,7 @@ import MenusContainer from "./MenusContainer";
 
 export default function BranchDetails({ branch, handlePdf }) {
   if (!branch) return <ErrorBranchDetails />;
-  console.log("berea")
-  console.log(branch.is_open_now)
+  
   return (
     <View style={styles.branch}>
       <View style={styles.imageRow}>

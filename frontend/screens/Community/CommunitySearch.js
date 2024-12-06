@@ -23,7 +23,7 @@ import { communityActions } from "../../context/community";
 
 const screenWidth = Dimensions.get("window").width;
 
-export default function CommunitySearch({ navigation, route }) {
+export default function CommunitySearch({ navigation }) {
   const width = useSharedValue(screenWidth);
 
   const animatedWidth = useAnimatedStyle(() => {
@@ -73,9 +73,8 @@ export default function CommunitySearch({ navigation, route }) {
     setSearchTerm("");
   }
 
-  function handleSelectTag(tag) {
-    const plainTag = { id: tag.id, name: tag.name };
-    dispatch(communityActions.addTag({ tag: plainTag }));
+  function handleSelectResult(result) {
+    dispatch(communityActions.addResult({ result }));
     handleCancel();
   }
 
@@ -106,7 +105,10 @@ export default function CommunitySearch({ navigation, route }) {
     );
   } else if (data && results.length > 0) {
     content = (
-      <SearchResultsList results={results} onSelectTag={handleSelectTag} />
+      <SearchResultsList
+        results={results}
+        onSelectResult={handleSelectResult}
+      />
     );
   } else if (data && results.length == 0) {
     content = <NoSearchResults>No se encontraron resultados</NoSearchResults>;

@@ -85,8 +85,8 @@ export function Dashboard() {
           onChange={(value) => updateData(value)} // Manejador de cambio
           value={selectedTime}
           name="tiempo"
-          errors={null} // Si tienes validación, ajusta este valor
-          touched={null} // Si tienes validación, ajusta este valor
+          errors={null} 
+          touched={null} 
           containerStyle={styles.comboboxContainer}
           style={styles.comboboxStyle}
           placeholderColor="#333"
@@ -107,7 +107,7 @@ export function Dashboard() {
           <View style={styles.rankedContainer}>
             <RankedBranches
               image={fire}
-              title="Ranking sucursales más visitadas"
+              title="Sucursales más visitadas"
               branches={dashData?.top_branches}
             />
           </View>
@@ -144,11 +144,12 @@ const styles = StyleSheet.create({
 
   ranks: {
     flexDirection: "row",
-    gap: 20,
+    gap: 10,
   },
 
   rankedContainer: {
     flex: 1,
+    marginRight: 5
   },
 
   topContainer: {

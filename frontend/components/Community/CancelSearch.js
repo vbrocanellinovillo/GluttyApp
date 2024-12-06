@@ -29,9 +29,10 @@ export default function CancelSearch({
         <Searchbar
           onChange={handleChange}
           onClear={onClear}
-          focused={true}
+          focused
           style={searchbarStyle}
           value={value}
+          placeholder="Buscar"
         />
       </Animated.View>
       <Pressable
