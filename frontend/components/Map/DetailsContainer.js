@@ -3,6 +3,7 @@ import LoadingMapBranchDetails from "../UI/Loading/LoadingMapBranchDetails";
 import ErrorBranchDetails from "./ErrorBranchDetails";
 import AnimatedInfoDetails from "../UI/AnimatedInfoDetails";
 import { useNavigation } from "@react-navigation/native";
+import CommerceImage from "./CommerceImage";
 
 export default function DetailsContainer({
   visible,
@@ -40,6 +41,12 @@ export default function DetailsContainer({
           visible={visible}
           isLoading={isLoading}
           isError={isError}
+          DragComponent={
+            !isLoading &&
+            !isError &&
+            branch &&
+            (() => <CommerceImage image={branch?.commerce_picture} />)
+          }
         >
           {content}
         </AnimatedInfoDetails>

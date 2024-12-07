@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, ScrollView } from "react-native";
 import { thumbGlutty } from "../../constants/glutty";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
@@ -11,21 +11,9 @@ import MenusContainer from "./MenusContainer";
 
 export default function BranchDetails({ branch, handlePdf }) {
   if (!branch) return <ErrorBranchDetails />;
-  
+
   return (
-    <View style={styles.branch}>
-      <View style={styles.imageRow}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: branch?.commerce_picture
-                ? branch?.commerce_picture
-                : thumbGlutty,
-            }}
-            style={styles.image}
-          />
-        </View>
-      </View>
+    <ScrollView contentContainerStyle={styles.branch}>
       <TextCommonsMedium style={styles.commerceName}>
         {branch?.commerce_name}
       </TextCommonsMedium>
@@ -48,7 +36,7 @@ export default function BranchDetails({ branch, handlePdf }) {
           schedule={branch?.schedules}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -56,30 +44,6 @@ const styles = StyleSheet.create({
   branch: {
     paddingHorizontal: 20,
     gap: 8,
-  },
-
-  imageRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-
-  imageContainer: {
-    width: 120,
-    height: 120,
-    backgroundColor: "white",
-    borderRadius: 60,
-    marginTop: -60,
-    shadowColor: "black",
-    shadowRadius: 5,
-    shadowOpacity: 0.5,
-    elevation: 5,
-  },
-
-  image: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 60,
-    objectFit: "contain"
   },
 
   commerceName: {
