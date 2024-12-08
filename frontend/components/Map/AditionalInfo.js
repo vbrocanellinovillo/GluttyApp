@@ -39,7 +39,7 @@ export default function AditionalInfo({
         <View>
           <DetailTitle>Información adicional</DetailTitle>
           {separatedKitchen && <ServiceInfo>Cocina separada</ServiceInfo>}
-          {onlyTakeAway && <ServiceInfo>Solo Take Away</ServiceInfo>}
+          {onlyTakeAway && <ServiceInfo>Sólo Take Away</ServiceInfo>}
         </View>
       )}
     </>
