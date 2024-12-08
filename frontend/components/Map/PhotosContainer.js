@@ -17,8 +17,8 @@ export default function PhotosContainer({ photos = [] }) {
 
 const styles = StyleSheet.create({
   photo: {
-    width: 100,
-    height: 110,
+    width: 140,
+    height: 170,
     objectFit: "fill",
     marginRight: 10,
   },

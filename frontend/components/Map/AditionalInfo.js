@@ -1,7 +1,8 @@
 import ServiceInfo from "./ServiceInfo";
 import DetailTitle from "./DetailTitle";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import DetailText from "./DetailText";
+import StatusIndicator from "./StatusIndicator";
 
 export default function AditionalInfo({
   separatedKitchen,
@@ -20,9 +21,12 @@ export default function AditionalInfo({
   return (
     <>
       {schedulesString && (
-        <View>
-          <DetailTitle>Horarios del negocio</DetailTitle>
-          <DetailText>{schedulesString}</DetailText>
+        <View style={styles.row}>
+          <View>
+            <DetailTitle>Horarios del negocio</DetailTitle>
+            <DetailText>{schedulesString}</DetailText>
+          </View>
+          <StatusIndicator isOpen={true} />
         </View>
       )}
       {description && (
@@ -41,3 +45,11 @@ export default function AditionalInfo({
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+});

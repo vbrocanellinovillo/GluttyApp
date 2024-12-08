@@ -13,7 +13,10 @@ export default function BranchDetails({ branch, handlePdf }) {
   if (!branch) return <ErrorBranchDetails />;
 
   return (
-    <ScrollView contentContainerStyle={styles.branch}>
+    <ScrollView
+      contentContainerStyle={styles.branch}
+      contentInset={{ bottom: 80 }}
+    >
       <TextCommonsMedium style={styles.commerceName}>
         {branch?.commerce_name}
       </TextCommonsMedium>
@@ -43,12 +46,12 @@ export default function BranchDetails({ branch, handlePdf }) {
 const styles = StyleSheet.create({
   branch: {
     paddingHorizontal: 20,
-    gap: 8,
+    gap: 10,
   },
 
   commerceName: {
     textAlign: "center",
-    fontSize: 22,
+    fontSize: 26,
     color: Colors.mJordan,
   },
 
