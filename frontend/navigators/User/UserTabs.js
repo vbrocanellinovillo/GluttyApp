@@ -11,6 +11,7 @@ import MedicalExamsStack from "./MedicalExamsStack";
 import CommunityStack from "../Community/CommunityStack";
 import Recipes from "../../screens/User/Chatbot/Recipes";
 import MyRecipes from "../../screens/User/Chatbot/MyRecipes";
+import AdminTopTabs from "./AdminTopTabs";
 
 export default function UserTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -129,6 +130,10 @@ export default function UserTabs() {
         name="MyRecipes"
         component={MyRecipes}
         options={{ title: "Mis Recetas" }}
+      />
+      <CurvedBottomBarExpo.Screen
+        name="Admin"
+        component={AdminTopTabs}
       />
     </CurvedBottomBarExpo.Navigator>
   );
