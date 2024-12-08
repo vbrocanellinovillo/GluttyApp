@@ -1,7 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { Colors } from "../../constants/colors";
 import { useEffect, useState } from "react";
-import { Input } from "@rneui/themed";
 import * as Haptics from "expo-haptics";
 import MapChipsContainer from "./MapChipsContainer";
 import SearchResultsList from "./SearchResultsList";

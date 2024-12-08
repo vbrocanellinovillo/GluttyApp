@@ -144,6 +144,8 @@ export default function Map() {
         },
       }));
 
+      console.log(mapData);
+
       if (searchTerm.trim() !== "") {
         setSearchData(branches);
       }
