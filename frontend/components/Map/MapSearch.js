@@ -84,7 +84,7 @@ export default function MapSearch({
       <View style={styles.container}>
         <Searchbar
           value={searchTerm}
-          placeholder="Busca tus lugares favoritos!"
+          placeholder="Buscá tus lugares favoritos!"
           onChange={handleChangeText}
           onFocus={focusSearch}
           onBlur={blurSearch}
