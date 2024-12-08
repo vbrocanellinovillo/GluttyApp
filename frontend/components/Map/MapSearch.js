@@ -66,11 +66,11 @@ export default function MapSearch({
   }
 
   function toggleSeparatedKitchen() {
-    setSeparatedKitchen(!separatedKitchen);
+    setSeparatedKitchen((prevSeparatedKitchen) => !prevSeparatedKitchen);
   }
 
   function toggleOnlyTakeAway() {
-    setOnlyTakeAway(!onlyTakeAway);
+    setOnlyTakeAway((prevOnlyTakeAway) => !prevOnlyTakeAway);
   }
 
   function changeLocation(location) {

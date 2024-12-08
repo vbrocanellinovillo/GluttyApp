@@ -9,6 +9,7 @@ export default function AditionalInfo({
   onlyTakeAway,
   description,
   schedule,
+  isOpen,
 }) {
   const schedulesString = schedule
     .map((horario) => {
@@ -26,7 +27,7 @@ export default function AditionalInfo({
             <DetailTitle>Horarios del negocio</DetailTitle>
             <DetailText>{schedulesString}</DetailText>
           </View>
-          <StatusIndicator isOpen={true} />
+          <StatusIndicator isOpen={isOpen} />
         </View>
       )}
       {description && (
