@@ -12,6 +12,7 @@ import CommunityStack from "../Community/CommunityStack";
 import Recipes from "../../screens/User/Chatbot/Recipes";
 import MyRecipes from "../../screens/User/Chatbot/MyRecipes";
 import AdminTopTabs from "./AdminTopTabs";
+import SecondaryHeader from "../../components/UI/Header/SecondaryHeader";
 
 export default function UserTabs() {
   const _renderIcon = (routeName, selectedTab) => {
@@ -134,6 +135,16 @@ export default function UserTabs() {
       <CurvedBottomBarExpo.Screen
         name="Admin"
         component={AdminTopTabs}
+        options={{
+          title: "Reportes",
+          header: ({ navigation, route, options }) => (
+            <SecondaryHeader
+              navigation={navigation}
+              route={route}
+              options={options}
+            />
+          ),
+        }}
       />
     </CurvedBottomBarExpo.Navigator>
   );
