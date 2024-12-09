@@ -1,13 +1,15 @@
 import ServiceInfo from "./ServiceInfo";
 import DetailTitle from "./DetailTitle";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import DetailText from "./DetailText";
+import StatusIndicator from "./StatusIndicator";
 
 export default function AditionalInfo({
   separatedKitchen,
   onlyTakeAway,
   description,
   schedule,
+  isOpen,
 }) {
   const schedulesString = schedule
     .map((horario) => {
@@ -20,9 +22,12 @@ export default function AditionalInfo({
   return (
     <>
       {schedulesString && (
-        <View>
-          <DetailTitle>Horarios del negocio</DetailTitle>
-          <DetailText>{schedulesString}</DetailText>
+        <View style={styles.row}>
+          <View>
+            <DetailTitle>Horarios del negocio</DetailTitle>
+            <DetailText>{schedulesString}</DetailText>
+          </View>
+          <StatusIndicator isOpen={isOpen} />
         </View>
       )}
       {description && (
@@ -35,9 +40,17 @@ export default function AditionalInfo({
         <View>
           <DetailTitle>Información adicional</DetailTitle>
           {separatedKitchen && <ServiceInfo>Cocina separada</ServiceInfo>}
-          {onlyTakeAway && <ServiceInfo>Solo Take Away</ServiceInfo>}
+          {onlyTakeAway && <ServiceInfo>Sólo Take Away</ServiceInfo>}
         </View>
       )}
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+});

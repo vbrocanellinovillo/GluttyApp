@@ -4,7 +4,6 @@ import MapSearchSkeleton from "../UI/Loading/MapSearchSkeleton";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { useEffect } from "react";
@@ -16,7 +15,6 @@ export default function SearchResultsList({
   isLoading,
   focused,
   hideResults,
-  handleHideSearchResults,
   handleShowSearchResults,
   onChangeLocation,
 }) {
@@ -46,10 +44,11 @@ export default function SearchResultsList({
     } else {
       if (searchResults) {
         const newHeight = searchResults.length * 100;
+        const minHeight = 150;
         if (newHeight > 450) {
           resultsHeight.value = 450;
         } else {
-          resultsHeight.value = newHeight;
+          resultsHeight.value = Math.max(newHeight, minHeight);
         }
       }
     }
@@ -82,7 +81,6 @@ export default function SearchResultsList({
 const styles = StyleSheet.create({
   resultsList: {
     gap: 12,
-    paddingBottom: 20,
   },
 
   icon: {

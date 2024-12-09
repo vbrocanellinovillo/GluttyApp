@@ -6,6 +6,7 @@ import { getRandomDate } from "../../utils/dateFunctions";
 import { useState } from "react";
 import * as Haptics from "expo-haptics";
 import { sleep } from "../../utils/utilFunctions";
+import { useRefresh } from "../../hooks/useRefresh";
 
 const POSTS = [
   new Post(
@@ -52,15 +53,7 @@ export default function ErrorPosts({
   iconStyle,
   onRefresh,
 }) {
-  const [refreshing, setRefreshing] = useState(false);
-
-  async function handleRefresh() {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setRefreshing(true);
-    await sleep(1000);
-    onRefresh && onRefresh();
-    setRefreshing(false);
-  }
+  const { refreshing, handleRefresh } = useRefresh(onRefresh);
 
   const backdropPosts = (
     <View style={postsStyle}>

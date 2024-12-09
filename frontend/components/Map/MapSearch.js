@@ -1,7 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { Colors } from "../../constants/colors";
 import { useEffect, useState } from "react";
-import { Input } from "@rneui/themed";
 import * as Haptics from "expo-haptics";
 import MapChipsContainer from "./MapChipsContainer";
 import SearchResultsList from "./SearchResultsList";
@@ -68,11 +66,11 @@ export default function MapSearch({
   }
 
   function toggleSeparatedKitchen() {
-    setSeparatedKitchen(!separatedKitchen);
+    setSeparatedKitchen((prevSeparatedKitchen) => !prevSeparatedKitchen);
   }
 
   function toggleOnlyTakeAway() {
-    setOnlyTakeAway(!onlyTakeAway);
+    setOnlyTakeAway((prevOnlyTakeAway) => !prevOnlyTakeAway);
   }
 
   function changeLocation(location) {
@@ -84,7 +82,7 @@ export default function MapSearch({
       <View style={styles.container}>
         <Searchbar
           value={searchTerm}
-          placeholder="Busca tus lugares favoritos!"
+          placeholder="Buscá tus lugares favoritos!"
           onChange={handleChangeText}
           onFocus={focusSearch}
           onBlur={blurSearch}

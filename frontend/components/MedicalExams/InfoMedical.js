@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: "700",
     color: Colors.oceanBlue,
     textAlign: "center",
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: 16,
+    fontSize: 15,
     color: Colors.mJordan,
   },
 
@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
 
   image: {
     flex: 0.6,
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     objectFit: "contain",
   },
 });

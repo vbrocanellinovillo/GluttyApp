@@ -23,7 +23,7 @@ export default function MapChipsContainer({
         isSelected={onlyTakeAway}
         onSelect={toggleOnlyTakeAway}
       >
-        Solo TakeAway
+        Sólo TakeAway
       </MapChip>
     </View>
   );

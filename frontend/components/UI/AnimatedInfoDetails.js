@@ -11,6 +11,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useEffect, useState } from "react";
+import { Colors } from "../../constants/colors";
+import DragHandle from "./DragHandle";
 
 const screenHeight = Dimensions.get("window").height;
 
@@ -30,7 +32,7 @@ export default function AnimatedInfoDetails({
   minimum,
   maximum,
   disableGesture = false,
-  customHeight = undefined,
+  DragComponent,
 }) {
   const height = useSharedValue(minimum ? minimum : MIN_HEIGHT);
   const [maxHeight, setMaxHeight] = useState(maximum ? maximum : MAX_HEIGHT);
@@ -89,14 +91,22 @@ export default function AnimatedInfoDetails({
             />
             {disableGesture ? (
               <Animated.View style={[styles.container, animatedHeight]}>
+                {DragComponent && <DragComponent />}
                 {children}
               </Animated.View>
             ) : (
-              <GestureDetector gesture={Pan}>
-                <Animated.View style={[styles.container, animatedHeight]}>
-                  {children}
-                </Animated.View>
-              </GestureDetector>
+              <Animated.View style={[styles.container, animatedHeight]}>
+                <GestureDetector gesture={Pan}>
+                  <View>
+                    {isLoading || isError ? null : DragComponent ? (
+                      <DragComponent />
+                    ) : (
+                      <DragHandle />
+                    )}
+                  </View>
+                </GestureDetector>
+                {children}
+              </Animated.View>
             )}
           </View>
         </Portal>

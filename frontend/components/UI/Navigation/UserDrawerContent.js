@@ -34,6 +34,15 @@ export default function UserDrawerContent() {
           icon="clipboard-text-outline"
         />
       </Drawer.Section>
+      <Drawer.Section title={<Text style={styles.title}>Administrador</Text>}>
+        <Drawer.Item
+          label="Panel"
+          onPress={() => {
+            navigation.navigate("Tabs", { screen: "Admin" });
+          }}
+          icon="tablet-dashboard"
+        />
+      </Drawer.Section>
     </DrawerContent>
   );
 }

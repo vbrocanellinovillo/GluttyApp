@@ -2,7 +2,8 @@ import BranchDetails from "./BranchDetails";
 import LoadingMapBranchDetails from "../UI/Loading/LoadingMapBranchDetails";
 import ErrorBranchDetails from "./ErrorBranchDetails";
 import AnimatedInfoDetails from "../UI/AnimatedInfoDetails";
-import { useNavigation } from "@react-navigation/native";
+import CommerceImage from "./CommerceImage";
+import { usePdf } from "../../hooks/usePdf";
 
 export default function DetailsContainer({
   visible,
@@ -13,12 +14,7 @@ export default function DetailsContainer({
 }) {
   let content = <></>;
 
-  const navigation = useNavigation();
-
-  function handlePdf(name, url) {
-    onDismiss();
-    navigation.navigate("PdfScreen", { name, url });
-  }
+  const { handlePdf } = usePdf(onDismiss);
 
   if (isLoading) {
     content = <LoadingMapBranchDetails />;
@@ -40,6 +36,12 @@ export default function DetailsContainer({
           visible={visible}
           isLoading={isLoading}
           isError={isError}
+          DragComponent={
+            !isLoading &&
+            !isError &&
+            branch &&
+            (() => <CommerceImage image={branch?.commerce_picture} />)
+          }
         >
           {content}
         </AnimatedInfoDetails>

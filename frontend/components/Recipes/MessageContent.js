@@ -45,8 +45,8 @@ export default function MessageContent({
           <TypeWriter
             typing={typing}
             style={styles.text}
-            maxDelay={10}
-            minDelay={5}
+            maxDelay={0.1}
+            initialDelay={0.1}
             onTypingEnd={handleFinish}
           >
             {children}

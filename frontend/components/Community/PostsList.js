@@ -1,4 +1,4 @@
-import { FlatList } from "react-native";
+import { FlatList, RefreshControl } from "react-native";
 import PostItem from "./PostItem";
 import PaginationFooter from "../UI/Loading/PaginationFooter";
 import {
@@ -8,6 +8,7 @@ import {
 import PostsSkeleton from "../UI/Loading/PostsSkeleton";
 import ErrorPosts from "./ErrorPosts";
 import { useNavigation } from "@react-navigation/native";
+import { useRefresh } from "../../hooks/useRefresh";
 
 export default function PostsList({
   posts = [],
@@ -25,6 +26,8 @@ export default function PostsList({
   ...props
 }) {
   const navigation = useNavigation();
+
+  const { refreshing, handleRefresh } = useRefresh(onRefresh);
 
   if (isLoading) {
     return <PostsSkeleton style={style} curved={curved} />;
@@ -67,6 +70,10 @@ export default function PostsList({
             />
           }
           contentInset={{ bottom: bottomInset || COMMUNITY_BOTTOM_INSET }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+          ListEmptyComponent={NoContentComponent}
         />
       )}
     </>
