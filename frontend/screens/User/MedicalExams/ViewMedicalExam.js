@@ -18,6 +18,7 @@ import ContextualMenu from "../../../components/UI/contextualMenu";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import ViewMedicalExamSkeleton from "../../../components/UI/Loading/ViewMedicalExamSkeleton";
 import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
+import { usePdf } from "../../../hooks/usePdf";
 
 export default function ViewMedicalExam({ navigation, route }) {
   const [medicalExam, setMedicalExam] = useState(undefined);
@@ -31,6 +32,8 @@ export default function ViewMedicalExam({ navigation, route }) {
 
   const id = route.params.id;
   const token = useSelector((state) => state.auth.accessToken);
+
+  const { handlePdf } = usePdf();
 
   useEffect(() => {
     const cargarEstudioMedico = async () => {
@@ -91,10 +94,7 @@ export default function ViewMedicalExam({ navigation, route }) {
   }
 
   function navigatePdf() {
-    navigation.navigate("PdfScreen", {
-      name: medicalExam?.pdf_info?.file_name,
-      url: medicalExam?.pdf_info?.url,
-    });
+    handlePdf(medicalExam?.pdf_info?.file_name, medicalExam?.pdf_info?.url);
   }
 
   const hasPdf = medicalExam?.pdf_info !== undefined;
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: Colors.locro,
     marginLeft: 20,
-    marginTop: 30
+    marginTop: 30,
   },
 
   pdf: {

@@ -8,7 +8,7 @@ export default function MenuesList({ menues, onDelete, onVisualize }) {
   }
 
   function handleVisualize({ url, name }) {
-    onVisualize && onVisualize({ url, name });
+    onVisualize && onVisualize(name, url);
   }
 
   return (
