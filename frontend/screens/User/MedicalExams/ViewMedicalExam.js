@@ -140,7 +140,7 @@ export default function ViewMedicalExam({ navigation, route }) {
               </TouchableOpacity>
 
               {showMenu && (
-                <ContextualMenu onEdit={handleEdit} onDelete={handleDelete} />
+                <ContextualMenu onEdit={handleEdit} onDelete={handleDelete} isStudy={true} />
               )}
             </View>
 

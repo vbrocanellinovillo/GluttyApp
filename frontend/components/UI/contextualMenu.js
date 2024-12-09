@@ -2,11 +2,14 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Colors } from "../../constants/colors";
+import Octicons from '@expo/vector-icons/Octicons';
+import { MaterialIcons } from "@expo/vector-icons";
 
-export default function ContextualMenu({ onEdit, onDelete }) {
+export default function ContextualMenu({ onEdit, onDelete, isStudy = false, isReportUser = false, isReportPost = false, onReportUser, onReportPost }) {
   return (
     <View style={styles.menuContainer}>
       {/* Botón para eliminar */}
+      {isStudy && (
       <TouchableOpacity style={styles.menuItem} onPress={onDelete}>
         <MaterialCommunityIcons
           name="trash-can-outline"
@@ -15,9 +18,10 @@ export default function ContextualMenu({ onEdit, onDelete }) {
           style={styles.iconStyle}
         />
         <Text style={styles.menuText}>Eliminar Estudio</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>)}
 
       {/* Botón para editar */}
+      {isStudy && (
       <TouchableOpacity style={styles.menuItem} onPress={onEdit}>
         <MaterialCommunityIcons
           name="pencil-outline"
@@ -26,7 +30,28 @@ export default function ContextualMenu({ onEdit, onDelete }) {
           style={styles.iconStyle}
         />
         <Text style={styles.menuText}>Editar Estudio</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>)}
+      
+      {/* Boton para reportar usuario en posteo o mapa*/ }
+      {isReportUser && (
+      <TouchableOpacity style={styles.menuItem} onPress={onReportUser}>
+        <MaterialIcons name="report-gmailerrorred" 
+          size={24}
+          color={Colors.darkGray}
+          style={styles.iconStyle}
+        />
+        <Text style={styles.menuText}>Reportar usuario</Text>
+      </TouchableOpacity>)}
+      {/*Boton para reportar posteo*/}
+      {isReportPost && (
+      <TouchableOpacity style={styles.menuItem} onPress={onReportPost}>
+        <Octicons name="report" 
+          size={24}
+          color={Colors.darkGray}
+          style={styles.iconStyle}
+        />
+        <Text style={styles.menuText}>Reportar posteo</Text>
+      </TouchableOpacity>)}
     </View>
   );
 }

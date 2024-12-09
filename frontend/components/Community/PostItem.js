@@ -17,6 +17,9 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useState } from "react";
+import ContextualMenu from "../UI/contextualMenu";
+import { TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function PostItem({
   post,
@@ -29,6 +32,8 @@ export default function PostItem({
 }) {
   const name = useSelector((state) => state?.auth?.userData?.username);
 
+  const [showMenu, setShowMenu] = useState(false); // Estado para mostrar el menú contextual
+ 
   const scaleAnimation = useSharedValue(0);
 
   const animationStlye = useAnimatedStyle(() => {
@@ -65,6 +70,13 @@ export default function PostItem({
     setTimeout(() => (scaleAnimation.value = 0), 1000);
   }
 
+  function handleReportPost(){
+    console.log("euuuuu")
+  }
+
+  function handleReportUser(){
+    console.log("wtffff")
+  }
   return (
     <>
       <Pressable
@@ -90,6 +102,25 @@ export default function PostItem({
             <Pressable onPress={handlePressIcon}>
               <Ionicons style={styles.verMas} name={iconPost} />
             </Pressable>
+          )}
+          {!borrar &&(
+            <View style = {styles.options}>
+            <TouchableOpacity onPress={() => {setShowMenu(!showMenu); console.log("Menu toggled:", !showMenu);}}>
+              <MaterialCommunityIcons
+                name="dots-vertical"
+                size={24}
+                color={Colors.darkGray}
+              />
+            </TouchableOpacity>
+            {showMenu&&(
+              <ContextualMenu
+                  isReportPost={true}
+                  isReportUser={true}
+                  onReportPost={handleReportPost}
+                  onReportUser={handleReportUser}
+              />
+            )}
+            </View>
           )}
         </View>
         <TextCommonsRegular style={styles.content}>
@@ -173,7 +204,14 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 10,
   },
-
+  options: {
+    flexDirection: "row",
+    //marginLeft:-50,
+    alignItems: "center",
+    //width: "100%",
+    marginTop: 7,
+    //zIndex: 1500, // Asegura que el menú esté por delante
+  },
   infoContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -219,4 +257,18 @@ const styles = StyleSheet.create({
     top: "75",
     left: "45%",
   },
+  menuContainer: {
+    position: "absolute",
+    top: 24, // Ajusta según tu diseño
+    right: 10,
+    backgroundColor: "white",
+    borderRadius: 8,
+    elevation: 5,
+    shadowColor: "black",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    zIndex: 1000, // Asegura que el menú esté por encima de otros elementos
+  },
+  
 });

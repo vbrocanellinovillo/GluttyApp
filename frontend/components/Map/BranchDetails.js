@@ -8,8 +8,18 @@ import PhotosContainer from "./PhotosContainer";
 import DetailsGeneralInfo from "./DetailsGeneralInfo";
 import ErrorBranchDetails from "./ErrorBranchDetails";
 import MenusContainer from "./MenusContainer";
+import { useState } from "react";
+import ContextualMenu from "../UI/contextualMenu";
+import { TouchableOpacity } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 
 export default function BranchDetails({ branch, handlePdf }) {
+  function handleReportUser(){
+    console.log("TALKKKK")
+  }
+  const [showMenu, setShowMenu] = useState(false); // Estado para mostrar el menú contextual
+
   if (!branch) return <ErrorBranchDetails />;
 
   return (
@@ -17,9 +27,30 @@ export default function BranchDetails({ branch, handlePdf }) {
       contentContainerStyle={styles.branch}
       contentInset={{ bottom: 80 }}
     >
+      <View style = {styles.puntos}>
       <TextCommonsMedium style={styles.commerceName}>
         {branch?.commerce_name}
       </TextCommonsMedium>
+
+      {/*Tres puntos para reportar usuario */}
+      <View style = {styles.options}>
+            <TouchableOpacity onPress={() => {setShowMenu(!showMenu); console.log("Menu toggled:", !showMenu);}}>
+              <MaterialCommunityIcons
+                name="dots-vertical"
+                size={24}
+                color={Colors.darkGray}
+              />
+            </TouchableOpacity>
+            {showMenu&&(
+              <ContextualMenu
+                  isReportUser={true}
+                  
+                  onReportUser={handleReportUser}
+              />
+            )}
+            </View>
+      </View>
+      
       <View style={styles.details}>
         <Divider />
         <DetailsGeneralInfo
@@ -54,9 +85,23 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: Colors.mJordan,
   },
+  options: {
+    flexDirection: "row",
+    //marginLeft: 50,
+    //alignItems: "left",
+    //width: "100%",
+    marginTop: 7,
+    //zIndex: 1500, // Asegura que el menú esté por delante
+  },
 
   details: {
     marginTop: 10,
     gap: 14,
+  },
+  puntos:{
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
   },
 });
