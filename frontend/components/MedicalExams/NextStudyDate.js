@@ -6,7 +6,7 @@ export default function NextStudyDate({ year, month, days }) {
     <View style={styles.container}>
       <NextStudyDateItem number={year} text="Años" />
       <NextStudyDateItem number={month} text="Meses" />
-      <NextStudyDateItem number={days} text="Dias" />
+      <NextStudyDateItem number={days} text="Días" />
     </View>
   );
 }

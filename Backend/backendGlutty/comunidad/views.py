@@ -698,7 +698,13 @@ def delete_comment(request):
 
     try:
         comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+        post = comment.post
+        
         comment.delete()
+        
+        post.comments_number -= 1
+        post.save()
+        
         connection.close()
         return Response({"Detail": "Comentario eliminado correctamente."}, status=status.HTTP_200_OK)
 

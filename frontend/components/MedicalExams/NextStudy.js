@@ -10,7 +10,7 @@ export default function NextStudy({ date }) {
   return (
     <View style={styles.container}>
       <TextCommonsMedium style={styles.title}>
-        Tiempo hasta tu proximo estudio médico
+        Tiempo hasta tu próximo estudio médico
       </TextCommonsMedium>
       <NextStudyDate year={date?.years} month={date?.months} days={date?.days} />
     </View>
