@@ -43,9 +43,9 @@ export default function RecipeContainer({ title, message, created_at, onDelete }
             )}
             {expanded && (
                 <View style={styles.iconContainer}>
-                    <Pressable onPress={handleDownload} style={styles.downloadIcon}>
+                    {/* <Pressable onPress={handleDownload} style={styles.downloadIcon}>
                         <Ionicons name="download-outline" size={24} color="#5555ff" />
-                    </Pressable>
+                    </Pressable> */}
                     <Pressable onPress={onDelete} style={styles.deleteIcon}>
                         <Ionicons name="trash-outline" size={24} color="#ff3333" />
                     </Pressable>
