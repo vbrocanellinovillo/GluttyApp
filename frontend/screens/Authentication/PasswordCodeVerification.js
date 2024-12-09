@@ -107,6 +107,7 @@ export default function PasswordCodeVerification() {
       </TouchableOpacity>
       
     </View>
+    
   );
 }
 
