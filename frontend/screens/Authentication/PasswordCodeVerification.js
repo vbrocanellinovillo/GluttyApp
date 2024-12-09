@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet, Text, Alert } from "react-native";
+import { View, TextInput, TouchableOpacity, StyleSheet, Text, Alert , ImageBackground} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
     forgotPassword,

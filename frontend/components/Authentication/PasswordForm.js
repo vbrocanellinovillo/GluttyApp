@@ -23,18 +23,14 @@ export default function PasswordForm({ onSubmit }) {
       <View style={styles.container}>
         <FormHeader/>
         <Formik
-          initialValues={{ username: "", usernameConfirm:""}}
-          validate={({ username, usernameConfirm }) => {
+          initialValues={{ username: ""}}
+          validate={({ username }) => {
             const errors = {};
 
             if (username.trim() === "") {
               errors.username = "Username requerido";
             }
 
-            if (username !== usernameConfirm) {
-                errors.usernameConfirm = "Los username no coinciden";
-              }
-              console.log(errors)
 
             return errors;
           }}
@@ -60,16 +56,7 @@ export default function PasswordForm({ onSubmit }) {
                 errors={errors.username}
                 autoCapitalize="none"
               />
-              <FormControl
-                label="Confirma username"
-                value={values.usernameConfirm}
-                name="usernameConfirm"
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                touched={touched.usernameConfirm}
-                errors={errors.usernameConfirm}
-                autoCapitalize="none"
-              />
+              
               <View style={styles.buttonContainer}>
                 <Button
                   backgroundColor={Colors.locro}
@@ -90,7 +77,7 @@ export default function PasswordForm({ onSubmit }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 100,
+    paddingTop: 150,
     alignItems: "center",
   },
 
