@@ -3,6 +3,7 @@ import { Colors } from "../../constants/colors";
 import ReportedUserItem from "./ReportedUserItem";
 import { ReportedUser } from "../../models/ReportedUser";
 import { FlashList } from "@shopify/flash-list";
+import { useNavigation } from "@react-navigation/native";
 
 const REPORTED_USERS = [
   new ReportedUser(
@@ -36,10 +37,17 @@ const REPORTED_USERS = [
 ];
 
 export default function ReportedUsers({ users }) {
+  const navigation = useNavigation()
+
+  
+  const handlePress = (username) => {
+    navigation.navigate("ViewPostsReportedUser", {username: username});
+  };
+
   return (
     <FlashList
       data={REPORTED_USERS}
-      renderItem={({ item }) => <ReportedUserItem reportedUser={item} />}
+      renderItem={({ item }) => <ReportedUserItem reportedUser={item} onPress={() => handlePress(item.username)} />}
       keyExtractor={(item) => item?.id?.toString()}
       ItemSeparatorComponent={() => <View style={{ height: 14 }} />}
       contentInset={{ bottom: 100 }}

@@ -40,7 +40,7 @@ export default function MyPosts() {
 
     try {
       const data = await getFavorite(token, page, pageSize);
-
+      console.log("data", data);
       if (data) {
         setPosts((prevPosts) => (isFirstPage ? data : [...prevPosts, ...data]));
         setHasNextPage(data?.length === pageSize);
