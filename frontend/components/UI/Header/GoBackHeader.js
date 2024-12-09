@@ -16,6 +16,8 @@ export default function GoBackHeader({
   titleStyle,
   iconStyle,
   backIcon,
+  customText,
+  onBack,
 }) {
   function goBack() {
     Haptics.selectionAsync();
@@ -27,7 +29,10 @@ export default function GoBackHeader({
 
   return (
     <Header style={[styles.container, containerStyle]}>
-      <TouchableOpacity style={[styles.backIcon, iconStyle]} onPress={goBack}>
+      <TouchableOpacity
+        style={[styles.backIcon, iconStyle]}
+        onPress={onBack ? onBack : goBack}
+      >
         <Ionicons
           name={backIcon || "chevron-back"}
           size={26}
@@ -38,7 +43,7 @@ export default function GoBackHeader({
         <HeaderTitle style={titleStyle}>{title ? title : name}</HeaderTitle>
       ) : (
         <TextCommonsMedium style={[styles.titleStyle, titleStyle]}>
-          {title ? title : name}
+          {customText ? customText : title ? title : name}
         </TextCommonsMedium>
       )}
       {children}

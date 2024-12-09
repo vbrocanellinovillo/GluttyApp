@@ -37,17 +37,24 @@ const REPORTED_USERS = [
 ];
 
 export default function ReportedUsers({ users }) {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
-  
   const handlePress = (username) => {
-    navigation.navigate("ViewPostsReportedUser", {username: username});
+    navigation.navigate("AdminStack", {
+      screen: "ViewPostsReportedUser",
+      params: { username },
+    });
   };
 
   return (
     <FlashList
       data={REPORTED_USERS}
-      renderItem={({ item }) => <ReportedUserItem reportedUser={item} onPress={() => handlePress(item.username)} />}
+      renderItem={({ item }) => (
+        <ReportedUserItem
+          reportedUser={item}
+          onPress={() => handlePress(item.username)}
+        />
+      )}
       keyExtractor={(item) => item?.id?.toString()}
       ItemSeparatorComponent={() => <View style={{ height: 14 }} />}
       contentInset={{ bottom: 100 }}
