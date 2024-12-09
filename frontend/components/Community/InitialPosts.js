@@ -2,15 +2,10 @@ import { useEffect, useState } from "react";
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import { getInitialPosts } from "../../services/communityService";
-import PostsSkeleton from "../UI/Loading/PostsSkeleton";
-import PostItem from "./PostItem";
-import ErrorPosts from "./ErrorPosts";
 import NoPosts from "./NoPosts";
 import {
-  communityPaginationFooterStyle,
   PAGE_SIZE,
 } from "../../constants/community";
-import PaginationFooter from "../UI/Loading/PaginationFooter";
 import PostsList from "./PostsList";
 
 const height = Dimensions.get("window").height * 0.2;
