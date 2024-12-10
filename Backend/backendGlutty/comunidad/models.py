@@ -10,7 +10,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)  # Fecha en que se registra en el sistema
     likes_number = models.IntegerField(blank=False, default=0)
     comments_number = models.IntegerField(blank=False, default=0)
-
+    
     class Meta:
         ordering = ["-created_at"]
 

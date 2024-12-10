@@ -612,7 +612,7 @@ def get_reported_posts(request):
         # Obtener posteos ordenados por cantidad de reportes y fecha de creación
         posts_queryset = (
             Post.objects.annotate(report_count=Count('reports'))
-            .filter(report_count__gt=0)  # Filtrar solo los posteos con al menos un reporte
+            .filter(report_count__gt=0, reports__resolved=False)  # Filtrar reportes no resueltos
             .select_related('user')
             .order_by('-report_count', '-created_at')
         )
@@ -661,6 +661,7 @@ def get_reported_users(request):
         reported_users = (
             User.objects.filter(reports_received__report_type='USER')
             .annotate(report_count=Count('reports_received'))
+            .filter(reports_received__resolved=False)  # Filtrar reportes no resueltos
             .order_by('-report_count')
         )
 
@@ -685,39 +686,69 @@ def get_reported_users(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+def resolve_report(request):
+    if not request.user.is_superuser:
+        return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
+
+    report_id = request.data.get('report_id')
+    
+    # Resolver el reporte
+    if resolve_report(report_id):
+        return Response({"message": "Report resolved successfully."}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def block_user(request):
     if not request.user.is_superuser:
         return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
 
-    username = request.data.get("username")
     reason = request.data.get("reason")
+    report_id = request.data.get("report_id")
 
     if not reason:
         return Response({"error": "Reason is required to block a user."}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = User.objects.filter(username=username).first()
-    if not user:
-        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+    report = Report.objects.filter(id=report_id).first()
 
-    if user.is_blocked:
-        return Response({"error": "User is already blocked."}, status=status.HTTP_400_BAD_REQUEST)
+    if not report:
+        return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    user.is_blocked = True
-    user.is_active = False
-    user.save()
+    # Resolver el reporte
+    if report.report_type == 'USER':
+        user = report.reported_user
+        if not user:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    # Registrar el bloqueo
-    Block.objects.create(user=user, blocked_by=request.user, reason=reason)
+        # Actualizar estado del usuario bloqueado
+        if user.is_blocked:
+            return Response({"error": "User is already blocked."}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Enviar un correo
-    send_mail(
-        "Cuenta bloqueada",
-        f"Tu cuenta ha sido bloqueada por el siguiente motivo: {reason}",
-        "admin@tuapp.com",
-        [user.email],
-    )
+        user.is_blocked = True
+        user.is_active = False
+        user.save()
+
+        # Registrar el bloqueo
+        Block.objects.create(user=user, blocked_by=request.user, reason=reason)
+
+        # Eliminar el reporte
+        report.resolved = True
+        report.save()
+
+        # Enviar correo
+        send_mail(
+            "Cuenta bloqueada",
+            f"Tu cuenta ha sido bloqueada por el siguiente motivo: {reason}",
+            "admin@tuapp.com",
+            [user.email],
+        )
+
+        return Response({"message": "User blocked successfully."})
     
-    return Response({"message": "User blocked successfully."})
+    return Response({"error": "Invalid report type."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -725,11 +756,25 @@ def delete_post(request):
     if not request.user.is_superuser:
         return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
 
-    post_id = request.data.get("post_id")
-    post = Post.objects.filter(id=post_id).first()
-    if not post:
-        return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+    report_id = request.data.get("report_id")
+    
+    # Buscar el reporte
+    report = Report.objects.filter(id=report_id).first()
+    
+    if not report:
+        return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+    if report.report_type == 'POST':
+        post = report.reported_post
+        
+        if not post:
+            return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    post.delete()
-    return Response({"message": "Post deleted successfully."})
+        # Eliminar la publicación
+        post.delete()
+        
+        return Response({"message": "Post deleted successfully."})
+    
+    return Response({"error": "Invalid report type."}, status=status.HTTP_400_BAD_REQUEST)
 
+        

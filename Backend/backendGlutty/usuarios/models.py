@@ -124,6 +124,7 @@ class Report(models.Model):
     reported_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="reports_received")
     reported_post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True, related_name="reports")
     report_type = models.CharField(max_length=10, choices=REPORT_TYPES)
+    resolved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -131,6 +132,14 @@ class Report(models.Model):
 
     def __str__(self):
         return f"Report by {self.reported_by.username} - {self.report_type}"
+    
+    def resolve_report(report_id):
+        report = Report.objects.filter(id=report_id).first()
+        if report:
+            report.resolved = True
+            report.save()
+            return True
+        return False
     
 # Tabla para bloqueos
 class Block(models.Model):
