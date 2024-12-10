@@ -26,6 +26,7 @@ class User(AbstractUser):
     password_code = models.CharField(max_length=6, blank=True, null=True)
     password_code_expires = models.DateTimeField(blank=True, null=True)
     is_changing_password = models.BooleanField(default=False)
+    is_blocked = models.BooleanField(default=False) 
     
     objects = CustomUserManager()
 
@@ -111,3 +112,38 @@ class Session(models.Model):
     
     def __str__(self):
         return f"Session for {self.user.username}"
+    
+# Tabla para denuncias
+class Report(models.Model):
+    from comunidad.models import Post
+    REPORT_TYPES = [
+        ('POST', 'Post'),
+        ('USER', 'User'),
+    ]
+    reported_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reports_made")
+    reported_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="reports_received")
+    reported_post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True, related_name="reports")
+    report_type = models.CharField(max_length=10, choices=REPORT_TYPES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Report by {self.reported_by.username} - {self.report_type}"
+    
+# Tabla para bloqueos
+class Block(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blocks")
+    blocked_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blocks_made")
+    reason = models.TextField()
+    blocked_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Block {self.user.username} by {self.blocked_by.username}"
+
+# Relacionar estas tablas con tu flujo lógico para que se actualice `is_blocked` automáticamente
+def block_user(user, reason, blocked_by):
+    user.is_blocked = True
+    user.save()
+    Block.objects.create(user=user, reason=reason, blocked_by=blocked_by)

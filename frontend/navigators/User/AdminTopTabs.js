@@ -3,16 +3,14 @@ import { Colors } from "../../constants/colors";
 import { StyleSheet } from "react-native";
 import PostsAdmin from "../../screens/User/Admin/PostsAdmin";
 import AdminTabs from "../../components/UI/Navigation/AdminTabs";
-import UsersAdminStack from "./UsersAdminStack";
+import UsersAdmin from "../../screens/User/Admin/UsersAdmin";
 
 const TopTabs = createMaterialTopTabNavigator();
 
 export default function AdminTopTabs() {
   return (
-    <TopTabs.Navigator
-      tabBar={(props) => <AdminTabs {...props} />}
-    >
-      <TopTabs.Screen name="UsersAdmin" component={UsersAdminStack} />
+    <TopTabs.Navigator tabBar={(props) => <AdminTabs {...props} />}>
+      <TopTabs.Screen name="UsersAdmin" component={UsersAdmin} />
       <TopTabs.Screen name="PostsAdmin" component={PostsAdmin} />
     </TopTabs.Navigator>
   );

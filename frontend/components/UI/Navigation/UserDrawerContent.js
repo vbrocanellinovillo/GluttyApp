@@ -38,7 +38,7 @@ export default function UserDrawerContent() {
         <Drawer.Item
           label="Panel"
           onPress={() => {
-            navigation.navigate("Tabs", { screen: "Admin" });
+            navigation.navigate("Tabs", { screen: "AdminTopTabs" });
           }}
           icon="tablet-dashboard"
         />

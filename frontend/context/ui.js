@@ -1,6 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = { blurHeader: false, medicalDetails: false };
+const initialState = {
+  blurHeader: false,
+  medicalDetails: false,
+};
 
 const uiSlice = createSlice({
   name: "ui",
