@@ -32,7 +32,7 @@ export default function SetNewPasswordForm({ onSubmit }){
                 // Validación de la nueva contraseña
                 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
                 if (!passwordRegex.test(newPassword)) {
-                  errors.newPassword = "Contraseña invalida";
+                  errors.newPassword = "Contraseña inválida";
     
                   if (newPassword.trim().length < 8) {
                     errors.newPassword += "\n *Al menos 8 caracteres";
@@ -40,12 +40,12 @@ export default function SetNewPasswordForm({ onSubmit }){
     
                   const minRegex = /(?=.*[a-z])/;
                   if (!minRegex.test(newPassword)) {
-                    errors.newPassword += "\n *Una minuscula";
+                    errors.newPassword += "\n *Una minúscula";
                   }
     
                   const mayusRegex = /(?=.*[A-Z])/;
                   if (!mayusRegex.test(newPassword)) {
-                    errors.newPassword += "\n *Una mayuscula";
+                    errors.newPassword += "\n *Una mayúscula";
                   }
     
                   const specialCharRegex = /(?=.*[\W_])/;

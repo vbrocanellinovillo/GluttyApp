@@ -28,7 +28,7 @@ export default function PasswordForm({ onSubmit }) {
             const errors = {};
 
             if (username.trim() === "") {
-              errors.username = "Username requerido";
+              errors.username = "Nombre de usuario requerido";
             }
 
 
@@ -45,9 +45,9 @@ export default function PasswordForm({ onSubmit }) {
             handleSubmit,
           }) => (
             <Form>
-              <FormTitle color={Colors.mJordan}>Ingresa tu username</FormTitle>
+              <FormTitle color={Colors.mJordan}>Ingresa tu nombre de usuario</FormTitle>
               <FormControl
-                label="Username"
+                label="Nombre de usuario"
                 value={values.username}
                 name="username"
                 handleChange={handleChange}
