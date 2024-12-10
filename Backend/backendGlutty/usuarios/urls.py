@@ -20,4 +20,9 @@ urlpatterns = [
     path("get-user/", get_user, name="get_user"),
     path("send-password-recovery-code/", send_password_recovery_code, name="send_password_recovery_code"),
     path("verify-recovery-code/", verify_recovery_code, name="verify_recovery_code"),
+    path('report/', report, name='report'),
+    path('get-reported-posts/', get_reported_posts, name='get_reported_posts'),
+    path('get-reported-users/', get_reported_users, name='get_reported_users'),
+    path('block-user/', block_user, name='block_user'),
+    path('delete-post/', delete_post, name='delete_post'),
 ]

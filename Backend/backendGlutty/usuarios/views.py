@@ -1,5 +1,7 @@
 from datetime import date, datetime
+from itertools import count
 from django.shortcuts import render, get_object_or_404
+from comunidad.views import format_time
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -9,8 +11,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 from django.conf import settings
 # from drf_yasg.utils import swagger_auto_schema
-from .models import User, Session, Celiac
+from .models import User, Session, Celiac, Report, Block
 from comercios.models import Commerce, Branch
+from comunidad.models import Favorite, Like, Post
 from .serializers import UsuarioSerializer, CeliacSerializer
 from comercios.serializers import CommerceSerializer
 from django.db import transaction
@@ -21,6 +24,8 @@ from django.core.exceptions import ValidationError
 from comercios.views import get_commerce_info
 from django.core.mail import send_mail
 import re
+from django.core.paginator import Paginator
+from django.db.models import Count
 
 # Create your views here.
 class UsuarioAPIView(generics.ListCreateAPIView):
@@ -315,6 +320,7 @@ def login(request):
     response_data["user"] = user_data
     response_data["profile_picture"] = str(usuario.profile_picture)
     response_data["is_commerce"] = usuario.is_commerce
+    response_data["is_superuser"] = usuario.is_superuser
     response_data["access_token"] = access_token
     response_data["refresh_token"] = str(refresh)
     response_data["is_changing_password"] = usuario.is_changing_password
@@ -565,3 +571,165 @@ def get_user(request):
     # ESTO NO ESTÁ BIEN
     # if request.user.id != user.id:
     #     return Response({"error": "No autorizado para esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def report(request):
+    reported_by = request.user  # Cambiado para usar la instancia del usuario directamente
+    report_type = request.data.get('report_type')
+    reported_id = request.data.get('reported_id')
+
+    if report_type not in ['POST', 'USER']:
+        return Response({"error": "Invalid report type."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if report_type == 'USER':
+        reported_user = User.objects.filter(username=reported_id).first()
+        if not reported_user:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+        # Crear el reporte para un usuario
+        Report.objects.create(reported_by=reported_by, reported_user=reported_user, report_type='USER')
+    
+    elif report_type == 'POST':
+        reported_post = Post.objects.filter(id=reported_id).first()
+        if not reported_post:
+            return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+        # Crear el reporte para un post
+        Report.objects.create(reported_by=reported_by, reported_post=reported_post, report_type='POST')
+    
+    return Response({"message": "Report created successfully."}, status=status.HTTP_201_CREATED)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_reported_posts(request):
+    if not request.user.is_superuser:
+        return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
+
+    page = request.data.get("page", 1)
+    page_size = request.data.get("page_size", 10)
+
+    try:
+        # Obtener posteos ordenados por cantidad de reportes y fecha de creación
+        posts_queryset = (
+            Post.objects.annotate(report_count=Count('reports'))
+            .filter(report_count__gt=0)  # Filtrar solo los posteos con al menos un reporte
+            .select_related('user')
+            .order_by('-report_count', '-created_at')
+        )
+
+
+        # Paginación
+        paginator = Paginator(posts_queryset, page_size)
+        paginated_posts = paginator.get_page(page)
+
+        # Construir datos de los posteos
+        posts_data = [
+            {
+                "post_id": post.id,
+                "user": post.user.username,
+                "name": f"{post.user.first_name} {post.user.last_name}" if post.user.first_name else post.user.username,
+                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                "body": post.body,
+                "created_at": post.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "likes": post.likes_number,
+                "comments_number": post.comments_number,
+                "report_count": post.report_count,
+                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                "labels": [label.label.name for label in post.labels.all()],
+            }
+            for post in paginated_posts
+        ]
+
+        return Response({
+            "total_count": paginator.count,
+            "total_pages": paginator.num_pages,
+            "current_page": paginated_posts.number,
+            "posts": posts_data,
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": f"Error al obtener los posteos reportados: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_reported_users(request):
+    if not request.user.is_superuser:
+        return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        # Obtener usuarios reportados ordenados por cantidad de reportes
+        reported_users = (
+            User.objects.filter(reports_received__report_type='USER')
+            .annotate(report_count=Count('reports_received'))
+            .order_by('-report_count')
+        )
+
+
+        # Construir datos de los usuarios
+        users_data = [
+            {
+                "user_id": user.id,
+                "username": user.username,
+                "name": f"{user.first_name} {user.last_name}" if user.first_name else user.username,
+                "profile_picture": user.profile_picture if user.profile_picture else None,
+                "report_count": user.report_count,
+            }
+            for user in reported_users
+        ]
+
+        return Response({"reported_users": users_data}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": f"Error al obtener los usuarios reportados: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def block_user(request):
+    if not request.user.is_superuser:
+        return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
+
+    username = request.data.get("username")
+    reason = request.data.get("reason")
+
+    if not reason:
+        return Response({"error": "Reason is required to block a user."}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.filter(username=username).first()
+    if not user:
+        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    if user.is_blocked:
+        return Response({"error": "User is already blocked."}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.is_blocked = True
+    user.is_active = False
+    user.save()
+
+    # Registrar el bloqueo
+    Block.objects.create(user=user, blocked_by=request.user, reason=reason)
+
+    # Enviar un correo
+    send_mail(
+        "Cuenta bloqueada",
+        f"Tu cuenta ha sido bloqueada por el siguiente motivo: {reason}",
+        "admin@tuapp.com",
+        [user.email],
+    )
+    
+    return Response({"message": "User blocked successfully."})
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_post(request):
+    if not request.user.is_superuser:
+        return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
+
+    post_id = request.data.get("post_id")
+    post = Post.objects.filter(id=post_id).first()
+    if not post:
+        return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    post.delete()
+    return Response({"message": "Post deleted successfully."})
+
