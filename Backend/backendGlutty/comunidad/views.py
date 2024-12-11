@@ -459,6 +459,7 @@ def get_recent_posts(request):
     user = User.objects.filter(username=username).first()
     
     if not user:
+        print("no encuentra el usuario")
         connection.close()
         return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
@@ -582,7 +583,7 @@ def filter_posts_by_labels(data, user, order_by):
         filters |= Q(labels__label__id__in=label_ids)
     if user_ids:
         filters |= Q(user__id__in=user_ids)
-
+    
     # Filtrar posts según los filtros combinados y ordenar en SQL
     posts = (
         Post.objects.filter(filters)
@@ -592,6 +593,62 @@ def filter_posts_by_labels(data, user, order_by):
 
     connection.close()
     return posts
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def get_posts_by_user(request):
+    username = request.user.username
+    user = User.objects.filter(username=username).first()
+    
+    if not user:
+        connection.close()
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    
+    try:
+        page = request.data.get("page", 1)
+        page_size = request.data.get("page_size", 10)
+        user_id = request.data.get("id")
+        print(user_id)
+        posts_queryset = Post.objects.filter(user__id=user_id)  # Ordenamos y limitamos en SQL
+        connection.close()
+        # Paginación
+        paginator = Paginator(posts_queryset, page_size)
+        paginated_posts = paginator.get_page(page)
+
+        # Crear una lista de datos de los posts
+        posts_data = []
+        for post in paginated_posts:
+            user_liked = Like.objects.filter(user=user, post=post).exists()
+            user_faved = Favorite.objects.filter(user=user, post=post).exists()
+
+            posts_data.append({
+                "post_id": post.id,
+                "user": post.user.username,
+                "name": Post.get_name(post.user),
+                "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
+                "body": post.body,
+                "created_at": format_time(post.created_at),
+                "likes": post.likes_number,
+                "comments_number": post.comments_number,
+                "user_liked": user_liked,
+                "user_faved": user_faved,
+                "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
+                "labels": [label.label.name for label in post.labels.all()],
+            })
+            
+        connection.close()
+        return Response({
+            "total_count": paginator.count,
+            "total_pages": paginator.num_pages,
+            "current_page": paginated_posts.number,
+            "posts": posts_data,
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        connection.close()
+        return Response({"error": f"Error al buscar posteos del usuario: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 
 import uuid
