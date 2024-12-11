@@ -12,17 +12,89 @@ import { useState } from "react";
 import ContextualMenu from "../UI/contextualMenu";
 import { TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { report } from "../../services/adminService";
+import GluttyModal from "../UI/GluttyModal";
+import { Portal } from "react-native-paper";
+import { useSelector } from "react-redux";
 
 
 export default function BranchDetails({ branch, handlePdf }) {
-  function handleReportUser(){
-    console.log("TALKKKK")
-  }
+
   const [showMenu, setShowMenu] = useState(false); // Estado para mostrar el menú contextual
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const token = useSelector((state) => state.auth.accessToken);
+
+
+  //Const de modal
+  const [isError, setIsError] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+
+
+
+  function handleReport() {
+    setShowReportModal(true)
+  }
+
+  async function confirmModalReportHandler() {
+    console.log("PORFISSS")
+    try {
+      console.log("perra")
+      setIsLoading(true);
+      console.log("comercio:", branch.commerce_username)
+
+      const response = await report("USER", branch.commerce_usernamen, token);
+      console.log(response)
+      setMessage("Tu reporte fue registrado con exito");
+      setShowModal(true);
+    } catch (error) {
+      setIsError(true);
+      setMessage(error.message || "Error desconocido"); // Maneja errores también
+      setShowModal(true);
+      console.log(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+    setShowReportModal(false);
+  }
+
+  function closeModalReportHandler(){
+    setShowReportModal(false)
+  }
+  function closeModalHandler() {
+    setShowModal(false);
+  }
 
   if (!branch) return <ErrorBranchDetails />;
 
   return (
+    <>
+      <GluttyModal
+        isError={isError}
+        message={message}
+        onClose={closeModalHandler}
+        visible={showModal}
+      />
+    {/*CONFIRMAR REPORTE */}
+    <Portal>
+    <GluttyModal
+      visible={showReportModal}
+      onClose={closeModalReportHandler}
+      message="¿Seguro que desea realizar el reporte?"
+      other
+      buttons={[
+        {
+          text: "Confirmar",
+          bg: "green",
+          color: Colors.whiteGreen,
+          onPress: ()=>{confirmModalReportHandler()}
+        },
+      ]}
+      closeButtonText="Cancelar"
+      style = {styles.modal}
+    />
+    </Portal>
     <ScrollView
       contentContainerStyle={styles.branch}
       contentInset={{ bottom: 80 }}
@@ -45,7 +117,7 @@ export default function BranchDetails({ branch, handlePdf }) {
               <ContextualMenu
                   isReportUser={true}
                   
-                  onReportUser={handleReportUser}
+                  onReportUser={handleReport}
               />
             )}
             </View>
@@ -71,6 +143,7 @@ export default function BranchDetails({ branch, handlePdf }) {
         />
       </View>
     </ScrollView>
+    </>
   );
 }
 

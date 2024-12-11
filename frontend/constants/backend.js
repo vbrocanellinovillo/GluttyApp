@@ -1,1 +1,1 @@
-export const backendUrl = "https://3eee-190-188-175-44.ngrok-free.app/";
+export const backendUrl = "https://ce1e-181-209-89-34.ngrok-free.app/";
