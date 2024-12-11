@@ -44,7 +44,7 @@ export default function BranchDetails({ branch, handlePdf }) {
       setIsLoading(true);
       console.log("comercio:", branch.commerce_username)
 
-      const response = await report("USER", branch.commerce_usernamen, token);
+      const response = await report("USER", branch.commerce_username, token);
       console.log(response)
       setMessage("Tu reporte fue registrado con exito");
       setShowModal(true);
