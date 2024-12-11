@@ -8,29 +8,29 @@ import { useNavigation } from "@react-navigation/native";
 const REPORTED_USERS = [
   new ReportedUser(
     1,
-    "Messi",
-    "lionelmessi",
+    "Agustin",
+    "agusGonzalez",
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEs4vn3kCVOAGRRhMmvxBoFDf06LMFiEpPMA&s",
     10
   ),
   new ReportedUser(
     2,
-    "Messi",
-    "lionelmessi",
+    "Santa Lucia",
+    "santalucia00",
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEs4vn3kCVOAGRRhMmvxBoFDf06LMFiEpPMA&s",
     10
   ),
   new ReportedUser(
     3,
-    "Messi",
-    "lionelmessi",
+    "Francisco",
+    "franDiaz",
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEs4vn3kCVOAGRRhMmvxBoFDf06LMFiEpPMA&s",
     10
   ),
   new ReportedUser(
     4,
-    "Messi",
-    "lionelmessi",
+    "Agostina Perez",
+    "agosPerez",
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEs4vn3kCVOAGRRhMmvxBoFDf06LMFiEpPMA&s",
     10
   ),

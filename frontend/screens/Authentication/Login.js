@@ -31,6 +31,7 @@ export default function Login() {
           refreshToken: response.refresh_token,
           image: response.profile_picture,
           isCommerce: response.is_commerce,
+          isAdmin: response.is_superuser, 
         })
       );
     } catch (error) {

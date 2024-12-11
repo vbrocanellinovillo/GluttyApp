@@ -29,6 +29,9 @@ export default function PostItem({
   onPress,
   iconPost = "chevron-forward-outline",
   onPressIcon,
+  isReportable = false,
+  handleReportPost,
+  handleReportUser,
 }) {
   const name = useSelector((state) => state?.auth?.userData?.username);
 
@@ -70,13 +73,9 @@ export default function PostItem({
     setTimeout(() => (scaleAnimation.value = 0), 1000);
   }
 
-  function handleReportPost(){
-    console.log("euuuuu")
-  }
+  
 
-  function handleReportUser(){
-    console.log("wtffff")
-  }
+  
   return (
     <>
       <Pressable
@@ -103,7 +102,7 @@ export default function PostItem({
               <Ionicons style={styles.verMas} name={iconPost} />
             </Pressable>
           )}
-          {!borrar &&(
+          {(!borrar && isReportable) &&(
             <View style = {styles.options}>
             <TouchableOpacity onPress={() => {setShowMenu(!showMenu); console.log("Menu toggled:", !showMenu);}}>
               <MaterialCommunityIcons
@@ -116,8 +115,8 @@ export default function PostItem({
               <ContextualMenu
                   isReportPost={true}
                   isReportUser={true}
-                  onReportPost={handleReportPost}
-                  onReportUser={handleReportUser}
+                  onReportPost={()=>handleReportPost("POST", post?.id)}
+                  onReportUser={()=>handleReportUser("USER",post?.username || post?.user)}
               />
             )}
             </View>

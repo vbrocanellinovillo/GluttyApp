@@ -18,9 +18,10 @@ const PostsAdmin = () => {
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(true);
   const pageSize = PAGE_SIZE;
+  
   const data = [{"comments": null, 
     "comments_number": 1, 
-    "content": "La capke que lugar del biennn", 
+    "content": "No me gusta esta comunidad", 
     "date": "20:42 - 04/11/2024", 
     "faved": true, 
     "id": 98, 
@@ -29,7 +30,7 @@ const PostsAdmin = () => {
     "likes": 2, 
     "name": 
     "Francisco Menendez", 
-    "tags": ["Recomendaciones", "Rico", "Meriendas"], 
+    "tags": [], 
     "userImage": "https://res.cloudinary.com/dc7sftc2n/image/upload/v1728956435/h7x59zzkszwvh2krjilq.jpg", 
     "username": "fran"},
     // {"comments": null, 
