@@ -250,6 +250,7 @@ def get_branch(request):
             "just_takeaway": branch.just_takeaway,
             "schedules": schedule_data,
             "is_open_now": branch.is_open_now(),
+            "commerce_username": branch.commerce.user.username,
         }
         
         branch_data["menus"] = []
