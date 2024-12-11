@@ -6,6 +6,7 @@ const initialState = {
   accessToken: undefined,
   refreshToken: undefined,
   isCommerce: undefined,
+  isAdmin: undefined,
 };
 
 const authSlice = createSlice({
@@ -18,7 +19,9 @@ const authSlice = createSlice({
       state.refreshToken = action.payload.refreshToken;
       state.image = action.payload.image;
       state.isCommerce = action.payload.isCommerce;
+      state.isAdmin = action.payload.isAdmin;
     },
+
 
     updateUser(state, action) {
       state.userData = action.payload.user;
