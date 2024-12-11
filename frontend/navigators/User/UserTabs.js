@@ -14,8 +14,11 @@ import MyRecipes from "../../screens/User/Chatbot/MyRecipes";
 import AdminTopTabs from "./AdminTopTabs";
 import SecondaryHeader from "../../components/UI/Header/SecondaryHeader";
 import AdminStack from "./AdminStack";
+import { useSelector } from "react-redux";
 
 export default function UserTabs() {
+
+
   const _renderIcon = (routeName, selectedTab) => {
     let icon = "";
 
@@ -133,6 +136,7 @@ export default function UserTabs() {
         component={MyRecipes}
         options={{ title: "Mis Recetas" }}
       />
+    
       <CurvedBottomBarExpo.Screen
         name="AdminTopTabs"
         component={AdminTopTabs}
@@ -152,6 +156,7 @@ export default function UserTabs() {
         component={AdminStack}
         options={{ headerShown: false }}
       />
+  
     </CurvedBottomBarExpo.Navigator>
   );
 }

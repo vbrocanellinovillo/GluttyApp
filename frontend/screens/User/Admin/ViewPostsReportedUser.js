@@ -31,18 +31,18 @@ export default function ViewPostsReportedUser({ navigation, route }) {
     {
       comments: null,
       comments_number: 1,
-      content: "La capke que lugar del biennn",
+      content: "No me gusta esta comunidad",
       date: "20:42 - 04/11/2024",
       faved: true,
       id: 98,
       images: [],
       liked: true,
       likes: 2,
-      name: "Lionel Messi",
-      tags: ["Recomendaciones", "Rico", "Meriendas"],
+      name: "Agus Gonzalez",
+      tags: ["NoMeGusta", "Feo"],
       userImage:
         "https://res.cloudinary.com/dc7sftc2n/image/upload/v1728956435/h7x59zzkszwvh2krjilq.jpg",
-      username: "messi",
+      username: "agusGonzalez",
     },
   ];
 
