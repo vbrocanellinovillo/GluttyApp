@@ -12,7 +12,6 @@ const ReportedUserItem = ({ containerStyle, reportedUser, onPress }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress && onPress();
   }
-
   return (
     <Pressable
       style={({ pressed }) =>

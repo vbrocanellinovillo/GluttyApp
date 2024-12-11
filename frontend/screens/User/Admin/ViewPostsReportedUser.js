@@ -8,6 +8,7 @@ import PostsList from "../../../components/Community/PostsList";
 import NoPosts from "../../../components/Community/NoPosts";
 import { FAB, Portal } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
+import { getPostsReportedUser } from "../../../services/adminService";
 
 export default function ViewPostsReportedUser({ navigation, route }) {
   const token = useSelector((state) => state.auth.accessToken);
@@ -21,37 +22,19 @@ export default function ViewPostsReportedUser({ navigation, route }) {
   const pageSize = PAGE_SIZE;
   const [isFABOpen, setIsFABOpen] = useState(false);
 
-  const { username } = route.params;
+  const { username, id } = route.params;
+  //console.log("id", id);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: username });
   }, [username]);
-
-  const data = [
-    {
-      comments: null,
-      comments_number: 1,
-      content: "No me gusta esta comunidad",
-      date: "20:42 - 04/11/2024",
-      faved: true,
-      id: 98,
-      images: [],
-      liked: true,
-      likes: 2,
-      name: "Agus Gonzalez",
-      tags: ["NoMeGusta", "Feo"],
-      userImage:
-        "https://res.cloudinary.com/dc7sftc2n/image/upload/v1728956435/h7x59zzkszwvh2krjilq.jpg",
-      username: "agusGonzalez",
-    },
-  ];
 
   useEffect(() => {
     if (isFocused) {
       setPage(1); // Reinicia la página al entrar
       fetchMyPosts(); // Llama a la función para actualizar los posts
     }
-  }, [isFocused]);
+  }, [id, isFocused]);
 
   async function fetchMyPosts() {
     const isFirstPage = page === 1;
@@ -60,16 +43,23 @@ export default function ViewPostsReportedUser({ navigation, route }) {
       setIsLoading(true);
     }
     try {
-      //const userReportedPosts = await getReportedPosts(username, token, page, pageSize);
+      const data = await getPostsReportedUser(id, token, page, pageSize);
       if (data) {
         setPosts((prevPosts) => (isFirstPage ? data : [...prevPosts, ...data]));
         setHasNextPage(data?.length === pageSize);
       }
+      
       setIsError(false);
     } catch (error) {
       setIsError(true);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  function changePage() {
+    if (hasNextPage && !isLoading) {
+      setPage((prevPage) => prevPage + 1);
     }
   }
 
@@ -79,8 +69,8 @@ export default function ViewPostsReportedUser({ navigation, route }) {
   }
 
   function unblockUser() {
-    console.log("Usuario desbloqueado");
-    // Lógica para desbloquear al usuario
+    console.log("Usuario resuelto/ublock");
+    
   }
 
   return (
@@ -88,14 +78,14 @@ export default function ViewPostsReportedUser({ navigation, route }) {
       {/* Aquí va el contenido para ver las publicaciones reportadas por el usuario */}
       <PostsList
         posts={posts}
-        //hasNextPage={hasNextPage}
-        //onPageChange={changePage}
+        hasNextPage={hasNextPage}
+        onPageChange={changePage}
         onRefresh={fetchMyPosts}
         isError={isError}
         isLoading={isLoading}
         errorStyle={styles.errorPosts}
         NoContentComponent={() => (
-          <NoPosts>¡No hubo nuevos posteos reportados!</NoPosts>
+          <NoPosts>¡No hay posteos!</NoPosts>
         )}
       />
       <Portal>
@@ -107,14 +97,14 @@ export default function ViewPostsReportedUser({ navigation, route }) {
             {
               icon: "block-helper", // Ícono para "Bloquear usuario"
               label: "Bloquear usuario",
-              onPress: blockUser,
+              onPress: blockUser(id),
               color: Colors.humita,
               labelTextColor: Colors.mJordan,
             },
             {
               icon: "check", // Ícono para "No bloquear usuario"
               label: "Anular reporte",
-              onPress: unblockUser,
+              onPress: unblockUser(id),
               color: Colors.humita,
               labelTextColor: Colors.mJordan,
             },
