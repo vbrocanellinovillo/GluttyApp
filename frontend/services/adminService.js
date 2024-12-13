@@ -90,6 +90,8 @@ export async function report(reportType, reportId, token) {
     }
   }
 
+
+
   export async function getPostsReportedUser(id_usuario, token, page, pageSize) {
     
     const requestUrl = backendUrl + "comunidad/get-posts-by-user/";
@@ -114,6 +116,32 @@ export async function report(reportType, reportId, token) {
       throw new Error(error.message);
     }
   }
+
+// POSTEOS
+///usuarios/get-reported-posts/
+export async function getReportedPosts(token, page, pageSize) {
+  const requestUrl = url + "get-reported-posts/";
+  
+  const requestOptions = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      page: page,
+      page_size: pageSize,
+    }),
+  };
+  try {
+    const data = await httpRequest(requestUrl, requestOptions);
+    return getPosts(data.posts);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+
 
 
   //POST /usuarios/resolve-report/ : me mandan el report_id es que se resuelva sin que hagan nada
