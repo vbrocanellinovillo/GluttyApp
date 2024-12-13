@@ -22,7 +22,7 @@ const ReportsNumber = ({
         style={iconStyle}
       />
       <TextCommonsRegular style={[styles.number, numberStyle]}>
-        10
+        {number}
       </TextCommonsRegular>
     </View>
   );

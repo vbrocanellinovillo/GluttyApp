@@ -8,7 +8,9 @@ import PostsList from "../../../components/Community/PostsList";
 import NoPosts from "../../../components/Community/NoPosts";
 import { FAB, Portal } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
-import { getPostsReportedUser } from "../../../services/adminService";
+import { blockUser, getPostsReportedUser, resolveReport } from "../../../services/adminService";
+import GluttyModal from "../../../components/UI/GluttyModal";
+import ReasonBlock from "../../../components/Admin/ReasonBlock";
 
 export default function ViewPostsReportedUser({ navigation, route }) {
   const token = useSelector((state) => state.auth.accessToken);
@@ -21,6 +23,11 @@ export default function ViewPostsReportedUser({ navigation, route }) {
   const [hasNextPage, setHasNextPage] = useState(true);
   const pageSize = PAGE_SIZE;
   const [isFABOpen, setIsFABOpen] = useState(false);
+  const [modalConfirmResolve, setModalConfirmResolve] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const [showReasonBlockModal, setShowReasonBlockModal] = useState(false);
+
 
   const { username, id } = route.params;
   //console.log("id", id);
@@ -63,14 +70,47 @@ export default function ViewPostsReportedUser({ navigation, route }) {
     }
   }
 
-  function blockUser() {
-    console.log("Usuario bloqueado");
-    // Lógica para bloquear al usuario
+  async function unblockUser(id) {
+    try {
+      //console.log("Usuario resuelto/ublock");
+      setModalConfirmResolve(false);
+      await resolveReport(id, token);
+      setMessage("Reporte resuelto");
+      setShowModal(true);
+    } catch (error) {
+      setIsError(error);
+      setMessage("Error al resolver el reporte");
+      setShowModal(true);
+    }
   }
 
-  function unblockUser() {
-    console.log("Usuario resuelto/ublock");
-    
+  function closeModalReportHandler(){
+    setModalConfirmResolve(false)
+  }
+
+  async function closeModalHandler() {
+    setShowModal(false);
+
+    // Ejecutar callback si existe
+    if (route.params?.onGoBack) {
+      route.params.onGoBack();
+    }
+    // Navegar hacia atrás
+    navigation.goBack();
+  }
+
+  async function handleBlock(reason) {
+    try {
+      console.log("Motivo del bloqueo:", reason);
+      setShowReasonBlockModal(false);
+      await blockUser(id, reason, token);
+      setMessage("Usuario bloqueado correctamente");
+      showModal(true);
+    } catch (error) {
+      setIsError(error);
+      setMessage("Error al bloquear el usuario");
+      setShowModal(true);
+    }
   }
 
   return (
@@ -97,14 +137,14 @@ export default function ViewPostsReportedUser({ navigation, route }) {
             {
               icon: "block-helper", // Ícono para "Bloquear usuario"
               label: "Bloquear usuario",
-              onPress: blockUser(id),
+              onPress: () => setShowReasonBlockModal(true),
               color: Colors.humita,
               labelTextColor: Colors.mJordan,
             },
             {
               icon: "check", // Ícono para "No bloquear usuario"
               label: "Anular reporte",
-              onPress: unblockUser(id),
+              onPress: () => setModalConfirmResolve(true),
               color: Colors.humita,
               labelTextColor: Colors.mJordan,
             },
@@ -116,7 +156,39 @@ export default function ViewPostsReportedUser({ navigation, route }) {
           rippleColor="transparent"
         />
       </Portal>
+
+      <GluttyModal
+        isError={isError}
+        message={message}
+        onClose={closeModalHandler}
+        visible={showModal}
+      />
+      {/*ES EL DE CONFIRMAR ALGO*/}
+      <GluttyModal
+        visible={modalConfirmResolve}
+        onClose={closeModalReportHandler}
+        message="¿Seguro que desea resolver la denuncia?"
+        other
+        buttons={[
+          {
+            text: "Confirmar",
+            bg: "green",
+            color: Colors.whiteGreen,
+            onPress: () => unblockUser(id)
+          },
+        ]}
+        closeButtonText="Cancelar"
+      />
+      <ReasonBlock
+        visible={showReasonBlockModal}
+        onClose={() => setShowReasonBlockModal(false)}
+        onConfirm={(reason) => {
+          handleBlock(reason)
+        }}
+        //isLoading={isSubmittingReason}
+      />
     </View>
+  
   );
 }
 
