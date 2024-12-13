@@ -118,11 +118,15 @@ export async function report(reportType, reportId, token) {
 
   //POST /usuarios/resolve-report/ : me mandan el report_id es que se resuelva sin que hagan nada
   export async function resolveReport(id_report, token) {
-    
-    const requestUrl = backendUrl + "comunidad/get-recent-posts/";
-  
+    console.log("id_report", id_report);
+    const requestUrl = url + "resolve-report/";
+    const formdata = new FormData();
+    formdata.append("report_id", id_report);
+
+
     const requestOptions = {
       method: "POST",
+      body: formdata,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -139,12 +143,17 @@ export async function report(reportType, reportId, token) {
 
 
   //POST /usuarios/block-user/ : me mandan el report_id y la reason (razon por bloqueo)
-  export async function blockUser(id_report, razon, token) {
+  export async function blockUser(id_report, reason, token) {
+    console.log("reasonnn del back", reason);
+    const requestUrl = url + "block-user/";
+    const formdata = new FormData();
     
-    const requestUrl = backendUrl + "comunidad/get-recent-posts/";
+    formdata.append("report_id", id_report);
+    formdata.append("reason", reason);
   
     const requestOptions = {
       method: "POST",
+      body: formdata,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

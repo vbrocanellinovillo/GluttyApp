@@ -19,11 +19,11 @@ export default function ReportedUsers() {
 
 
   useEffect(() => {
-      fetchMyPosts(); // Llama a la función para actualizar los posts
+      fetchReportedUsers(); // Llama a la función para actualizar los posts
     }
   ,[]);
 
-  async function fetchMyPosts() {
+  async function fetchReportedUsers() {
     try {
       setIsLoading(true);
       const data = await getReportedUsers(token);
@@ -41,7 +41,11 @@ export default function ReportedUsers() {
   const handlePress = (username, id) => {
     navigation.navigate("AdminStack", {
       screen: "ViewPostsReportedUser",
-      params: { username, id },
+      params: { 
+        username, 
+        id,
+        onGoBack: () => fetchReportedUsers(),
+       },
     });
   };
 
