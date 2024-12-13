@@ -691,9 +691,10 @@ def resolve_report(request):
         return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
 
     report_id = request.data.get('report_id')
+    report = Report.objects.filter(reported_user__id=report_id).first()
     
     # Resolver el reporte
-    if resolve_report(report_id):
+    if report.resolve_report():
         return Response({"message": "Report resolved successfully."}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -704,21 +705,25 @@ def resolve_report(request):
 def block_user(request):
     if not request.user.is_superuser:
         return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
+    try:
+        reason = request.data.get("reason")
+        report_id = request.data.get("report_id")
 
-    reason = request.data.get("reason")
-    report_id = request.data.get("report_id")
+        if not reason:
+            return Response({"error": "Reason is required to block a user."}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not reason:
-        return Response({"error": "Reason is required to block a user."}, status=status.HTTP_400_BAD_REQUEST)
+        reports = Report.objects.filter(reported_user__id=report_id)
 
-    report = Report.objects.filter(id=report_id).first()
+        if not reports:
+            return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    if not report:
-        return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
-
-    # Resolver el reporte
-    if report.report_type == 'USER':
-        user = report.reported_user
+        # Resolver el reporte
+        for report in reports:
+            if report.report_type == 'USER':
+                # Eliminar el reporte
+                report.resolved = True
+                report.save()
+        user = User.objects.filter(id=report_id).first()
         if not user:
             return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -733,10 +738,6 @@ def block_user(request):
         # Registrar el bloqueo
         Block.objects.create(user=user, blocked_by=request.user, reason=reason)
 
-        # Eliminar el reporte
-        report.resolved = True
-        report.save()
-
         # Enviar correo
         send_mail(
             "Cuenta bloqueada",
@@ -746,8 +747,8 @@ def block_user(request):
         )
 
         return Response({"message": "User blocked successfully."})
-    
-    return Response({"error": "Invalid report type."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": f"Error al bloquear el usuario: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['DELETE'])
