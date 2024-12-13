@@ -103,15 +103,6 @@ DATABASES = {
         "PORT": os.getenv("DB_PORT", "5432"),
         "CONN_MAX_AGE": 600,  # Reutiliza conexiones hasta por 10 minutos
     }
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'celinahunziker',
-    #     'USER': 'celinahunziker',
-    #     'PASSWORD': 'niHosDyld/ov4nus60',
-    #     'HOST': '200.69.137.167',
-    #     'PORT': '54321',
-    #     'CONN_MAX_AGE': 600, 
-    # }
 }
 
 # Password validation

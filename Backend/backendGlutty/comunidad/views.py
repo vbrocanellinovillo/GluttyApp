@@ -738,6 +738,33 @@ def delete_post(request):
     except Exception as e:
         return Response({"error": f"Error al eliminar el post: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+# Función que elimina todos los posteos de un usuario
+def delete_post_by_user(user):
+    
+    posts = Post.objects.filter(Post, user=user)
+
+    for post in posts:
+        # Obtener todas las etiquetas asociadas al post antes de eliminarlo
+        labels = post.labels.all()  # Esto obtiene las relaciones LabelxPost asociadas al post
+        
+        # Almacenar las etiquetas en una lista para no perderlas cuando se borre el post
+        label_ids = [labelxpost.label.id for labelxpost in labels]
+        
+        # Eliminar fotos asociadas
+        post.deletePictures()
+        
+        # Eliminar el post (esto eliminará automáticamente LabelxPost por on_delete=models.CASCADE)
+        post.delete()
+
+        # Revisar si alguna etiqueta quedó sin posts asociados
+        for label_id in label_ids:
+            label = Label.objects.get(id=label_id)
+            # Verificar si esa etiqueta está asociada a otros posts
+            if not LabelxPost.objects.filter(label=label).exists():
+                # Si no está asociada a ningún otro post, se elimina la etiqueta
+                label.delete()
+
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def delete_comment(request):

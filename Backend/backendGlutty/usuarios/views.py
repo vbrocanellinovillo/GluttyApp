@@ -26,6 +26,7 @@ from django.core.mail import send_mail
 import re
 from django.core.paginator import Paginator
 from django.db.models import Count
+from comunidad.views import delete_post_by_user
 
 # Create your views here.
 class UsuarioAPIView(generics.ListCreateAPIView):
@@ -274,6 +275,9 @@ def login(request):
             return Response({"error": "Máximo número de intentos de inicio de sesión alcanzado."}, status=status.HTTP_403_FORBIDDEN)
         return Response({"error": "Contraseña incorrecta."}, status=status.HTTP_401_UNAUTHORIZED)
 
+    if usuario.is_blocked:
+        raise AuthenticationFailed("Cuenta bloqueada.", 403)
+    
     if not usuario.is_active:
         raise AuthenticationFailed("Cuenta eliminada.")
     
@@ -719,7 +723,7 @@ def block_user(request):
 
         # Resolver el reporte
         for report in reports:
-            if report.report_type == 'USER':
+            if report.report_type == 'USER' or report.report_type == "POST":
                 # Eliminar el reporte
                 report.resolved = True
                 report.save()
@@ -737,6 +741,9 @@ def block_user(request):
 
         # Registrar el bloqueo
         Block.objects.create(user=user, blocked_by=request.user, reason=reason)
+        
+        # Borrar todo posteo o comentario asociado
+        delete_post_by_user(user)
 
         # Enviar correo
         send_mail(
@@ -746,7 +753,7 @@ def block_user(request):
             [user.email],
         )
 
-        return Response({"message": "User blocked successfully."})
+        return Response({"message": "User blocked successfully."}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": f"Error al bloquear el usuario: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -757,13 +764,13 @@ def delete_post(request):
     if not request.user.is_superuser:
         return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
 
-    report_id = request.data.get("report_id")
+    post_id = request.data.get("post_id")
     
-    # Buscar el reporte
-    report = Report.objects.filter(id=report_id).first()
+    # Buscar el posteo
+    post = Post.objects.filter(id=post_id).first()
     
-    if not report:
-        return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
+    if not post:
+        return Response({"error": "Posteo no encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
     if report.report_type == 'POST':
         post = report.reported_post
@@ -772,10 +779,8 @@ def delete_post(request):
             return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Eliminar la publicación
-        post.delete()
+        delete_post_by_user(post.user)
         
         return Response({"message": "Post deleted successfully."})
     
     return Response({"error": "Invalid report type."}, status=status.HTTP_400_BAD_REQUEST)
-
-        
