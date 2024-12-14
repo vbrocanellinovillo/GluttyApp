@@ -27,7 +27,9 @@ export default function ViewPostsReportedUser({ navigation, route }) {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const [showReasonBlockModal, setShowReasonBlockModal] = useState(false);
+  const [isSubmittingReason, setIsSubmittingReason] = useState(false);
 
+  
 
   const { username, id } = route.params;
   //console.log("id", id);
@@ -101,17 +103,18 @@ export default function ViewPostsReportedUser({ navigation, route }) {
 
   async function handleBlock(reason) {
     try {
-      console.log("Motivo del bloqueo:", reason);
-      setShowReasonBlockModal(false);
-      await blockUser(id, reason, token);
-      setMessage("Usuario bloqueado correctamente");
-      showModal(true);
+        setShowReasonBlockModal(false);
+        await blockUser(id, reason, token);
+        setMessage("Usuario bloqueado con éxito!");
+        setShowModal(true);
     } catch (error) {
-      setIsError(error);
-      setMessage("Error al bloquear el usuario");
-      setShowModal(true);
-    }
-  }
+        const errorMessage = error.response?.data?.message || "Error al bloquear el usuario";
+        setIsError(true);
+        setMessage(errorMessage);
+        setShowModal(true);
+    } 
+}
+
 
   return (
     <View>
