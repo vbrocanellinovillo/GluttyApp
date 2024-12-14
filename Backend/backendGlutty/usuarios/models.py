@@ -133,11 +133,10 @@ class Report(models.Model):
     def __str__(self):
         return f"Report by {self.reported_by.username} - {self.report_type}"
     
-    def resolve_report(report_id):
-        report = Report.objects.filter(id=report_id).first()
-        if report:
-            report.resolved = True
-            report.save()
+    def resolve_report(self):
+        if self:
+            self.resolved = True
+            self.save()
             return True
         return False
     

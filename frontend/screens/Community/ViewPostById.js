@@ -12,6 +12,7 @@ import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { deletePost } from "../../services/communityService";
 import GluttyModal from "../../components/UI/GluttyModal";
 import ConsultarPostSkeleton from "../../components/UI/Loading/ConsultarPostSkeleton";
+import { report } from "../../services/adminService";
 
 
 export default function ViewPostById({ route, navigation }) {
@@ -24,6 +25,9 @@ export default function ViewPostById({ route, navigation }) {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const [showEliminarModal, setShowEliminarModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportData, setReportData] = useState({ type: null, id: null });
+
 
   const id = route.params?.id;
   const token = useSelector((state) => state.auth.accessToken);
@@ -93,6 +97,32 @@ if (isLoading) {
     }));
   }
 
+  function handleReport(reportType, reportId){
+    setReportData({ type: reportType, id: reportId });
+    setShowReportModal(true)
+  }
+  async function confirmModalReportHandler() {
+    try {
+      setIsLoading(true);
+      const response = await report(reportData.type, reportData.id, token);
+      setMessage("Tu reporte fue registrado con exito");
+      setShowModal(true);
+    } catch (error) {
+      setIsError(true);
+      setMessage(error.message || "Error desconocido"); // Maneja errores también
+      setShowModal(true);
+      console.log(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+    setShowReportModal(false);
+  }
+  function closeModalReportHandler(){
+    setShowReportModal(false)
+  }
+
+
+
   return (
     <>
       <GluttyModal
@@ -117,12 +147,31 @@ if (isLoading) {
         ]}
         closeButtonText="Cancelar"
       />
+      {/*CONFIRMAR REPORTE */}
+      <GluttyModal
+        visible={showReportModal}
+        onClose={closeModalReportHandler}
+        message="¿Seguro que desea realizar el reporte?"
+        other
+        buttons={[
+          {
+            text: "Confirmar",
+            bg: "green",
+            color: Colors.whiteGreen,
+            onPress: confirmModalReportHandler
+          },
+        ]}
+        closeButtonText="Cancelar"
+      />
       <ScrollView style={styles.scroll}>
         {/* Mostrar el post */}
         <PostItem
           post={post}
           iconPost="trash-outline"
           onPressIcon={handleConfirmDelete}
+          isReportable = {true}
+          handleReportPost={handleReport}
+          handleReportUser={handleReport}
         />
 
         {/* Mostrar los comentarios */}

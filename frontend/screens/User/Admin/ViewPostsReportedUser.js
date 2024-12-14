@@ -8,6 +8,9 @@ import PostsList from "../../../components/Community/PostsList";
 import NoPosts from "../../../components/Community/NoPosts";
 import { FAB, Portal } from "react-native-paper";
 import { Colors } from "../../../constants/colors";
+import { blockUser, getPostsReportedUser, resolveReport } from "../../../services/adminService";
+import GluttyModal from "../../../components/UI/GluttyModal";
+import ReasonBlock from "../../../components/Admin/ReasonBlock";
 
 export default function ViewPostsReportedUser({ navigation, route }) {
   const token = useSelector((state) => state.auth.accessToken);
@@ -20,38 +23,27 @@ export default function ViewPostsReportedUser({ navigation, route }) {
   const [hasNextPage, setHasNextPage] = useState(true);
   const pageSize = PAGE_SIZE;
   const [isFABOpen, setIsFABOpen] = useState(false);
+  const [modalConfirmResolve, setModalConfirmResolve] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+  const [showReasonBlockModal, setShowReasonBlockModal] = useState(false);
+  const [isSubmittingReason, setIsSubmittingReason] = useState(false);
 
-  const { username } = route.params;
+  
+
+  const { username, id } = route.params;
+  //console.log("id", id);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: username });
   }, [username]);
-
-  const data = [
-    {
-      comments: null,
-      comments_number: 1,
-      content: "La capke que lugar del biennn",
-      date: "20:42 - 04/11/2024",
-      faved: true,
-      id: 98,
-      images: [],
-      liked: true,
-      likes: 2,
-      name: "Lionel Messi",
-      tags: ["Recomendaciones", "Rico", "Meriendas"],
-      userImage:
-        "https://res.cloudinary.com/dc7sftc2n/image/upload/v1728956435/h7x59zzkszwvh2krjilq.jpg",
-      username: "messi",
-    },
-  ];
 
   useEffect(() => {
     if (isFocused) {
       setPage(1); // Reinicia la página al entrar
       fetchMyPosts(); // Llama a la función para actualizar los posts
     }
-  }, [isFocused]);
+  }, [id, isFocused]);
 
   async function fetchMyPosts() {
     const isFirstPage = page === 1;
@@ -60,11 +52,12 @@ export default function ViewPostsReportedUser({ navigation, route }) {
       setIsLoading(true);
     }
     try {
-      //const userReportedPosts = await getReportedPosts(username, token, page, pageSize);
+      const data = await getPostsReportedUser(id, token, page, pageSize);
       if (data) {
         setPosts((prevPosts) => (isFirstPage ? data : [...prevPosts, ...data]));
         setHasNextPage(data?.length === pageSize);
       }
+      
       setIsError(false);
     } catch (error) {
       setIsError(true);
@@ -73,29 +66,69 @@ export default function ViewPostsReportedUser({ navigation, route }) {
     }
   }
 
-  function blockUser() {
-    console.log("Usuario bloqueado");
-    // Lógica para bloquear al usuario
+  function changePage() {
+    if (hasNextPage && !isLoading) {
+      setPage((prevPage) => prevPage + 1);
+    }
   }
 
-  function unblockUser() {
-    console.log("Usuario desbloqueado");
-    // Lógica para desbloquear al usuario
+  async function unblockUser(id) {
+    try {
+      //console.log("Usuario resuelto/ublock");
+      setModalConfirmResolve(false);
+      await resolveReport(id, token);
+      setMessage("Reporte resuelto");
+      setShowModal(true);
+    } catch (error) {
+      setIsError(error);
+      setMessage("Error al resolver el reporte");
+      setShowModal(true);
+    }
   }
+
+  function closeModalReportHandler(){
+    setModalConfirmResolve(false)
+  }
+
+  async function closeModalHandler() {
+    setShowModal(false);
+
+    // Ejecutar callback si existe
+    if (route.params?.onGoBack) {
+      route.params.onGoBack();
+    }
+    // Navegar hacia atrás
+    navigation.goBack();
+  }
+
+  async function handleBlock(reason) {
+    try {
+        setShowReasonBlockModal(false);
+        await blockUser(id, reason, token);
+        setMessage("Usuario bloqueado con éxito!");
+        setShowModal(true);
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || "Error al bloquear el usuario";
+        setIsError(true);
+        setMessage(errorMessage);
+        setShowModal(true);
+    } 
+}
+
 
   return (
     <View>
       {/* Aquí va el contenido para ver las publicaciones reportadas por el usuario */}
       <PostsList
         posts={posts}
-        //hasNextPage={hasNextPage}
-        //onPageChange={changePage}
+        hasNextPage={hasNextPage}
+        onPageChange={changePage}
         onRefresh={fetchMyPosts}
         isError={isError}
         isLoading={isLoading}
         errorStyle={styles.errorPosts}
         NoContentComponent={() => (
-          <NoPosts>¡No hubo nuevos posteos reportados!</NoPosts>
+          <NoPosts>¡No hay posteos!</NoPosts>
         )}
       />
       <Portal>
@@ -107,14 +140,14 @@ export default function ViewPostsReportedUser({ navigation, route }) {
             {
               icon: "block-helper", // Ícono para "Bloquear usuario"
               label: "Bloquear usuario",
-              onPress: blockUser,
+              onPress: () => setShowReasonBlockModal(true),
               color: Colors.humita,
               labelTextColor: Colors.mJordan,
             },
             {
               icon: "check", // Ícono para "No bloquear usuario"
               label: "Anular reporte",
-              onPress: unblockUser,
+              onPress: () => setModalConfirmResolve(true),
               color: Colors.humita,
               labelTextColor: Colors.mJordan,
             },
@@ -126,7 +159,39 @@ export default function ViewPostsReportedUser({ navigation, route }) {
           rippleColor="transparent"
         />
       </Portal>
+
+      <GluttyModal
+        isError={isError}
+        message={message}
+        onClose={closeModalHandler}
+        visible={showModal}
+      />
+      {/*ES EL DE CONFIRMAR ALGO*/}
+      <GluttyModal
+        visible={modalConfirmResolve}
+        onClose={closeModalReportHandler}
+        message="¿Seguro que desea resolver la denuncia?"
+        other
+        buttons={[
+          {
+            text: "Confirmar",
+            bg: "green",
+            color: Colors.whiteGreen,
+            onPress: () => unblockUser(id)
+          },
+        ]}
+        closeButtonText="Cancelar"
+      />
+      <ReasonBlock
+        visible={showReasonBlockModal}
+        onClose={() => setShowReasonBlockModal(false)}
+        onConfirm={(reason) => {
+          handleBlock(reason)
+        }}
+        //isLoading={isSubmittingReason}
+      />
     </View>
+  
   );
 }
 
