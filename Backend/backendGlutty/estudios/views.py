@@ -48,6 +48,9 @@ def register_analysis(request):
         # Obtener valores ingresados
         test_date = request.data.get("test_date")
         lab = request.data.get("lab")
+        
+        if lab == null or lab == "null":
+            return Response({"error": "Debe seleccionar el laboratorio del estudio"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Verificar si el usuario ya tiene un estudio en la misma fecha y laboratorio
         existing_analysis = BloodTest.objects.filter(celiac=celiac, test_date=test_date, lab=lab).exists()

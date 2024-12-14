@@ -14,7 +14,7 @@ export default function MedicalExamItem({ medicalExam, onPress }) {
 
         <View style={styles.icons}>
           <TextCommonsMedium style={styles.exam} numberOfLines={2}>
-            Analisis de Sangre
+            Análisis de Sangre
           </TextCommonsMedium>
           <View style={styles.iconContainer}>
             <FontAwesome5

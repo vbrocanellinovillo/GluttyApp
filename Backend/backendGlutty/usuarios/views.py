@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from itertools import count
 from django.shortcuts import render, get_object_or_404
-from comunidad.views import format_time
+from comunidad.views import ban_post_by_id, format_time
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -694,8 +694,25 @@ def resolve_report(request):
     if not request.user.is_superuser:
         return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
 
-    report_id = request.data.get('report_id')
-    report = Report.objects.filter(reported_user__id=report_id).first()
+    user_id = request.data.get('user_id')
+    report = Report.objects.filter(reported_user__id=user_id).first()
+    
+    # Resolver el reporte
+    if report.resolve_report():
+        return Response({"message": "Report resolved successfully."}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def resolve_post_report(request):
+    if not request.user.is_superuser:
+        return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
+
+    post_id = request.data.get("post_id")
+    print(post_id)
+    report = Report.objects.filter(reported_post_id=post_id, resolved = False).first()
     
     # Resolver el reporte
     if report.resolve_report():
@@ -760,27 +777,40 @@ def block_user(request):
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
-def delete_post(request):
+def ban_post(request):
     if not request.user.is_superuser:
         return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
 
-    post_id = request.data.get("post_id")
-    
-    # Buscar el posteo
-    post = Post.objects.filter(id=post_id).first()
-    
-    if not post:
-        return Response({"error": "Posteo no encontrado."}, status=status.HTTP_404_NOT_FOUND)
-    
-    if report.report_type == 'POST':
-        post = report.reported_post
+    try: 
+        post_id = request.data.get("post_id")
         
+        # Buscar el posteo
+        post = Post.objects.filter(id=post_id).first()
+        
+        if not post:
+            return Response({"error": "Posteo no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        
+        print("hola")
+        reports = Report.objects.filter(reported_post__id=post_id)
+        if not reports:
+                return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
+        print("hola")
+        # Resolver el reporte
+        for report in reports:
+            print("hola0")
+            if report.report_type == "POST":
+                # Eliminar el reporte
+                report.resolved = True
+                report.save()
+        
+        post = report.reported_post
+            
         if not post:
             return Response({"error": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
 
         # Eliminar la publicación
-        delete_post_by_user(post.user)
-        
+        ban_post_by_id(post_id)
+            
         return Response({"message": "Post deleted successfully."})
-    
-    return Response({"error": "Invalid report type."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": f"Error al bloquear el usuario: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

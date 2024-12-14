@@ -24,6 +24,7 @@ urlpatterns = [
     path("get-reported-posts/", get_reported_posts, name="get_reported_posts"),
     path("get-reported-users/", get_reported_users, name="get_reported_users"),
     path("block-user/", block_user, name="block_user"),
-    path("delete-post/", delete_post, name="delete_post"),
+    path("ban-post/", ban_post, name="ban_post"),
     path("resolve-report/", resolve_report, name="resolve_report"),
+    path("resolve-post-report/", resolve_post_report, name="resolve_post_report"),
 ]
