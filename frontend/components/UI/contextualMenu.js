@@ -5,7 +5,7 @@ import { Colors } from "../../constants/colors";
 import Octicons from '@expo/vector-icons/Octicons';
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function ContextualMenu({ onEdit, onDelete, isStudy = false, isReportUser = false, isReportPost = false, onReportUser, onReportPost }) {
+export default function ContextualMenu({ onEdit, onDelete, isStudy = false, isReportUser = false, isReportPost = false, onReportUser, onReportPost, isBanPost=false, onBanPost, onResolvePost }) {
   return (
     <View style={styles.menuContainer}>
       {/* Botón para eliminar */}
@@ -51,6 +51,24 @@ export default function ContextualMenu({ onEdit, onDelete, isStudy = false, isRe
           style={styles.iconStyle}
         />
         <Text style={styles.menuText}>Reportar posteo</Text>
+      </TouchableOpacity>)}
+      {isBanPost && (
+      <TouchableOpacity style={styles.menuItem} onPress={onBanPost}>
+        <Octicons name="x-circle-fill" 
+          size={24}
+          color={Colors.darkGray}
+          style={styles.iconStyle}
+        />
+        <Text style={styles.menuText}>Eliminar posteo</Text>
+      </TouchableOpacity>)}
+      {isBanPost && (
+      <TouchableOpacity style={styles.menuItem} onPress={onResolvePost}>
+        <Octicons name="thumbsup" 
+          size={24}
+          color={Colors.darkGray}
+          style={styles.iconStyle}
+        />
+        <Text style={styles.menuText}>Aprobar posteo</Text>
       </TouchableOpacity>)}
     </View>
   );

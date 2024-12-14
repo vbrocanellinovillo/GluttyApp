@@ -195,3 +195,50 @@ export async function getReportedPosts(token, page, pageSize) {
       throw new Error(error.message);
     }
   }
+
+
+  export async function banPost(id_post, token) {
+    const requestUrl = url + "ban-post/";
+    const formdata = new FormData();
+    
+    formdata.append("post_id", id_post);
+
+    const requestOptions = {
+      method: "DELETE",
+      body: formdata,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+  
+    try {
+      const data = await httpRequest(requestUrl, requestOptions);
+      return data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  export async function resolvePost(id_post, token) {
+    const requestUrl = url + "resolve-post-report/";
+    const formdata = new FormData();
+    formdata.append("post_id", id_post);
+
+
+    const requestOptions = {
+      method: "POST",
+      body: formdata,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+  
+    try {
+      const data = await httpRequest(requestUrl, requestOptions);
+      return data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
