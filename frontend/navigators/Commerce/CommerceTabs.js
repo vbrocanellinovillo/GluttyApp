@@ -51,6 +51,7 @@ export default function CommerceTabs() {
   const renderTabBar = ({ routeName, selectedTab, navigate }) => {
     return (
       <TouchableOpacity
+        key={routeName}
         onPress={() => navigate(routeName)}
         style={styles.tabBarItem}
       >
