@@ -101,7 +101,7 @@ export default function NumericInput({
         <TouchableOpacity onPress={increaseValue}>
           <Ionicons
             name="chevron-up"
-            size={18}
+            size={14}
             color={Colors.mJordan}
             style={iconStyle}
           />
@@ -109,7 +109,7 @@ export default function NumericInput({
         <TouchableOpacity onPress={decreaseValue}>
           <Ionicons
             name="chevron-down"
-            size={18}
+            size={14}
             color={Colors.mJordan}
             style={iconStyle}
           />
