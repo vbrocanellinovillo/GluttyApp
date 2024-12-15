@@ -17,12 +17,14 @@ export default function Profile() {
 
   const user = useSelector((state) => state.auth.userData);
   const [showModal, setShowModal] = useState(false);
-  const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
   const [userData, setUserData] = useState(null);
 
   const [isFetching, setIsFetching] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const [isErrorFetching, setIsErrorFetching] = useState(false);
+  const [isErrorUpdating, setIsErrorUpdating] = useState(false);
 
   const updateMessage = isCommerce
     ? "Datos de comercio actualizados correctamente"
@@ -41,11 +43,10 @@ export default function Profile() {
       setIsFetching(true);
       const response = await getUser(token);
       setUserData(response);
-      setIsError(false);
+      setIsErrorFetching(false);
     } catch (error) {
-      setIsError(true);
+      setIsErrorFetching(true);
       setMessage(error.message);
-      setShowModal(true);
     } finally {
       setIsFetching(false);
     }
@@ -53,7 +54,7 @@ export default function Profile() {
 
   function closeModalHandler() {
     setShowModal(false);
-    if (!isError) {
+    if (!isErrorUpdating) {
       if (isCommerce) {
         navigation.navigate("Sucursales", { screen: "Branches" });
       } else {
@@ -91,11 +92,11 @@ export default function Profile() {
         );
       }
 
-      setIsError(false);
+      setIsErrorUpdating(false);
       setMessage(updateMessage);
       setShowModal(true);
     } catch (error) {
-      setIsError(true);
+      setIsErrorUpdating(true);
       setMessage(error.message);
       setShowModal(true);
     } finally {
@@ -106,7 +107,7 @@ export default function Profile() {
   return (
     <>
       <GluttyModal
-        isError={isError}
+        isError={isErrorUpdating}
         message={message}
         onClose={closeModalHandler}
         visible={showModal}
@@ -115,8 +116,10 @@ export default function Profile() {
       <UpdateProfile
         isCommerce={isCommerce}
         isFetching={isFetching}
+        isErrorFetching={isErrorFetching}
         userData={userData}
         onSubmit={submitHandler}
+        onRefresh={getUserData}
       />
     </>
   );

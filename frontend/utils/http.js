@@ -24,8 +24,8 @@ export async function httpRequest(url, requestOptions) {
       throw new Error(
         "Error en la conexión. Por favor intente de nuevo más tarde."
       );
+    } else {
+      throw new Error(error);
     }
-
-    throw new Error(error);
   }
 }

@@ -1,6 +1,8 @@
-import { StyleSheet, View, Image } from "react-native";
-import { mechanicGlutty, thumbGlutty } from "../../constants/glutty";
+import { StyleSheet, Image, ScrollView, RefreshControl } from "react-native";
+import { mechanicGlutty } from "../../constants/glutty";
 import TextCommonsMedium from "./FontsTexts/TextCommonsMedium";
+import { useRefresh } from "../../hooks/useRefresh";
+import { Colors } from "../../constants/colors";
 
 export default function GluttyErrorScreen({
   width,
@@ -8,17 +10,27 @@ export default function GluttyErrorScreen({
   children,
   textStyle,
   style,
+  onRefresh,
 }) {
+  const { refreshing, handleRefresh } = useRefresh(onRefresh);
+
   return (
-    <View style={[styles.gluttyContainer, style]}>
+    <ScrollView
+      contentContainerStyle={[styles.gluttyContainer, style]}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+    >
       <Image
         source={{
           uri: mechanicGlutty,
         }}
         style={[styles.image, { width, height }, textStyle]}
       />
-      <TextCommonsMedium style={[styles.text, textStyle]}>{children}</TextCommonsMedium>
-    </View>
+      <TextCommonsMedium style={[styles.text, textStyle]}>
+        {children}
+      </TextCommonsMedium>
+    </ScrollView>
   );
 }
 
@@ -36,9 +48,9 @@ const styles = StyleSheet.create({
 
   text: {
     fontSize: 22,
-    fontStyle: "italic",
     fontWeight: "bold",
     textAlign: "center",
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    color: Colors.mJordan,
   },
 });

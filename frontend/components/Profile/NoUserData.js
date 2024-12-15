@@ -1,11 +1,15 @@
 import { StyleSheet } from "react-native";
 import GluttyErrorScreen from "../UI/GluttyErrorScreen";
 
-export default function NoUserData() {
+export default function NoUserData({ onRefresh }) {
   return (
-    <GluttyErrorScreen width={300} height={300} style={styles.container}>
-      Hubo un error al recuperar los datos del usuario. Por favor intente de
-      nuevo mas tarde
+    <GluttyErrorScreen
+      width={200}
+      height={200}
+      style={styles.container}
+      onRefresh={onRefresh}
+    >
+      Ocurrio un error. Por favor intente de nuevo mas tarde
     </GluttyErrorScreen>
   );
 }

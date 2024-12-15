@@ -24,6 +24,8 @@ export default function UpdateProfile({
   onSubmit,
   userData,
   isFetching,
+  isErrorFetching,
+  onRefresh,
 }) {
   // Manejo de la imagen
   const sheetRef = useRef();
@@ -85,8 +87,8 @@ export default function UpdateProfile({
     return <UserDataSkeleton />;
   }
 
-  if (!userData && !isFetching) {
-    return <NoUserData />;
+  if (!isFetching && (!userData || isErrorFetching)) {
+    return <NoUserData onRefresh={onRefresh} />;
   }
 
   function submitHandler(values) {
