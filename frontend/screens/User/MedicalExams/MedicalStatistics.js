@@ -142,14 +142,16 @@ export default function MedicalStatistics({ navigation, route }) {
     setShowNextStudy(false);
   }
 
-  const currentDate = new Date();
-  const futureDate = new Date(currentDate.setMonth(currentDate.getMonth() + 8));
-
   if (isloading) return <MedicalStatisticsSkeleton />;
 
   if (isError)
     return (
-      <GluttyErrorScreen width={210} height={210}>
+      <GluttyErrorScreen
+        width={210}
+        height={210}
+        onRefresh={getData}
+        style={{ flex: 0.8 }}
+      >
         Ocurrio un error. Por favor intente de nuevo más tarde
       </GluttyErrorScreen>
     );
