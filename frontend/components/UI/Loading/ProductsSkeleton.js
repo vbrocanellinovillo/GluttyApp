@@ -1,15 +1,18 @@
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Skeleton } from "@rneui/themed";
 
 export default function ProductsSkeleton() {
   const items = Array.from({ length: 20 }, (_, index) => `Item ${index + 1}`);
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
       {items.map((item) => (
         <Skeleton key={item} style={styles.skeleton} />
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
