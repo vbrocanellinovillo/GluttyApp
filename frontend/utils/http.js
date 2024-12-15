@@ -14,6 +14,18 @@ export async function httpRequest(url, requestOptions) {
 
     return data;
   } catch (error) {
+    const errorMessage = error.message;
+
+    if (
+      errorMessage &&
+      (typeof errorMessage === "string" || myVar instanceof String) &&
+      errorMessage.startsWith("JSON")
+    ) {
+      throw new Error(
+        "Error en la conexión. Por favor intente de nuevo más tarde."
+      );
+    }
+
     throw new Error(error);
   }
 }
