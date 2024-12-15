@@ -56,19 +56,6 @@ export default function ProductsList({
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (
-        searchTerm.trim() === "" &&
-        brands.length === 0 &&
-        types.length === 0
-      ) {
-        return;
-      }
-      setPage(1);
-      setProducts([]);
-      refetch();
-    };
-
     fetchData();
   }, [searchTerm, brands, types]);
 
@@ -96,6 +83,15 @@ export default function ProductsList({
     setRecommendedBrands([initialFilters?.marca]);
     setRecommendedTypes([initialFilters?.tipo]);
   }, [initialFilters]);
+
+  const fetchData = async () => {
+    if (searchTerm.trim() === "" && brands.length === 0 && types.length === 0) {
+      return;
+    }
+    setPage(1);
+    setProducts([]);
+    refetch();
+  };
 
   function handleChange(text) {
     setSearchTerm(text);
@@ -183,8 +179,8 @@ export default function ProductsList({
 
   if (isError)
     content = (
-      <GluttyErrorScreen width={250} height={250}>
-        Ocurrió un error al buscar las productos, por favor intente de nuevamente
+      <GluttyErrorScreen width={250} height={250} onRefresh={fetchData}>
+        Ocurrió un error al buscar las productos. Por favor intente más tarde.
       </GluttyErrorScreen>
     );
 

@@ -13,10 +13,12 @@ export default function GluttyErrorScreen({
   onRefresh,
 }) {
   const { refreshing, handleRefresh } = useRefresh(onRefresh);
+  console.log("aparece error");
 
   return (
     <ScrollView
       contentContainerStyle={[styles.gluttyContainer, style]}
+      showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
