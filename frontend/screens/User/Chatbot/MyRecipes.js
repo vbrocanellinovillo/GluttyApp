@@ -10,6 +10,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import { Colors } from "../../../constants/colors";
 import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
+import RecipesSkeleton from "../../../components/UI/Loading/RecipesSkeleton";
 
 export default function MyRecipes() {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -73,9 +74,12 @@ export default function MyRecipes() {
     setShowEliminarModal(false);
   }
 
+  if (isLoading) {
+        return <RecipesSkeleton />;
+    }
+
   return (
     <>
-      <LoadingGlutty visible={isLoading} />
       <GluttyModal
         isError={isError}
         message={message}

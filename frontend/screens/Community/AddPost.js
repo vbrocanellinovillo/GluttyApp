@@ -324,9 +324,10 @@ const styles = StyleSheet.create({
   inputPost: {
     padding: 15,
     borderRadius: 10,
-    fontSize: 16,
-    height: 150,
+    fontSize: 18,
+    height: 100,
     //borderWidth: 1,
+    //backgroundColor: "grey",
   },
   inputEtiqueta: {
     backgroundColor: "#fff",
@@ -404,8 +405,8 @@ const styles = StyleSheet.create({
     marginVertical: 18,
   },
   imagePreview: {
-    width: 60,
-    height: 60,
+    width: 110,
+    height: 110,
     borderRadius: 10,
     marginHorizontal: 3,
     marginVertical: 3,
@@ -416,6 +417,7 @@ const styles = StyleSheet.create({
     right: 9,
     borderRadius: 15,
     padding: 2,
+    back: Colors.mJordan,
   },
   modalContainer: {
     flex: 1,
