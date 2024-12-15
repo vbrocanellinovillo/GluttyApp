@@ -176,7 +176,17 @@ def add_branch(request):
                     min_time=min_time,
                     max_time=max_time,
                 )
-
+                
+            schedules = new_branch.schedules.all()
+            schedule_data = [
+                {
+                    "id": schedule.id,
+                    "day": schedule.get_day_display(),
+                    "min_time": schedule.min_time,
+                    "max_time": schedule.max_time,
+                }
+                for schedule in schedules
+            ]
 
             # Obtener los datos de la sucursal recién creada
             branch_data = {
@@ -189,7 +199,7 @@ def add_branch(request):
                 "longitude": new_location.longitude,
                 "separated_kitchen": new_branch.separated_kitchen,
                 "just_takeaway": new_branch.just_takeaway,
-                "schedules": created_schedules,
+                "schedules": schedule_data,
             }
             
             # Manejar imágenes de la sucursal 

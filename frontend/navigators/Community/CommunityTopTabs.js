@@ -4,6 +4,7 @@ import Favourites from "../../screens/Community/Favourites";
 import { Colors } from "../../constants/colors";
 import { StyleSheet } from "react-native";
 import FeedStack from "./FeedStack";
+import TextCommonsMedium from "../../components/UI/FontsTexts/TextCommonsMedium";
 
 const TopTabs = createMaterialTopTabNavigator();
 
@@ -19,7 +20,7 @@ export default function CommunityTopTabs() {
       <TopTabs.Screen
         name="FeedStack"
         component={FeedStack}
-        options={{ title: "Explorar" }}
+        options={{ title: "Explorar", }}
       />
       <TopTabs.Screen
         name="MyPosts"

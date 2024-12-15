@@ -35,5 +35,6 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: -14,
     marginBottom: 20,
+    alignItems: "center"
   },
 });

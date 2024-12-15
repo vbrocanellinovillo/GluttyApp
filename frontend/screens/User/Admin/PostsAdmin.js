@@ -36,7 +36,6 @@ export default function MyPosts() {
     }
 
     try {
-      console.log("puta")
       const data = await getReportedPosts(token, page, pageSize);
       console.log("data", data);
       if (data) {
@@ -69,8 +68,10 @@ export default function MyPosts() {
         isError={isError}
         isLoading={isLoading}
         errorStyle={styles.errorPosts}
+        isAdmin={true}
         NoContentComponent={() => (
           <NoPosts>¡GUAU! Que hermosa comunidad sin reportes</NoPosts>
+
         )}
       />
     </View>

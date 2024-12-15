@@ -9,6 +9,7 @@ import PostsSkeleton from "../UI/Loading/PostsSkeleton";
 import ErrorPosts from "./ErrorPosts";
 import { useNavigation } from "@react-navigation/native";
 import { useRefresh } from "../../hooks/useRefresh";
+import { banPost } from "../../services/adminService";
 
 export default function PostsList({
   posts = [],
@@ -23,6 +24,7 @@ export default function PostsList({
   errorStyle,
   onRefresh,
   bottomInset,
+  isAdmin = false,
   ...props
 }) {
   const navigation = useNavigation();
@@ -44,6 +46,8 @@ export default function PostsList({
     return <NoContentComponent />;
   }
 
+
+
   return (
     <>
       {posts.length > 0 && (
@@ -54,8 +58,12 @@ export default function PostsList({
             <PostItem
               post={item}
               curved={curved}
-              onPress={() =>
-                navigation.navigate("ViewPostById", { id: item.id })
+              isReportable={false}
+              onPress={() =>{
+                console.log("HGOLA")
+                navigation.navigate("ViewPostById", { id: item.id,  admin:isAdmin, isReportable: false })
+              }
+                
               }
               {...props}
             />
