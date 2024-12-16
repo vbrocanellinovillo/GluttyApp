@@ -88,7 +88,7 @@ export default function ViewPostById({ route, navigation }) {
           const selectedPost = await getPostById(id, token);
           setIsLoading(false);
           setPost(selectedPost);
-          console.log("el posteo lindo:     ", selectedPost);
+          //console.log("el posteo lindo:     ", selectedPost);
         } catch (error) {
           setIsError(true);
         } finally {
@@ -145,7 +145,7 @@ if (isLoading) {
   //manejo del ok del post 
 
   async function handleResolvePost(post_id){
-    console.log(post_id)
+    //console.log(post_id)
     setresolvepostdata(post_id)
     setShowResolveModal(true)
 
@@ -315,10 +315,8 @@ if (isLoading) {
                 />
               );
             })
-          ) : (
-            <TextCommonsRegular style={styles.noComments}>
-              No hay comentarios aún.
-            </TextCommonsRegular>
+          ):(
+            <Text style={styles.noComments}>Hola</Text>
           )}
 
           {/* Agregar un nuevo comentario */}
@@ -334,7 +332,8 @@ const styles = StyleSheet.create({
   noComments: {
     textAlign: "center",
     fontSize: 16,
-    color: Colors.mJordan,
+    color: "transparent",
+
   },
   scroll: {
     marginBottom: 100,

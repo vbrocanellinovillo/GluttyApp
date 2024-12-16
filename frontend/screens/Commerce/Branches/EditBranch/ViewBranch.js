@@ -46,13 +46,13 @@ export function ViewBranch({ route }) {
     }, [id, token]) // Dependencias
   );
   
-console.log("le branch:")
-console.log(branch)
+//console.log("le branch:")
+//console.log(branch)
 
 const handleDeleteBranch = async () => {
   try {
     //setIsLoading(true);
-    const response = await deleteBranch(id, token);
+    await deleteBranch(id, token);
     setMessage("La sucursal fue eliminada con éxito");
     setModalExito(true);
     onDelete && onDelete(id);
@@ -61,7 +61,7 @@ const handleDeleteBranch = async () => {
     setIsError(true);
     setMessage(error.message || "Error desconocido"); // Maneja errores también
     setModalExito(true);
-    console.log(error.message);
+    //console.log(error.message);
   } finally {
     //setIsLoading(false);
   }
@@ -112,7 +112,7 @@ const handleDeleteBranch = async () => {
           <GluttyModal
             visible={showEliminarModal}
             onClose={closeModalDeleteHandler}
-            message="¿Seguro que desea eliminar el comentario?"
+            message="¿Seguro que desea eliminar la sucursal?"
             other
             buttons={[
             {
