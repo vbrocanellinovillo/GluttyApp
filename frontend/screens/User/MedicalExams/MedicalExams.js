@@ -1,14 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
-import { getUser } from "../../../services/userService";
 import InfoMedicalContainer from "../../../components/MedicalExams/InfoMedicalContainer";
 import { uiActions } from "../../../context/ui";
-import ScreenCenter from "../../../components/UI/ScreenCenter";
-import TextCommonsMedium from "../../../components/UI/FontsTexts/TextCommonsMedium";
-import { Image, Text, View } from "react-native";
 import { MedicalExamsContainer } from "../../../components/MedicalExams/MedicalExamsContainer";
-import { doctorGlutty, gluttyMarker } from "../../../constants/glutty";
 import InfoMedical from "../../../components/MedicalExams/InfoMedical";
+import { getMedicalExamsList } from "../../../services/medicalExamService";
 
 export default function MedicalExams() {
   const token = useSelector((state) => state.auth.accessToken);
@@ -19,40 +15,35 @@ export default function MedicalExams() {
     dispatch(uiActions.toggleMedicalDetails());
   }
 
-  const [isloading, setisloading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [exams, setExams] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [message, setMessage] = useState("");
-  const [userData, setUserMedicalData] = useState();
 
   useEffect(() => {
-    getUserMedicalData();
+    fetchMedicalExams();
   }, []);
 
-  async function getUserMedicalData() {
+  async function fetchMedicalExams() {
     try {
-      setisloading(true);
-      const response = await getUser(token);
-      console.log("response", response);
-      setUserMedicalData(response);
+      setLoading(true);
+      const response = await getMedicalExamsList(token);
+
+      setExams(response);
       setIsError(false);
     } catch (error) {
       setIsError(true);
     } finally {
-      setisloading(false);
+      setLoading(false);
     }
   }
-
-  // <ScreenCenter>
-  //   <Title>Estudios medicos</Title>
-  //   <BoxingGlutty width={400} height={400} />
-  // </ScreenCenter>
 
   return (
     <>
       <MedicalExamsContainer
-        isLoading={isloading}
-        getData={getUserMedicalData}
+        medicalExams={exams?.analysis}
+        isLoading={loading}
+        isError={isError}
+        onRefresh={fetchMedicalExams}
       />
       <InfoMedicalContainer
         visible={showMedicalInfo}
