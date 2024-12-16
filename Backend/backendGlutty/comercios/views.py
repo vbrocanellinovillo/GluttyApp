@@ -164,6 +164,8 @@ def add_branch(request):
                 
                 # Validar que max_time sea mayor que min_time
                 if max_time <= min_time:
+                    new_branch.delete()
+                    new_location.delete()
                     return Response(
                         {"error": f"El horario para el día {schedule['day']} tiene un 'max_time' menor o igual a 'min_time'."},
                         status=status.HTTP_400_BAD_REQUEST,
