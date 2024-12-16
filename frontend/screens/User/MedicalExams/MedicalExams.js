@@ -26,22 +26,22 @@ export default function MedicalExams() {
   const [userData, setUserMedicalData] = useState();
 
   useEffect(() => {
-    async function getUserMedicalData() {
-      try {
-        setisloading(true);
-        const response = await getUser(token);
-        console.log("response", response);
-        setUserMedicalData(response);
-        setIsError(false);
-      } catch (error) {
-        setIsError(true);
-      } finally {
-        setisloading(false);
-      }
-    }
-
     getUserMedicalData();
   }, []);
+
+  async function getUserMedicalData() {
+    try {
+      setisloading(true);
+      const response = await getUser(token);
+      console.log("response", response);
+      setUserMedicalData(response);
+      setIsError(false);
+    } catch (error) {
+      setIsError(true);
+    } finally {
+      setisloading(false);
+    }
+  }
 
   // <ScreenCenter>
   //   <Title>Estudios medicos</Title>
@@ -50,7 +50,10 @@ export default function MedicalExams() {
 
   return (
     <>
-      <MedicalExamsContainer isLoading={isloading} isError={isError} />
+      <MedicalExamsContainer
+        isLoading={isloading}
+        getData={getUserMedicalData}
+      />
       <InfoMedicalContainer
         visible={showMedicalInfo}
         onDismiss={showInfoMedicalExams}
