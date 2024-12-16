@@ -11,6 +11,7 @@ export default function DetailsContainer({
   branch,
   isError,
   isLoading,
+  onRefresh,
 }) {
   let content = <></>;
 
@@ -21,7 +22,7 @@ export default function DetailsContainer({
   }
 
   if (isError) {
-    content = <ErrorBranchDetails />;
+    content = <ErrorBranchDetails onRefresh={onRefresh} />;
   }
 
   if (branch && !isLoading) {

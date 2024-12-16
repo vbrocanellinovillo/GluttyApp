@@ -7,7 +7,6 @@ import { getBranch } from "../../services/commerceService";
 import { useSelector } from "react-redux";
 import { AnimatedMapView } from "react-native-maps/lib/MapView";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../constants/map";
-import { PROVIDER_GOOGLE } from "react-native-maps";
 import MapView from "react-native-maps/lib/MapView";
 
 export default function InfoMap({ branches, location, onPress, newRegion }) {
@@ -24,6 +23,7 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
   const [branch, setBranch] = useState(undefined);
 
   const [isError, setIsError] = useState(false);
+  const [branchId, setBranchId] = useState(undefined);
 
   const token = useSelector((state) => state.auth.accessToken);
 
@@ -41,11 +41,11 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
   }, [newRegion]);
 
   async function openDetails(id) {
+    setBranchId(id);
     setShowDetails(true);
     setIsLoadingDetails(true);
     try {
       const detailsBranch = await getBranch(id, token);
-      console.log(detailsBranch);
       setBranch(detailsBranch);
       setIsError(false);
     } catch (error) {
@@ -64,7 +64,6 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
     Keyboard.dismiss();
     onPress();
   }
-  function handleReport() {}
 
   return (
     <>
@@ -88,6 +87,7 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
         isLoading={isLoadingDetails}
         isError={isError}
         branch={branch}
+        onRefresh={() => openDetails(branchId)}
       />
     </>
   );
