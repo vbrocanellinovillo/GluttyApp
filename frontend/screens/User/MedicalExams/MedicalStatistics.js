@@ -17,7 +17,6 @@ import {
 } from "../../../services/medicalExamService";
 import { useSelector } from "react-redux";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
-import ScheduleNextStudy from "../../../components/MedicalExams/ScheduleNextStudy";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRefresh } from "../../../hooks/useRefresh";
 

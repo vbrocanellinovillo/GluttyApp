@@ -12,6 +12,7 @@ import { getMapPoints, getSearchData } from "../../../services/commerceService";
 import InfoMap from "../../../components/Map/InfoMap";
 import MapSearch from "../../../components/Map/MapSearch";
 import { useQuery } from "@tanstack/react-query";
+import RefreshButton from "../../../components/Map/RefreshButton";
 
 export default function Map() {
   const [locationPermissions, requestLocationPermissions] =
@@ -83,27 +84,27 @@ export default function Map() {
 
   useFocusEffect(
     useCallback(() => {
-      async function getMapData() {
-        if (mapData) return;
-        try {
-          setisloading(true);
-          const branches = await getMapPoints(token);
-          setMapData(branches);
-          setIsError(false);
-        } catch (error) {
-          setIsError(true);
-          serError(
-            "Ocurrio un error al cargar el mapa. Por favor intente de nuevo más tarde"
-          );
-          setShowModal(true);
-        } finally {
-          setisloading(false);
-        }
-      }
-
       getMapData();
     }, [token])
   );
+
+  async function getMapData() {
+    if (mapData) return;
+    try {
+      setisloading(true);
+      const branches = await getMapPoints(token);
+      setMapData(branches);
+      setIsError(false);
+    } catch (error) {
+      setIsError(true);
+      serError(
+        "Ocurrio un error al cargar el mapa. Por favor intente de nuevo más tarde"
+      );
+      setShowModal(true);
+    } finally {
+      setisloading(false);
+    }
+  }
 
   async function handleSearch(
     searchTerm,
@@ -201,6 +202,7 @@ export default function Map() {
           onPress={handleHideSearchResults}
           newRegion={newRegion}
         />
+        <RefreshButton onRefresh={getMapData} />
       </>
     </>
   );

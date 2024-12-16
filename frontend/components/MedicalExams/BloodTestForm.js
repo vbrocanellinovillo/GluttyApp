@@ -58,12 +58,16 @@ export default function BloodTestForm({
             laboratory: medicalExam?.lab,
             date: medicalExam?.date || new Date(Date.now()),
           }}
-          validate={({ date }) => {
+          validate={({ date, laboratory }) => {
             const errors = {};
 
             const formattedDate = formatShortToYYYYMMDD(date);
             if (isFutureDate(formattedDate)) {
               errors.date = "Fecha futura";
+            }
+
+            if (laboratory?.trim() === "") {
+              errors.laboratory = "Debe ingresar laboratorio";
             }
 
             return errors;
