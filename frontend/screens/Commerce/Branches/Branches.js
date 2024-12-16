@@ -24,7 +24,6 @@ export default function Branches() {
   async function getData() {
     setIsLoading(true);
     try {
-      await sleep(5000);
       const data = await getBranches(token);
       dispatch(commerceActions.setBranches({ branches: data.branches }));
       setIsError(false);

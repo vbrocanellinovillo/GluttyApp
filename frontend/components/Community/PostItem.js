@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
     color: Colors.mJordan,
   },

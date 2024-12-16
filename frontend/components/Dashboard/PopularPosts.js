@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
 
   postContainer: {
-    borderRadius: 10,
+    //borderRadius: 20,
     paddingVertical: 10,
   },
 
@@ -65,10 +65,10 @@ const styles = StyleSheet.create({
   },
 
   slider: {
-    width: "80%",
+    width: "70%",
     height: 6,
     backgroundColor: Colors.sliderBackground,
-    borderRadius: 3,
+    borderRadius: 5,
     position: "relative",
   },
 
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.sliderActive,
     borderRadius: 3,
     position: "absolute",
-    left: "50%",
-    transform: [{ translateX: -10 }],
+    left: "80%",
+    transform: [{ translateX: -8 }],
   },
 });
