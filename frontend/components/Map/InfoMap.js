@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { AnimatedMapView } from "react-native-maps/lib/MapView";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../constants/map";
 import { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView from "react-native-maps/lib/MapView";
 
 export default function InfoMap({ branches, location, onPress, newRegion }) {
   const userLocation = new AnimatedRegion({
@@ -74,7 +75,7 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
         userInterfaceStyle="light"
         ref={mapRef}
         showsUserLocation
-        provider={PROVIDER_GOOGLE}
+        provider={MapView.PROVIDER_GOOGLE}
       >
         {branches &&
           branches.map((branch) => (
