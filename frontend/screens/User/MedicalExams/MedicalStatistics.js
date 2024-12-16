@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import MyStudies from "../../../components/MedicalExams/MyStudies";
 import GluttyTips from "../../../components/MedicalExams/GluttyTips";
 import { useState, useEffect, useCallback } from "react";
@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
 import ScheduleNextStudy from "../../../components/MedicalExams/ScheduleNextStudy";
 import { useFocusEffect } from "@react-navigation/native";
+import { useRefresh } from "../../../hooks/useRefresh";
 
 export default function MedicalStatistics({ navigation, route }) {
   // Blur views
@@ -41,6 +42,8 @@ export default function MedicalStatistics({ navigation, route }) {
   const [isChecked, setIsChecked] = useState(false);
 
   const shouldRefresh = route.params?.shouldRefresh;
+
+  const { refreshing, handleRefresh } = useRefresh(getData);
 
   function handleCheckChange() {
     setIsChecked((prev) => !prev);
@@ -161,6 +164,9 @@ export default function MedicalStatistics({ navigation, route }) {
         contentContainerStyle={styles.container}
         contentInsetAdjustmentBehavior="always"
         contentInset={{ bottom: 200 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
       >
         <View style={styles.firstSection}>
           <MyStudies onPress={navigateMyStudies} number={data?.analysis} />
