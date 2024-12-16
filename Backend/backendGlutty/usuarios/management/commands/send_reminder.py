@@ -10,21 +10,19 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         tomorrow = timezone.now().date() + timezone.timedelta(days=1)
         celiacs = Celiac.objects.filter(next_analysis_date=tomorrow)
-
-        message = f"""
-            ¡Hola {celiac.first_name}!
-
-            Este es un recordatorio de que mañana ({celiac.next_analysis_date}) es tu análisis programado.
-            ¡No lo olvides!
-            
-            Saludos,
-            Equipo Glutty.
-            """
-
+        
         for celiac in celiacs:
             send_mail(
                 "¡Recordatorio de análisis!",
-                message,
+                        f"""
+                ¡Hola {celiac.first_name}!
+
+                Este es un recordatorio de que mañana ({celiac.next_analysis_date}) es tu análisis programado.
+                ¡No lo olvides!
+                
+                Saludos,
+                Equipo Glutty.
+                """,
                 settings.DEFAULT_FROM_EMAIL,
                 [celiac.user.email],
                 fail_silently=False,
