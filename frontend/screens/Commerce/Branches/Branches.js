@@ -6,6 +6,9 @@ import GluttyModal from "../../../components/UI/GluttyModal";
 import { commerceActions } from "../../../context/commerce";
 import { sleep } from "../../../utils/utilFunctions";
 import { useIsFocused } from "@react-navigation/native";
+import { useRefresh } from "../../../hooks/useRefresh";
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
+
 
 export default function Branches() {
   const [isLoading, setIsLoading] = useState(true);
@@ -21,6 +24,7 @@ export default function Branches() {
     }
   }, [isFocused]);
 
+
   async function getData() {
     setIsLoading(true);
     try {
@@ -33,6 +37,13 @@ export default function Branches() {
       setIsLoading(false);
     }
   }
+  return (
+      <BranchesContainer isLoading={isLoading} isError={isError} getData={getData} />
+    )}
 
-  return <BranchesContainer isLoading={isLoading} isError={isError} />;
-}
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1,
+        paddingHorizontal: 25,
+      },
+    });
