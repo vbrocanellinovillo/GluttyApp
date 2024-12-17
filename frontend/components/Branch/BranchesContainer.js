@@ -6,8 +6,9 @@ import BranchesList from "./BranchesList";
 import BranchesSkeleton from "../UI/Loading/BranchesSkeleton";
 import NoBranches from "./NoBranches";
 import ErrorFetchingBranches from "./ErrorFetchingBranches";
+import { useRefresh } from "../../hooks/useRefresh";
 
-export default function BranchesContainer({ isLoading, isError }) {
+export default function BranchesContainer({ isLoading, isError, getData }) {
   const branchesFromRedux = useSelector((state) => state.commerce.branches);
   const [branches, setBranches] = useState(branchesFromRedux);
 
@@ -30,7 +31,7 @@ export default function BranchesContainer({ isLoading, isError }) {
     content = (
       <BranchesList
         branches={branches}
-        onUpdateBranches={handleUpdateBranches} // Pasar el callback
+        onUpdateBranches={handleUpdateBranches} getData={getData}// Pasar el callback
       />
     );
   } else {
@@ -38,10 +39,11 @@ export default function BranchesContainer({ isLoading, isError }) {
   }
 
   return (
-    <View style={styles.container}>
-      <AddBranchButton />
-      {content}
-    </View>
+    <>
+      <View style={styles.container}>
+        <AddBranchButton />
+        {content}
+      </View></>
   );
 }
 

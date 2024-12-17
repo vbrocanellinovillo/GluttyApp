@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 20,
+    gap: 10,
     marginTop: 10
   },
 });

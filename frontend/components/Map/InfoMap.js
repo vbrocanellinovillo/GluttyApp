@@ -7,9 +7,8 @@ import { getBranch } from "../../services/commerceService";
 import { useSelector } from "react-redux";
 import { AnimatedMapView } from "react-native-maps/lib/MapView";
 import { LATITUDE_DELTA, LONGITUDE_DELTA } from "../../constants/map";
-import GluttyModal from "../UI/GluttyModal";
-import { Colors } from "../../constants/colors";
-import { Portal } from "react-native-paper";
+import MapView from "react-native-maps/lib/MapView";
+
 export default function InfoMap({ branches, location, onPress, newRegion }) {
   const userLocation = new AnimatedRegion({
     latitude: location.latitude ? location.latitude : -31.4262,
@@ -24,7 +23,7 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
   const [branch, setBranch] = useState(undefined);
 
   const [isError, setIsError] = useState(false);
-
+  const [branchId, setBranchId] = useState(undefined);
 
   const token = useSelector((state) => state.auth.accessToken);
 
@@ -42,11 +41,11 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
   }, [newRegion]);
 
   async function openDetails(id) {
+    setBranchId(id);
     setShowDetails(true);
     setIsLoadingDetails(true);
     try {
       const detailsBranch = await getBranch(id, token);
-      console.log(detailsBranch)
       setBranch(detailsBranch);
       setIsError(false);
     } catch (error) {
@@ -65,13 +64,9 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
     Keyboard.dismiss();
     onPress();
   }
-  function handleReport(){}
-
 
   return (
     <>
- 
-
       <AnimatedMapView
         region={userLocation}
         style={styles.map}
@@ -79,6 +74,7 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
         userInterfaceStyle="light"
         ref={mapRef}
         showsUserLocation
+        provider={MapView.PROVIDER_GOOGLE}
       >
         {branches &&
           branches.map((branch) => (
@@ -91,8 +87,8 @@ export default function InfoMap({ branches, location, onPress, newRegion }) {
         isLoading={isLoadingDetails}
         isError={isError}
         branch={branch}
+        onRefresh={() => openDetails(branchId)}
       />
-
     </>
   );
 }
@@ -101,7 +97,7 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
-  modal:{
+  modal: {
     zIndex: 1000, // Asegura que esté por encima de todos los demás elementos
     elevation: 10, // Para dispositivos Android
   },

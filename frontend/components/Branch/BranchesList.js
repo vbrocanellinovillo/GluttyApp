@@ -1,12 +1,14 @@
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, RefreshControl, StyleSheet } from "react-native";
 import BranchItem from "./BranchItem";
 import { ViewBranch } from "../../screens/Commerce/Branches/EditBranch/ViewBranch";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import { useRefresh } from "../../hooks/useRefresh";
 
-export default function BranchesList({ branches, onUpdateBranches }) {
+export default function BranchesList({ branches, onUpdateBranches, getData }) {
   const navigation = useNavigation();
   const [branchList, setBranchList] = useState(branches);
+  const { refreshing, handleRefresh } = useRefresh(getData)
 
   const handlePress = (branch) => {
     navigation.navigate("Mi Sucursal", {
@@ -35,7 +37,11 @@ export default function BranchesList({ branches, onUpdateBranches }) {
       keyExtractor={(item) => (item.id ? item.id.toString() : Math.random())}
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
     />
+
   );
 }
 const styles = StyleSheet.create({

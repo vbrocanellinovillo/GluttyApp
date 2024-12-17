@@ -149,8 +149,6 @@ export async function updateMedicalExam(
       Authorization: `Bearer ${token}`,
     },
   };
-  console.log("el formdataaaaaaa: ");
-  console.log(formdata);
   try {
     const response = await httpRequest(requestUrl, requestOptions);
     console.log("RESPUESTAAA: ", response);

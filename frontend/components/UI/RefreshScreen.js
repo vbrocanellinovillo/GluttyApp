@@ -11,6 +11,7 @@ import Svg, { Path } from "react-native-svg";
 import { Colors } from "../../constants/colors";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
+
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 const screenWidth = Dimensions.get("window").width;

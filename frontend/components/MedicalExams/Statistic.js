@@ -9,10 +9,10 @@ import { getStatistics } from "../../services/medicalExamService";
 import Graphic from "./Graphic";
 
 const FREQUENCIES = [
-  { id: 1, value: "3 años" },
-  { id: 2, value: "1 año" },
-  { id: 3, value: "6 meses" },
-  { id: 4, value: "3 meses" },
+  { id: 1, value: "Todo" },
+  { id: 2, value: "3 años" },
+  { id: 3, value: "1 año" },
+  { id: 4, value: "6 meses" },
 ];
 
 function getGraphicData(values) {

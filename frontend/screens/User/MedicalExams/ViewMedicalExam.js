@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+} from "react-native";
 import { useSelector } from "react-redux";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Colors } from "../../../constants/colors";
@@ -19,6 +25,8 @@ import GluttyModal from "../../../components/UI/GluttyModal";
 import ViewMedicalExamSkeleton from "../../../components/UI/Loading/ViewMedicalExamSkeleton";
 import LoadingGlutty from "../../../components/UI/Loading/LoadingGlutty";
 import { usePdf } from "../../../hooks/usePdf";
+import { useRefresh } from "../../../hooks/useRefresh";
+import GluttyErrorScreen from "../../../components/UI/GluttyErrorScreen";
 
 export default function ViewMedicalExam({ navigation, route }) {
   const [medicalExam, setMedicalExam] = useState(undefined);
@@ -29,6 +37,7 @@ export default function ViewMedicalExam({ navigation, route }) {
   const [message, setMessage] = useState("");
   const [showEliminarModal, setShowEliminarModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isFetchingError, setIsFetchingError] = useState(false);
 
   const id = route.params.id;
   const token = useSelector((state) => state.auth.accessToken);
@@ -36,22 +45,23 @@ export default function ViewMedicalExam({ navigation, route }) {
   const { handlePdf } = usePdf();
 
   useEffect(() => {
-    const cargarEstudioMedico = async () => {
-      try {
-        setIsLoading(true);
-        const medicExam = await getMedicalExamById(id, token);
-        setMedicalExam(medicExam);
-      } catch (error) {
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (id && token) {
       cargarEstudioMedico();
     }
   }, [id, token]);
+
+  const cargarEstudioMedico = async () => {
+    try {
+      setIsLoading(true);
+      const medicExam = await getMedicalExamById(id, token);
+      setMedicalExam(medicExam);
+      setIsFetchingError(false);
+    } catch (error) {
+      setIsFetchingError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Función para manejar la eliminación
   async function handleDelete() {
@@ -68,8 +78,11 @@ export default function ViewMedicalExam({ navigation, route }) {
 
   function closeModalHandler() {
     setShowModal(false);
-    // Navegación una vez que el modal se cierre
-    navigation.navigate("MedicalStatistics", { shouldRefresh: true });
+
+    if (!isError) {
+      // Navegación una vez que el modal se cierre
+      navigation.navigate("MedicalStatistics", { shouldRefresh: true });
+    }
   }
 
   function closeModalDeleteHandler() {
@@ -78,11 +91,12 @@ export default function ViewMedicalExam({ navigation, route }) {
 
   // Confirmación de la eliminación
   async function handleConfirmDelete() {
+    setShowEliminarModal(false); // Cerrar modal de confirmación de eliminación
     try {
       setIsDeleting(true);
       const response = await deleteMedicalExam(id, token);
+      setIsError(false);
       setMessage("Se eliminó el análisis."); // Mensaje de confirmación de eliminación
-      setShowEliminarModal(false); // Cerrar modal de confirmación de eliminación
       setShowModal(true); // Mostrar modal de que se eliminó el análisis
     } catch (error) {
       setIsError(true);
@@ -98,6 +112,8 @@ export default function ViewMedicalExam({ navigation, route }) {
   }
 
   const hasPdf = medicalExam?.pdf_info !== undefined;
+
+  const { refreshing, handleRefresh } = useRefresh(cargarEstudioMedico);
 
   return (
     <>
@@ -126,88 +142,112 @@ export default function ViewMedicalExam({ navigation, route }) {
 
       {isloading && <ViewMedicalExamSkeleton />}
 
+      {isFetchingError && !isloading && (
+        <GluttyErrorScreen
+          height={200}
+          width={200}
+          onRefresh={cargarEstudioMedico}
+        >
+          Ocurrio un error al cargar el estudio medico. Por favor intente de
+          nuevo más tarde
+        </GluttyErrorScreen>
+      )}
+
       {medicalExam && !isloading && (
         <>
-          {/* ENCABEZADO */}
-          <View style={styles.container}>
-            <View style={styles.options}>
-              <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
-                <MaterialCommunityIcons
-                  name="dots-vertical"
-                  size={24}
-                  color={Colors.darkGray}
-                />
-              </TouchableOpacity>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+              />
+            }
+          >
+            {/* ENCABEZADO */}
+            <View style={styles.container}>
+              <View style={styles.options}>
+                <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
+                  <MaterialCommunityIcons
+                    name="dots-vertical"
+                    size={24}
+                    color={Colors.darkGray}
+                  />
+                </TouchableOpacity>
 
-              {showMenu && (
-                <ContextualMenu onEdit={handleEdit} onDelete={handleDelete} isStudy={true} />
-              )}
-            </View>
-
-            <View style={styles.infoEncabezado}>
-              <View style={styles.dateBox}>
-                <MedicalExamDateViewer date={medicalExam.date} />
+                {showMenu && (
+                  <ContextualMenu
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    isStudy={true}
+                  />
+                )}
               </View>
 
-              <View style={styles.infoBox}>
-                <TextCommonsMedium style={styles.examTitle}>
-                  Análisis de Sangre
-                </TextCommonsMedium>
+              <View style={styles.infoEncabezado}>
+                <View style={styles.dateBox}>
+                  <MedicalExamDateViewer date={medicalExam.date} />
+                </View>
 
-                <View style={styles.locationBox}>
-                  <MaterialCommunityIcons
-                    name="map-marker"
-                    size={24}
-                    color={Colors.mJordan}
-                  />
-                  <TextCommonsRegular style={styles.locationText}>
-                    {medicalExam.lab}
-                  </TextCommonsRegular>
+                <View style={styles.infoBox}>
+                  <TextCommonsMedium style={styles.examTitle}>
+                    Análisis de Sangre
+                  </TextCommonsMedium>
+
+                  <View style={styles.locationBox}>
+                    <MaterialCommunityIcons
+                      name="map-marker"
+                      size={24}
+                      color={Colors.mJordan}
+                    />
+                    <TextCommonsRegular style={styles.locationText}>
+                      {medicalExam.lab}
+                    </TextCommonsRegular>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
 
-          {hasPdf && (
-            <Button style={styles.pdf} onPress={navigatePdf}>
-              Ver PDF
-            </Button>
-          )}
+            {hasPdf && (
+              <Button style={styles.pdf} onPress={navigatePdf}>
+                Ver PDF
+              </Button>
+            )}
 
-          {/* VARIABLES */}
-          <TextCommonsMedium style={styles.titleVarMed}>
-            Variables Médicas
-          </TextCommonsMedium>
-          <ScrollView style={styles.scrollview}>
-            {medicalExam.variables.map((item) => (
-              <View key={item.variable_name}>
-                {item.value === "Positivo" ||
-                item.value === "Negativo" ||
-                item.value === "NEGATIVO" ||
-                item.value === "POSITIVO" ? (
-                  <FormSectionContainer>
-                    <ValorPosNeg
-                      label={item.variable_name}
-                      valor={item.value}
-                      descrip={item.description}
-                    />
-                  </FormSectionContainer>
-                ) : (
-                  <FormSectionContainer>
-                    <RangeBar
-                      label={item.variable_name}
-                      minBarraGris={item.min_value}
-                      maxBarraGris={item.max_value}
-                      normalMin={item.min_value}
-                      normalMax={item.max_value}
-                      currentValue={item.value}
-                      descrip={item.description}
-                      unit={item.unit_of_measurement}
-                    />
-                  </FormSectionContainer>
-                )}
-              </View>
-            ))}
+            {/* VARIABLES */}
+            <TextCommonsMedium style={styles.titleVarMed}>
+              Variables Médicas
+            </TextCommonsMedium>
+            <ScrollView style={styles.scrollview}>
+              {medicalExam.variables.map((item) => (
+                <View key={item.variable_name}>
+                  {item.value === "Positivo" ||
+                  item.value === "Negativo" ||
+                  item.value === "NEGATIVO" ||
+                  item.value === "POSITIVO" ? (
+                    <FormSectionContainer>
+                      <ValorPosNeg
+                        label={item.variable_name}
+                        valor={item.value}
+                        descrip={item.description}
+                      />
+                    </FormSectionContainer>
+                  ) : (
+                    <FormSectionContainer>
+                      <RangeBar
+                        label={item.variable_name}
+                        minBarraGris={item.min_value}
+                        maxBarraGris={item.max_value}
+                        normalMin={item.min_value}
+                        normalMax={item.max_value}
+                        currentValue={item.value}
+                        descrip={item.description}
+                        unit={item.unit_of_measurement}
+                      />
+                    </FormSectionContainer>
+                  )}
+                </View>
+              ))}
+            </ScrollView>
           </ScrollView>
         </>
       )}
