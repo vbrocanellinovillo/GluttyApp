@@ -659,8 +659,8 @@ def get_statistics(request):
 
     today = timezone.now().date()
     start_date = None
-    if period == '3 meses':
-        start_date = today - timedelta(days=90)
+    if period == 'Todo':
+        pass
     elif period == '6 meses':
         start_date = today - timedelta(days=180)
     elif period == '1 año':
