@@ -11,10 +11,6 @@ export default function TipsCarousel({ tips, height }) {
 
   const onPressPagination = (index) => {
     carouselRef.current?.scrollTo({
-      /**
-       * Calculate the difference between the current index and the target index
-       * to ensure that the carousel scrolls to the nearest index
-       */
       count: index - progress.value,
       animated: true,
     });
@@ -28,16 +24,8 @@ export default function TipsCarousel({ tips, height }) {
         pagingEnabled
         data={tips}
         scrollAnimationDuration={800}
-        onProgressChange={progress}
-        renderItem={({ item }) => <Tip tip={item} key={item.id} />}
-        mode="horizontal-stack"
-        modeConfig={{
-          moveSize: 10,
-          stackInterval: 500,
-          scaleInterval: 0.08,
-          rotateZDeg: 60,
-          snapDirection: "left",
-        }}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <Tip tip={item} />}
       />
       <Pagination.Basic
         progress={progress}
@@ -56,17 +44,14 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     alignItems: "center",
   },
-
   dotsContainer: {
     gap: 15,
     marginTop: -30,
     height: 2,
   },
-
   activeDot: {
     backgroundColor: Colors.locro,
   },
-
   dotStyle: {
     backgroundColor: "rgba(0,0,0,0.2)",
     borderRadius: 50,
