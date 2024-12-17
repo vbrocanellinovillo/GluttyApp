@@ -1,7 +1,7 @@
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../../constants/colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Haptics from "expo-haptics";
 
 export default function NumericInput({
@@ -20,6 +20,11 @@ export default function NumericInput({
 
   // const showValue = number.toString().trim() === "" && !isFocused ? 0 : number;
 
+  useEffect(((prevNumber) => {
+    setNumber(value)
+  }), [value])
+
+
   function increaseValue() {
     Haptics.selectionAsync();
 
@@ -30,8 +35,7 @@ export default function NumericInput({
         return (prevNumber += 1);
       }
     });
-
-    onChange(number + 1);
+    onChange(number+1);
     onBlur();
     if (!hasChanged) setHasChanged(true);
   }
@@ -53,18 +57,25 @@ export default function NumericInput({
   }
 
   function changeNumberHandler(text) {
-    if (text.trim() == "") {
+    if (text.trim() === "") {
       setNumber(text);
       return;
     }
-
-    const result = parseInt(text);
-
-    setNumber(result);
-    onChange(result);
-
-    if (!hasChanged) setHasChanged(true);
+  
+    // Reemplazar coma por punto antes de convertir
+    const normalizedText = text.replace(",", ".");
+    const result = parseFloat(normalizedText);
+  
+    if (!isNaN(result)) {
+      setNumber(result);
+      onChange(result);
+      if (!hasChanged) setHasChanged(true);
+    } else {
+      // Manejo opcional en caso de entrada no válida
+      setNumber(text); 
+    }
   }
+  
 
   function handleFocus() {
     setIsFocused(true);
@@ -92,7 +103,7 @@ export default function NumericInput({
       <TextInput
         style={[styles.input, inputStyle]}
         keyboardType="numeric"
-        value={number.toString()}
+        value={number}
         onChangeText={changeNumberHandler}
         onFocus={handleFocus}
         onBlur={handleBlur}
