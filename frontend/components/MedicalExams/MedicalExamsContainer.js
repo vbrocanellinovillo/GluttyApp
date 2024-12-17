@@ -17,7 +17,9 @@ export function MedicalExamsContainer({
   } else if (isError) {
     content = <ErrorFetchingMedicalExams onRefresh={onRefresh} />;
   } else {
-    content = <MedicalExamsList medicalExams={medicalExams} />;
+    content = (
+      <MedicalExamsList medicalExams={medicalExams} onRefresh={onRefresh} />
+    );
   }
 
   return (
