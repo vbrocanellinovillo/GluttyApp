@@ -4,16 +4,20 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import AddComment from "../../components/Community/AddComment";
 import PostItem from "../../components/Community/PostItem";
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  RefreshControl,
+} from "react-native";
 import Comment from "../../components/Community/Comment";
 import { Colors } from "../../constants/colors";
-import TextCommonsRegular from "../../components/UI/FontsTexts/TextCommonsRegular";
-import LoadingGlutty from "../../components/UI/Loading/LoadingGlutty";
 import { deletePost } from "../../services/communityService";
 import GluttyModal from "../../components/UI/GluttyModal";
 import ConsultarPostSkeleton from "../../components/UI/Loading/ConsultarPostSkeleton";
 import { banPost, report, resolvePost } from "../../services/adminService";
-
+import { useRefresh } from "../../hooks/useRefresh";
 
 export default function ViewPostById({ route, navigation }) {
   const [post, setPost] = useState(undefined);
@@ -25,28 +29,27 @@ export default function ViewPostById({ route, navigation }) {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const [showEliminarModal, setShowEliminarModal] = useState(false);
-  const [showReportModal, setShowReportModal] = useState(false)
-  const [banpostdata, setbanpostdata] = useState(undefined)
-  const [resolvepostdata, setresolvepostdata] = useState(undefined)
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [banpostdata, setbanpostdata] = useState(undefined);
+  const [resolvepostdata, setresolvepostdata] = useState(undefined);
 
   const [reportData, setReportData] = useState({ type: null, id: null });
   const [showModalReportClose, setShowModalReportClose] = useState(false);
-  const [showBanModal, setShowBanModal] = useState(false)
+  const [showBanModal, setShowBanModal] = useState(false);
   const [showModalResolveClose, setShowModalResolveClose] = useState(false);
-  const [showResolveModal, setShowResolveModal] = useState(false)
+  const [showResolveModal, setShowResolveModal] = useState(false);
 
-
-  
-  const admin = route.params?.admin || false
-
+  const admin = route.params?.admin || false;
 
   const id = route.params?.id;
   const token = useSelector((state) => state.auth.accessToken);
   const username = useSelector((state) => state.auth.userData.username);
   const is_admin = useSelector((state) => state.auth.isAdmin);
-  const is_reportable = route.paramas?.isReportable || true
+  const is_reportable = route.paramas?.isReportable || true;
 
   let is_mine = false;
+
+  const { refreshing, handleRefresh } = useRefresh(cargarPost);
 
   function closeModalHandler() {
     setShowModal(false);
@@ -57,7 +60,6 @@ export default function ViewPostById({ route, navigation }) {
     setShowModal(false);
     navigation.goBack();
   }
-
 
   async function confirmModalDeleteHandler() {
     try {
@@ -76,49 +78,49 @@ export default function ViewPostById({ route, navigation }) {
     setShowEliminarModal(false);
   }
 
-  function closeModalDeleteHandler(){
-    setShowEliminarModal(false)
+  function closeModalDeleteHandler() {
+    setShowEliminarModal(false);
   }
 
   useFocusEffect(
     useCallback(() => {
-      const cargarPost = async () => {
-        setIsLoading(true);
-        try {
-          const selectedPost = await getPostById(id, token);
-          setIsLoading(false);
-          setPost(selectedPost);
-          //console.log("el posteo lindo:     ", selectedPost);
-        } catch (error) {
-          setIsError(true);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
       cargarPost();
     }, [id, token])
   );
 
-  // Confirmación de la eliminación
+  const cargarPost = async () => {
+    setIsLoading(true);
+    try {
+      const selectedPost = await getPostById(id, token);
+      setIsLoading(false);
+      setPost(selectedPost);
+    } catch (error) {
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   async function handleConfirmDelete() {
     setShowEliminarModal(true);
   }
 
-if (isLoading) {
-      return <ConsultarPostSkeleton />;
+  if (isLoading) {
+    return <ConsultarPostSkeleton />;
   }
 
   function handleDeleteComment(commentId) {
     setPost((prevPost) => ({
       ...prevPost,
-      comments: prevPost.comments.filter((comment) => comment.comment_id !== commentId),
+      comments: prevPost.comments.filter(
+        (comment) => comment.comment_id !== commentId
+      ),
     }));
   }
 
-  function handleReport(reportType, reportId){
+  function handleReport(reportType, reportId) {
     setReportData({ type: reportType, id: reportId });
-    setShowReportModal(true)
+    setShowReportModal(true);
   }
   async function confirmModalReportHandler() {
     try {
@@ -130,66 +132,60 @@ if (isLoading) {
       setIsError(true);
       setMessage(error.message || "Error desconocido"); // Maneja errores también
       setShowModal(true);
-      console.log(error.message);
     } finally {
       setIsLoading(false);
     }
     setShowReportModal(false);
   }
-  function closeModalReportHandler(){
-    setShowReportModal(false)
-    setShowBanModal(false)
-    setShowResolveModal(false)
+  function closeModalReportHandler() {
+    setShowReportModal(false);
+    setShowBanModal(false);
+    setShowResolveModal(false);
   }
 
-  //manejo del ok del post 
+  //manejo del ok del post
 
-  async function handleResolvePost(post_id){
+  async function handleResolvePost(post_id) {
     //console.log(post_id)
-    setresolvepostdata(post_id)
-    setShowResolveModal(true)
-
+    setresolvepostdata(post_id);
+    setShowResolveModal(true);
   }
-
 
   // Manejo del baneo
 
   //Comienzo de resolve post
-  async function handleBanPost(post_id){
-    setbanpostdata(post_id)
-    setShowBanModal(true)
+  async function handleBanPost(post_id) {
+    setbanpostdata(post_id);
+    setShowBanModal(true);
   }
 
-
-    // Funcionalidad de resolve del posteo
-    async function confirmResolvePostHandler(){
-      console.log("AMUSINGGG", resolvepostdata)
-      try {
-        setIsLoading(true);
-        const response = await resolvePost(resolvepostdata,token)
-        setMessage("El posteo fue resuelto con exito");
-        setShowModalReportClose(true);
-      } catch (error) {
-        setShowBanModal(false)
-        setIsError(true);
-        setMessage(error.message || "Error desconocido"); // Maneja errores también
-        setShowModal(true);
-        console.log("mensaje del error", error.message);
-      } finally {
-        setIsLoading(false);
-        setShowResolveModal(false);
-      }
-    }
-
-  // Funcionalidad de eliminacion del posteo
-  async function confirmBanHandler(){
+  // Funcionalidad de resolve del posteo
+  async function confirmResolvePostHandler() {
     try {
       setIsLoading(true);
-      const response = await banPost(banpostdata,token)
+      const response = await resolvePost(resolvepostdata, token);
+      setMessage("El posteo fue resuelto con exito");
+      setShowModalReportClose(true);
+    } catch (error) {
+      setShowBanModal(false);
+      setIsError(true);
+      setMessage(error.message || "Error desconocido"); // Maneja errores también
+      setShowModal(true);
+    } finally {
+      setIsLoading(false);
+      setShowResolveModal(false);
+    }
+  }
+
+  // Funcionalidad de eliminacion del posteo
+  async function confirmBanHandler() {
+    try {
+      setIsLoading(true);
+      const response = await banPost(banpostdata, token);
       setMessage("El posteo fue eliminado con exito");
       setShowModalReportClose(true);
     } catch (error) {
-      setShowBanModal(false)
+      setShowBanModal(false);
       setIsError(true);
       setMessage(error.message || "Error desconocido"); // Maneja errores también
       setShowModalReportClose(true);
@@ -200,9 +196,6 @@ if (isLoading) {
     }
     setShowReportModal(false);
   }
-  
-  
-
 
   return (
     <>
@@ -230,7 +223,7 @@ if (isLoading) {
             text: "Confirmar",
             bg: "green",
             color: Colors.whiteGreen,
-            onPress: confirmModalDeleteHandler
+            onPress: confirmModalDeleteHandler,
           },
         ]}
         closeButtonText="Cancelar"
@@ -246,7 +239,7 @@ if (isLoading) {
             text: "Confirmar",
             bg: "green",
             color: Colors.whiteGreen,
-            onPress: confirmModalReportHandler
+            onPress: confirmModalReportHandler,
           },
         ]}
         closeButtonText="Cancelar"
@@ -262,7 +255,7 @@ if (isLoading) {
             text: "Confirmar",
             bg: "green",
             color: Colors.whiteGreen,
-            onPress: confirmBanHandler
+            onPress: confirmBanHandler,
           },
         ]}
         closeButtonText="Cancelar"
@@ -279,18 +272,23 @@ if (isLoading) {
             text: "Confirmar",
             bg: "green",
             color: Colors.whiteGreen,
-            onPress: confirmResolvePostHandler
+            onPress: confirmResolvePostHandler,
           },
         ]}
         closeButtonText="Cancelar"
       />
-      <ScrollView style={styles.scroll}>
+      <ScrollView
+        style={styles.scroll}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
         {/* Mostrar el post */}
         <PostItem
           post={post}
           iconPost="trash-outline"
           onPressIcon={handleConfirmDelete}
-          isReportable = {is_reportable}
+          isReportable={is_reportable}
           handleReportPost={handleReport}
           handleReportUser={handleReport}
           handleBanPost={handleBanPost}
@@ -300,29 +298,29 @@ if (isLoading) {
 
         {/* Mostrar los comentarios */}
         {console.log(admin)}
-        {(!admin ) && (
-        <View>
-          {post?.comments?.length > 0 ? (
-            post.comments.map((comment, index) => {
-              const is_mine = comment.user === username;
-              return (
-                <Comment
-                  key={index}
-                  comment={comment}
-                  is_mine={is_mine}
-                  token={token}
-                  onDelete={handleDeleteComment}
-                />
-              );
-            })
-          ):(
-            <Text style={styles.noComments}>Hola</Text>
-          )}
+        {!admin && (
+          <View>
+            {post?.comments?.length > 0 ? (
+              post.comments.map((comment, index) => {
+                const is_mine = comment.user === username;
+                return (
+                  <Comment
+                    key={index}
+                    comment={comment}
+                    is_mine={is_mine}
+                    token={token}
+                    onDelete={handleDeleteComment}
+                  />
+                );
+              })
+            ) : (
+              <Text style={styles.noComments}>Hola</Text>
+            )}
 
-          {/* Agregar un nuevo comentario */}
-          <AddComment id_post={id} />
-        </View>
-      )}
+            {/* Agregar un nuevo comentario */}
+            <AddComment id_post={id} />
+          </View>
+        )}
       </ScrollView>
     </>
   );
@@ -333,9 +331,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     color: "transparent",
-
   },
   scroll: {
     marginBottom: 100,
-  }
+  },
 });
