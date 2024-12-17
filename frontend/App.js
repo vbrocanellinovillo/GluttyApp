@@ -8,7 +8,11 @@ import { PaperProvider } from "react-native-paper";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/http";
 import { StatusBar } from "expo-status-bar";
+import { LogBox } from "react-native";
 
+LogBox.ignoreLogs([
+  'A props object containing a "key" prop is being spread into JSX',
+]);
 
 export default function App() {
   return (
