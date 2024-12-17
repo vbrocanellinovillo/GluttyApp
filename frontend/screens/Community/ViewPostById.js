@@ -49,7 +49,9 @@ export default function ViewPostById({ route, navigation }) {
 
   let is_mine = false;
 
-  const { refreshing, handleRefresh } = useRefresh(cargarPost);
+  const { refreshing, handleRefresh } = useRefresh( useCallback(() => {
+    cargarPost();
+  }, [id, token]));
 
   function closeModalHandler() {
     setShowModal(false);
@@ -293,7 +295,10 @@ export default function ViewPostById({ route, navigation }) {
           handleResolvePost={handleResolvePost}
           isAdmin={admin}
         />
+        {/* Agregar un nuevo comentario */}
+        <AddComment id_post={id} />
 
+        
         {/* Mostrar los comentarios */}
         {!admin && (
           <View>
@@ -314,8 +319,7 @@ export default function ViewPostById({ route, navigation }) {
               <Text style={styles.noComments}>Hola</Text>
             )}
 
-            {/* Agregar un nuevo comentario */}
-            <AddComment id_post={id} />
+            
           </View>
         )}
       </ScrollView>
