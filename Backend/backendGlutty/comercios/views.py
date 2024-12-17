@@ -22,6 +22,7 @@ from collections import Counter
 from django.db.models import Count, Subquery
 from datetime import timedelta
 from django.utils.timezone import now
+from comunidad.views import format_time
 
 # Función para buscar el comercio según una query y filtros
 @api_view(["POST"])
@@ -754,7 +755,7 @@ def get_info_dashboard(request):
              "name": Post.get_name(post.user),
              "profile_picture": post.user.profile_picture if post.user.profile_picture else None,
              "body": post.body,
-             "created_at": post.created_at,
+             "created_at": format_time(post.created_at),
              "likes": post.likes_number,
              "images": [{"url": pic.photo_url} for pic in post.pictures.all()],
              "comments_number": post.comments_number,
