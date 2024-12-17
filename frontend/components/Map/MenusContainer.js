@@ -6,7 +6,7 @@ import { Colors } from "../../constants/colors";
 export default function MenusContainer({ menus = [], handlePdf }) {
   return (
     <ElementsContainer
-      title="Menus"
+      title="Menú"
       items={menus}
       scrollContainerStyle={styles.container}
     >
