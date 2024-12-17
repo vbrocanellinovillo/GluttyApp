@@ -71,7 +71,6 @@ export default function ViewPostById({ route, navigation }) {
       setIsError(true);
       setMessage(error.message || "Error desconocido"); // Maneja errores también
       setShowModal(true);
-      console.log(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +91,6 @@ export default function ViewPostById({ route, navigation }) {
     setIsLoading(true);
     try {
       const selectedPost = await getPostById(id, token);
-      setIsLoading(false);
       setPost(selectedPost);
     } catch (error) {
       setIsError(true);
@@ -122,6 +120,7 @@ export default function ViewPostById({ route, navigation }) {
     setReportData({ type: reportType, id: reportId });
     setShowReportModal(true);
   }
+
   async function confirmModalReportHandler() {
     try {
       setIsLoading(true);
@@ -137,6 +136,7 @@ export default function ViewPostById({ route, navigation }) {
     }
     setShowReportModal(false);
   }
+
   function closeModalReportHandler() {
     setShowReportModal(false);
     setShowBanModal(false);
@@ -146,7 +146,6 @@ export default function ViewPostById({ route, navigation }) {
   //manejo del ok del post
 
   async function handleResolvePost(post_id) {
-    //console.log(post_id)
     setresolvepostdata(post_id);
     setShowResolveModal(true);
   }
@@ -190,7 +189,6 @@ export default function ViewPostById({ route, navigation }) {
       setMessage(error.message || "Error desconocido"); // Maneja errores también
       setShowModalReportClose(true);
       setShowModal(true);
-      console.log("mensaje del error", error.message);
     } finally {
       setIsLoading(false);
     }
@@ -297,7 +295,6 @@ export default function ViewPostById({ route, navigation }) {
         />
 
         {/* Mostrar los comentarios */}
-        {console.log(admin)}
         {!admin && (
           <View>
             {post?.comments?.length > 0 ? (
