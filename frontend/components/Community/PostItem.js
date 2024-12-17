@@ -80,8 +80,7 @@ export default function PostItem({
     setTimeout(() => (scaleAnimation.value = 0), 1000);
   }
 
-  
-
+  //console.log("Post:", post);
   
   return (
     <>
@@ -109,7 +108,6 @@ export default function PostItem({
               <Ionicons style={styles.verMas} name={iconPost} />
             </Pressable>
           )}
-          {console.log("adminnnnnnnn ", admin)}
           {(!borrar && isReportable && !admin) &&(
             <View style = {styles.options}>
             <TouchableOpacity onPress={() => {setShowMenu(!showMenu); console.log("Menu toggled:", !showMenu);}}>
@@ -171,9 +169,13 @@ export default function PostItem({
           )}
         </View>
         <View style={styles.infoContainer}>
-          <TextCommonsRegular style={styles.date}>
-            {post?.date ? post?.date : "Fecha no disponible"}
-          </TextCommonsRegular>
+        <TextCommonsRegular style={styles.date}>
+          {post?.date
+            ? post.date
+            : post?.created_at
+            ? post.created_at
+            : "Fecha no disponible"}
+        </TextCommonsRegular>
 
           <PostInfoContainer
             comments={post?.comments_number}
