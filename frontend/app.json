@@ -16,7 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.glutty.gluttyapp",
       "config": {
-        "googleMapsApiKey": "AIzaSyCR7NE3OD2rkoQ18WF6B-ZLy9dkZIxoh2U"
+        "googleMapsApiKey": "AIzaSyD6gwGJXISMQiPf6PuQF_CwsI8rDCq11Ck"
       }
     },
     "android": {
