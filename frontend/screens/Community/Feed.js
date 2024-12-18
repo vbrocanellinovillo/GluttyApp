@@ -68,6 +68,8 @@ export default function Feed({ navigation }) {
     }
   }
 
+  if (data && posts.length === 0) return;
+
   return (
     <View style={styles.container}>
       <Searchbar
@@ -96,7 +98,7 @@ export default function Feed({ navigation }) {
         isLoading={isLoading}
         style={styles.list}
         NoContentComponent={() => (
-          <NoPosts>
+          <NoPosts onRefresh={() => refetch()}>
             Comienza a compartir tus experiencias con la comunidad!
           </NoPosts>
         )}

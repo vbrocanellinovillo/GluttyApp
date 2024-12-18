@@ -55,6 +55,13 @@ export default function BloodTest({ navigation, route }) {
     date,
     pdf,
   }) {
+    if (!laboratory || laboratory.trim() === "") {
+      setIsError(true);
+      setMessage("Por favor, ingrese el nombre del laboratorio.");
+      setShowModal(true);
+      return; // Detiene el flujo si no hay laboratorio
+    }
+  
     setIsLoading(true);
     try {
       const response = await registerMedicalExam(
@@ -86,7 +93,7 @@ export default function BloodTest({ navigation, route }) {
       setShowModal(true);
     } catch (error) {
       console.log(error);
-
+  
       setIsError(true);
       setMessage("Ocurrió un error. Por favor intente de nuevo más tarde");
       setShowModal(true);
@@ -94,6 +101,7 @@ export default function BloodTest({ navigation, route }) {
       setIsLoading(false);
     }
   }
+  
 
   return (
     <>

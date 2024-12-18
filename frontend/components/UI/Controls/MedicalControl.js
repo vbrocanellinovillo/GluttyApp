@@ -18,6 +18,7 @@ export default function MedicalControl({
   const hasError = errors && touched;
 
   function handleChange(value) {
+    console.log(value)
     onChange(value);
   }
 

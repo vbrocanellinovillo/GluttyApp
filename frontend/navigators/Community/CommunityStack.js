@@ -22,7 +22,15 @@ export default function CommunityStack() {
         component={CommunityTopTabs}
         options={{ title: "Feed" }}
       />
-      <Stack.Screen name="ViewPostById" component={ViewPostById} />
+      <Stack.Screen
+        name="ViewPostById"
+        component={ViewPostById}
+        options={{
+          header: ({ options, navigation }) => (
+            <PrincipalHeader options={options} navigation={navigation} goBack />
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 }

@@ -1,13 +1,21 @@
-import { Image, StyleSheet, View } from "react-native";
+import { Image, RefreshControl, ScrollView, StyleSheet } from "react-native";
 import { thumbGlutty } from "../../constants/glutty";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
+import { useRefresh } from "../../hooks/useRefresh";
 
-export default function NoPosts({ children }) {
+export default function NoPosts({ children, onRefresh }) {
+  const { refreshing, handleRefresh } = useRefresh(onRefresh);
+
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+    >
       <Image source={{ uri: thumbGlutty }} style={styles.image} />
       <TextCommonsMedium style={styles.text}>{children}</TextCommonsMedium>
-    </View>
+    </ScrollView>
   );
 }
 

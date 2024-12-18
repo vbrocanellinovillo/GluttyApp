@@ -5,42 +5,45 @@ import { Colors } from "../../../constants/colors";
 import UserImage from "../UserImage/UserImage";
 import * as Haptics from "expo-haptics";
 import { gluttyTitulo } from "../../../constants/glutty";
+import DrawerIcon from "./DrawerIcon";
 
-export default function PrincipalHeader({ options, navigation }) {
+export default function PrincipalHeader({ navigation, goBack }) {
   function toggleDrawer() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     navigation.toggleDrawer();
   }
 
+  function handleBack() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    navigation.goBack();
+  }
+
   return (
     <Header style={styles.header}>
       <View style={styles.textContainer}>
-        <Pressable
-          style={({ pressed }) =>
-            pressed
-              ? [styles.pressed, styles.iconContainer]
-              : [styles.iconContainer]
-          }
-          onPress={toggleDrawer}
-        >
-          <Ionicons
-            name="menu"
-            color={Colors.mJordan}
-            size={38}
-            style={styles.menu}
-          />
-        </Pressable>
+        {goBack ? (
+          <Pressable
+            onPress={handleBack}
+            style={({ pressed }) => {
+              [pressed && styles.pressed];
+            }}
+          >
+            <Ionicons
+              name="arrow-back-circle"
+              color={Colors.mJordan}
+              size={38}
+              style={styles.backIcon}
+            />
+          </Pressable>
+        ) : (
+          <DrawerIcon onPress={toggleDrawer} />
+        )}
         <Image
-        source={{
-          uri: gluttyTitulo}}
-        style={styles.image}
-      />
-        {/* <TextCommonsBold style={styles.text}>
-          Glutty.
-          <TextCommonsMedium style={styles.title}>
-            {options.title}
-          </TextCommonsMedium>
-        </TextCommonsBold> */}
+          source={{
+            uri: gluttyTitulo,
+          }}
+          style={styles.image}
+        />
       </View>
       <UserImage dimensions={68} onPress={toggleDrawer} />
     </Header>
@@ -55,12 +58,17 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
   },
 
-  iconContainer: {
-    justifyContent: "center",
+  iconsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 
   pressed: {
-    opacity: 0.6,
+    opacity: 0.7,
+  },
+
+  backIcon: {
+    paddingHorizontal: 10,
   },
 
   textContainer: {
@@ -79,12 +87,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.locro,
   },
-  menu: {
-    paddingRight: 7,
-    paddingLeft: 5,
-  },
+
   image: {
     height: 42,
-    width: 135, 
+    width: 135,
   },
 });

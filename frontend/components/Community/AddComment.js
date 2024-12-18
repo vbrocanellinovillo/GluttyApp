@@ -30,14 +30,14 @@ export default function AddComment({ id_post }) {
   const token = useSelector((state) => state.auth.accessToken);
   const username = useSelector((state) => state.auth.userData.username);
 
-
+  // Función para manejar el envío del comentario
   const handleSend = async () => {
     try {
       Keyboard.dismiss();
       setIsLoading(true);
 
       const nuevoComentario = await addComment(id_post, comment, token); // Publica el comentario
-      setComentarios((prevComentarios) => [nuevoComentario, ...prevComentarios]); // Agrega el nuevo comentario al inicio del array
+      setComentarios((prevComentarios) => [...prevComentarios, nuevoComentario]); // Agrega el nuevo comentario al final del array
       setIsLoading(false);
       setCommentAddedModal(true);
       setComment("");
@@ -50,29 +50,38 @@ export default function AddComment({ id_post }) {
     }
   };
 
+  // Función para eliminar un comentario
   const handleDeleteComment = (commentId) => {
     setComentarios((prevComentarios) =>
       prevComentarios.filter((comment) => comment.comment_id !== commentId)
     );
   };
 
-
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} nestedScrollEnabled={true}>
-        {/* Renderizar comentarios */}
+      {/* Lista de comentarios */}
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        nestedScrollEnabled={true}
+      >
         <View style={styles.commentsContainer}>
           {comentarios.map((item, index) => (
             <View key={index} style={styles.commentContainer}>
-              <Comment comment={item} is_mine={true} token={token} onDelete={handleDeleteComment} />
+              <Comment
+                comment={item}
+                is_mine={true}
+                token={token}
+                onDelete={handleDeleteComment}
+              />
             </View>
           ))}
         </View>
       </ScrollView>
 
+      {/* Barra para agregar comentarios */}
       <View style={styles.container}>
         {/* Cargando */}
         <LoadingGlutty visible={isLoading} />
@@ -99,9 +108,10 @@ export default function AddComment({ id_post }) {
           ]}
         />
 
+        {/* Imagen del usuario */}
         <UserImage dimensions={40} />
 
-        {/* Campo de texto */}
+        {/* Input para el comentario */}
         <TextInput
           style={styles.input}
           placeholder="Nuevo comentario..."
@@ -112,10 +122,12 @@ export default function AddComment({ id_post }) {
           textAlignVertical="top"
         />
 
-        {/* Botones */}
+        {/* Botón de emojis */}
         <TouchableOpacity style={styles.emojiButton}>
           <Ionicons name="happy-outline" size={24} color="black" />
         </TouchableOpacity>
+
+        {/* Botón de enviar */}
         <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
           <Ionicons name="arrow-forward" size={22} color="black" />
         </TouchableOpacity>

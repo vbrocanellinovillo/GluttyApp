@@ -24,37 +24,43 @@ export default function PostInfoContainer({
   const navigation = useNavigation();
 
   async function handleLike() {
+    if (isLiked) {
+      setSumLiked(sumLiked - 1);
+    } else {
+      setSumLiked(sumLiked + 1);
+    }
+
     try {
       setLiked(!isLiked);
       onPressIcon("heart", Colors.redLike);
       await addLike(id, token);
-      if (isLiked) {
-        setSumLiked(sumLiked - 1);
-      } else {
-        setSumLiked(sumLiked + 1);
-      }
     } catch (error) {
-      setLiked(!isLiked);
+      setLiked(isLiked);
+      setSumLiked(sumLiked);
     }
   }
 
   async function handleFav() {
     try {
-      setFaved(!isFaved);
+      setFaved((prevFaved) => !prevFaved);
       onPressIcon("star", Colors.favYellow);
-      const response = addFavorite(id, token);
+      await addFavorite(id, token);
     } catch (error) {
-      setFaved(!isFaved);
+      setFaved(isFaved);
     }
   }
 
   function handleComment() {
-    navigation.navigate("ViewPostById", {id});
+    navigation.navigate("ViewPostById", { id });
   }
 
   return (
     <Animated.View style={[styles.container, style]}>
-      <PostInfo icon="chatbubble-ellipses" number={comments} onPress={handleComment} />
+      <PostInfo
+        icon="chatbubble-ellipses"
+        number={comments}
+        onPress={handleComment}
+      />
       <PostInfo
         icon={isLiked ? "heart" : "heart-outline"}
         iconColor={isLiked && Colors.redLike}

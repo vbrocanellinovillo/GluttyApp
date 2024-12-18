@@ -38,8 +38,8 @@ export default function PostItem({
   const name = useSelector((state) => state?.auth?.userData?.username);
 
   const [showMenu, setShowMenu] = useState(false); // Estado para mostrar el menú contextual
-  
-  const [showAdmin, setShowAdmin] = useState(false)
+
+  const [showAdmin, setShowAdmin] = useState(false);
   const scaleAnimation = useSharedValue(0);
 
   const animationStlye = useAnimatedStyle(() => {
@@ -48,14 +48,12 @@ export default function PostItem({
     };
   });
 
-
   const admin = useSelector((state) => state.auth.isAdmin);
 
   const [animationIcon, setAnimationIcon] = useState("");
   const [animationColor, setAnimationColor] = useState("");
 
   let borrar = true;
-
 
   if (post?.username == name) {
     borrar = true;
@@ -64,15 +62,14 @@ export default function PostItem({
   }
 
   function handlePress() {
-   
     onPress && onPress();
-    
   }
 
-  function handlePressIcon(){
+  function handlePressIcon() {
     Haptics.selectionAsync();
     onPressIcon && onPressIcon();
   }
+
   function animateIcon(icon, color) {
     setAnimationIcon(icon);
     setAnimationColor(color);
@@ -80,9 +77,6 @@ export default function PostItem({
     setTimeout(() => (scaleAnimation.value = 0), 1000);
   }
 
-  
-
-  
   return (
     <>
       <Pressable
@@ -109,42 +103,53 @@ export default function PostItem({
               <Ionicons style={styles.verMas} name={iconPost} />
             </Pressable>
           )}
-          {console.log("adminnnnnnnn ", admin)}
-          {(!borrar && isReportable && !admin) &&(
-            <View style = {styles.options}>
-            <TouchableOpacity onPress={() => {setShowMenu(!showMenu); console.log("Menu toggled:", !showMenu);}}>
-              <MaterialCommunityIcons
-                name="dots-vertical"
-                size={24}
-                color={Colors.darkGray}
-              />
-            </TouchableOpacity>
-            {(showMenu)&&(
-              <ContextualMenu
+          {!borrar && isReportable && !admin && (
+            <View style={styles.options}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowMenu(!showMenu);
+                  console.log("Menu toggled:", !showMenu);
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={24}
+                  color={Colors.darkGray}
+                />
+              </TouchableOpacity>
+              {showMenu && (
+                <ContextualMenu
                   isReportPost={true}
                   isReportUser={true}
-                  onReportPost={()=>handleReportPost("POST", post?.id)}
-                  onReportUser={()=>handleReportUser("USER",post?.username || post?.user)}
-              />
-            )}
+                  onReportPost={() => handleReportPost("POST", post?.id)}
+                  onReportUser={() =>
+                    handleReportUser("USER", post?.username || post?.user)
+                  }
+                />
+              )}
             </View>
           )}
-          {(!borrar && admin && handleBanPost) &&(
-            <View style = {styles.options}>
-            <TouchableOpacity onPress={() => {setShowAdmin(!showAdmin); console.log("admin toggled:", !showAdmin);}}>
-              <MaterialCommunityIcons
-                name="dots-vertical"
-                size={24}
-                color={Colors.darkGray}
-              />
-            </TouchableOpacity>
-            {(showAdmin)&&(
-              <ContextualMenu
+          {!borrar && admin && handleBanPost && (
+            <View style={styles.options}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowAdmin(!showAdmin);
+                  console.log("admin toggled:", !showAdmin);
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={24}
+                  color={Colors.darkGray}
+                />
+              </TouchableOpacity>
+              {showAdmin && (
+                <ContextualMenu
                   isBanPost={true}
-                  onBanPost={()=>handleBanPost(post?.id)}   
-                  onResolvePost={()=>handleResolvePost(post?.id)}
-               />
-            )}
+                  onBanPost={() => handleBanPost(post?.id)}
+                  onResolvePost={() => handleResolvePost(post?.id)}
+                />
+              )}
             </View>
           )}
         </View>
@@ -172,7 +177,11 @@ export default function PostItem({
         </View>
         <View style={styles.infoContainer}>
           <TextCommonsRegular style={styles.date}>
-            {post?.date ? post?.date : "Fecha no disponible"}
+            {post?.date
+              ? post.date
+              : post?.created_at
+              ? post.created_at
+              : "Fecha no disponible"}
           </TextCommonsRegular>
 
           <PostInfoContainer
@@ -186,7 +195,13 @@ export default function PostItem({
         </View>
       </Pressable>
       {!curved && <Divider />}
-      <Animated.View style={[styles.animatedIcon, animationStlye]}>
+      <Animated.View
+        style={[
+          styles.animatedIcon,
+          { top: post?.images ? "50%" : "75%" },
+          animationStlye,
+        ]}
+      >
         <Ionicons name={animationIcon} size={30} color={animationColor} />
       </Animated.View>
     </>
@@ -279,9 +294,9 @@ const styles = StyleSheet.create({
 
   animatedIcon: {
     position: "absolute",
-    top: "75",
     left: "45%",
   },
+
   menuContainer: {
     position: "absolute",
     top: 24, // Ajusta según tu diseño
@@ -295,5 +310,4 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     zIndex: 1000, // Asegura que el menú esté por encima de otros elementos
   },
-  
 });

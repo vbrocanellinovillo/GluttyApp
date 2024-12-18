@@ -2,6 +2,7 @@ import { Image } from "react-native";
 import { StyleSheet, View } from "react-native";
 import TextCommonsMedium from "../UI/FontsTexts/TextCommonsMedium";
 import { Colors } from "../../constants/colors";
+import { userGlutty } from "../../constants/glutty";
 
 export default function UserResult({
   containerStyle,
@@ -12,7 +13,7 @@ export default function UserResult({
   return (
     <View style={[styles.container, containerStyle]}>
       <Image
-        source={{ uri: user?.profilePicture }}
+        source={{ uri: user?.profilePicture || userGlutty }}
         style={[styles.image, imageStyle]}
       />
       <TextCommonsMedium style={[styles.text, textStyle]}>
