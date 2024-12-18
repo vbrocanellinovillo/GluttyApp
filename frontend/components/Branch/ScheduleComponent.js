@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textStyle:{
-    fontSize: 14
+    fontSize: 12
   }
 });
 
