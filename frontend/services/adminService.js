@@ -149,7 +149,7 @@ export async function getReportedPosts(token, page, pageSize) {
     console.log("id_report", id_report);
     const requestUrl = url + "resolve-report/";
     const formdata = new FormData();
-    formdata.append("report_id", id_report);
+    formdata.append("user_id", id_report);
 
 
     const requestOptions = {
