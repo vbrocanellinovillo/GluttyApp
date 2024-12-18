@@ -3,25 +3,29 @@ import { Colors } from "../../constants/colors";
 import ReportedUserItem from "./ReportedUserItem";
 import { ReportedUser } from "../../models/ReportedUser";
 import { FlashList } from "@shopify/flash-list";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { getReportedUsers } from "../../services/adminService";
 import { useSelector } from "react-redux";
+import NoUsersReported from "./noUsersReported";
+import ReportedUserSkeleton from "../UI/Loading/ReportedUserSkeleton";
 
 
 export default function ReportedUsers() {
   const navigation = useNavigation();
-  const [isLoading, setIsLoading] = useState(false); 
   const [users, setUsers] = useState([]);
-  //const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const token = useSelector((state) => state.auth.accessToken);
 
 
+  const isFocused = useIsFocused(); // Verifica si la pantalla está enfocada
+
   useEffect(() => {
+    if (isFocused) {
       fetchReportedUsers(); // Llama a la función para actualizar los posts
     }
-  ,[]);
+  }, [isFocused]);
 
   async function fetchReportedUsers() {
     try {
@@ -34,7 +38,7 @@ export default function ReportedUsers() {
     } catch (error) {
       setIsError(true);
     } finally {
-      setIsLoading(false);
+      //setIsLoading(false);
     }
   } 
 
@@ -48,6 +52,11 @@ export default function ReportedUsers() {
        },
     });
   };
+
+ if (isLoading) {
+        return <ReportedUserSkeleton />;
+    }
+
 
   return (
     <FlashList
@@ -63,6 +72,11 @@ export default function ReportedUsers() {
       contentInset={{ bottom: 100 }}
       contentContainerStyle={styles.container}
       estimatedItemSize={100}
+      ListEmptyComponent={() => (
+      <NoUsersReported>No existen usuarios reportados</NoUsersReported>
+           )}
+
+      
     />
   );
 }

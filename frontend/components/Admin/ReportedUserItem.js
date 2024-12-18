@@ -7,7 +7,11 @@ import ReportedUserInfo from "./ReportedUserInfo";
 import ReportsNumber from "./ReportsNumber";
 import * as Haptics from "expo-haptics";
 
-const ReportedUserItem = ({ containerStyle, reportedUser, onPress }) => {
+const ReportedUserItem = ({ 
+  containerStyle, 
+  reportedUser, 
+  onPress
+   }) => {
   function handlePress() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress && onPress();

@@ -11,6 +11,7 @@ import { Colors } from "../../../constants/colors";
 import { blockUser, getPostsReportedUser, resolveReport } from "../../../services/adminService";
 import GluttyModal from "../../../components/UI/GluttyModal";
 import ReasonBlock from "../../../components/Admin/ReasonBlock";
+import UsersAdmin from "./UsersAdmin";
 
 export default function ViewPostsReportedUser({ navigation, route }) {
   const token = useSelector((state) => state.auth.accessToken);
@@ -32,7 +33,6 @@ export default function ViewPostsReportedUser({ navigation, route }) {
   
 
   const { username, id } = route.params;
-  //console.log("id", id);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: username });
@@ -74,7 +74,6 @@ export default function ViewPostsReportedUser({ navigation, route }) {
 
   async function unblockUser(id) {
     try {
-      //console.log("Usuario resuelto/ublock");
       setModalConfirmResolve(false);
       await resolveReport(id, token);
       setMessage("Reporte resuelto");
@@ -98,7 +97,7 @@ export default function ViewPostsReportedUser({ navigation, route }) {
       route.params.onGoBack();
     }
     // Navegar hacia atrás
-    navigation.goBack();
+    navigation.navigate(UsersAdmin);
   }
 
   async function handleBlock(reason) {
@@ -131,34 +130,34 @@ export default function ViewPostsReportedUser({ navigation, route }) {
           <NoPosts>¡No hay posteos!</NoPosts>
         )}
       />
-      <Portal>
-        <FAB.Group
-          open={isFABOpen}
-          icon="dots-horizontal" // Cambiar por el ícono que desees
-          backdropColor="transparent"
-          actions={[
-            {
-              icon: "block-helper", // Ícono para "Bloquear usuario"
-              label: "Bloquear usuario",
-              onPress: () => setShowReasonBlockModal(true),
-              color: Colors.humita,
-              labelTextColor: Colors.mJordan,
-            },
-            {
-              icon: "check", // Ícono para "No bloquear usuario"
-              label: "Anular reporte",
-              onPress: () => setModalConfirmResolve(true),
-              color: Colors.humita,
-              labelTextColor: Colors.mJordan,
-            },
-          ]}
-          onStateChange={({ open }) => setIsFABOpen(open)}
-          visible={true}
-          style={styles.botonFlotante}
-          fabStyle={{ backgroundColor: Colors.locro }}
-          rippleColor="transparent"
-        />
-      </Portal>
+      <FAB.Group
+        open={isFABOpen}
+        icon="dots-horizontal"
+        backdropColor="rgba(0, 0, 0, 0.2)" // Fondo semitransparente al abrirse
+        actions={[
+          {
+            icon: "block-helper",
+            label: "Bloquear usuario",
+            onPress: () => setShowReasonBlockModal(true),
+            color: Colors.humita,
+            labelStyle: { backgroundColor: Colors.mJordan , color: "#FFFFFF" }, // Fondo oscuro y letras blancas
+            style: { backgroundColor: Colors.white }, // Fondo del ícono
+          },
+          {
+            icon: "check",
+            label: "Anular reporte",
+            onPress: () => setModalConfirmResolve(true),
+            color: Colors.humita,
+            labelStyle: { backgroundColor: Colors.mJordan , color: "#FFFFFF" }, // Fondo oscuro y letras blancas
+            style: { backgroundColor: Colors.white },
+          },
+        ]}
+        onStateChange={({ open }) => setIsFABOpen(open)}
+        visible={true}
+        fabStyle={{ backgroundColor: Colors.locro }}
+        style={styles.botonFlotante}
+        rippleColor="white"
+    />
 
       <GluttyModal
         isError={isError}
@@ -195,17 +194,16 @@ export default function ViewPostsReportedUser({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
+  botonFlotante: {
+    position: "absolute",
+    bottom: 80,
+    position: "absolute",
+  },
   titulo: {
     padding: 10,
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
-  },
-  
-  botonFlotante: {
-    position: "absolute",
-    bottom: 80,
-    //right: 5
   },
 });
