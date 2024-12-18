@@ -1,7 +1,7 @@
 import { FlatList, StyleSheet } from "react-native";
 import SearchResult from "./SearchResult";
 
-export default function SearchResultsList({ results, onSelectResult }) {
+export default function SearchResultsList({ results = [], onSelectResult }) {
   if (!results) return;
 
   return (
@@ -10,7 +10,7 @@ export default function SearchResultsList({ results, onSelectResult }) {
       renderItem={({ item }) => (
         <SearchResult onPress={onSelectResult} result={item} />
       )}
-      keyExtractor={(item) => item?.id_front?.toString()}
+      keyExtractor={(item) => item?.id.toString()}
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
     />
