@@ -69,14 +69,13 @@ export default function PostItem({
     Haptics.selectionAsync();
     onPressIcon && onPressIcon();
   }
+
   function animateIcon(icon, color) {
     setAnimationIcon(icon);
     setAnimationColor(color);
     scaleAnimation.value = 1.6;
     setTimeout(() => (scaleAnimation.value = 0), 1000);
   }
-
-  //console.log("Post:", post);
 
   return (
     <>
@@ -196,7 +195,13 @@ export default function PostItem({
         </View>
       </Pressable>
       {!curved && <Divider />}
-      <Animated.View style={[styles.animatedIcon, animationStlye]}>
+      <Animated.View
+        style={[
+          styles.animatedIcon,
+          { top: post?.images ? "50%" : "75%" },
+          animationStlye,
+        ]}
+      >
         <Ionicons name={animationIcon} size={30} color={animationColor} />
       </Animated.View>
     </>
@@ -289,9 +294,9 @@ const styles = StyleSheet.create({
 
   animatedIcon: {
     position: "absolute",
-    top: "75",
     left: "45%",
   },
+
   menuContainer: {
     position: "absolute",
     top: 24, // Ajusta según tu diseño
