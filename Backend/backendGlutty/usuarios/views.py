@@ -695,10 +695,15 @@ def resolve_report(request):
         return Response({"error": "Only superusers can perform this action."}, status=status.HTTP_403_FORBIDDEN)
 
     user_id = request.data.get('user_id')
+    if not user_id:
+        return Response({"error": "User Id not found."}, status=status.HTTP_404_NOT_FOUND)
+    
     report = Report.objects.filter(reported_user__id=user_id).first()
+    print(report)
     
     # Resolver el reporte
     if report.resolve_report():
+        print(report.resolved)
         return Response({"message": "Report resolved successfully."}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Report not found."}, status=status.HTTP_404_NOT_FOUND)
