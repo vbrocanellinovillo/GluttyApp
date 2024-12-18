@@ -195,13 +195,7 @@ export default function PostItem({
         </View>
       </Pressable>
       {!curved && <Divider />}
-      <Animated.View
-        style={[
-          styles.animatedIcon,
-          { top: post?.images ? "50%" : "75%" },
-          animationStlye,
-        ]}
-      >
+      <Animated.View style={[styles.animatedIcon, animationStlye]}>
         <Ionicons name={animationIcon} size={30} color={animationColor} />
       </Animated.View>
     </>
@@ -294,6 +288,7 @@ const styles = StyleSheet.create({
 
   animatedIcon: {
     position: "absolute",
+    top: "40%",
     left: "45%",
   },
 

@@ -225,7 +225,6 @@ export async function getReportedPosts(token, page, pageSize) {
     const formdata = new FormData();
     formdata.append("post_id", id_post);
 
-
     const requestOptions = {
       method: "POST",
       body: formdata,

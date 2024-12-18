@@ -27,13 +27,16 @@ export default function Feed({ navigation }) {
   const [hasNextPage, setHasNextPage] = useState(true);
   const pageSize = PAGE_SIZE;
 
+  // Le cambio el numero para que refresque sin afectar la cache
+  const [refresh, setRefresh] = useState(0);
+
   const results = useSelector((state) => state.community?.results);
   const dispatch = useDispatch();
 
   const token = useSelector((state) => state.auth.accessToken);
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["feed", selectedOption, results],
+    queryKey: ["feed", selectedOption, results, refresh],
     queryFn: ({ signal }) =>
       getFeed(token, selectedOption, results, signal, page, pageSize),
   });
@@ -68,6 +71,10 @@ export default function Feed({ navigation }) {
     }
   }
 
+  function refreshPosts() {
+    setRefresh((prevRefresh) => prevRefresh + 1);
+  }
+
   if (data && posts.length === 0) return;
 
   return (
@@ -93,12 +100,12 @@ export default function Feed({ navigation }) {
         posts={posts}
         hasNextPage={hasNextPage}
         onPageChange={changePage}
-        onRefresh={() => refetch()}
+        onRefresh={refreshPosts}
         isError={isError}
         isLoading={isLoading}
         style={styles.list}
         NoContentComponent={() => (
-          <NoPosts onRefresh={() => refetch()}>
+          <NoPosts onRefresh={refreshPosts}>
             Comienza a compartir tus experiencias con la comunidad!
           </NoPosts>
         )}
