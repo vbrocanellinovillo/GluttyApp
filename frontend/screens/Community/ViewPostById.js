@@ -284,6 +284,7 @@ export default function ViewPostById({ route, navigation }) {
         }
       >
         {/* Mostrar el post */}
+        <View style={{ position: "relative" }}>
         <PostItem
           post={post}
           iconPost="trash-outline"
@@ -295,6 +296,7 @@ export default function ViewPostById({ route, navigation }) {
           handleResolvePost={handleResolvePost}
           isAdmin={admin}
         />
+        </View>
         {/* Agregar un nuevo comentario */}
         <AddComment id_post={id} />
 
