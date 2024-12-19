@@ -7,7 +7,7 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { getReportedUsers } from "../../services/adminService";
 import { useSelector } from "react-redux";
-import NoUsersReported from "./noUsersReported";
+import NoUsersReported from "./NoUsersReported";
 import ReportedUserSkeleton from "../UI/Loading/ReportedUserSkeleton";
 
 
