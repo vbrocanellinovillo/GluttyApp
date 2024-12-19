@@ -32,7 +32,7 @@ export default function ScannedProduct({
 
   const animatedHeight = useAnimatedStyle(() => {
     return {
-      height: isContracted ? withSpring(360, { damping: 18 }) : withSpring(250),
+      height: isContracted ? withSpring(385, { damping: 18 }) : withSpring(275),
     };
   });
 
